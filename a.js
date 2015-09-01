@@ -1658,10 +1658,9 @@ var snakeColors = [
   "#00f",
   "#ff0",
 ];
-var blockForeground = ["#de5a6d","#fa65dd","#c367e3","#9c62fa","#625ff0"];
-var blockInside     = ["#b14857","#c850b0","#9c52b5","#7c4ec8","#4e4cc0"];
-var blockBackground = ["#853641","#963c84","#753d88","#5d3a96","#3a3990"];
-
+var blockForeground = ["#0b3","#6b0","#8c0","#Ad0","#Be0","#ED0"];
+var blockBackground = ["#0b3","#6b0","#8c0","#Ad0","#Be0","#ED0"];
+var skyColor = "#88f";
 var activeSnakeId = null;
 
 function render() {
@@ -1669,7 +1668,7 @@ function render() {
   canvas.width = tileSize * level.width;
   canvas.height = tileSize * level.height;
   var context = canvas.getContext("2d");
-  context.fillStyle = "#88f"; // sky
+  context.fillStyle = skyColor;
   context.fillRect(0, 0, canvas.width, canvas.height);
 
   if (persistentState.showGrid && !persistentState.showEditor) {
@@ -1695,7 +1694,7 @@ function render() {
     if (paintBrushTileCode === "b") {
       if (paintBrushBlockId != null) {
         // fade everything else away
-        context.fillStyle = "rgba(0, 0, 0, 0.8)";
+        context.fillStyle = "rgba(0, 0, 0, 0.75)";
         context.fillRect(0, 0, canvas.width, canvas.height);
         // and render just this object in focus
         var activeBlock = findBlockById(paintBrushBlockId);
@@ -1727,15 +1726,17 @@ function render() {
     // begin by rendering the background connections for blocks
     objects.forEach(function(object) {
       if (object.type !== "b") return;
+	  var rowcols = object.locations.map(function(location) {
+        return getRowcol(level, location);
+      });
       for (var i = 0; i < object.locations.length - 1; i++) {
         var rowcol1 = getRowcol(level, object.locations[i]);
         var rowcol2 = getRowcol(level, object.locations[i + 1]);
         var cornerRowcol = {r:rowcol1.r, c:rowcol2.c};
-        drawConnector(rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, blockBackground[object.id % blockBackground.length]);
-        drawConnector(rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, blockBackground[object.id % blockBackground.length]);
+        drawConnector(rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, blockBackground[object.id%blockBackground.length],rowcols);
+        drawConnector(rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, blockBackground[object.id%blockBackground.length],rowcols);
       }
     });
-
     // terrain
     if (onlyTheseObjects == null) {
       for (var r = 0; r < level.height; r++) {
@@ -1783,7 +1784,11 @@ function render() {
         }
       } else if (paintBrushTileCode === "b") {
         if (!(objectHere != null && objectHere.type === "b" && objectHere.id === paintBrushBlockId)) {
-          drawObject(newBlock(hoverLocation));
+          if(paintBrushBlockId == null)
+		  drawObject(newBlock(hoverLocation));
+		  else{context.fillStyle = blockForeground[paintBrushBlockId%blockForeground.length];
+		drawTileOutlines(hoverRowcol.r,hoverRowcol.c,hello,0.3);
+		function hello(dc,dr){return false;}}
         }
       } else if (paintBrushTileCode === "resize") {
         void 0; // do nothing
@@ -1889,15 +1894,14 @@ function render() {
   function drawWall(r, c, adjacentTiles) {
     drawRect(r, c, "#844204"); // dirt
     context.fillStyle = "#282"; // grass
-    drawTileOutlines(r, c, isWall);
+    drawTileOutlines(r, c, isWall,0.2);
 
     function isWall(dc, dr) {
       var tileCode = adjacentTiles[1 + dr][1 + dc];
       return tileCode == null || tileCode === WALL;
     }
   }
-  function drawTileOutlines(r, c, isOccupied) {
-    var grassSize = 0.2;
+  function drawTileOutlines(r, c, isOccupied,grassSize) {
     var complement = 1 - grassSize;
     var grassPixels = grassSize * tileSize;
     var complementPixels = (1 - 2 * grassSize) * tileSize;
@@ -1934,8 +1938,9 @@ function render() {
     context.lineTo(x + tileSize * 0.3, y + tileSize * 0.3);
     context.fill();
   }
-  function drawConnector(r1, c1, r2, c2, color) {
+  function drawConnector(r1, c1, r2, c2, color, rowcols) {
     // either r1 and r2 or c1 and c2 must be equal
+	context.fillStyle = color;
     if (r1 > r2 || c1 > c2) {
       var rTmp = r1;
       var cTmp = c1;
@@ -1944,13 +1949,39 @@ function render() {
       r2 = rTmp;
       c2 = cTmp;
     }
-    var xLo = (c1 + 0.4) * tileSize;
-    var yLo = (r1 + 0.4) * tileSize;
-    var xHi = (c2 + 0.6) * tileSize;
-    var yHi = (r2 + 0.6) * tileSize;
-    context.fillStyle = color;
-    context.fillRect(xLo, yLo, xHi - xLo, yHi - yLo);
+    if(r1==r2){//vertical
+	  if(!isThisBlock(c1,r1,rowcols)){ // half a connector
+	    context.fillRect((c1+0.4) * tileSize, (r1+ 0.4) * tileSize , 0.6*tileSize, 0.2*tileSize);
+	  }
+	  for(var cTemp = c1+1; cTemp < c2; cTemp++){
+		if(!isThisBlock(cTemp,r1,rowcols)){//loops through and adds 1-segment connectors if there isn't a block there
+		  context.fillRect(cTemp * tileSize, (r1+ 0.4) * tileSize , tileSize, 0.2*tileSize);
+		}
+	  }
+	  if(!isThisBlock(c2,r2,rowcols)){// ends with another half connector
+	    context.fillRect((c2) * tileSize, (r2+ 0.4) * tileSize , 0.6*tileSize, 0.2*tileSize);
+	  }
+	} else if(c1==c2){//horizontal
+	  if(!isThisBlock(c1,r1,rowcols)){ // half a connector
+	    context.fillRect((c1+0.4) * tileSize, (r1+ 0.4) * tileSize , 0.2*tileSize, 0.6*tileSize);
+	  }
+	  for(var rTemp = r1+1; rTemp < r2; rTemp++){
+		if(!isThisBlock(c1,rTemp,rowcols)){//loops through and adds 1-segment connectors if there isn't a block there
+		 context.fillRect((c1+ 0.4) * tileSize, rTemp * tileSize , 0.2*tileSize, tileSize);}
+	  }
+	  if(!isThisBlock(c2,r2,rowcols)){ // ends with another half connector
+	    context.fillRect((c2+0.4) * tileSize, r2 * tileSize , 0.2*tileSize, 0.6*tileSize);
+	  }
+	}
+	function isThisBlock(dc, dr,rowcols) {
+        for (var i = 0; i < rowcols.length;	i++) {
+          var rowcol = rowcols[i];
+          if (dr === rowcol.r && dc === rowcol.c) return true;
+        }
+        return false;
+      }
   }
+
   function drawBlock(block) {
     var rowcols = block.locations.map(function(location) {
       return getRowcol(level, location);
@@ -1958,8 +1989,8 @@ function render() {
     rowcols.forEach(function(rowcol) {
       var r = rowcol.r;
       var c = rowcol.c;
-      drawRect(r, c, blockInside[block.id % blockInside.length]);
-      context.fillStyle = blockForeground[block.id % blockForeground.length];
+      context.fillStyle = blockForeground[block.id%blockForeground.length];
+      drawTileOutlines(r, c, isAlsoThisBlock,0.3);
       drawTileOutlines(r, c, isAlsoThisBlock);
       function isAlsoThisBlock(dc, dr) {
         for (var i = 0; i < rowcols.length; i++) {
