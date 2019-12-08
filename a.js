@@ -681,15 +681,22 @@ function refreshCheatButtonText() {
   document.getElementById("cheatCollisionButton").textContent = isCollisionEnabled ? "Collision: ON" : "Collision: OFF";
   document.getElementById("cheatCollisionButton").style.background = isCollisionEnabled ? "" : "#f88";
 }
+// suppress right-click menu
+canvas.addEventListener("contextmenu", function(event) {
+  event.preventDefault();
+});
+
 
 // be careful with location vs rowcol, because this variable is used when resizing
 var lastDraggingRowcol = null;
 var hoverLocation = null;
 var draggingChangeLog = null;
+var mouseButton = null;
 canvas.addEventListener("mousedown", function(event) {
   if (event.altKey) return;
-  if (event.button !== 0) return;
+  if (!(event.button === 0 || event.button === 2)) return;
   event.preventDefault();
+  mouseButton = event.button;
   var location = getLocationFromEvent(event);
   if (persistentState.showEditor && paintBrushTileCode != null) {
     // editor tool
@@ -697,7 +704,9 @@ canvas.addEventListener("mousedown", function(event) {
     if (paintBrushTileCode === "select") selectionStart = location;
     if (paintBrushTileCode === "resize") resizeDragAnchorRowcol = lastDraggingRowcol;
     draggingChangeLog = [];
-    paintAtLocation(location, draggingChangeLog);
+    if (mouseButton === 0) paintAtLocation(location, draggingChangeLog);
+    else if (mouseButton === 2) eraseAtLocation(location, draggingChangeLog);
+    else throw unreachable();
   } else {
     // playtime
     var object = findObjectAtLocation(location);
@@ -744,6 +753,7 @@ function stopDragging() {
     resizeDragAnchorRowcol = null;
     pushUndo(uneditStuff, draggingChangeLog);
     draggingChangeLog = null;
+    mouseButton = null;
   }
 }
 canvas.addEventListener("mousemove", function(event) {
@@ -759,7 +769,10 @@ canvas.addEventListener("mousemove", function(event) {
     });
     path.forEach(function(rowcol) {
       // convert to location at the last minute in case each of these steps is changing the coordinate system.
-      paintAtLocation(getLocation(level, rowcol.r, rowcol.c), draggingChangeLog);
+      var location = getLocation(level, rowcol.r, rowcol.c);
+      if (mouseButton === 0) paintAtLocation(location, draggingChangeLog);
+      else if (mouseButton === 2) eraseAtLocation(location, draggingChangeLog);
+      else throw unreachable();
     });
     lastDraggingRowcol = mouseRowcol;
     hoverLocation = null;
@@ -1185,6 +1198,12 @@ function paintTileAtLocation(location, tileCode, changeLog) {
   if (level.map[location] === tileCode) return;
   changeLog.push(["m", location, level.map[location], tileCode]);
   level.map[location] = tileCode;
+}
+
+function eraseAtLocation(location, changeLog) {
+  removeAnyObjectAtLocation(location, changeLog);
+  paintTileAtLocation(location, SPACE, changeLog);
+  render();
 }
 
 function pushUndo(undoStuff, changeLog) {
