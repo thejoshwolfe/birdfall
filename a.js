@@ -2221,7 +2221,7 @@ function render() {
     if (countSnakes() === 0) {
       context.fillStyle = "#ff0";
       context.font = "100px Arial";
-      context.fillText("You Win!", 0, canvas.height / 2);
+      context.fillText("test!", 0, canvas.height / 2);
     }
     if (isDead()) {
       context.fillStyle = "#f00";
