@@ -5,7 +5,7 @@ if (typeof VERSION !== "undefined") {
 }
 
 var img3 = document.createElement('img'); //Gooby
-img3.src = './Snakebird Images/Cherry2.png';
+img3.src = '/Snakebird Images/Cherry2.png';
 
 var canvas = document.getElementById("canvas");
 
