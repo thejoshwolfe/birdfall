@@ -1596,10 +1596,11 @@ function isAnyCheatcodeEnabled() {
     !isGravityEnabled || !isCollisionEnabled
   );
 }
-var background = [
+var background = "gradient";
+/*[
   "sky",
   "gradient",
-];
+];*/
 
 
 function showEditorChanged() {
