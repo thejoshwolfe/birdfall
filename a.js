@@ -2482,7 +2482,7 @@ function render() {
         context.stroke();*/
         
         var img2=document.createElement('img');
-        img2.src='/Snakebird Images/pinwheel.png';
+        img2.src='https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird Images/pinwheel.png';
         
         if(isUneatenFruit()==0)
             context.drawImage(img2,c*tileSize-tileSize/2,r*tileSize-tileSize/2,2*tileSize, 2*tileSize);
