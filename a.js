@@ -2337,7 +2337,7 @@ function render() {
         drawSpikes(r, c, getAdjacentTiles(), level);
         break;
       case EXIT:
-        drawExit(r, c);
+        //drawExit(r, c);
         var radiusFactor = isUneatenFruit() ? 0.7 : 1.2;
         drawQuarterPie(r, c, radiusFactor, "#fd0c0b", 0);
         drawQuarterPie(r, c, radiusFactor, "#18d11f", 1);
