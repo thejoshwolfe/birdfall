@@ -5,7 +5,7 @@ if (typeof VERSION !== "undefined") {
 }
 
 var img3 = document.createElement('img'); //Gooby
-img3.src = 'https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird%20Images/Cherry2.png';
+//img3.src = 'https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird%20Images/Cherry2.png';
 
 var canvas = document.getElementById("canvas");
 
@@ -2120,8 +2120,8 @@ function render() {
     }
     else{
       var img=document.createElement('img');
-      img.src='https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird%20Images/sky2.jpeg';    
-      context.drawImage(img,0,0,canvas.width, canvas.height)
+      //img.src='https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird%20Images/sky2.jpeg';    
+      //context.drawImage(img,0,0,canvas.width, canvas.height)
       //context.fillRect(0, 0, canvas.width, canvas.height);
     }
   if (persistentState.showGrid && !persistentState.showEditor) {
@@ -2458,7 +2458,7 @@ function render() {
         var rowcol = getRowcol(level, object.locations[0]);
         //drawCircle(rowcol.r, rowcol.c, 1, "#f0f");
         
-        context.drawImage(img3,rowcol.c*tileSize+(tileSize*.1), rowcol.r*tileSize+(tileSize*.1), tileSize*.8, tileSize*.8);
+        //context.drawImage(img3,rowcol.c*tileSize+(tileSize*.1), rowcol.r*tileSize+(tileSize*.1), tileSize*.8, tileSize*.8);
         break;
       default: throw unreachable();
     }
