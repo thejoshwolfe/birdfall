@@ -2465,7 +2465,7 @@ function render() {
   }
     
     function drawExit(r, c) { //Gooby
-        /*var cx = c+.5;
+        var cx = c+.5;
         var rx = r+.5;
         
         var grd = context.createRadialGradient(cx*tileSize, rx*tileSize, 1, cx*tileSize, rx*tileSize, 13);
@@ -2479,15 +2479,15 @@ function render() {
         
         context.arc(cx*tileSize,rx*tileSize,tileSize/2,0,2*Math.PI);
         context.fill();
-        context.stroke();*/
+        context.stroke();
         
-        var img2=document.createElement('img');
-        img2.src='https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird Images/pinwheel.png';
+        //var img2=document.createElement('img');
+        //img2.src='https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird Images/pinwheel.png';
         
-        if(isUneatenFruit()==0)
+        /*if(isUneatenFruit()==0)
             context.drawImage(img2,c*tileSize-tileSize/2,r*tileSize-tileSize/2,2*tileSize, 2*tileSize);
         else
-            context.drawImage(img2,c*tileSize,r*tileSize,tileSize, tileSize);
+            context.drawImage(img2,c*tileSize,r*tileSize,tileSize, tileSize);*/
     }
 
   function drawWall(r, c, adjacentTiles) {  //GOOBY
