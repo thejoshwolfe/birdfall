@@ -5,7 +5,7 @@ if (typeof VERSION !== "undefined") {
 }
 
 var img3 = document.createElement('img'); //Gooby
-img3.src = 'https://github.com/jmdiamond3/Snakefall-Solutions/Snakebird Images/Cherry2.png';
+img3.src = 'https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird%20Images/Cherry2.png';
 
 var canvas = document.getElementById("canvas");
 
@@ -2120,7 +2120,7 @@ function render() {
     }
     else{
       var img=document.createElement('img');
-      img.src='/Snakebird Images/sky2.jpeg';    
+      img.src='https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird%20Images/sky2.jpeg';    
       context.drawImage(img,0,0,canvas.width, canvas.height)
       //context.fillRect(0, 0, canvas.width, canvas.height);
     }
