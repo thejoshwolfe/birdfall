@@ -2338,11 +2338,11 @@ function render() {
         break;
       case EXIT:
         drawExit(r, c);
-        /*var radiusFactor = isUneatenFruit() ? 0.7 : 1.2;
+        var radiusFactor = isUneatenFruit() ? 0.7 : 1.2;
         drawQuarterPie(r, c, radiusFactor, "#fd0c0b", 0);
         drawQuarterPie(r, c, radiusFactor, "#18d11f", 1);
         drawQuarterPie(r, c, radiusFactor, "#004cff", 2);
-        drawQuarterPie(r, c, radiusFactor, "#fdc122", 3);*/
+        drawQuarterPie(r, c, radiusFactor, "#fdc122", 3);
         break;
       case PORTAL:
         drawCircle(r, c, 0.8, "#888");
@@ -2465,7 +2465,7 @@ function render() {
     }
   }
     
-    function drawExit(r, c) { //Gooby
+    /*function drawExit(r, c) { //Gooby
         var cx = c+.5;
         var rx = r+.5;
         
@@ -2482,14 +2482,14 @@ function render() {
         context.fill();
         context.stroke();
         
-        //var img2=document.createElement('img');
-        //img2.src='https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird Images/pinwheel.png';
+        var img2=document.createElement('img');
+        img2.src='https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird Images/pinwheel.png';
         
-        /*if(isUneatenFruit()==0)
+        if(isUneatenFruit()==0)
             context.drawImage(img2,c*tileSize-tileSize/2,r*tileSize-tileSize/2,2*tileSize, 2*tileSize);
         else
-            context.drawImage(img2,c*tileSize,r*tileSize,tileSize, tileSize);*/
-    }
+            context.drawImage(img2,c*tileSize,r*tileSize,tileSize, tileSize);
+    }*/
 
   function drawWall(r, c, adjacentTiles) {  //GOOBY
     //drawRect(r, c, "#976537"); // dirt      
