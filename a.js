@@ -5,7 +5,7 @@ if (typeof VERSION !== "undefined") {
 }
 
 var img3 = document.createElement('img'); //Gooby
-img3.src = '/Snakefall/Snakebird Images/Cherry2.png';
+img3.src = '/Snakebird Images/Cherry2.png';
 
 var canvas = document.getElementById("canvas");
 
@@ -2120,7 +2120,7 @@ function render() {
     }
     else{
       var img=document.createElement('img');
-      img.src='/Snakefall/Snakebird Images/sky2.jpeg';    
+      img.src='/Snakebird Images/sky2.jpeg';    
       context.drawImage(img,0,0,canvas.width, canvas.height)
       //context.fillRect(0, 0, canvas.width, canvas.height);
     }
@@ -2482,7 +2482,7 @@ function render() {
         context.stroke();*/
         
         var img2=document.createElement('img');
-        img2.src='/Snakefall/Snakebird Images/pinwheel.png';
+        img2.src='/Snakebird Images/pinwheel.png';
         
         if(isUneatenFruit()==0)
             context.drawImage(img2,c*tileSize-tileSize/2,r*tileSize-tileSize/2,2*tileSize, 2*tileSize);
