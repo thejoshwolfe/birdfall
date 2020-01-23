@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <title>Snakefall</title>
+  <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee" src="//local.adguard.org?ts=1579742875033&amp;type=content-script&amp;dmn=wolfesoftware.com&amp;css=1&amp;js=1&amp;gcss=1&amp;rel=1&amp;rji=1&amp;stealth=1&amp;uag="></script>
+<script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee" src="//local.adguard.org?ts=1579742875033&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;type=user-script"></script></head>
+  <body>
+    <table style="margin:0px auto;"><tr>
+      <td><canvas id="canvas" width=750 height=600></canvas></td>
+      <td id="editorPane" style="display:none;">
+        <table>
+          <tr><td><input type="button" id="playtestButton" value="PLAYTEST!" title="P - Anchors the Restart state."></td></tr>
+          <tr><td style="text-align:center;">
+            <input type="button" id="uneditButton" value="Unedit <<" title="Ctrl+Z" disabled>
+            <input type="button" id="reeditButton" value=">> Re-edit" title="Ctrl+Shift+Z, Ctrl+Y" disabled><br>
+            Edits: <span id="editsSpan">0+0</span>
+          </td></tr>
+          <tr><td><input type="button" id="saveLevelButton" value="Save Level" title="Ctrl+S - puts the share link in the URL bar of your browser"></td></tr>
+          <tr><td><input type="button" id="resizeButton" value="Resize" title="Shift+S"></td></tr>
+          <tr><td>
+            <input type="button" id="selectButton" value="Select" title="Shift+R - double click to edit objects"><br>
+            <input type="button" id="cutButton" value="X" title="Cut (Ctrl+X)" disabled><input type="button" id="copyButton" value="C" title="Copy (Ctrl+C)" disabled><input type="button" id="pasteButton" value="V" title="Paste (Ctrl+V)" disabled>
+          </td></tr>
+          <tr><td><input type="button" id="paintSpaceButton" value="Erase" title="E"></td></tr>
+          <tr><td><input type="button" id="paintWallButton" value="Wall" title="W"></td></tr>
+          <tr><td><input type="button" id="paintSpikeButton" value="Spike" title="S"></td></tr>
+          <tr><td><input type="button" id="paintExitButton" value="Exit" title="X"></td></tr>
+          <tr><td><input type="button" id="paintFruitButton" value="Fruit" title="F"></td></tr>
+          <tr><td><input type="button" id="paintPortalButton" value="Portal" title="A"></td></tr>
+          <tr><td><input type="button" id="paintPlatformButton" value="Platform" title="L"></td></tr>
+          <tr><td><input type="button" id="paintSnakeButton" value="Snake" title="D"></td></tr>
+          <tr><td><input type="button" id="paintBlockButton" value="Block" title="B"></td></tr>
+          <tr><td><input type="button" id="cheatGravityButton" value="Gravity: ON" title="Shift+G"></td></tr>
+          <tr><td><input type="button" id="cheatCollisionButton" value="Collision: ON" title="Shift+C"></td></tr>
+        </table>
+      </td>
+    </tr></table>
+
+    <div style="text-align:center;">
+      <div id="paradoxDiv" style="background:#f88;"></div>
+      Controls (hover for hotkeys):
+      <br>
+      Arrows<span id="wasdSpan">/WASD</span> to move
+      <input type="button" id="switchSnakesButton" value="Switch Snakes" title="(Shift+)Spacebar, (Shift+)Tab, 1 - Red, 2 - Green, 3 - Blue, 4 - Yellow">
+      <input type="button" id="showGridButton" value="Show Grid" title="G">
+      <input style="display:none" type="button" id="saveProgressButton" value="Save Progress" title="Ctrl+Shift+S - Saves a replay URL to the URL bar of your browser">
+      <br>
+      <input type="button" id="unmoveButton" value="Unmove <<" title="Backspace, Z, Q" disabled>
+      Moves: <span id="movesSpan">0+0</span>
+      <input type="button" id="removeButton" value=">> Re-move" title="Y, Shift+Backspace, Shift+Z, Shift+Q" disabled>
+      <input type="button" id="restartButton" value="Restart" title="R - Unmove all the way. Shift+R - Re-move all the way">
+    </div>
+
+    <input id="showHideEditor" type="button" value="Show Editor Stuff" title="\">
+    <div id="editorDiv" style="display:none;">
+      <textarea id="serializationTextarea" rows=30 cols=80></textarea>
+      <div>
+        <input id="submitSerializationButton" type="button" value="Submit">
+        Share link: <input id="shareLinkTextbox">
+      </div>
+    </div>
+
+    <div style="margin-top:1em;">This project on Github: <a href="https://github.com/thejoshwolfe/snakefall">thejoshwolfe/snakefall</a> version <span id="versionSpan">???</span></div>
+    <div>Also check out the <a href="http://wolfesoftware.com/snakefall/experimental/">experimental versions of this game</a>.</div>
+    <div>This game is a clone of <a href="http://snakebird.noumenongames.com/">Snakebird</a> by Noumenon Games.</div>
+    <script src="version.js"></script>
+    <script src="a.js"></script>
+  </body>
+</html>
+
