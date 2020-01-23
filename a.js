@@ -5,7 +5,7 @@ if (typeof VERSION !== "undefined") {
 }
 
 var img3 = document.createElement('img'); //Gooby
-//img3.src = 'https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird%20Images/Cherry2.png';
+//img3.src = '/Snakefall/Snakebird Images/Cherry2.png';
 
 var canvas = document.getElementById("canvas");
 
@@ -672,8 +672,8 @@ document.getElementById("backgroundButton").addEventListener("click", function()
   toggleBackground();
 });
 function toggleBackground() {
-  if(background == "sky") background = "gradient";
-  else background = "sky";
+    //var bgLength = backgroundList.length;
+    //background = backgroundList
 }
 function toggleGravity() {
   isGravityEnabled = !isGravityEnabled;
@@ -1596,6 +1596,8 @@ function isAnyCheatcodeEnabled() {
     !isGravityEnabled || !isCollisionEnabled
   );
 }
+var bg2 = "rgba(230, 230, 255 * rgba(220, 220, 255";
+var bg1 = "rgba(0, 0, 255 * rgba(20, 20, 255";
 var background = "gradient";
 /*[
   "sky",
@@ -2112,17 +2114,20 @@ function render() {
     if(background=="gradient"){
       for(var i = 0; i<level.width; i++){   //checkerboard background
           for(var j = 0; j<level.height; j++){
+              var bgColor1= bg1.substr(0, bg1.indexOf('*')); 
+              var bgColor2= bg1.substr(bg1.indexOf('*')+2, bg1.length); 
               var shade = (j+1)*.03+.2;
-              if((i+j) % 2 == 0) context.fillStyle = "rgba(230, 230, 255,"+shade+")";
-              else context.fillStyle = "rgba(220, 220, 255,"+shade+")";
+              if((i+j) % 2 == 0) context.fillStyle = "" + bgColor1 + ", " + shade + ")";
+              else context.fillStyle = "" + bgColor2 + ", " + shade + ")";
               context.fillRect(i*tileSize, j*tileSize, tileSize, tileSize);
+              //context.fillText(i+" "+j,i*tileSize, j*tileSize);
           }      
       }
     }
     else{
       var img=document.createElement('img');
-      //img.src='https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird%20Images/sky2.jpeg';    
-      //context.drawImage(img,0,0,canvas.width, canvas.height)
+      img.src='/Snakefall/Snakebird Images/sky2.jpeg';    
+      context.drawImage(img,0,0,canvas.width, canvas.height)
       //context.fillRect(0, 0, canvas.width, canvas.height);
     }
   if (persistentState.showGrid && !persistentState.showEditor) {
@@ -2457,7 +2462,7 @@ function render() {
         break;
       case FRUIT:
         var rowcol = getRowcol(level, object.locations[0]);
-        drawCircle(rowcol.r, rowcol.c, 1, "#f0f");
+        drawCircle(rowcol.r, rowcol.c, .9, "#f0f");
         
         //context.drawImage(img3,rowcol.c*tileSize+(tileSize*.1), rowcol.r*tileSize+(tileSize*.1), tileSize*.8, tileSize*.8);
         break;
@@ -2465,8 +2470,8 @@ function render() {
     }
   }
     
-    /*function drawExit(r, c) { //Gooby
-        var cx = c+.5;
+    function drawExit(r, c) { //Gooby
+        /*var cx = c+.5;
         var rx = r+.5;
         
         var grd = context.createRadialGradient(cx*tileSize, rx*tileSize, 1, cx*tileSize, rx*tileSize, 13);
@@ -2483,13 +2488,13 @@ function render() {
         context.stroke();
         
         var img2=document.createElement('img');
-        img2.src='https://github.com/jmdiamond3/Snakefall-Solutions/blob/master/Snakebird Images/pinwheel.png';
+        img2.src='/Snakefall/Snakebird Images/pinwheel.png';
         
         if(isUneatenFruit()==0)
             context.drawImage(img2,c*tileSize-tileSize/2,r*tileSize-tileSize/2,2*tileSize, 2*tileSize);
         else
-            context.drawImage(img2,c*tileSize,r*tileSize,tileSize, tileSize);
-    }*/
+            context.drawImage(img2,c*tileSize,r*tileSize,tileSize, tileSize);*/
+    }
 
   function drawWall(r, c, adjacentTiles) {  //GOOBY
     //drawRect(r, c, "#976537"); // dirt      
@@ -2525,8 +2530,53 @@ function render() {
     var complementPixels = (1 - 2 * outlineThickness) * tileSize;
       
     
-    if (grass && !isOccupied( 0, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels); //grass  
-      
+    if (grass && !isOccupied(0, -1)){ //context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels); //grass  
+        if(!isOccupied(-1, 0) && isOccupied(1, 0)){
+            context.beginPath();
+            context.moveTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.25);
+            context.bezierCurveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.4, c*tileSize+tileSize*.2, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.1);
+            context.bezierCurveTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.3, c*tileSize+tileSize*.5, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.1);
+            context.bezierCurveTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.4, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize+tileSize, r*tileSize);
+            context.lineTo(c*tileSize+tileSize*.2, r*tileSize);
+            context.arc(c*tileSize+tileSize*.2, r*tileSize+tileSize*.2, tileSize*.2, 1.5*Math.PI, .9*Math.PI, true);
+            context.closePath();
+        }
+        else if(isOccupied(-1, 0) && !isOccupied(1, 0)){
+            context.beginPath();
+            context.moveTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.25);
+            context.bezierCurveTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.3, c*tileSize+tileSize*.8, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.1);
+            context.bezierCurveTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.3, c*tileSize+tileSize*.5, r*tileSize+tileSize*.4, c*tileSize+tileSize*.4, r*tileSize+tileSize*.1);
+            context.bezierCurveTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.3, c*tileSize+tileSize*.1, r*tileSize+tileSize*.4, c*tileSize, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize, r*tileSize);
+            context.lineTo(c*tileSize+tileSize*.8, r*tileSize);
+            context.arc(c*tileSize+tileSize*.8, r*tileSize+tileSize*.2, tileSize*.2, 1.5*Math.PI, 2.1*Math.PI);
+            context.closePath();
+        }
+        else if(!isOccupied(-1, 0) && !isOccupied(1, 0)){
+            context.beginPath();
+            context.moveTo(c*tileSize+tileSize*.85, r*tileSize);
+            context.lineTo(c*tileSize+tileSize*.2, r*tileSize);
+            context.arc(c*tileSize+tileSize*.2, r*tileSize+tileSize*.2, tileSize*.2, 1.5*Math.PI, .9*Math.PI, true);
+            context.bezierCurveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.3, c*tileSize+tileSize*.2, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.1);
+            context.bezierCurveTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.3, c*tileSize+tileSize*.5, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.1);
+            context.bezierCurveTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.4, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.1);
+            //context.arc(c*tileSize+tileSize*.8, r*tileSize+tileSize*.2, tileSize*.2, 1.5*Math.PI, 2.1*Math.PI);
+            context.closePath();
+        }
+        else{
+            context.beginPath();
+            context.moveTo(c*tileSize, r*tileSize);
+            context.lineTo(c*tileSize, r*tileSize+tileSize*.15);
+            context.bezierCurveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.3, c*tileSize+tileSize*.2, r*tileSize+tileSize*.3, c*tileSize+tileSize*.33, r*tileSize+tileSize*.1);
+            context.bezierCurveTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.3, c*tileSize+tileSize*.5, r*tileSize+tileSize*.3, c*tileSize+tileSize*.67, r*tileSize+tileSize*.1);
+            context.bezierCurveTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.3, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize+tileSize, r*tileSize);
+            context.closePath();
+        }
+            context.fill();
+    }
     /*if (!grass && !isOccupied(-1, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
     if (!grass && !isOccupied( 1, -1)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
     if (!grass && !isOccupied(-1,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
@@ -2553,31 +2603,35 @@ function render() {
   function drawSpikes(r, c, adjacentTiles) {
     var x = c * tileSize;
     var y = r * tileSize;
-    context.fillStyle = "#666";
+    context.fillStyle = "#E4E4E4";
     context.beginPath();
-    context.moveTo(x + tileSize * 0.2, y + tileSize * 0.3); //top spikes
+    context.moveTo(x + tileSize * 0.25, y + tileSize * 0.3); //top spikes
     context.lineTo(x + tileSize * 0.35, y + tileSize * 0.0);
-    context.lineTo(x + tileSize * 0.5, y + tileSize * 0.3);
+    context.lineTo(x + tileSize * 0.45, y + tileSize * 0.3);
+    context.lineTo(x + tileSize * 0.55, y + tileSize * 0.3);
     context.lineTo(x + tileSize * 0.65, y + tileSize * 0.0);
-    context.lineTo(x + tileSize * 0.8, y + tileSize * 0.3);
+    context.lineTo(x + tileSize * 0.75, y + tileSize * 0.3);
       
-    context.moveTo(x + tileSize * 0.7, y + tileSize * 0.2); //right spikes
+    context.moveTo(x + tileSize * 0.7, y + tileSize * 0.25); //right spikes
     context.lineTo(x + tileSize * 1.0, y + tileSize * 0.35);
-    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.5);
+    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.45);
+    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.55);
     context.lineTo(x + tileSize * 1.0, y + tileSize * 0.65);
-    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.8);
+    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.75);
       
-    context.moveTo(x + tileSize * 0.8, y + tileSize * 0.7); //bottom spikes
+    context.moveTo(x + tileSize * 0.75, y + tileSize * 0.7); //bottom spikes
     context.lineTo(x + tileSize * 0.65, y + tileSize * 1.0);
-    context.lineTo(x + tileSize * 0.5, y + tileSize * 0.7);
+    context.lineTo(x + tileSize * 0.55, y + tileSize * 0.7);
+    context.lineTo(x + tileSize * 0.45, y + tileSize * 0.7);
     context.lineTo(x + tileSize * 0.35, y + tileSize * 1.0);
-    context.lineTo(x + tileSize * 0.2, y + tileSize * 0.7);
+    context.lineTo(x + tileSize * 0.25, y + tileSize * 0.7);
       
-    context.moveTo(x + tileSize * 0.3, y + tileSize * 0.8); //left spikes
+    context.moveTo(x + tileSize * 0.3, y + tileSize * 0.75); //left spikes
     context.lineTo(x + tileSize * 0.0, y + tileSize * 0.65);
-    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.5);
+    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.55);
+    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.45);
     context.lineTo(x + tileSize * 0.0, y + tileSize * 0.35);
-    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.2);
+    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.25);
     context.closePath();
       
     /*context.lineTo(x + tileSize * 1.0, y + tileSize * 0.4);      
