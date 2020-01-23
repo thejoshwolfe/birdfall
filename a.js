@@ -2559,8 +2559,8 @@ function render() {
             context.beginPath();
             context.arc((c+1)*tileSize+tileSize/6, (r+1)*tileSize+tileSize/6, tileSize/6, 0, 2*Math.PI);
             context.closePath();
-            tileColor = context.getImageData((c+1)*tileSize+tileSize/2, (r+1)*tileSize+tileSize/2, 1, 1);
-            context.fillStyle = "rgba(" + tileColor.data[0] + ", " + tileColor.data[1] + ", " + tileColor.data[2] + ", " + tileColor.data[3] + ")";
+            //tileColor = context.getImageData((c+1)*tileSize+tileSize/2, (r+1)*tileSize+tileSize/2, 1, 1);
+            //context.fillStyle = "rgba(" + tileColor.data[0] + ", " + tileColor.data[1] + ", " + tileColor.data[2] + ", " + tileColor.data[3] + ")";
             context.fill();
             context.globalCompositeOperation = "source-over";            
         }
@@ -2570,9 +2570,8 @@ function render() {
             context.beginPath();
             context.arc(c*tileSize-tileSize/6, (r+1)*tileSize+tileSize/6, tileSize/6, 0, 2*Math.PI);
             context.closePath();
-            tileColor = context.getImageData(c*tileSize-tileSize/2, (r+1)*tileSize+tileSize/2, 1, 1);
-            //alert(tileColor.data[0] + " " + tileColor.data[1] + " " + tileColor.data[2] + " " + tileColor.data[3] + "");
-            context.fillStyle = "rgba(" + tileColor.data[0] + ", " + tileColor.data[1] + ", " + tileColor.data[2] + ", " + tileColor.data[3] + ")";
+            //tileColor = context.getImageData(c*tileSize-tileSize/2, (r+1)*tileSize+tileSize/2, 1, 1);
+            //context.fillStyle = "rgba(" + tileColor.data[0] + ", " + tileColor.data[1] + ", " + tileColor.data[2] + ", " + tileColor.data[3] + ")";
             context.fill();
             context.globalCompositeOperation = "source-over";
         }
