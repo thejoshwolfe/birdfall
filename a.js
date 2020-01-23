@@ -2522,6 +2522,29 @@ function render() {
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tr:10}, true, false);
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 10, true, false);
         else roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 0, true, false);
+      
+        if(isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(1, 1)) {
+            context.fillRect((c+1)*tileSize, (r+1)*tileSize, tileSize/6, tileSize/6);
+            //context.globalCompositeOperation = "destination-out";
+            context.beginPath();
+            context.arc((c+1)*tileSize+tileSize/6, (r+1)*tileSize+tileSize/6, tileSize/6, 0, 2*Math.PI);
+            context.closePath();
+            tileColor = context.getImageData(c*tileSize-tileSize/2, (r+1)*tileSize+tileSize/2, 1, 1);
+            context.fillStyle = "rgba(" + tileColor.data[0] + ", " + tileColor.data[1] + ", " + tileColor.data[2] + ", " + tileColor.data[3] + ")";
+            context.fill();
+            context.globalCompositeOperation = "source-over";            
+        }
+        else if(isOccupied(-1, 0) && isOccupied(0, 1) && !isOccupied(-1, 1)) {
+            context.fillRect(c*tileSize-tileSize/6, (r+1)*tileSize, tileSize/6, tileSize/6);
+            //context.globalCompositeOperation = "destination-out";
+            context.beginPath();
+            context.arc(c*tileSize-tileSize/6, (r+1)*tileSize+tileSize/6, tileSize/6, 0, 2*Math.PI);
+            context.closePath();
+            tileColor = context.getImageData(c*tileSize-tileSize/2, (r+1)*tileSize+tileSize/2, 1, 1);
+            context.fillStyle = "rgba(" + tileColor.data[0] + ", " + tileColor.data[1] + ", " + tileColor.data[2] + ", " + tileColor.data[3] + ")";
+            context.fill();
+            context.globalCompositeOperation = "source-over";
+        }
     }
     
   function drawTileOutlines(r, c, isOccupied, outlineThickness, grass) {
