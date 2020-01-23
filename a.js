@@ -514,6 +514,8 @@ document.addEventListener("keydown", function(event) {
       return;
     case "V".charCodeAt(0):
       if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("paste"); break; }
+    case "T".charCodeAt(0):
+      toggleTheme(); break;
       return;
     case 32: // spacebar
     case 9:  // tab
