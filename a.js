@@ -1597,7 +1597,7 @@ function isAnyCheatcodeEnabled() {
   );
 }
 var bg2 = "rgba(230, 230, 255 * rgba(220, 220, 255";
-var bg1 = "rgba(150, 200, 253 * rgba(133, 192, 255";
+var bg1 = "rgba(145, 198, 254 * rgba(133, 192, 255";
 var background = "gradient";
 /*[
   "sky",
@@ -2116,7 +2116,7 @@ function render() {
           for(var j = 0; j<level.height; j++){
               var bgColor1= bg1.substr(0, bg1.indexOf('*')); 
               var bgColor2= bg1.substr(bg1.indexOf('*')+2, bg1.length); 
-              var shade = (j+1)*.03+.2;
+              var shade = (j+1)*.03+.5;
               if((i+j) % 2 == 0) context.fillStyle = "" + bgColor1 + ", " + shade + ")";
               else context.fillStyle = "" + bgColor2 + ", " + shade + ")";
               context.fillRect(i*tileSize, j*tileSize, tileSize, tileSize);
