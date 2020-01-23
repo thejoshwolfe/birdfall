@@ -1708,7 +1708,7 @@ function move(dr, dc) {
     }
     // do portals separate from falling logic
     if (portalActivationLocations.length === 1) {
-      var portalAnimations = [500];
+      var portalAnimations = [200];
       if (activatePortal(portalLocations, portalActivationLocations[0], portalAnimations, changeLog)) {
         animationQueue.push(portalAnimations);
       }
