@@ -1610,6 +1610,7 @@ function isAnyCheatcodeEnabled() {
 var bg2 = "rgba(230, 230, 255 * rgba(220, 220, 255";
 var bg1 = "rgba(145, 198, 254 * rgba(133, 192, 255";
 //var theme = "gradient";
+var background;
 var surface;
 var material;
 var curlyOutline = false;
@@ -1618,7 +1619,8 @@ var themes = [  //name, background, material, surface, curlyOutline
   //["sky",],
   ["grass", bg1, "#976537", "#95ff45", true],
   ["snow", bg1, "#30455B", "white", true],
-  ["classic", bg1, "#844204", "#282", false]
+  ["classic", bg1, "#844204", "#282", false],
+  ["midnightRainbow", "#070753", "black", "rainbow", false]
 ];
 
 
@@ -2135,20 +2137,27 @@ function render() {
   var context = canvas.getContext("2d"); //Gooby
   
     if(true){
+        background = themes[themeCounter][1];
         material = themes[themeCounter][2];
         surface = themes[themeCounter][3];
         curlyOutline = themes[themeCounter][4];
-        for(var i = 0; i<level.width; i++){   //checkerboard background
-            for(var j = 0; j<level.height; j++){
-                var bgColor1= bg1.substr(0, bg1.indexOf('*')); 
-                var bgColor2= bg1.substr(bg1.indexOf('*')+2, bg1.length); 
-                var shade = (j+1)*.03+.5;
-                if((i+j) % 2 == 0) context.fillStyle = bgColor1 + ", " + shade + ")";
-                else context.fillStyle = bgColor2 + ", " + shade + ")";
-                context.fillRect(i*tileSize, j*tileSize, tileSize, tileSize);
-                //context.fillText(i+" "+j,i*tileSize, j*tileSize);
-              }      
-      }
+        if(background.substr(0,1) == "#") {
+            context.fillStyle = background;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        else{
+            for(var i = 0; i<level.width; i++){   //checkerboard background
+                for(var j = 0; j<level.height; j++){
+                    var bgColor1= bg1.substr(0, bg1.indexOf('*')); 
+                    var bgColor2= bg1.substr(bg1.indexOf('*')+2, bg1.length); 
+                    var shade = (j+1)*.03+.5;
+                    if((i+j) % 2 == 0) context.fillStyle = bgColor1 + ", " + shade + ")";
+                    else context.fillStyle = bgColor2 + ", " + shade + ")";
+                    context.fillRect(i*tileSize, j*tileSize, tileSize, tileSize);
+                    //context.fillText(i+" "+j,i*tileSize, j*tileSize);
+                  }      
+            }
+        }
     }
     else{
       var img=document.createElement('img');
@@ -2547,8 +2556,7 @@ function render() {
 
   function drawWall(r, c, adjacentTiles) {  //GOOBY
     //drawRect(r, c, "#976537");    
-    drawTileNew(r, c, isWall, 0.2, material);
-    context.fillStyle = surface;
+    drawTileNew(r, c, isWall, 0.2, material, surface);
     drawTileOutlines(r, c, isWall, 0.2, curlyOutline);
     context.save();
     if(curlyOutline) drawBushes(r, c, isWall);
@@ -2562,7 +2570,9 @@ function render() {
     }
   }
     
-    function drawTileNew(r, c, isOccupied, outlineThickness, fillStyle){
+    function drawTileNew(r, c, isOccupied, outlineThickness, fillStyle, surface){
+        var isRainbow = false;
+        if(surface == "rainbow") isRainbow = true;
         context.fillStyle = fillStyle;  
         var tileColor = "blue";
         if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {bl:10,br:10}, true, false);
@@ -2576,7 +2586,7 @@ function render() {
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 10, true, false);
         else roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 0, true, false);
         
-        if(isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(1, 1)) {
+        if(isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(1, 1) && !isRainbow) {
             context.fillRect((c+1)*tileSize, (r+1)*tileSize, tileSize/6, tileSize/6);
             //context.globalCompositeOperation = "destination-out";
             context.beginPath();
@@ -2587,7 +2597,7 @@ function render() {
             context.fill();
             context.globalCompositeOperation = "source-over";            
         }
-        if(isOccupied(-1, 0) && isOccupied(0, 1) && !isOccupied(-1, 1)) {
+        if(isOccupied(-1, 0) && isOccupied(0, 1) && !isOccupied(-1, 1) && !isRainbow) {
             context.fillRect(c*tileSize-tileSize/6, (r+1)*tileSize, tileSize/6, tileSize/6);
             //context.globalCompositeOperation = "destination-out";
             context.beginPath();
@@ -2602,6 +2612,33 @@ function render() {
     }
     
   function drawTileOutlines(r, c, isOccupied, outlineThickness, curlyOutline) {
+    if(surface != "rainbow") {
+        context.fillStyle = surface;
+    }
+    else{
+        context.fillStyle = "white";
+        var yes = true;
+        var mod = (r+c) % 17;
+        switch(mod){
+            case 0: context.fillStyle = "#ff004c"; break;
+            case 1: context.fillStyle = "#e30000"; break;
+            case 2: context.fillStyle = "#ff4c00"; break;
+            case 3: context.fillStyle = "#ff9900"; break;
+            case 4: context.fillStyle = "#ffe500"; break;
+            case 5: context.fillStyle = "#cbff00"; break;
+            case 6: context.fillStyle = "#7fff00"; break;
+            case 7: context.fillStyle = "#00ff19"; break;
+            case 8: context.fillStyle = "#00ff66"; break;
+            case 9: context.fillStyle = "#00ffb2"; break;
+            case 10: context.fillStyle = "#00ffff"; break;
+            case 11: context.fillStyle = "#00b2ff"; break;
+            case 12: context.fillStyle = "#3200ff"; break;
+            case 13: context.fillStyle = "#5702c6"; break;
+            case 14: context.fillStyle = "#cc00ff"; break;
+            case 15: context.fillStyle = "#ff00e5"; break;
+            case 16: context.fillStyle = "#ff0098"; break;
+        }
+    }
     var complement = 1 - outlineThickness;
     var outlinePixels = outlineThickness * tileSize;
     var complementPixels = (1 - 2 * outlineThickness) * tileSize;
@@ -2657,13 +2694,13 @@ function render() {
       else if(!curlyOutline && !isOccupied(0, -1)){ context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels);
           
       }
-    /*if (!grass && !isOccupied(-1, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
-    if (!grass && !isOccupied( 1, -1)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
-    if (!grass && !isOccupied(-1,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
-    if (!grass && !isOccupied( 1,  1)) context.fillRect((c+complement) * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
-    if (!grass && !isOccupied( 0,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, tileSize, outlinePixels);
-    if (!grass && !isOccupied(-1,  0)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, tileSize);
-    if (!grass && !isOccupied( 1,  0)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, tileSize);*/
+    if (yes && !isOccupied(-1, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
+    if (yes && !isOccupied( 1, -1)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
+    if (yes && !isOccupied(-1,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
+    if (yes && !isOccupied( 1,  1)) context.fillRect((c+complement) * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
+    if (yes && !isOccupied( 0,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, tileSize, outlinePixels);
+    if (yes && !isOccupied(-1,  0)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, tileSize);
+    if (yes && !isOccupied( 1,  0)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, tileSize);
   }
 
     function drawBushes(r, c, isOccupied){
