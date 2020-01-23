@@ -3,6 +3,14 @@ if (typeof VERSION !== "undefined") {
   document.getElementById("versionSpan").innerHTML =
     '<a href="https://github.com/thejoshwolfe/snakefall/blob/' + VERSION.sha1 + '/README.md">' + VERSION.tag + '</a>';
 }
+/*$(document).ready(function() {
+    var fruits1 = getObjectsOfType(FRUIT);
+    $(fruits1[0]).jqFloat({
+            width: 10,
+            height: 10,
+            speed: 100
+        });
+});*/
 
 var img3 = document.createElement('img'); //Gooby
 //img3.src = '/Snakefall/Snakebird Images/Cherry2.png';
@@ -668,12 +676,13 @@ document.getElementById("cheatGravityButton").addEventListener("click", function
 document.getElementById("cheatCollisionButton").addEventListener("click", function() {
   toggleCollision();
 });
-document.getElementById("backgroundButton").addEventListener("click", function() {
-  toggleBackground();
+document.getElementById("themeButton").addEventListener("click", function() {
+  toggleTheme();
 });
-function toggleBackground() {
-    //var bgLength = backgroundList.length;
-    //background = backgroundList
+function toggleTheme() {
+    if(themeCounter<themes.length-1) themeCounter++;
+    else themeCounter = 0;
+    render();
 }
 function toggleGravity() {
   isGravityEnabled = !isGravityEnabled;
@@ -1598,11 +1607,17 @@ function isAnyCheatcodeEnabled() {
 }
 var bg2 = "rgba(230, 230, 255 * rgba(220, 220, 255";
 var bg1 = "rgba(145, 198, 254 * rgba(133, 192, 255";
-var background = "gradient";
-/*[
-  "sky",
-  "gradient",
-];*/
+//var theme = "gradient";
+var surface;
+var material;
+var curlyOutline = false;
+var themeCounter = 0;
+var themes = [  //name, background, material, surface, curlyOutline 
+  //["sky",],
+  ["grass", bg1, "#976537", "#95ff45", true],
+  ["snow", bg1, "#30455B", "white", true],
+  ["bw", bg1, "#444", "#777", false]
+];
 
 
 function showEditorChanged() {
@@ -2045,6 +2060,7 @@ var snakeAltColors = [
   "#6666ff",
   "#ffff66",
 ];
+
 var blockForeground = ["#de5a6d","#fa65dd","#c367e3","#9c62fa","#625ff0"];
 var blockBackground = ["#853641","#963c84","#753d88","#5d3a96","#3a3990"];
 
@@ -2116,18 +2132,20 @@ function render() {
   canvas.height = tileSize * level.height;
   var context = canvas.getContext("2d"); //Gooby
   
-    if(background=="gradient"){
-      for(var i = 0; i<level.width; i++){   //checkerboard background
-          for(var j = 0; j<level.height; j++){
-              var bgColor1= bg1.substr(0, bg1.indexOf('*')); 
-              var bgColor2= bg1.substr(bg1.indexOf('*')+2, bg1.length); 
-              var shade = (j+1)*.03+.5;
-              //var shade = 1;
-              if((i+j) % 2 == 0) context.fillStyle = "" + bgColor1 + ", " + shade + ")";
-              else context.fillStyle = "" + bgColor2 + ", " + shade + ")";
-              context.fillRect(i*tileSize, j*tileSize, tileSize, tileSize);
-              //context.fillText(i+" "+j,i*tileSize, j*tileSize);
-          }      
+    if(true){
+        material = themes[themeCounter][2];
+        surface = themes[themeCounter][3];
+        curlyOutline = themes[themeCounter][4];
+        for(var i = 0; i<level.width; i++){   //checkerboard background
+            for(var j = 0; j<level.height; j++){
+                var bgColor1= bg1.substr(0, bg1.indexOf('*')); 
+                var bgColor2= bg1.substr(bg1.indexOf('*')+2, bg1.length); 
+                var shade = (j+1)*.03+.5;
+                if((i+j) % 2 == 0) context.fillStyle = bgColor1 + ", " + shade + ")";
+                else context.fillStyle = bgColor2 + ", " + shade + ")";
+                context.fillRect(i*tileSize, j*tileSize, tileSize, tileSize);
+                //context.fillText(i+" "+j,i*tileSize, j*tileSize);
+              }      
       }
     }
     else{
@@ -2526,12 +2544,12 @@ function render() {
     }
 
   function drawWall(r, c, adjacentTiles) {  //GOOBY
-    //drawRect(r, c, "#976537"); // dirt      
-    drawTileNew(r, c, isWall, 0.2, "#976537");
-    context.fillStyle = "#95ff45"; // grass
-    drawTileOutlines(r, c, isWall, 0.2, true);
+    //drawRect(r, c, "#976537");    
+    drawTileNew(r, c, isWall, 0.2, material);
+    context.fillStyle = surface;
+    drawTileOutlines(r, c, isWall, 0.2, curlyOutline);
     context.save();
-    drawBushes(r, c, isWall);
+    if(curlyOutline) drawBushes(r, c, isWall);
     context.restore();
     context.fillStyle = "#895C33"; // dirt edge
     //drawTileOutlines(r, c, isWall, 0.2, false);
@@ -2544,7 +2562,7 @@ function render() {
     
     function drawTileNew(r, c, isOccupied, outlineThickness, fillStyle){
         context.fillStyle = fillStyle;  
-        var tileColor;
+        var tileColor = "blue";
         if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {bl:10,br:10}, true, false);
         else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tl:10,bl:10}, true, false);
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tl:10,tr:10}, true, false);
@@ -2574,6 +2592,7 @@ function render() {
             context.arc(c*tileSize-tileSize/6, (r+1)*tileSize+tileSize/6, tileSize/6, 0, 2*Math.PI);
             context.closePath();
             //tileColor = context.getImageData(c*tileSize-tileSize/2, (r+1)*tileSize+tileSize/2, 1, 1);
+            //alert(tileColor.data[0] + " " + tileColor.data[1] + " " + tileColor.data[2] + " " + tileColor.data[3] + "");
             //context.fillStyle = "rgba(" + tileColor.data[0] + ", " + tileColor.data[1] + ", " + tileColor.data[2] + ", " + tileColor.data[3] + ")";
             context.fill();
             context.globalCompositeOperation = "source-over";
@@ -2586,7 +2605,7 @@ function render() {
     var complementPixels = (1 - 2 * outlineThickness) * tileSize;
       
     
-    if (grass && !isOccupied(0, -1)){ //context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels); //grass  
+    if (curlyOutline && !isOccupied(0, -1)){ //context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels); //grass  
         if(!isOccupied(-1, 0) && isOccupied(1, 0)){
             context.beginPath();
             context.moveTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.25);
@@ -2633,6 +2652,9 @@ function render() {
         }
             context.fill();
     }
+      else if(!curlyOutline && !isOccupied(0, -1)){ context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels);
+          
+      }
     /*if (!grass && !isOccupied(-1, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
     if (!grass && !isOccupied( 1, -1)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
     if (!grass && !isOccupied(-1,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
@@ -2644,7 +2666,7 @@ function render() {
 
     function drawBushes(r, c, isOccupied){
         if(!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(1, -1)){
-            context.shadowColor = "#2c6600";
+            context.shadowColor = "#666";
             context.shadowOffsetX = -.5;
             context.shadowOffsetY = -.5;
             context.shadowBlur = 1;
@@ -2665,7 +2687,7 @@ function render() {
         }
         
         if(!isOccupied(0, -1) && isOccupied(-1, 0) && isOccupied(-1, -1)){
-            context.shadowColor = "#2c6600";
+            context.shadowColor = "#666";
             context.shadowOffsetX = .5;
             context.shadowOffsetY = -.5;
             context.shadowBlur = 1;
