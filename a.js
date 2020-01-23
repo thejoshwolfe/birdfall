@@ -2068,6 +2068,9 @@ var snakeAltColors = [
 var blockForeground = ["#de5a6d","#fa65dd","#c367e3","#9c62fa","#625ff0"];
 var blockBackground = ["#853641","#963c84","#753d88","#5d3a96","#3a3990"];
 
+var rainbowForeground = ["white","#888","#666","#444","#222"];
+var rainbowBackground = ["white","#888","#666","#444","#222"];
+
 /*var blockForeground = ["#de7913","#7d46a0","#39868b","#41ccc2","#ded800"];
 var blockBackground = ["#8d4d0c","#532f6a","#2c686d","#207973","#999400"];*/
 
@@ -2270,8 +2273,14 @@ function render() {
           rowcol2.r -= minR;
           rowcol2.c -= minC;
           var cornerRowcol = {r:rowcol1.r, c:rowcol2.c};
-          drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, blockBackground[object.id % blockBackground.length]);
-          drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, blockBackground[object.id % blockBackground.length]);
+          if(surface == "rainbow"){
+              drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, rainbowBackground[object.id % rainbowBackground.length]);
+              drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, rainbowBackground[object.id % rainbowBackground.length]);
+          }
+          else{
+              drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, blockBackground[object.id % blockBackground.length]);
+              drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, blockBackground[object.id % blockBackground.length]);
+          }
         }
       }
       var r = minR + animationDisplacementRowcol.r;
@@ -2495,7 +2504,7 @@ function render() {
       case BLOCK:
         drawBlock(object);
         break;
-      case FRUIT:
+      case FRUIT:   //Gooby
         rowcol = getRowcol(level, object.locations[0]);
         var c = rowcol.c;
         var r = rowcol.r;
@@ -2503,6 +2512,11 @@ function render() {
         var startR = r*tileSize+tileSize*.24;
         var resize = tileSize * 1.7;
         context.fillStyle = fruitColors[object.id % fruitColors.length];
+        if(surface == "rainbow") {
+            context.fillStyle = "black";
+            context.lineWidth = tileSize/8;
+            context.strokeStyle = "white";
+        }
         //context.fillStyle = "#ff6b45";
         context.beginPath();
         context.moveTo(startC, startR);
@@ -2512,12 +2526,14 @@ function render() {
         context.bezierCurveTo(startC+resize*.25, startR-resize*.05, startC+resize*.1, startR-resize*.05, startC, startR);
         context.closePath();
         context.fill();
+        if(surface == "rainbow") context.stroke();
 
         context.beginPath();
         context.moveTo(startC,startR);
         context.bezierCurveTo(startC-resize*.1, startR-resize*.05, startC, startR-resize*.1, startC-resize*.1, startR-resize*.15);
         context.bezierCurveTo(startC, startR-resize*.1, startC+resize*.05, startR-resize*.1, startC, startR);
         context.fillStyle = "green";
+        if(surface == "rainbow") context.fillStyle = "white";
         context.fill();
         
             //drawCircle(rowcol.r, rowcol.c, 1, "#f0f");
@@ -2556,7 +2572,7 @@ function render() {
 
   function drawWall(r, c, adjacentTiles) {  //GOOBY
     //drawRect(r, c, "#976537");    
-    drawTileNew(r, c, isWall, 0.2, material, surface);
+    drawTileNew(r, c, isWall, 0.2, material, curlyOutline);
     drawTileOutlines(r, c, isWall, 0.2, curlyOutline);
     context.save();
     if(curlyOutline) drawBushes(r, c, isWall);
@@ -2570,9 +2586,7 @@ function render() {
     }
   }
     
-    function drawTileNew(r, c, isOccupied, outlineThickness, fillStyle, surface){
-        var isRainbow = false;
-        if(surface == "rainbow") isRainbow = true;
+    function drawTileNew(r, c, isOccupied, outlineThickness, fillStyle, curlyOutline){
         context.fillStyle = fillStyle;  
         var tileColor = "blue";
         if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {bl:10,br:10}, true, false);
@@ -2586,7 +2600,7 @@ function render() {
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 10, true, false);
         else roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 0, true, false);
         
-        if(isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(1, 1) && !isRainbow) {
+        if(isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(1, 1) && curlyOutline) {
             context.fillRect((c+1)*tileSize, (r+1)*tileSize, tileSize/6, tileSize/6);
             //context.globalCompositeOperation = "destination-out";
             context.beginPath();
@@ -2597,7 +2611,7 @@ function render() {
             context.fill();
             context.globalCompositeOperation = "source-over";            
         }
-        if(isOccupied(-1, 0) && isOccupied(0, 1) && !isOccupied(-1, 1) && !isRainbow) {
+        if(isOccupied(-1, 0) && isOccupied(0, 1) && !isOccupied(-1, 1) && curlyOutline) {
             context.fillRect(c*tileSize-tileSize/6, (r+1)*tileSize, tileSize/6, tileSize/6);
             //context.globalCompositeOperation = "destination-out";
             context.beginPath();
@@ -2979,6 +2993,7 @@ function render() {
       var r = rowcol.r + animationDisplacementRowcol.r;
       var c = rowcol.c + animationDisplacementRowcol.c;
       context.fillStyle = blockForeground[block.id % blockForeground.length];
+      if(surface == "rainbow")  context.fillStyle = rainbowForeground[block.id % rainbowForeground.length];
       drawTileOutlines2(r, c, isAlsoThisBlock, 0.3);
       function isAlsoThisBlock(dc, dr) {
         for (var i = 0; i < rowcols.length; i++) {
