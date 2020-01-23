@@ -2462,7 +2462,7 @@ function render() {
         break;
       case FRUIT:
         var rowcol = getRowcol(level, object.locations[0]);
-        drawCircle(rowcol.r, rowcol.c, .9, "#f0f");
+        drawCircle(rowcol.r, rowcol.c, 1, "#f0f");
         
         //context.drawImage(img3,rowcol.c*tileSize+(tileSize*.1), rowcol.r*tileSize+(tileSize*.1), tileSize*.8, tileSize*.8);
         break;
