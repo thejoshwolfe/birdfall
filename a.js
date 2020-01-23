@@ -1597,7 +1597,7 @@ function isAnyCheatcodeEnabled() {
   );
 }
 var bg2 = "rgba(230, 230, 255 * rgba(220, 220, 255";
-var bg1 = "rgba(0, 0, 255 * rgba(20, 20, 255";
+var bg1 = "rgba(45, 47, 71 * rgba(19, 22, 74";
 var background = "gradient";
 /*[
   "sky",
