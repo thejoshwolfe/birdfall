@@ -2813,7 +2813,7 @@ function render() {
       var r = rowcol.r + animationDisplacementRowcol.r;
       var c = rowcol.c + animationDisplacementRowcol.c;
       context.fillStyle = blockForeground[block.id % blockForeground.length];
-      drawTileOutlines2(r, c, isAlsoThisBlock, 0.2);
+      drawTileOutlines2(r, c, isAlsoThisBlock, 0.3);
       function isAlsoThisBlock(dc, dr) {
         for (var i = 0; i < rowcols.length; i++) {
           var otherRowcol = rowcols[i];
