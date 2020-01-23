@@ -2603,7 +2603,7 @@ function render() {
   function drawSpikes(r, c, adjacentTiles) {
     var x = c * tileSize;
     var y = r * tileSize;
-    context.fillStyle = "#E4E4E4";
+    context.fillStyle = "#B2B2B2";
     context.beginPath();
     context.moveTo(x + tileSize * 0.25, y + tileSize * 0.3); //top spikes
     context.lineTo(x + tileSize * 0.35, y + tileSize * 0.0);
