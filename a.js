@@ -1616,7 +1616,7 @@ var themes = [  //name, background, material, surface, curlyOutline
   //["sky",],
   ["grass", bg1, "#976537", "#95ff45", true],
   ["snow", bg1, "#30455B", "white", true],
-  ["bw", bg1, "#444", "#777", false]
+  ["classic", bg1, "#844204", "#282", false]
 ];
 
 
@@ -2599,7 +2599,7 @@ function render() {
         }
     }
     
-  function drawTileOutlines(r, c, isOccupied, outlineThickness, grass) {
+  function drawTileOutlines(r, c, isOccupied, outlineThickness, curlyOutline) {
     var complement = 1 - outlineThickness;
     var outlinePixels = outlineThickness * tileSize;
     var complementPixels = (1 - 2 * outlineThickness) * tileSize;
