@@ -2658,29 +2658,37 @@ function render() {
         return tileCode == null || tileCode === WALL;
     }
   }
-    
     function drawSpikeSupports(r, c, isOccupied, canConnect){
-        
         var boltBool = false;
+        var occupiedCount = 0;
         if(canConnect(0, 1)){
             context.fillStyle = "#444";
             context.fillRect(c*tileSize+(tileSize*.3), r*tileSize+(tileSize*.8), tileSize*.4, tileSize*.4);
             boltBool = true;
         }
         if(canConnect(0, -1) && !canConnect(0, 1)){
-            context.fillStyle = "#444";
-            context.fillRect(c*tileSize+(tileSize*.3), r*tileSize, tileSize*.4, tileSize*.4);
-            boltBool = true;
+            if(!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(1, -1)){}
+            else{
+                context.fillStyle = "#444";
+                context.fillRect(c*tileSize+(tileSize*.3), r*tileSize, tileSize*.4, tileSize*.4);
+                boltBool = true;
+            }
         }
         if(canConnect(-1, 0) && !canConnect(0, 1)){
-            context.fillStyle = "#444";
-            context.fillRect(c*tileSize, r*tileSize+(tileSize*.3), tileSize*.4, tileSize*.4);
-            boltBool = true;
+            if(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(-1, 1)){}
+            else{
+                context.fillStyle = "#444";
+                context.fillRect(c*tileSize, r*tileSize+(tileSize*.3), tileSize*.4, tileSize*.4);
+                boltBool = true;
+            }
         }
         if(canConnect(1, 0) && !canConnect(0, 1)){
-            context.fillStyle = "#444";
-            context.fillRect(c*tileSize+(tileSize*.8), r*tileSize+(tileSize*.3), tileSize*.4, tileSize*.4);
-            boltBool = true;
+            if(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(1, -1) && canConnect(1, 1)){}
+            else{
+                context.fillStyle = "#444";
+                context.fillRect(c*tileSize+(tileSize*.8), r*tileSize+(tileSize*.3), tileSize*.4, tileSize*.4);
+                boltBool = true;
+            }
         }
         
         context.fillStyle = "#555";
@@ -2703,19 +2711,23 @@ function render() {
         else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)){                                         //TOUCHING TWO (CORNERS)
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize*.8, {bl:4}, true, false);
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {bl:4}, true, false);
+            if(!canConnect(1, -1)) boltBool = true;
         }
         else if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)){
             roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {br:4}, true, false);
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize*.8, {br:4}, true, false);        
+            if(!canConnect(-1, -1)) boltBool = true;
         }
         else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)){
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {tl:4}, true, false);
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.8, {tl:4}, true, false);
-        }
+            if(!canConnect(1, 1)) boltBool = true;
+      }
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)){
             roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {tr:4}, true, false);
-             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.8, {tr:4}, true, false);
-        }
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.8, {tr:4}, true, false);
+            if(!canConnect(-1, 1)) boltBool = true;
+       }
         else if (isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)){                                         //TOUCHING TWO (OPPOSITES)
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize, 0, true, false);
         }
@@ -2725,22 +2737,27 @@ function render() {
         else if (isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)){                                         //TOUCHING THREE
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize, 0, true, false);
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, 0, true, false);
-        }
+             boltBool = true;
+       }
         else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)){                                         
             roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize, tileSize*.6, 0, true, false);
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize*.8, 0, true, false);
-        }
+             boltBool = true;
+       }
         else if (isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)){                                         
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize, 0, true, false);
             roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, 0, true, false);
+            boltBool = true;
         }
         else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)){                                         
             roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize, tileSize*.6, 0, true, false);
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.8, 0, true, false);
-        }
-        else if (isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)){                                         
+             boltBool = true;
+       }
+        else if (isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)){                                              //TOUCHING FOUR                                 
             roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize, tileSize*.6, 0, true, false);
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize, 0, true, false);
+            //boltBool = true;
         }
         else{
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.6, 0, true, false);
