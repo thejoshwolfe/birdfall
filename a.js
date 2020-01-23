@@ -2501,6 +2501,9 @@ function render() {
     drawTileNew(r, c, isWall, 0.2, "#976537");
     context.fillStyle = "#95ff45"; // grass
     drawTileOutlines(r, c, isWall, 0.2, true);
+    context.save();
+    drawBushes(r, c, isWall);
+    context.restore();
     context.fillStyle = "#895C33"; // dirt edge
     drawTileOutlines(r, c, isWall, 0.2, false);
 
@@ -2608,6 +2611,54 @@ function render() {
     if (!grass && !isOccupied(-1,  0)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, tileSize);
     if (!grass && !isOccupied( 1,  0)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, tileSize);*/
   }
+  
+  function drawBushes(r, c, isOccupied){
+        if(!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(1, -1)){
+            context.beginPath();
+            context.moveTo((c+1)*tileSize, r*tileSize);
+            context.lineTo((c+1)*tileSize, r*tileSize-tileSize*.4);
+            context.bezierCurveTo((c+1)*tileSize-tileSize*.1,r*tileSize-tileSize*.4,(c+1)*tileSize-tileSize*.2,r*tileSize-tileSize*.4,(c+1)*tileSize-tileSize*.2, r*tileSize-tileSize*.2);
+            context.bezierCurveTo((c+1)*tileSize-tileSize*.3,r*tileSize-tileSize*.2,(c+1)*tileSize-tileSize*.4,r*tileSize-tileSize*.1,(c+1)*tileSize-tileSize*.3, r*tileSize);
+            context.lineTo((c+1)*tileSize, r*tileSize);
+            context.closePath();
+            context.fill();
+            
+            context.shadowColor = "red";
+            context.shadowOffsetX = 2;
+            context.shadowOffsetY = -2;
+            context.shadowBlur = 3;
+            
+            context.beginPath();
+            context.moveTo((c+1)*tileSize, r*tileSize-tileSize*.4);
+            context.bezierCurveTo((c+1)*tileSize-tileSize*.1,r*tileSize-tileSize*.4,(c+1)*tileSize-tileSize*.2,r*tileSize-tileSize*.4,(c+1)*tileSize-tileSize*.2, r*tileSize-tileSize*.2);
+            context.bezierCurveTo((c+1)*tileSize-tileSize*.3,r*tileSize-tileSize*.2,(c+1)*tileSize-tileSize*.4,r*tileSize-tileSize*.1,(c+1)*tileSize-tileSize*.3, r*tileSize);
+            /*context.strokeStyle = "white";
+            context.stroke();*/
+        }
+        
+        if(!isOccupied(0, -1) && isOccupied(-1, 0) && isOccupied(-1, -1)){
+            context.beginPath();
+            context.moveTo(c*tileSize, r*tileSize);
+            context.lineTo(c*tileSize, r*tileSize-tileSize*.4);
+            context.bezierCurveTo(c*tileSize+tileSize*.1,r*tileSize-tileSize*.4,c*tileSize+tileSize*.2,r*tileSize-tileSize*.4,c*tileSize+tileSize*.2, r*tileSize-tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.3,r*tileSize-tileSize*.2,c*tileSize+tileSize*.4,r*tileSize-tileSize*.1,c*tileSize+tileSize*.3, r*tileSize);
+            context.lineTo(c*tileSize, r*tileSize);
+            context.closePath();
+            context.fill();
+            
+            context.shadowColor = "red";
+            context.shadowOffsetX = 2;
+            context.shadowOffsetY = -2;
+            context.shadowBlur = 3;
+            
+            context.beginPath();
+            context.moveTo(c*tileSize, r*tileSize-tileSize*.4);
+            context.bezierCurveTo(c*tileSize+tileSize*.1,r*tileSize-tileSize*.4,c*tileSize+tileSize*.2,r*tileSize-tileSize*.4,c*tileSize+tileSize*.2, r*tileSize-tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.3,r*tileSize-tileSize*.2,c*tileSize+tileSize*.4,r*tileSize-tileSize*.1,c*tileSize+tileSize*.3, r*tileSize);
+            /*context.strokeStyle = "#7dff1a";
+            context.stroke();*/        
+        }
+    }
     
     function drawTileOutlines2(r, c, isOccupied, outlineThickness) {
     var complement = 1 - outlineThickness;
