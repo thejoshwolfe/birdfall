@@ -2045,8 +2045,11 @@ var snakeAltColors = [
   "#6666ff",
   "#ffff66",
 ];
-var blockForeground = ["#de7913","#7d46a0","#39868b","#41ccc2","#ded800"];
-var blockBackground = ["#8d4d0c","#532f6a","#2c686d","#207973","#999400"];
+var blockForeground = ["#de5a6d","#fa65dd","#c367e3","#9c62fa","#625ff0"];
+var blockBackground = ["#853641","#963c84","#753d88","#5d3a96","#3a3990"];
+
+/*var blockForeground = ["#de7913","#7d46a0","#39868b","#41ccc2","#ded800"];
+var blockBackground = ["#8d4d0c","#532f6a","#2c686d","#207973","#999400"];*/
 
 var fruitColors = ["#ff3399","#ff526b","#ff703d","#ff851f","#ff9900"];
 
