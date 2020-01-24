@@ -1,6 +1,6 @@
 # Josh Wolfe's Snakefall
 
-This is a redesign of Josh Wolfe's [Snakefall](https://github.com/thejoshwolfe/snakefall), which is a level editor for the award-winning game [Snakebird](http://snakebird.noumenongames.com).
+This is a redesign of Josh Wolfe's [Snakefall](https://github.com/thejoshwolfe/snakefall), which is a level editor for the award-winning game [Snakebird](http://snakebird.noumenongames.com). This redesign involves graphics upgrades only and uses Snakefall's original framework.
 
 # Standard Snakebird Puzzles
 
