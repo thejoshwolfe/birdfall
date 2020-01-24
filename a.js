@@ -1608,18 +1608,22 @@ function isAnyCheatcodeEnabled() {
     !isGravityEnabled || !isCollisionEnabled
   );
 }
-var themeName = "Spring";   //themeCenter Gooby
-var background, surface, material, blockColors, spikeColors, textStyle;
+var themeName = "Spring";   //Gooby
+var background, surface, material, snakeColors, blockColors, spikeColors, fruitColors, textStyle;
 var curlyOutline = false;
 
 var bg1 = "rgba(145, 198, 254 * rgba(133, 192, 255";
 var bg2 = "rgba(254, 198, 145 * rgba(255, 192, 133";
 var bg3 = "rgba(145, 254, 198 * rgba(117, 255, 192";
 
+var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];
+var snakeColors2 = ["#f00", "#0f0", "#00f", "#ff0"];
+var snakeColors3 = ["#B92215", "#FBAB0B", "#C41560", "#FEFE37"];
+
 var fruitColors1 = ["#ff0066","#ff36a6","#ff6b1f","#ff9900","#ff2600"];
 var fruitColors2 = ["black","black","black","black","black"];
 
-var spikeColors1 = ["#999", "#444", "#555", "#777"];
+var spikeColors1 = ["#999", "#444", "#555", "#777"];    //spike, support, box, bolt
 var spikeColors2 = ["black", "black", "black", "black"];
 
 var blockColors1 = [
@@ -1634,20 +1638,26 @@ var blockColors3 = [
     ["#de7913","#7d46a0","#39868b","#41ccc2","#ded800"],
     ["#8d4d0c","#532f6a","#2c686d","#207973","#999400"]
 ];
+var blockColors4 = [
+    ["#150612", "#a52e8b", "#990077", "#d917af", "#4d003c"],
+    ["#8d4d0c","#532f6a","#2c686d","#207973","#999400"]
+];
 
-var textStyle1 = ["150px Impact", "#fdc122", "#fd0c0b"];
-var textStyle2 = ["150px Impact", "#00aaff", "#ffb3ec"];
+var textStyle1 = ["150px Impact", "#fdc122", "#fd0c0b"];    //font, Win, Lose
+var textStyle2 = ["150px Impact", "#5702c6", "#ff0098"];
+var textStyle3 = ["150px Impact", "#18d11f", "#fd0c0b"];
+var textStyle4 = ["150px Impact", "#ff0", "#f00"];
 
 var themeCounter = 0;
 
 var themes = [  //name, background, material, surface, curlyOutline, blockColors, spikeColors, fruitColors, stemColor
   //["sky",],
-  ["Spring", bg1, "#976537", "#95ff45", true, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
-  ["Winter", bg1, "#30455B", "white", true,  blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
-  ["Classic", bg1, "#844204", "#282", false,  blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
-  ["Summer", bg2, "#976537", "#95ff45", true,  blockColors3, spikeColors1, fruitColors1, "green", textStyle1],
-  ["Dream", bg3, "#00aaff", "#ffb3ec", true,  blockColors1, spikeColors1, fruitColors2, "white", textStyle2],
-  ["Midnight Rainbow", "#070753", "black", "rainbow", false,  blockColors2, spikeColors2, "white", "white", textStyle1]
+  ["Spring", bg1, "#976537", "#95ff45", true, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
+  ["Winter", bg1, "#30455B", "white", true,  snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
+  ["Classic", bg1, "#844204", "#282", false,  snakeColors2, blockColors1, spikeColors1, fruitColors1, "green", textStyle4],
+  ["Summer", bg2, "#734d26", "#009933", true,  snakeColors3, blockColors3, spikeColors1, fruitColors1, "green", textStyle3],
+  ["Dream", bg3, "#00aaff", "#ffb3ec", true,  snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2],
+  ["Midnight Rainbow", "#070753", "black", "rainbow", false,  snakeColors1, blockColors2, spikeColors2, "white", "white", textStyle1]
 ];
 
 
@@ -2079,12 +2089,7 @@ function isAlive() {
   return countSnakes() > 0 && !isDead();
 }
 
-var snakeColors = [
-  "#fd0c0b",
-  "#18d11f",
-  "#004cff",
-  "#fdc122",
-];
+
 var snakeAltColors = [
   "#ff6666",
   "#66ff66",
@@ -2160,9 +2165,11 @@ function render() {
         background = themes[themeCounter][1];
         material = themes[themeCounter][2];
         surface = themes[themeCounter][3];
-        blockColors = themes[themeCounter][5];
-        spikeColors = themes[themeCounter][6];
-        textStyle = themes[themeCounter][9];
+        snakeColors = themes[themeCounter][5];
+        blockColors = themes[themeCounter][6];
+        spikeColors = themes[themeCounter][7];
+        fruitColors = themes[themeCounter][8];
+        textStyle = themes[themeCounter][10];
         
         curlyOutline = themes[themeCounter][4];
         if(background.substr(0,1) == "#") {
@@ -2403,10 +2410,10 @@ function render() {
       case EXIT:
         //drawExit(r, c);
         var radiusFactor = isUneatenFruit() ? 0.7 : 1.2;
-        drawQuarterPie(r, c, radiusFactor, "#fd0c0b", 0);
-        drawQuarterPie(r, c, radiusFactor, "#18d11f", 1);
-        drawQuarterPie(r, c, radiusFactor, "#004cff", 2);
-        drawQuarterPie(r, c, radiusFactor, "#fdc122", 3);
+        drawQuarterPie(r, c, radiusFactor, snakeColors[0], 0);
+        drawQuarterPie(r, c, radiusFactor, snakeColors[1], 1);
+        drawQuarterPie(r, c, radiusFactor, snakeColors[2], 2);
+        drawQuarterPie(r, c, radiusFactor, snakeColors[3], 3);
         break;
       case PORTAL:
         drawCircle(r, c, 0.8, "#888");
@@ -2520,14 +2527,13 @@ function render() {
         drawBlock(object);
         break;
       case FRUIT:   //Gooby
-        var fc = themes[themeCounter][7];
         rowcol = getRowcol(level, object.locations[0]);
         var c = rowcol.c;
         var r = rowcol.r;
         var startC = c*tileSize+tileSize/2;
         var startR = r*tileSize+tileSize*.2;
         var resize = tileSize * 1.7;
-        context.fillStyle = fc[object.id % fc.length];
+        context.fillStyle = fruitColors[object.id % fruitColors.length];
         if(themeName != "Classic"){
             if(surface == "rainbow") {
                 context.fillStyle = "black";
@@ -2550,7 +2556,7 @@ function render() {
             context.moveTo(startC,startR);
             context.bezierCurveTo(startC-resize*.1, startR-resize*.05, startC, startR-resize*.1, startC-resize*.1, startR-resize*.15);
             context.bezierCurveTo(startC, startR-resize*.1, startC+resize*.05, startR-resize*.1, startC, startR);
-            context.fillStyle = themes[themeCounter][8];
+            context.fillStyle = themes[themeCounter][9];
             context.fill();
         }
         else drawCircle(rowcol.r, rowcol.c, 1, "#f0f");
