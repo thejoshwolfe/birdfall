@@ -1608,21 +1608,26 @@ function isAnyCheatcodeEnabled() {
     !isGravityEnabled || !isCollisionEnabled
   );
 }
-var bg2 = "rgba(230, 230, 255 * rgba(220, 220, 255";
 var bg1 = "rgba(145, 198, 254 * rgba(133, 192, 255";
+var bg2 = "rgba(254, 198, 145 * rgba(255, 192, 133";
+var bg3 = "rgba(145, 254, 198 * rgba(117, 255, 192";
 //var theme = "gradient";
 var themeName = "Spring";
-var background;
-var surface;
-var material;
+var background, surface, material, sc, ssc1, ssc2, bc;
+var fruitColors1 = ["#ff0066","#ff36a6","#ff6b1f","#ff9900","#ff2600"];
+var fruitColors2 = ["black","black","black","black","black"];
 var curlyOutline = false;
+
 var themeCounter = 0;
-var themes = [  //name, background, material, surface, curlyOutline 
+
+var themes = [  //name, background, material, surface, curlyOutline, spikeColor, spikeSupportColor1, spikeSupportColor2, boltColor, fruitColors, stemColor 
   //["sky",],
-  ["Spring", bg1, "#976537", "#95ff45", true],
-  ["Winter", bg1, "#30455B", "white", true],
-  ["Classic", bg1, "#844204", "#282", false],
-  ["Midnight Rainbow", "#070753", "black", "rainbow", false]
+  ["Spring", bg1, "#976537", "#95ff45", true, "#999", "#444", "#555", "#777", fruitColors1, "green"],
+  ["Winter", bg1, "#30455B", "white", true, "#999", "#444", "#555", "#777", fruitColors1, "green"],
+  ["Classic", bg1, "#844204", "#282", false, "#999", "#444", "#555", "#777", fruitColors1, "green"],
+  ["Summer", bg2, "#976537", "#95ff45", true, "#999", "#444", "#555", "#777", fruitColors1, "green"],
+  ["Dream", bg3, "#00aaff", "#ffb3ec", true, "#999", "#444", "#555", "#777", fruitColors2, "white"],
+  ["Midnight Rainbow", "#070753", "black", "rainbow", false, "black", "black", "black", "black", "white", "white"]
 ];
 
 
@@ -2076,8 +2081,6 @@ var rainbowBackground = ["white"];
 /*var blockForeground = ["#de7913","#7d46a0","#39868b","#41ccc2","#ded800"];
 var blockBackground = ["#8d4d0c","#532f6a","#2c686d","#207973","#999400"];*/
 
-var fruitColors = ["#ff3399","#ff526b","#ff703d","#ff851f","#ff9900"];
-
 var activeSnakeId = null;
 
 var SLITHER_HEAD = "sh";
@@ -2146,6 +2149,10 @@ function render() {
         background = themes[themeCounter][1];
         material = themes[themeCounter][2];
         surface = themes[themeCounter][3];
+        sc = themes[themeCounter][5];
+        ssc1 = themes[themeCounter][6];
+        ssc2 = themes[themeCounter][7];
+        bc = themes[themeCounter][8];
         curlyOutline = themes[themeCounter][4];
         if(background.substr(0,1) == "#") {
             context.fillStyle = background;
@@ -2154,8 +2161,8 @@ function render() {
         else{
             for(var i = 0; i<level.width; i++){   //checkerboard background
                 for(var j = 0; j<level.height; j++){
-                    var bgColor1= bg1.substr(0, bg1.indexOf('*')); 
-                    var bgColor2= bg1.substr(bg1.indexOf('*')+2, bg1.length); 
+                    var bgColor1= background.substr(0, background.indexOf('*')); 
+                    var bgColor2= background.substr(background.indexOf('*')+2, background.length); 
                     var shade = (j+1)*.03+.5;
                     if((i+j) % 2 == 0) context.fillStyle = bgColor1 + ", " + shade + ")";
                     else context.fillStyle = bgColor2 + ", " + shade + ")";
@@ -2183,12 +2190,12 @@ function render() {
   if (persistentState.showGrid && persistentState.showEditor) {
     drawGrid();
   }
-  // active snake halo
-  if (countSnakes() !== 0 && isAlive()) {
+  // active snake halo - Gooby
+  /*if (countSnakes() !== 0 && isAlive()) {
     var activeSnake = findActiveSnake();
     var activeSnakeRowcol = getRowcol(level, activeSnake.locations[0]);
     drawCircle(activeSnakeRowcol.r, activeSnakeRowcol.c, 2, "rgba(256,256,256,0.3)");
-  }
+  }*/
 
   if (persistentState.showEditor) {
     if (paintBrushTileCode === BLOCK) {
@@ -2508,13 +2515,14 @@ function render() {
         drawBlock(object);
         break;
       case FRUIT:   //Gooby
+        var fc = themes[themeCounter][9];
         rowcol = getRowcol(level, object.locations[0]);
         var c = rowcol.c;
         var r = rowcol.r;
         var startC = c*tileSize+tileSize/2;
         var startR = r*tileSize+tileSize*.2;
         var resize = tileSize * 1.7;
-        context.fillStyle = fruitColors[object.id % fruitColors.length];
+        context.fillStyle = fc[object.id % fc.length];
         if(themeName != "Classic"){
             if(surface == "rainbow") {
                 context.fillStyle = "black";
@@ -2537,8 +2545,7 @@ function render() {
             context.moveTo(startC,startR);
             context.bezierCurveTo(startC-resize*.1, startR-resize*.05, startC, startR-resize*.1, startC-resize*.1, startR-resize*.15);
             context.bezierCurveTo(startC, startR-resize*.1, startC+resize*.05, startR-resize*.1, startC, startR);
-            context.fillStyle = "green";
-            if(surface == "rainbow") context.fillStyle = "white";
+            context.fillStyle = themes[themeCounter][10];
             context.fill();
         }
         else drawCircle(rowcol.r, rowcol.c, 1, "#f0f");
@@ -2678,8 +2685,8 @@ function render() {
             context.beginPath();
             context.moveTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.25);
             context.bezierCurveTo(c*tileSize+tileSize*.95, r*tileSize+tileSize*.3, c*tileSize+tileSize*.7, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.65, r*tileSize+tileSize*.3, c*tileSize+tileSize*.4, r*tileSize+tileSize*.4, c*tileSize+tileSize*.4, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.3, c*tileSize+tileSize*.1, r*tileSize+tileSize*.4, c*tileSize, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.65, r*tileSize+tileSize*.3, c*tileSize+tileSize*.4, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.3, c*tileSize+tileSize*.1, r*tileSize+tileSize*.4, c*tileSize, r*tileSize+tileSize*.2);
             context.lineTo(c*tileSize, r*tileSize);
             context.lineTo(c*tileSize+tileSize*.8, r*tileSize);
             context.arc(c*tileSize+tileSize*.8, r*tileSize+tileSize*.2, tileSize*.2, 1.5*Math.PI, 2.1*Math.PI);
@@ -2786,12 +2793,8 @@ function render() {
   function drawSpikes(r, c, adjacentTiles) {
     var x = c * tileSize;
     var y = r * tileSize;
-    if(themeName != "Midnight Rainbow") {
-        context.fillStyle = "#999";
-    }
-    else {
-        context.fillStyle = "#ffffff";
-    }
+    context.fillStyle = sc;
+      
     context.beginPath();
     context.moveTo(x + tileSize * 0.25, y + tileSize * 0.3); //top spikes
     context.lineTo(x + tileSize * 0.35, y + tileSize * 0.0);
@@ -2851,14 +2854,14 @@ function render() {
         var boltBool = false;
         var occupiedCount = 0;
         if(canConnect(0, 1)){
-            context.fillStyle = "#444";
+            context.fillStyle = ssc1;
             context.fillRect(c*tileSize+(tileSize*.3), r*tileSize+(tileSize*.8), tileSize*.4, tileSize*.4);
             boltBool = true;
         }
         if(canConnect(0, -1) && !canConnect(0, 1)){
             if(!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(1, -1)){}
             else{
-                context.fillStyle = "#444";
+                context.fillStyle = ssc1;
                 context.fillRect(c*tileSize+(tileSize*.3), r*tileSize, tileSize*.4, tileSize*.4);
                 boltBool = true;
             }
@@ -2866,7 +2869,7 @@ function render() {
         if(canConnect(-1, 0) && !canConnect(0, 1)){
             if(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(-1, 1)){}
             else{
-                context.fillStyle = "#444";
+                context.fillStyle = ssc1;
                 context.fillRect(c*tileSize, r*tileSize+(tileSize*.3), tileSize*.4, tileSize*.4);
                 boltBool = true;
             }
@@ -2874,13 +2877,13 @@ function render() {
         if(canConnect(1, 0) && !canConnect(0, 1)){
             if(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(1, -1) && canConnect(1, 1)){}
             else{
-                context.fillStyle = "#444";
+                context.fillStyle = ssc1;
                 context.fillRect(c*tileSize+(tileSize*.8), r*tileSize+(tileSize*.3), tileSize*.4, tileSize*.4);
                 boltBool = true;
             }
         }
         
-        context.fillStyle = "#555";
+        context.fillStyle = ssc2;
         if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)){                                             //TOUCHING ONE
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize*.8, {bl:4,br:4}, true, false);
             boltBool = true;
@@ -2957,12 +2960,12 @@ function render() {
     }
     
     function drawBolt(r, c){
-        context.strokeStyle = "#777";
+        context.strokeStyle = bc;
         context.beginPath();
         context.arc(c*tileSize+(tileSize*.55), r*tileSize+(tileSize*.45), 4, -.7*Math.PI, .2*Math.PI);
         context.lineTo(c*tileSize+(tileSize*.45),r*tileSize+(tileSize*.35));
         context.closePath();
-        context.fillStyle = "#777";
+        context.fillStyle = bc;
         context.fill();
         context.stroke();
         
@@ -2971,7 +2974,7 @@ function render() {
         context.arc(c*tileSize+(tileSize*.48), r*tileSize+(tileSize*.52), 4, .2*Math.PI, -.75*Math.PI);
         //context.lineTo(c*tileSize+(tileSize*.4),r*tileSize+(tileSize*.6));
         context.closePath();
-        context.fillStyle = "#777";
+        context.fillStyle = bc;
         context.fill();
         context.stroke();
     }
