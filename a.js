@@ -2666,9 +2666,9 @@ function render() {
         if(!isOccupied(-1, 0) && isOccupied(1, 0)){
             context.beginPath();
             context.moveTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.25);
-            context.bezierCurveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.4, c*tileSize+tileSize*.2, r*tileSize+tileSize*.5, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.3, c*tileSize+tileSize*.5, r*tileSize+tileSize*.5, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.5, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.05, r*tileSize+tileSize*.3, c*tileSize+tileSize*.3, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.3, c*tileSize+tileSize*.6, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.4, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
             context.lineTo(c*tileSize+tileSize, r*tileSize);
             context.lineTo(c*tileSize+tileSize*.2, r*tileSize);
             context.arc(c*tileSize+tileSize*.2, r*tileSize+tileSize*.2, tileSize*.2, 1.5*Math.PI, .9*Math.PI, true);
@@ -2677,9 +2677,9 @@ function render() {
         else if(isOccupied(-1, 0) && !isOccupied(1, 0)){
             context.beginPath();
             context.moveTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.25);
-            context.bezierCurveTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.3, c*tileSize+tileSize*.8, r*tileSize+tileSize*.5, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.3, c*tileSize+tileSize*.5, r*tileSize+tileSize*.5, c*tileSize+tileSize*.4, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.3, c*tileSize+tileSize*.1, r*tileSize+tileSize*.5, c*tileSize, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.95, r*tileSize+tileSize*.3, c*tileSize+tileSize*.7, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.65, r*tileSize+tileSize*.3, c*tileSize+tileSize*.4, r*tileSize+tileSize*.4, c*tileSize+tileSize*.4, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.3, c*tileSize+tileSize*.1, r*tileSize+tileSize*.4, c*tileSize, r*tileSize+tileSize*.2);
             context.lineTo(c*tileSize, r*tileSize);
             context.lineTo(c*tileSize+tileSize*.8, r*tileSize);
             context.arc(c*tileSize+tileSize*.8, r*tileSize+tileSize*.2, tileSize*.2, 1.5*Math.PI, 2.1*Math.PI);
@@ -2690,9 +2690,9 @@ function render() {
             context.moveTo(c*tileSize+tileSize*.85, r*tileSize);
             context.lineTo(c*tileSize+tileSize*.2, r*tileSize);
             context.arc(c*tileSize+tileSize*.2, r*tileSize+tileSize*.2, tileSize*.2, 1.5*Math.PI, .9*Math.PI, true);
-            context.bezierCurveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.3, c*tileSize+tileSize*.2, r*tileSize+tileSize*.5, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.3, c*tileSize+tileSize*.5, r*tileSize+tileSize*.5, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.5, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.05, r*tileSize+tileSize*.3, c*tileSize+tileSize*.3, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.3, c*tileSize+tileSize*.6, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.4, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
             context.lineTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.1);
             //context.arc(c*tileSize+tileSize*.8, r*tileSize+tileSize*.2, tileSize*.2, 1.5*Math.PI, 2.1*Math.PI);
             context.closePath();
@@ -2701,9 +2701,9 @@ function render() {
             context.beginPath();
             context.moveTo(c*tileSize, r*tileSize);
             context.lineTo(c*tileSize, r*tileSize+tileSize*.15);
-            context.bezierCurveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.3, c*tileSize+tileSize*.2, r*tileSize+tileSize*.3, c*tileSize+tileSize*.33, r*tileSize+tileSize*.1);
-            context.bezierCurveTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.3, c*tileSize+tileSize*.5, r*tileSize+tileSize*.3, c*tileSize+tileSize*.67, r*tileSize+tileSize*.1);
-            context.bezierCurveTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.3, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.3, c*tileSize+tileSize*.3, r*tileSize+tileSize*.3, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.3, c*tileSize+tileSize*.6, r*tileSize+tileSize*.3, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.3, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
             context.lineTo(c*tileSize+tileSize, r*tileSize);
             context.closePath();
         }
@@ -2786,7 +2786,12 @@ function render() {
   function drawSpikes(r, c, adjacentTiles) {
     var x = c * tileSize;
     var y = r * tileSize;
-    context.fillStyle = "#B2B2B2";
+    if(themeName != "Midnight Rainbow") {
+        context.fillStyle = "#999";
+    }
+    else {
+        context.fillStyle = "#ffffff";
+    }
     context.beginPath();
     context.moveTo(x + tileSize * 0.25, y + tileSize * 0.3); //top spikes
     context.lineTo(x + tileSize * 0.35, y + tileSize * 0.0);
