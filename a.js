@@ -1608,26 +1608,46 @@ function isAnyCheatcodeEnabled() {
     !isGravityEnabled || !isCollisionEnabled
   );
 }
+var themeName = "Spring";   //themeCenter Gooby
+var background, surface, material, blockColors, spikeColors, textStyle;
+var curlyOutline = false;
+
 var bg1 = "rgba(145, 198, 254 * rgba(133, 192, 255";
 var bg2 = "rgba(254, 198, 145 * rgba(255, 192, 133";
 var bg3 = "rgba(145, 254, 198 * rgba(117, 255, 192";
-//var theme = "gradient";
-var themeName = "Spring";
-var background, surface, material, sc, ssc1, ssc2, bc;
+
 var fruitColors1 = ["#ff0066","#ff36a6","#ff6b1f","#ff9900","#ff2600"];
 var fruitColors2 = ["black","black","black","black","black"];
-var curlyOutline = false;
+
+var spikeColors1 = ["#999", "#444", "#555", "#777"];
+var spikeColors2 = ["black", "black", "black", "black"];
+
+var blockColors1 = [
+    ["#de5a6d","#fa65dd","#c367e3","#9c62fa","#625ff0"],
+    ["#853641","#963c84","#753d88","#5d3a96","#3a3990"]
+];
+var blockColors2 = [
+    ["white"],
+    ["white"]
+];
+var blockColors3 = [
+    ["#de7913","#7d46a0","#39868b","#41ccc2","#ded800"],
+    ["#8d4d0c","#532f6a","#2c686d","#207973","#999400"]
+];
+
+var textStyle1 = ["150px Impact", "#fdc122", "#fd0c0b"];
+var textStyle2 = ["150px Impact", "#00aaff", "#ffb3ec"];
 
 var themeCounter = 0;
 
-var themes = [  //name, background, material, surface, curlyOutline, spikeColor, spikeSupportColor1, spikeSupportColor2, boltColor, fruitColors, stemColor 
+var themes = [  //name, background, material, surface, curlyOutline, blockColors, spikeColors, fruitColors, stemColor
   //["sky",],
-  ["Spring", bg1, "#976537", "#95ff45", true, "#999", "#444", "#555", "#777", fruitColors1, "green"],
-  ["Winter", bg1, "#30455B", "white", true, "#999", "#444", "#555", "#777", fruitColors1, "green"],
-  ["Classic", bg1, "#844204", "#282", false, "#999", "#444", "#555", "#777", fruitColors1, "green"],
-  ["Summer", bg2, "#976537", "#95ff45", true, "#999", "#444", "#555", "#777", fruitColors1, "green"],
-  ["Dream", bg3, "#00aaff", "#ffb3ec", true, "#999", "#444", "#555", "#777", fruitColors2, "white"],
-  ["Midnight Rainbow", "#070753", "black", "rainbow", false, "black", "black", "black", "black", "white", "white"]
+  ["Spring", bg1, "#976537", "#95ff45", true, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
+  ["Winter", bg1, "#30455B", "white", true,  blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
+  ["Classic", bg1, "#844204", "#282", false,  blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
+  ["Summer", bg2, "#976537", "#95ff45", true,  blockColors3, spikeColors1, fruitColors1, "green", textStyle1],
+  ["Dream", bg3, "#00aaff", "#ffb3ec", true,  blockColors1, spikeColors1, fruitColors2, "white", textStyle2],
+  ["Midnight Rainbow", "#070753", "black", "rainbow", false,  blockColors2, spikeColors2, "white", "white", textStyle1]
 ];
 
 
@@ -2072,15 +2092,6 @@ var snakeAltColors = [
   "#ffff66",
 ];
 
-var blockForeground = ["#de5a6d","#fa65dd","#c367e3","#9c62fa","#625ff0"];
-var blockBackground = ["#853641","#963c84","#753d88","#5d3a96","#3a3990"];
-
-var rainbowForeground = ["white"];
-var rainbowBackground = ["white"];
-
-/*var blockForeground = ["#de7913","#7d46a0","#39868b","#41ccc2","#ded800"];
-var blockBackground = ["#8d4d0c","#532f6a","#2c686d","#207973","#999400"];*/
-
 var activeSnakeId = null;
 
 var SLITHER_HEAD = "sh";
@@ -2149,10 +2160,10 @@ function render() {
         background = themes[themeCounter][1];
         material = themes[themeCounter][2];
         surface = themes[themeCounter][3];
-        sc = themes[themeCounter][5];
-        ssc1 = themes[themeCounter][6];
-        ssc2 = themes[themeCounter][7];
-        bc = themes[themeCounter][8];
+        blockColors = themes[themeCounter][5];
+        spikeColors = themes[themeCounter][6];
+        textStyle = themes[themeCounter][9];
+        
         curlyOutline = themes[themeCounter][4];
         if(background.substr(0,1) == "#") {
             context.fillStyle = background;
@@ -2283,14 +2294,8 @@ function render() {
           rowcol2.r -= minR;
           rowcol2.c -= minC;
           var cornerRowcol = {r:rowcol1.r, c:rowcol2.c};
-          if(surface == "rainbow"){
-              drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, rainbowBackground[object.id % rainbowBackground.length]);
-              drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, rainbowBackground[object.id % rainbowBackground.length]);
-          }
-          else{
-              drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, blockBackground[object.id % blockBackground.length]);
-              drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, blockBackground[object.id % blockBackground.length]);
-          }
+          drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, blockColors[1][object.id % blockColors[1].length]);
+          drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, blockColors[1][object.id % blockColors[1].length]);
         }
       }
       var r = minR + animationDisplacementRowcol.r;
@@ -2314,8 +2319,8 @@ function render() {
 
     // banners
     if (countSnakes() === 0) {
-      context.fillStyle = "#fdc122";
-      context.font = "150px Impact";
+      context.fillStyle = textStyle[1];
+      context.font = textStyle[0];
       context.shadowOffsetX = 5;
       context.shadowOffsetY = 5;
       context.shadowColor = "rgba(0,0,0,0.5)";
@@ -2325,8 +2330,8 @@ function render() {
       context.fillText(textString, (canvas.width/2) - (textWidth/2), canvas.height/2);
     }
     if (isDead()) {
-      context.fillStyle = "#fd0c0b";
-      context.font = "150px Impact";
+      context.fillStyle = textStyle[2];
+      context.font = textStyle[0];
       context.shadowOffsetX = 5;
       context.shadowOffsetY = 5;
       context.shadowColor = "rgba(0,0,0,0.5)";
@@ -2515,7 +2520,7 @@ function render() {
         drawBlock(object);
         break;
       case FRUIT:   //Gooby
-        var fc = themes[themeCounter][9];
+        var fc = themes[themeCounter][7];
         rowcol = getRowcol(level, object.locations[0]);
         var c = rowcol.c;
         var r = rowcol.r;
@@ -2545,7 +2550,7 @@ function render() {
             context.moveTo(startC,startR);
             context.bezierCurveTo(startC-resize*.1, startR-resize*.05, startC, startR-resize*.1, startC-resize*.1, startR-resize*.15);
             context.bezierCurveTo(startC, startR-resize*.1, startC+resize*.05, startR-resize*.1, startC, startR);
-            context.fillStyle = themes[themeCounter][10];
+            context.fillStyle = themes[themeCounter][8];
             context.fill();
         }
         else drawCircle(rowcol.r, rowcol.c, 1, "#f0f");
@@ -2793,7 +2798,7 @@ function render() {
   function drawSpikes(r, c, adjacentTiles) {
     var x = c * tileSize;
     var y = r * tileSize;
-    context.fillStyle = sc;
+    context.fillStyle = spikeColors[0];
       
     context.beginPath();
     context.moveTo(x + tileSize * 0.25, y + tileSize * 0.3); //top spikes
@@ -2854,14 +2859,14 @@ function render() {
         var boltBool = false;
         var occupiedCount = 0;
         if(canConnect(0, 1)){
-            context.fillStyle = ssc1;
+            context.fillStyle = spikeColors[1];
             context.fillRect(c*tileSize+(tileSize*.3), r*tileSize+(tileSize*.8), tileSize*.4, tileSize*.4);
             boltBool = true;
         }
         if(canConnect(0, -1) && !canConnect(0, 1)){
             if(!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(1, -1)){}
             else{
-                context.fillStyle = ssc1;
+                context.fillStyle = spikeColors[1];
                 context.fillRect(c*tileSize+(tileSize*.3), r*tileSize, tileSize*.4, tileSize*.4);
                 boltBool = true;
             }
@@ -2869,7 +2874,7 @@ function render() {
         if(canConnect(-1, 0) && !canConnect(0, 1)){
             if(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(-1, 1)){}
             else{
-                context.fillStyle = ssc1;
+                context.fillStyle = spikeColors[1];
                 context.fillRect(c*tileSize, r*tileSize+(tileSize*.3), tileSize*.4, tileSize*.4);
                 boltBool = true;
             }
@@ -2877,13 +2882,13 @@ function render() {
         if(canConnect(1, 0) && !canConnect(0, 1)){
             if(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(1, -1) && canConnect(1, 1)){}
             else{
-                context.fillStyle = ssc1;
+                context.fillStyle = spikeColors[1];
                 context.fillRect(c*tileSize+(tileSize*.8), r*tileSize+(tileSize*.3), tileSize*.4, tileSize*.4);
                 boltBool = true;
             }
         }
         
-        context.fillStyle = ssc2;
+        context.fillStyle = spikeColors[2];
         if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)){                                             //TOUCHING ONE
             roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize*.8, {bl:4,br:4}, true, false);
             boltBool = true;
@@ -2960,12 +2965,12 @@ function render() {
     }
     
     function drawBolt(r, c){
-        context.strokeStyle = bc;
+        context.strokeStyle = spikeColors[3];
         context.beginPath();
         context.arc(c*tileSize+(tileSize*.55), r*tileSize+(tileSize*.45), 4, -.7*Math.PI, .2*Math.PI);
         context.lineTo(c*tileSize+(tileSize*.45),r*tileSize+(tileSize*.35));
         context.closePath();
-        context.fillStyle = bc;
+        context.fillStyle = spikeColors[3];
         context.fill();
         context.stroke();
         
@@ -2974,7 +2979,7 @@ function render() {
         context.arc(c*tileSize+(tileSize*.48), r*tileSize+(tileSize*.52), 4, .2*Math.PI, -.75*Math.PI);
         //context.lineTo(c*tileSize+(tileSize*.4),r*tileSize+(tileSize*.6));
         context.closePath();
-        context.fillStyle = bc;
+        context.fillStyle = spikeColors[3];
         context.fill();
         context.stroke();
     }
@@ -3004,8 +3009,7 @@ function render() {
     rowcols.forEach(function(rowcol) {
       var r = rowcol.r + animationDisplacementRowcol.r;
       var c = rowcol.c + animationDisplacementRowcol.c;
-      context.fillStyle = blockForeground[block.id % blockForeground.length];
-      if(surface == "rainbow")  context.fillStyle = rainbowForeground[block.id % rainbowForeground.length];
+      context.fillStyle = blockColors[0][block.id % blockColors[0].length];
       drawTileOutlines2(r, c, isAlsoThisBlock, 0.3);
       function isAlsoThisBlock(dc, dr) {
         for (var i = 0; i < rowcols.length; i++) {
