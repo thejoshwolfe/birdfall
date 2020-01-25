@@ -1615,6 +1615,7 @@ var curlyOutline = false;
 var bg1 = "rgba(145, 198, 254 * rgba(133, 192, 255";
 var bg2 = "rgba(254, 198, 145 * rgba(255, 192, 133";
 var bg3 = "rgba(145, 254, 198 * rgba(117, 255, 192";
+var bg4 = "rgba(7, 7, 83 * rgba(0, 0, 70";
 
 var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];
 var snakeColors2 = ["#f00", "#0f0", "#00f", "#ff0"];
@@ -1658,7 +1659,7 @@ var themes = [  //name, background, material, surface, curlyOutline, blockColors
   ["Classic", bg1, "#844204", "#282", false,  snakeColors2, blockColors1, spikeColors1, fruitColors1, "green", textStyle4],
   ["Summer", bg2, "#734d26", "#009933", true,  snakeColors3, blockColors3, spikeColors1, fruitColors1, "green", textStyle3],
   ["Dream", bg3, "#00aaff", "#ffb3ec", true,  snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2],
-  ["Midnight Rainbow", "#070753", "black", "rainbow", false,  snakeColors1, blockColors2, spikeColors2, "white", "white", textStyle1]
+  ["Midnight Rainbow", bg4, "black", "rainbow", false,  snakeColors1, blockColors2, spikeColors2, "white", "white", textStyle1]
 ];
 
 
