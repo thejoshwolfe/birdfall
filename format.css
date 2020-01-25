@@ -1,5 +1,7 @@
 body{
     font-family: Optima;
+    background-color: #fdc122;
+    padding-bottom: 50px;
 }
 
 table{
@@ -7,7 +9,14 @@ table{
     counter-reset: rowNumber;
     margin-left: 25%;
     margin-right: 25%;
-    border-collapse: collapse;
+    border-spacing: 0;
+    background-color: #18d11f;
+    border: 10px solid black;
+    border-radius: 20px;
+}
+
+th{
+    padding: 20px;
 }
 
 tr{
@@ -34,7 +43,7 @@ a{
 }
 
 td:hover{
-    background-color: gainsboro;
+    background-color: white;
 }
 
 #title{
@@ -48,14 +57,18 @@ td:hover{
 .topLink{
     display: block;
     margin-bottom: 20px;
-    border: 1px solid black;
     padding: 10px;
+    border-radius: 10px;
 }
 
 #top{
-    width: 30%;
-    margin-left: 35%;
-    margin-right: 35%;
+    width: 20%;
+    margin-left: 40%;
+    margin-right: 40%;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+td.noteColumn:hover{
+    background-color: #fdc122 !important;
 }
