@@ -23,6 +23,7 @@ table tr{
 
 table tr td:first-child::before {
     content: counter(rowNumber);
+    color: rgba(0,0,0,.3);
 }
 
 table tr td:not(:nth-child(3)){
@@ -83,8 +84,12 @@ td a{
     background-color: #730c39;
     width: 25%;
     margin: 10px;
-    text-shadow: 0 0 10px black;
+    text-shadow: 1px 1px 0 black;
     border: 2px solid black;
+}
+
+.topButton:active {
+    transform: scale(.95);
 }
 
 #tableHolder{
@@ -94,6 +99,7 @@ td a{
     border: 10px solid black;
     border-radius: 20px;
     padding: 20px 30px 20px 30px;
+    background-color: rgba(255,255,255,.2);
 }
 
 .numberColumn{
