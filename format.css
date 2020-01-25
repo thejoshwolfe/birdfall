@@ -1,0 +1,25 @@
+table{
+    width: 50%;
+    font-family: Garamond;
+    color: black;
+    counter-reset: rowNumber;
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+table tr:not(:first-child){
+    counter-increment: rowNumber;
+}
+
+table tr td:first-child::before {
+    content: counter(rowNumber);
+    min-width: 1em;
+    margin-right: 0.5em;
+}
+
+td{
+    text-align: center;
+}
+
+a{
+}
