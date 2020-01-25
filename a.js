@@ -1631,8 +1631,8 @@ var blockColors1 = [
     ["#853641","#963c84","#753d88","#5d3a96","#3a3990"]
 ];
 var blockColors2 = [
-    ["white"],
-    ["white"]
+    ["#f2f2f2"],
+    ["#f2f2f2"]
 ];
 var blockColors3 = [
     ["#de7913","#7d46a0","#39868b","#41ccc2","#ded800"],
@@ -1646,7 +1646,7 @@ var blockColors4 = [
 var fontSize = tileSize*5;
 var textStyle1 = ["" + fontSize + "px Impact", "#fdc122", "#fd0c0b"];    //font, Win, Lose
 var textStyle2 = ["" + fontSize + "px Impact", "#5702c6", "#ff0098"];
-var textStyle3 = ["" + fontSize + "px Impact", "#18d11f", "#fd0c0b"];
+var textStyle3 = ["" + fontSize + "px Impact", "#BA145C", "#F75802"];
 var textStyle4 = ["" + fontSize + "px Impact", "#ff0", "#f00"];
 
 var themeCounter = 0;
