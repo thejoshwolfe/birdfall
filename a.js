@@ -31,7 +31,7 @@ var SNAKE = "s";
 var BLOCK = "b";
 var FRUIT = "f";
 
-var tileSize = 30;
+var tileSize = 50;
 var level;
 var unmoveStuff = {undoStack:[], redoStack:[], spanId:"movesSpan", undoButtonId:"unmoveButton", redoButtonId:"removeButton"};
 var uneditStuff = {undoStack:[], redoStack:[], spanId:"editsSpan", undoButtonId:"uneditButton", redoButtonId:"reeditButton"};
@@ -1656,7 +1656,7 @@ var themes = [  //name, background, material, surface, curlyOutline, blockColors
   //["sky",],
   ["Spring", bg1, "#976537", "#95ff45", true, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
   ["Winter", bg1, "#30455B", "white", true,  snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
-  ["Classic", bg1, "#844204", "#282", false,  snakeColors2, blockColors1, spikeColors1, fruitColors1, "green", textStyle4],
+  ["Classic", "#8888ff", "#844204", "#282", false,  snakeColors2, blockColors1, spikeColors1, fruitColors1, "green", textStyle4],
   ["Summer", bg2, "#734d26", "#009933", true,  snakeColors3, blockColors3, spikeColors1, fruitColors1, "green", textStyle3],
   ["Dream", bg3, "#00aaff", "#ffb3ec", true,  snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2],
   ["Midnight Rainbow", bg4, "black", "rainbow", false,  snakeColors1, blockColors2, spikeColors2, "white", "white", textStyle1]
