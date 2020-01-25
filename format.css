@@ -1,22 +1,19 @@
 body{
-    font-family: Optima;
+    font-family: Futura;
     background-color: #fdc122;
     padding-bottom: 50px;
 }
 
 table{
-    width: 50%;
+    width: 100%;
     counter-reset: rowNumber;
-    margin-left: 25%;
-    margin-right: 25%;
     border-spacing: 0;
-    background-color: #18d11f;
-    border: 10px solid black;
-    border-radius: 20px;
+    border-collapse: collapse;
 }
 
 th{
-    padding: 20px;
+    font-size: 20px;
+    padding-bottom: 20px;
 }
 
 tr{
@@ -35,6 +32,7 @@ table tr td:first-child::before {
 
 td{
     text-align: center;
+    border-radius: 10px;
 }
 
 a{
@@ -42,7 +40,12 @@ a{
     text-decoration: none;
 }
 
-td:hover{
+td a{
+    display: block;
+    width: 100%;
+}
+
+td:hover:not(:first-child){
     background-color: white;
 }
 
@@ -70,5 +73,18 @@ td:hover{
 }
 
 td.noteColumn:hover{
-    background-color: #fdc122 !important;
+    background-color: #18d11f !important;
+}
+
+#tableHolder{
+    width: 50%;
+    margin: 0 auto;
+    border-spacing: 0;
+    background-color: #18d11f;
+    border: 10px solid black;
+    border-radius: 20px;
+    padding: 20px 30px 20px 30px;
+}
+
+#solutionHeader{
 }
