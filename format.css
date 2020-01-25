@@ -96,15 +96,21 @@ td.noteColumn:hover{
 
 #templateHolder{
     width: 40%;
-    background-color: white;
     float: left;
-    padding: 10px;
-    border-radius: 10px;
-    background-color: #BA145C;
     color: white;
+    display: inline-block;
 }
 
 #githubLinkHolder{
     width: 40%;
-    margin-left: 50%;
+    display: inline-block;
+}
+
+.templateButton{
+    background-color: #BA145C;
+    display: block;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    color: white;
 }
