@@ -1,18 +1,15 @@
 body{
     font-family: Futura;
-    background-color: #fdc122;
     padding-bottom: 50px;
+    background-image: linear-gradient(to bottom right, #ffe800 , #ff4d94);
+    counter-reset: rowNumber -1;
 }
 
 table{
     width: 100%;
-    counter-reset: rowNumber;
-    border-spacing: 0;
-    border-collapse: collapse;
 }
 
 th{
-    font-size: 20px;
     padding-bottom: 20px;
 }
 
@@ -20,19 +17,35 @@ tr{
     height: 30px;
 }
 
-table tr:not(:first-child){
+table tr{
     counter-increment: rowNumber;
 }
 
 table tr td:first-child::before {
     content: counter(rowNumber);
-    min-width: 1em;
-    margin-right: 0.5em;
+}
+
+table tr td:not(:nth-child(3)){
+    text-align: center;
+}
+
+table tr td:nth-child(3){
+    padding-left: 10px;
 }
 
 td{
-    text-align: center;
     border-radius: 10px;
+    border: 2px solid transparent;
+    padding: 5px;
+}
+
+td:hover:not(:first-child):not(:last-child){
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,.1);
+}
+
+td.noteColumn:hover{
 }
 
 a{
@@ -45,72 +58,43 @@ td a{
     width: 100%;
 }
 
-td:hover:not(:first-child){
-    background-color: white;
-}
-
 #title{
     width: 100%;
     text-align: center;
-    font-family: Impact;
     font-size: 100px;
     margin-bottom: 20px;
 }
 
-.topLink{
-    display: block;
-    margin-bottom: 20px;
-    padding: 10px;
-    border-radius: 10px;
-}
-
-#top{
+#buttonHolder{
     width: 50%;
     margin-left: 25%;
     margin-right: 25%;
     text-align: center;
+    color: white;
     margin-bottom: 30px;
-    display: inline-block;
 }
 
-td.noteColumn:hover{
-    background-color: #18d11f !important;
+.topButton{
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    color: white;
+    background-color: #730c39;
+    width: 25%;
+    margin: 10px;
+    text-shadow: 0 0 10px black;
+    border: 2px solid black;
 }
 
 #tableHolder{
     width: 50%;
     margin: 0 auto;
     border-spacing: 0;
-    background-color: #18d11f;
     border: 10px solid black;
     border-radius: 20px;
     padding: 20px 30px 20px 30px;
 }
 
-#solutionHeader{
-}
-
 .numberColumn{
-    color: gray;
-}
-
-#templateHolder{
-    width: 40%;
-    float: left;
-    color: white;
-    display: inline-block;
-}
-
-#githubLinkHolder{
-    width: 40%;
-    display: inline-block;
-}
-
-.templateButton{
-    background-color: #BA145C;
-    display: block;
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    color: white;
 }
