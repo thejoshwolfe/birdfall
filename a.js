@@ -1664,7 +1664,7 @@ var themes = [  //name, background, material, surface, curlyOutline, blockColors
 
 
 function showEditorChanged() {
-  document.getElementById("showHideEditor").textContent = (persistentState.showEditor ? "Hide" : "Show") + " Editor Stuff";
+  document.getElementById("showHideEditor").textContent = (persistentState.showEditor ? "Hide" : "Show") + " Editor";
   ["editorDiv", "editorPane"].forEach(function(id) {
     document.getElementById(id).style.display = persistentState.showEditor ? "block" : "none";
   });
