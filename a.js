@@ -31,7 +31,7 @@ var SNAKE = "s";
 var BLOCK = "b";
 var FRUIT = "f";
 
-var tileSize = 40;
+var tileSize = 34;
 var level;
 var unmoveStuff = {undoStack:[], redoStack:[], spanId:"movesSpan", undoButtonId:"unmoveButton", redoButtonId:"removeButton"};
 var uneditStuff = {undoStack:[], redoStack:[], spanId:"editsSpan", undoButtonId:"uneditButton", redoButtonId:"reeditButton"};
