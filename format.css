@@ -65,11 +65,12 @@ td:hover:not(:first-child){
 }
 
 #top{
-    width: 20%;
-    margin-left: 40%;
-    margin-right: 40%;
+    width: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
     text-align: center;
     margin-bottom: 30px;
+    display: inline-block;
 }
 
 td.noteColumn:hover{
@@ -87,4 +88,23 @@ td.noteColumn:hover{
 }
 
 #solutionHeader{
+}
+
+.numberColumn{
+    color: gray;
+}
+
+#templateHolder{
+    width: 40%;
+    background-color: white;
+    float: left;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #BA145C;
+    color: white;
+}
+
+#githubLinkHolder{
+    width: 40%;
+    margin-left: 50%;
 }
