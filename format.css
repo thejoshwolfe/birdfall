@@ -1,7 +1,7 @@
 body{
     font-family: Futura;
     padding-bottom: 50px;
-    background-image: linear-gradient(to bottom right, #ffe800 , #ff4d94);
+    background-image: linear-gradient(to bottom right, #fdc122 , #ff4d94);
     counter-reset: rowNumber -1;
 }
 
