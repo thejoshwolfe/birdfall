@@ -1,10 +1,14 @@
 table{
     width: 50%;
-    font-family: Garamond;
-    color: black;
+    font-family: Palatino;
     counter-reset: rowNumber;
     margin-left: 25%;
     margin-right: 25%;
+    border-collapse: collapse;
+}
+
+tr{
+    height: 30px;
 }
 
 table tr:not(:first-child){
@@ -22,4 +26,17 @@ td{
 }
 
 a{
+    color: black;
+    text-decoration: none;
+}
+
+td:hover{
+    background-color: gainsboro;
+}
+
+div{
+    width: 100%;
+    text-align: center;
+    font-family: Impact;
+    font-size: 100px;
 }
