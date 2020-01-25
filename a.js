@@ -1618,7 +1618,7 @@ var bg3 = "rgba(145, 254, 198 * rgba(117, 255, 192";
 
 var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];
 var snakeColors2 = ["#f00", "#0f0", "#00f", "#ff0"];
-var snakeColors3 = ["#B92215", "#FBAB0B", "#C41560", "#FEFE37"];
+var snakeColors3 = ["#BA145C", "#E91624", "#F75802", "#FEFE28"];
 
 var fruitColors1 = ["#ff0066","#ff36a6","#ff6b1f","#ff9900","#ff2600"];
 var fruitColors2 = ["black","black","black","black","black"];
@@ -1643,10 +1643,11 @@ var blockColors4 = [
     ["#8d4d0c","#532f6a","#2c686d","#207973","#999400"]
 ];
 
-var textStyle1 = ["150px Impact", "#fdc122", "#fd0c0b"];    //font, Win, Lose
-var textStyle2 = ["150px Impact", "#5702c6", "#ff0098"];
-var textStyle3 = ["150px Impact", "#18d11f", "#fd0c0b"];
-var textStyle4 = ["150px Impact", "#ff0", "#f00"];
+var fontSize = tileSize*5;
+var textStyle1 = ["" + fontSize + "px Impact", "#fdc122", "#fd0c0b"];    //font, Win, Lose
+var textStyle2 = ["" + fontSize + "px Impact", "#5702c6", "#ff0098"];
+var textStyle3 = ["" + fontSize + "px Impact", "#18d11f", "#fd0c0b"];
+var textStyle4 = ["" + fontSize + "px Impact", "#ff0", "#f00"];
 
 var themeCounter = 0;
 
@@ -2159,9 +2160,9 @@ function render() {
   canvas.width = tileSize * level.width;
   canvas.height = tileSize * level.height;
   var context = canvas.getContext("2d"); //Gooby
-  
-    if(true){
-        themeName = themes[themeCounter][0];
+    
+  themeName = themes[themeCounter][0];
+    if(themeName!="sky"){
         background = themes[themeCounter][1];
         material = themes[themeCounter][2];
         surface = themes[themeCounter][3];
@@ -2629,8 +2630,21 @@ function render() {
             context.beginPath();
             context.arc((c+1)*tileSize+tileSize/6, (r+1)*tileSize+tileSize/6, tileSize/6, 0, 2*Math.PI);
             context.closePath();
-            //tileColor = context.getImageData((c+1)*tileSize+tileSize/2, (r+1)*tileSize+tileSize/2, 1, 1);
-            //context.fillStyle = "rgba(" + tileColor.data[0] + ", " + tileColor.data[1] + ", " + tileColor.data[2] + ", " + tileColor.data[3] + ")";
+            
+            var bgColor;
+            if((c+r) % 2 == 0) bgColor = background.substr(0, background.indexOf('*'));
+            else bgColor = background.substr(background.indexOf('*')+2, background.length);
+            var r1, r2, b1, b2, g1, g2;
+            r1 = bgColor.substr(5, bgColor.indexOf(",")-5);
+            g1 = bgColor.substr(bgColor.indexOf(",")+1, bgColor.indexOf(",")-4);
+            b1 = bgColor.substr(bgColor.indexOf(",", bgColor.indexOf(",")+1)+1, bgColor.indexOf(",")-4);
+            var shade = (r+1)*.03+.5;
+            if(shade>1)
+                shade = 1;
+            r2 = 255 + (r1-255) * shade;
+            g2 = 255 + (g1-255) * shade;
+            b2 = 255 + (b1-255) * shade;
+            context.fillStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
             context.fill();
             context.globalCompositeOperation = "source-over";            
         }
@@ -2640,15 +2654,27 @@ function render() {
             context.beginPath();
             context.arc(c*tileSize-tileSize/6, (r+1)*tileSize+tileSize/6, tileSize/6, 0, 2*Math.PI);
             context.closePath();
-            //tileColor = context.getImageData(c*tileSize-tileSize/2, (r+1)*tileSize+tileSize/2, 1, 1);
-            //alert(tileColor.data[0] + " " + tileColor.data[1] + " " + tileColor.data[2] + " " + tileColor.data[3] + "");
-            //context.fillStyle = "rgba(" + tileColor.data[0] + ", " + tileColor.data[1] + ", " + tileColor.data[2] + ", " + tileColor.data[3] + ")";
+            
+            var bgColor;
+            if((c+r) % 2 == 0) bgColor = background.substr(0, background.indexOf('*'));
+            else bgColor = background.substr(background.indexOf('*')+2, background.length);
+            var r1, r2, b1, b2, g1, g2;
+            r1 = bgColor.substr(5, bgColor.indexOf(",")-5);
+            g1 = bgColor.substr(bgColor.indexOf(",")+1, bgColor.indexOf(",")-4);
+            b1 = bgColor.substr(bgColor.indexOf(",", bgColor.indexOf(",")+1)+1, bgColor.indexOf(",")-4);
+            var shade = (r+1)*.03+.5;
+            if(shade>1)
+                shade = 1;
+            r2 = 255 + (r1-255) * shade;
+            g2 = 255 + (g1-255) * shade;
+            b2 = 255 + (b1-255) * shade;
+            context.fillStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
             context.fill();
             context.globalCompositeOperation = "source-over";
         }
     }
     
-  function drawTileOutlines(r, c, isOccupied, outlineThickness, curlyOutline) {
+  function drawTileOutlines(r, c, isOccupied, outlineThickness, curlyOutline) { //Gooby
     if(surface != "rainbow") {
         context.fillStyle = surface;
     }
@@ -2680,48 +2706,47 @@ function render() {
     var complementPixels = (1 - 2 * outlineThickness) * tileSize;
       
     
-    if (curlyOutline && !isOccupied(0, -1)){ //context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels); //grass  
+    if (curlyOutline && !isOccupied(0, -1)){  
         if(!isOccupied(-1, 0) && isOccupied(1, 0)){
             context.beginPath();
-            context.moveTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.25);
+            context.moveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.2);
             context.bezierCurveTo(c*tileSize+tileSize*.05, r*tileSize+tileSize*.3, c*tileSize+tileSize*.3, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.3, c*tileSize+tileSize*.6, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.4, c*tileSize+tileSize*.6, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
             context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.4, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
             context.lineTo(c*tileSize+tileSize, r*tileSize);
             context.lineTo(c*tileSize+tileSize*.2, r*tileSize);
-            context.arc(c*tileSize+tileSize*.2, r*tileSize+tileSize*.2, tileSize*.2, 1.5*Math.PI, .9*Math.PI, true);
+            context.bezierCurveTo(c*tileSize-tileSize*.2, r*tileSize-tileSize*.05, c*tileSize-tileSize*.15, r*tileSize+tileSize*.5, c*tileSize+tileSize*.1, r*tileSize+tileSize*.25);
             context.closePath();
         }
         else if(isOccupied(-1, 0) && !isOccupied(1, 0)){
             context.beginPath();
-            context.moveTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.25);
+            context.moveTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.2);
             context.bezierCurveTo(c*tileSize+tileSize*.95, r*tileSize+tileSize*.3, c*tileSize+tileSize*.7, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.65, r*tileSize+tileSize*.3, c*tileSize+tileSize*.4, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.65, r*tileSize+tileSize*.4, c*tileSize+tileSize*.4, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
             context.bezierCurveTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.3, c*tileSize+tileSize*.1, r*tileSize+tileSize*.4, c*tileSize, r*tileSize+tileSize*.2);
             context.lineTo(c*tileSize, r*tileSize);
             context.lineTo(c*tileSize+tileSize*.8, r*tileSize);
-            context.arc(c*tileSize+tileSize*.8, r*tileSize+tileSize*.2, tileSize*.2, 1.5*Math.PI, 2.1*Math.PI);
+            context.bezierCurveTo((c+1)*tileSize+tileSize*.2, r*tileSize-tileSize*.05, (c+1)*tileSize+tileSize*.15, r*tileSize+tileSize*.5, (c+1)*tileSize-tileSize*.1, r*tileSize+tileSize*.25);
             context.closePath();
         }
         else if(!isOccupied(-1, 0) && !isOccupied(1, 0)){
             context.beginPath();
-            context.moveTo(c*tileSize+tileSize*.85, r*tileSize);
+            context.moveTo(c*tileSize+tileSize*.9, r*tileSize-tileSize*0);
             context.lineTo(c*tileSize+tileSize*.2, r*tileSize);
-            context.arc(c*tileSize+tileSize*.2, r*tileSize+tileSize*.2, tileSize*.2, 1.5*Math.PI, .9*Math.PI, true);
+            context.bezierCurveTo(c*tileSize-tileSize*.2, r*tileSize-tileSize*.05, c*tileSize-tileSize*.15, r*tileSize+tileSize*.5, c*tileSize+tileSize*.1, r*tileSize+tileSize*.25);
             context.bezierCurveTo(c*tileSize+tileSize*.05, r*tileSize+tileSize*.3, c*tileSize+tileSize*.3, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.3, c*tileSize+tileSize*.6, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.4, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
-            context.lineTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.1);
-            //context.arc(c*tileSize+tileSize*.8, r*tileSize+tileSize*.2, tileSize*.2, 1.5*Math.PI, 2.1*Math.PI);
+            context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.4, c*tileSize+tileSize*.6, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.8, r*tileSize+tileSize*.4, c*tileSize+tileSize*.9, r*tileSize+tileSize*.2);
+            context.bezierCurveTo((c+1)*tileSize-tileSize*.1, r*tileSize+tileSize*.4, (c+1)*tileSize+tileSize*.3, r*tileSize+tileSize*.3, (c+1)*tileSize, r*tileSize+tileSize*.02);
             context.closePath();
         }
         else{
             context.beginPath();
             context.moveTo(c*tileSize, r*tileSize);
             context.lineTo(c*tileSize, r*tileSize+tileSize*.15);
-            context.bezierCurveTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.3, c*tileSize+tileSize*.3, r*tileSize+tileSize*.3, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.4, c*tileSize+tileSize*.3, r*tileSize+tileSize*.3, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
             context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.3, c*tileSize+tileSize*.6, r*tileSize+tileSize*.3, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.3, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.4, c*tileSize+tileSize*.9, r*tileSize+tileSize*.3, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
             context.lineTo(c*tileSize+tileSize, r*tileSize);
             context.closePath();
         }
@@ -2741,10 +2766,10 @@ function render() {
 
     function drawBushes(r, c, isOccupied){
         if(!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(1, -1)){
-            context.shadowColor = "#666";
+            /*context.shadowColor = "#666";
             context.shadowOffsetX = -.5;
             context.shadowOffsetY = -.5;
-            context.shadowBlur = 1;
+            context.shadowBlur = 1;*/
             
             context.beginPath();
             context.moveTo((c+1)*tileSize, r*tileSize);
@@ -2762,10 +2787,10 @@ function render() {
         }
         
         if(!isOccupied(0, -1) && isOccupied(-1, 0) && isOccupied(-1, -1)){
-            context.shadowColor = "#666";
+            /*context.shadowColor = "#666";
             context.shadowOffsetX = .5;
             context.shadowOffsetY = -.5;
-            context.shadowBlur = 1;
+            context.shadowBlur = 1;*/
             
             context.beginPath();
             context.moveTo(c*tileSize, r*tileSize);
