@@ -1,7 +1,7 @@
 body{
     font-family: Futura;
     padding-bottom: 50px;
-    background-image: linear-gradient(to bottom right, #fdc122 , #BA145C);
+    background-image: linear-gradient(to bottom right, #fdc122 , #dc6a3f, #d55945, #dc6a3f, #fdc122);
     counter-reset: rowNumber -1;
 }
 
@@ -32,6 +32,26 @@ table tr td:not(:nth-child(3)){
 
 table tr td:nth-child(3){
     padding-left: 10px;
+}
+
+table tr td:nth-child(1){
+    width: 5%;
+}
+
+table tr td:nth-child(2){
+    width: 5%;
+}
+
+table tr td:nth-child(3){
+    width: 35%;
+}
+
+table tr td:nth-child(4){
+    width: 15%;
+}
+
+table tr td:nth-child(5){
+    width: 40%;
 }
 
 td{
@@ -66,6 +86,13 @@ td a{
     margin-bottom: 20px;
 }
 
+.tableTitle{
+    font-size: 40px;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
 #buttonHolder{
     width: 50%;
     margin-left: 25%;
@@ -92,7 +119,7 @@ td a{
     transform: scale(.95);
 }
 
-#tableHolder{
+.tableHolder{
     width: 50%;
     margin: 0 auto;
     border-spacing: 0;
@@ -100,6 +127,7 @@ td a{
     border-radius: 20px;
     padding: 20px 30px 20px 30px;
     background-color: rgba(255,255,255,.2);
+    margin-bottom: 50px;
 }
 
 .numberColumn{
