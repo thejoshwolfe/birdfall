@@ -684,11 +684,15 @@
         function validatePass(){
             if(document.getElementById('passInput').value == "password1"){
                 var x = document.getElementsByClassName("hiddenItem");
-                var i;
-                for (i = 0; i < x.length; i++) {
+                for (var i = 0; i < x.length; i++) {
                     x[i].style.filter = "blur(0)";
                     x[i].style.pointerEvents = "auto";
                     x[i].style.cursor = "pointer";
+                }
+                var y = document.getElementsByClassName("disabled");
+                for (var i = 0; i < y.length; i++) {
+                    y[i].style.pointerEvents = "auto";
+                    y[i].style.cursor = "pointer";
                 }
                 document.getElementById("passWindow").style.visibility = "hidden";
                 return true;
