@@ -93,7 +93,7 @@ td a{
     margin-bottom: 20px;
 }
 
-#buttonHolder{
+#buttonContainer{
     width: 50%;
     margin-left: 25%;
     margin-right: 25%;
@@ -111,15 +111,16 @@ td a{
     background-color: #730c39;
     width: 25%;
     margin: 10px;
-    text-shadow: 1px 1px 0 black;
     border: 2px solid black;
+    text-transform:uppercase;
+    font-size: 14px;
 }
 
 .topButton:active {
-    transform: scale(.95);
+    transform: scale(.98);
 }
 
-.tableHolder{
+.tableContainer{
     width: 50%;
     margin: 0 auto;
     border-spacing: 0;
@@ -131,4 +132,55 @@ td a{
 }
 
 .numberColumn{
+}
+
+.hiddenItem{
+    filter: blur(8px);
+    pointer-events: none;
+    cursor: default;
+}
+
+#showButtonContainer{
+    width: 50%;
+    margin-left: 25%;
+    margin-right: 25%;
+    margin-bottom: 5px;
+}
+
+#showButton{
+    border: 1px solid black;
+    border-radius: 5px;
+    display: inline-block;
+    padding: 5px;
+    font-size: 12px;
+}
+
+#showButton:hover{
+    cursor: pointer;
+}
+
+#showButton:active{
+    transform: scale(.98);
+}
+
+.disabled{
+    pointer-events: none;
+    cursor: default;
+}
+
+#note{
+    display: inline-block;
+    font-size: 12px;
+    float: right;
+}
+
+#passWindow{
+    width: 300px;
+    height: 300px;
+    background-color: blue;
+    position: absolute;
+    left: 50%;
+    margin-left: -50px;
+    top: 50%;
+    margin-top: -50px;
 }
