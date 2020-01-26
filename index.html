@@ -10,7 +10,13 @@
     </head>
     <body>
         <div id="title">Snakefall Redesign</div>
-        <!--<div id="passWindow"><label for="passInput">Password:</label><input id="passInput" type="text"/><a href="http://127.0.0.1:55716/Snakefall/index.html" onclick="javascript:return validatePass()">Submit</a></div>-->
+        <div id="passWindow">
+            <form name="PasswordField" action="">
+            <label for="passInput">Password:</label>
+            <input type="text" id="passInput" name="passInput">
+            <input type="button" value="Submit" onclick="validatePass();">
+            </form>
+        </div>
         <div id="buttonContainer">
             <a class="topButton" style="background-color:rgba(0,0,0,.4)" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html">Demo Level</a>
             <a class="topButton" style="background-color:rgba(0,0,0,.4); color:white" href="https://github.com/jmdiamond3/Snakefall-Redesign/">Snakefall Redesign Github</a>
@@ -676,7 +682,7 @@
             document.getElementById("passWindow").style.visibility = "visible";
         });
         function validatePass(){
-            if(document.getElementById('pass').value == "password1"){
+            if(document.getElementById('passInput').value == "password1"){
                 var x = document.getElementsByClassName("hiddenItem");
                 var i;
                 for (i = 0; i < x.length; i++) {
@@ -684,6 +690,7 @@
                     x[i].style.pointerEvents = "auto";
                     x[i].style.cursor = "pointer";
                 }
+                document.getElementById("passWindow").style.visibility = "hidden";
                 return true;
             }
             else alert("Incorrect Password");
