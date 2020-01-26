@@ -10,7 +10,8 @@
     </head>
     <body>
         <div id="title">Snakefall Redesign</div>
-        <div id="buttonHolder">
+        <!--<div id="passWindow"><label for="passInput">Password:</label><input id="passInput" type="text"/><a href="http://127.0.0.1:55716/Snakefall/index.html" onclick="javascript:return validatePass()">Submit</a></div>-->
+        <div id="buttonContainer">
             <a class="topButton" style="background-color:rgba(0,0,0,.4)" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html">Demo Level</a>
             <a class="topButton" style="background-color:rgba(0,0,0,.4); color:white" href="https://github.com/jmdiamond3/Snakefall-Redesign/">Snakefall Redesign Github</a>
             <a class="topButton" style="background-color:rgba(0,0,0,.4); color:white" href="https://github.com/thejoshwolfe/snakefall">Original Snakefall Github</a>
@@ -18,7 +19,8 @@
             <a class="topButton" style="background-color:rgba(0,0,0,.4)" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&17&29?*z0*z0*z0*z0*z0*z0*z0*Y0/">Experimental Template 1</a>
             <a class="topButton" style="background-color:rgba(0,0,0,.4)" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&17&29?*z0*z0*z0*z0*z0*z0*z0*Y0/">Experimental Template 2</a>
         </div>
-        <div class="tableHolder">
+        <div id="showButtonContainer"><div id="showButton">Show Hidden Options</div><div id="note">Most checkmarks contain links to solutions, though some are not accessible without a password.</div></div>
+        <div class="tableContainer">
             <table>
                 <div class="tableTitle">Standard Puzzles</div>
                 <thead>
@@ -331,7 +333,7 @@
                 </tr>
                 <tr> 
                     <td class="numberColumn"></td>
-                    <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&11&19?*p04*e0111*1011*50111*1011*50111*C01110*21*50*61*50*61*00/b0?87&83/f0?147/f2?41/f1?42/s0?45&64/s2?49&68/#replay=nmGTi8PB&2rrrulll0lurdlullurrulldrr2uru0*0rdr2l0ru2lur0ulu2ru0rurrull2llurrdrrruruld*2lulu0lluulu*0lurr2ullulllu*1r0*3rullulld*0r2rrr0uul2uuuruuu*1r*0u">&#10003;</a></td>
+                    <td><a class="tableLink disabled" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&11&19?*p04*e0111*1011*50111*1011*50111*C01110*21*50*61*50*61*00/b0?87&83/f0?147/f2?41/f1?42/s0?45&64/s2?49&68/#replay=nmGTi8PB&2rrrulll0lurdlullurrulldrr2uru0*0rdr2l0ru2lur0ulu2ru0rurrull2llurrdrrruruld*2lulu0lluulu*0lurr2ullulllu*1r0*3rullulld*0r2rrr0uul2uuuruuu*1r*0u">&#10003;</a></td>
                     <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&11&19?*p04*e0111*1011*50111*1011*50111*C01110*21*50*61*50*61*00/b0?87&83/f0?147/f2?41/f1?42/s0?45&64/s2?49&68/">Level 3 2</a></td>
                     <td><a class="tableLink" href="https://joelthefox.github.io">Joel Fox</a></td>
                     <td>Derived from Cookie's level above</td>
@@ -352,7 +354,7 @@
                 </tr>
                 <tr> 
                     <td class="numberColumn"></td>
-                    <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&20&40?*b1*A0*31*D0110*32*40111*70*3201102*102*I02*10201102022202*30*02*70202220201102020202*I0202020201100024002*401*902040200011000*12*30*02*70*1200011*Y0*01*W0*01*U0*21*U0*21*U0*21*U0*21*V0*11*202*O0*11*202*N0*212*102*N0*81222*410*510*j1/f25?325/f26?483/f27?526/f10?569/f0?652/s4?705/f8?670/f11?550/f6?220/f12?258/f1?196/f4?238/f2?665/b3?612/b4?625/f3?255/f5?138/#replay=nmGTi8PB&4u*1ru*1lu*9lu*Cruruuuru*Eluluuu*3l*0ulurrddrrruuurrdd*Dru*2rdrrruurul*1urruuulddllur*4uruluurrdddllluruurruuld*2l*0d*Fluluullldddllul*4ur*0druururrddd*5rur*7ur*2d*2lul*7u*2ruu*1ldd*1r*7d*1lul*6urrurrdrr*7d*5luluullddd*0l*5ullur*0u*0rdddll">&#10003;</a></td>
+                    <td><a class="tableLink disabled" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&20&40?*b1*A0*31*D0110*32*40111*70*3201102*102*I02*10201102022202*30*02*70202220201102020202*I0202020201100024002*401*902040200011000*12*30*02*70*1200011*Y0*01*W0*01*U0*21*U0*21*U0*21*U0*21*V0*11*202*O0*11*202*N0*212*102*N0*81222*410*510*j1/f25?325/f26?483/f27?526/f10?569/f0?652/s4?705/f8?670/f11?550/f6?220/f12?258/f1?196/f4?238/f2?665/b3?612/b4?625/f3?255/f5?138/#replay=nmGTi8PB&4u*1ru*1lu*9lu*Cruruuuru*Eluluuu*3l*0ulurrddrrruuurrdd*Dru*2rdrrruurul*1urruuulddllur*4uruluurrdddllluruurruuld*2l*0d*Fluluullldddllul*4ur*0druururrddd*5rur*7ur*2d*2lul*7u*2ruu*1ldd*1r*7d*1lul*6urrurrdrr*7d*5luluullddd*0l*5ullur*0u*0rdddll">&#10003;</a></td>
                     <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&20&40?*b1*A0*31*D0110*32*40111*70*3201102*102*I02*10201102022202*30*02*70202220201102020202*I0202020201100024002*401*902040200011000*12*30*02*70*1200011*Y0*01*W0*01*U0*21*U0*21*U0*21*U0*21*V0*11*202*O0*11*202*N0*212*102*N0*81222*410*510*j1/f25?325/f26?483/f27?526/f10?569/f0?652/s4?705/f8?670/f11?550/f6?220/f12?258/f1?196/f4?238/f2?665/b3?612/b4?625/f3?255/f5?138/">Renovated Temple</a></td>
                     <td><a class="tableLink" href="https://joelthefox.github.io">Joel Fox</a></td>
                     <td>Addresses a common criticism of Temple</td>
@@ -373,7 +375,7 @@
                 </tr>
                 <tr> 
                     <td class="numberColumn"></td>
-                    <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&17&30?4*00101*901222*005*5010222*0122*00200012*10101*50100010011*501012201*40220020001*901200021011002*8011*001*002011122*001*1020112*0010002022202*8011101*001010500020001*201000101*401120001*401000101*10201222*201*101000101010002*D0100010100111221*401*20101000100222*E010101011*C01*10101010110*02*10110001*2010101011*20222*11011*101110*H1/s1?55/b0?414/s0?28/f0?94/f6?162/f2?231/f1?337/f8?433/f5?321/f4?88/f3?389/f7?445/#replay=nmGTi8PB&1rldrrul0ll1l0l1u0l1lul0l1lururrr0rrrll1rururuuluuruuluuruulllddlddlll0l1luurrrulldd*0ld*1luuuluuuruuululluu*0luuullddd*3rddrrdrrurrddrddrr*0drr0l1urrr0rrr1*1u0r1lldluu*2ruruuluul0r1ul0l1*2ur0rrr1uuldlddlul0rrru1ddrrru0*0r1ruu0u1uu0l1ruluuul*2ulurrdddlddldll*0dllluuulluur0u1uuu0l1uulllddllurul0llulll1ll0lll1u*0rdrrruruu*8ldllddd*0ru0u1u0l1ll0ld*0l1ullddd*1rddl*2dllull*0ulluurru*0rddrrdddrrruulllullulu*2luuurrrddd*0ruurrdrrddrddlllullulullluuullddd*1r0*0l1rr0lluluu1rrr*0ulld*4lu">&#10003;</a></td>
+                    <td><a class="tableLink disabled" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&17&30?4*00101*901222*005*5010222*0122*00200012*10101*50100010011*501012201*40220020001*901200021011002*8011*001*002011122*001*1020112*0010002022202*8011101*001010500020001*201000101*401120001*401000101*10201222*201*101000101010002*D0100010100111221*401*20101000100222*E010101011*C01*10101010110*02*10110001*2010101011*20222*11011*101110*H1/s1?55/b0?414/s0?28/f0?94/f6?162/f2?231/f1?337/f8?433/f5?321/f4?88/f3?389/f7?445/#replay=nmGTi8PB&1rldrrul0ll1l0l1u0l1lul0l1lururrr0rrrll1rururuuluuruuluuruulllddlddlll0l1luurrrulldd*0ld*1luuuluuuruuululluu*0luuullddd*3rddrrdrrurrddrddrr*0drr0l1urrr0rrr1*1u0r1lldluu*2ruruuluul0r1ul0l1*2ur0rrr1uuldlddlul0rrru1ddrrru0*0r1ruu0u1uu0l1ruluuul*2ulurrdddlddldll*0dllluuulluur0u1uuu0l1uulllddllurul0llulll1ll0lll1u*0rdrrruruu*8ldllddd*0ru0u1u0l1ll0ld*0l1ullddd*1rddl*2dllull*0ulluurru*0rddrrdddrrruulllullulu*2luuurrrddd*0ruurrdrrddrddlllullulullluuullddd*1r0*0l1rr0lluluu1rrr*0ulld*4lu">&#10003;</a></td>
                     <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&17&30?4*00101*901222*005*5010222*0122*00200012*10101*50100010011*501012201*40220020001*901200021011002*8011*001*002011122*001*1020112*0010002022202*8011101*001010500020001*201000101*401120001*401000101*10201222*201*101000101010002*D0100010100111221*401*20101000100222*E010101011*C01*10101010110*02*10110001*2010101011*20222*11011*101110*H1/s1?55/b0?414/s0?28/f0?94/f6?162/f2?231/f1?337/f8?433/f5?321/f4?88/f3?389/f7?445/">The Birds Uncaged</a></td>
                     <td><a class="tableLink" href="https://joelthefox.github.io">Joel Fox</a></td>
                     <td>Derived from Gooby's level above</td>
@@ -401,7 +403,7 @@
                 </tr>
                 <tr> 
                     <td class="numberColumn"></td>
-                    <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&24&32?*F02*202*R02*R02*301*C20022202*E01*802*601*301002*A02*901*E02*001*30100220222*3021*A01*D051*801000*11011*301*801000*11*601*801000*61*101*8010*51001222001*801000*31051220001*801000*210001120001*801*A020001*80*610*51*T02022*4020020020022200222*B0200202020200202002004*70*0202220222002002*A0200202020202002002*A020020202020020222*U0/b3?115&147&179&211/b4?207&208&176/b0?78/b2?379&347&315&283/s2?508&509&510&478&446/s1?44/s0?46&45&77&76/f1?6/f3?534/f2?341/f7?116/f4?221/b1?255&220&188&156&124&92&60&28/#replay=nmGTi8PB&1*5rl0rddd2urruuul0*1ruuu2ddru0r2ul0ulu2uuu0r2uru0u*1l2lu*1lulluull1d*0rdllluurrru*5lddlldd*7rull0*0luu*4lddd*6r2u*3ruuu0uruuldld1u0*5luurdd*0r1ll0*1ruruuld1*7lur0*5l1ulu0lu1ur0uuurr1ruu*2r2ll0uuu*3ru*1rd*0l2lllu*0r1*1r2r1ruuluu2ddl*0dluur1ll2*0uruulllu1u2u1urrdrd2uu1d2r1d2rrd0lluu1luuru2dddluu1uld*6l2ruluuruluruuld*2l1urr2lll1ulluu2ul0r1rruu2*0u1u2r1llur2ruuur0rrddlll2*5ru*7l1uu2uur0uu*0lu2rrururuurrrurr*0dlll0uururuurrrurr*0d*5ld1luu0dl1ru0uuu1rr2uu*0lu1rururuur2ull0u2ll*0d0lurru*6rull2ruul*0urruuu*3rurruu0uuu2l0r2ulllu*0rullul1uu*1rdlll0u*3luuururu1*2lu*1l0uu*5l1*1l0*0l1lll0*0l2dddr1ll*0dldddr0l*0dldddr">&#10003;</a></td>
+                    <td><a class="tableLink disabled" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&24&32?*F02*202*R02*R02*301*C20022202*E01*802*601*301002*A02*901*E02*001*30100220222*3021*A01*D051*801000*11011*301*801000*11*601*801000*61*101*8010*51001222001*801000*31051220001*801000*210001120001*801*A020001*80*610*51*T02022*4020020020022200222*B0200202020200202002004*70*0202220222002002*A0200202020202002002*A020020202020020222*U0/b3?115&147&179&211/b4?207&208&176/b0?78/b2?379&347&315&283/s2?508&509&510&478&446/s1?44/s0?46&45&77&76/f1?6/f3?534/f2?341/f7?116/f4?221/b1?255&220&188&156&124&92&60&28/#replay=nmGTi8PB&1*5rl0rddd2urruuul0*1ruuu2ddru0r2ul0ulu2uuu0r2uru0u*1l2lu*1lulluull1d*0rdllluurrru*5lddlldd*7rull0*0luu*4lddd*6r2u*3ruuu0uruuldld1u0*5luurdd*0r1ll0*1ruruuld1*7lur0*5l1ulu0lu1ur0uuurr1ruu*2r2ll0uuu*3ru*1rd*0l2lllu*0r1*1r2r1ruuluu2ddl*0dluur1ll2*0uruulllu1u2u1urrdrd2uu1d2r1d2rrd0lluu1luuru2dddluu1uld*6l2ruluuruluruuld*2l1urr2lll1ulluu2ul0r1rruu2*0u1u2r1llur2ruuur0rrddlll2*5ru*7l1uu2uur0uu*0lu2rrururuurrrurr*0dlll0uururuurrrurr*0d*5ld1luu0dl1ru0uuu1rr2uu*0lu1rururuur2ull0u2ll*0d0lurru*6rull2ruul*0urruuu*3rurruu0uuu2l0r2ulllu*0rullul1uu*1rdlll0u*3luuururu1*2lu*1l0uu*5l1*1l0*0l1lll0*0l2dddr1ll*0dldddr0l*0dldddr">&#10003;</a></td>
                     <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/framework.html#level=HyRr4JK1&24&32?*F02*202*R02*R02*301*C20022202*E01*802*601*301002*A02*901*E02*001*30100220222*3021*A01*D051*801000*11011*301*801000*11*601*801000*61*101*8010*51001222001*801000*31051220001*801000*210001120001*801*A020001*80*610*51*T02022*4020020020022200222*B0200202020200202002004*70*0202220222002002*A0200202020202002002*A020020202020020222*U0/b3?115&147&179&211/b4?207&208&176/b0?78/b2?379&347&315&283/s2?508&509&510&478&446/s1?44/s0?46&45&77&76/f1?6/f3?534/f2?341/f7?116/f4?221/b1?255&220&188&156&124&92&60&28/">The Hardmill</a></td>
                     <td><a class="tableLink" href="https://joelthefox.github.io">Joel Fox</a></td>
                     <td>Derived from Gooby's level above</td>
@@ -477,8 +479,8 @@
                     <td class="noteColumn"></td>
                 </tr>
             </table>
-        </div><!---
-        <div class="tableHolder">
+        </div>
+        <div class="tableContainer hiddenItem">
             <table>
                 <div class="tableTitle">nohatcoder Puzzles</div>
                 <thead>
@@ -532,7 +534,7 @@
                 </tr>
             </table>
         </div>
-        <div class="tableHolder">
+        <div class="tableContainer hiddenItem">
             <table>
                 <div class="tableTitle">Avis Anguis Puzzles</div>
                 <thead>
@@ -586,7 +588,7 @@
                 </tr>
             </table>
         </div>
-        <div class="tableHolder">
+        <div class="tableContainer hiddenItem">
             <table>
                 <div class="tableTitle">Gameboy Puzzles</div>
                 <thead>
@@ -667,8 +669,26 @@
                     <td class="noteColumn"></td>
                 </tr>
             </table>
-        </div>--->
+        </div>
     </body>
+    <script type="text/javascript">
+        document.getElementById("showButton").addEventListener("click", function() {    //Gooby
+            document.getElementById("passWindow").style.visibility = "visible";
+        });
+        function validatePass(){
+            if(document.getElementById('pass').value == "password1"){
+                var x = document.getElementsByClassName("hiddenItem");
+                var i;
+                for (i = 0; i < x.length; i++) {
+                    x[i].style.filter = "blur(0)";
+                    x[i].style.pointerEvents = "auto";
+                    x[i].style.cursor = "pointer";
+                }
+                return true;
+            }
+            else alert("Incorrect Password");
+        }
+    </script>
 </html>
 <!---
 
