@@ -177,10 +177,18 @@ td a{
 #passWindow{
     width: 300px;
     height: 300px;
-    background-color: blue;
+    background-color: rgba(0,0,0,.8);
     position: absolute;
-    left: 50%;
-    margin-left: -50px;
-    top: 50%;
-    margin-top: -50px;
+    left: 0;
+    margin-left: auto;
+    right: 0;
+    margin-right: auto;
+    color: white;
+    display: inline-block;
+    visibility: hidden;
+}
+
+form{
+    display: inline-block;
+    
 }
