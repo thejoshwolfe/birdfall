@@ -604,6 +604,7 @@ function toggleGrid() {
   savePersistentState();
   render();
 }
+
 ["serializationTextarea", "shareLinkTextbox"].forEach(function(id) {
   document.getElementById(id).addEventListener("keydown", function(event) {
     // let things work normally
@@ -1626,6 +1627,7 @@ var fruitColors2 = ["black","black","black","black","black"];
 
 var spikeColors1 = ["#999", "#444", "#555", "#777"];    //spike, support, box, bolt
 var spikeColors2 = ["black", "black", "black", "black"];
+var spikeColors3 = ["#333", "#333", "#333", "#777"];
 
 var blockColors1 = [
     ["#de5a6d","#fa65dd","#c367e3","#9c62fa","#625ff0"],
@@ -1656,7 +1658,7 @@ var themes = [  //name, background, material, surface, curlyOutline, blockColors
   //["sky",],
   ["Spring", bg1, "#976537", "#95ff45", true, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
   ["Winter", bg1, "#30455B", "white", true,  snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
-  ["Classic", "#8888ff", "#844204", "#282", false,  snakeColors2, blockColors1, spikeColors1, fruitColors1, "green", textStyle4],
+  ["Classic", "#8888ff", "#844204", "#282", false,  snakeColors2, blockColors1, spikeColors3, fruitColors1, "green", textStyle4],
   ["Summer", bg2, "#734d26", "#009933", true,  snakeColors3, blockColors3, spikeColors1, fruitColors1, "green", textStyle3],
   ["Dream", bg3, "#00aaff", "#ffb3ec", true,  snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2],
   ["Midnight Rainbow", bg4, "black", "rainbow", false,  snakeColors1, blockColors2, spikeColors2, "white", "white", textStyle1]
