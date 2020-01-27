@@ -100,7 +100,7 @@ td a{
     margin-right: 25%;
     text-align: center;
     color: white;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
 }
 
 .topButton{
@@ -145,7 +145,7 @@ td a{
     width: 50%;
     margin-left: 25%;
     margin-right: 25%;
-    margin-bottom: 5px;
+    position: relative;
 }
 
 #showButton{
@@ -154,6 +154,9 @@ td a{
     display: inline-block;
     padding: 5px;
     font-size: 12px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
 
 #showButton:hover{
@@ -170,9 +173,11 @@ td a{
 }
 
 #note{
-    display: inline-block;
     font-size: 12px;
     float: right;
+    position: absolute;
+    bottom: 0;
+    right: 0;
 }
 
 #passWindow{
