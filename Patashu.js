@@ -237,108 +237,18 @@ function decompressSerialization(string) {
   return result;
 }
 
+function stringifyReplay() {
+  throw asdf; // TODO
+}
+function parseAndLoadReplay(string) {
+  throw asdf; // TODO
+}
+
 function saveToUrlBar(withReplay) {
   var hash = "#level=" + compressSerialization(stringifyLevel(level));
   if (withReplay) {
     hash += "#replay=" + stringifyReplay();
   }
-  location.hash = hash;
-}
-
-var replayMagicNumber = "nmGTi8PB";
-function stringifyReplay() {
-  var output = replayMagicNumber + "&";
-  // only specify the snake id in an input if it's different from the previous.
-  // the first snake index is 0 to optimize for the single-snake case.
-  var currentSnakeId = 0;
-  for (var i = 0; i < unmoveStuff.undoStack.length; i++) {
-    var firstChange = unmoveStuff.undoStack[i][0];
-    if (firstChange[0] !== "i") throw unreachable();
-    var snakeId = firstChange[1];
-    var dr = firstChange[2];
-    var dc = firstChange[3];
-    var directionCode;
-    if      (dr ===-1 && dc === 0) directionCode = "u";
-    else if (dr === 0 && dc ===-1) directionCode = "l";
-    else if (dr === 1 && dc === 0) directionCode = "d";
-    else if (dr === 0 && dc === 1) directionCode = "r";
-    else throw unreachable();
-    if (snakeId !== currentSnakeId) {
-      output += snakeId; // int to string
-      currentSnakeId = snakeId;
-    }
-    output += directionCode;
-  }
-  return output;
-}
-function parseAndLoadReplay(string) {
-  string = decompressSerialization(string);
-  var expectedPrefix = replayMagicNumber + "&";
-  if (string.substring(0, expectedPrefix.length) !== expectedPrefix) throw new Error("unrecognized replay string");
-  var cursor = expectedPrefix.length;
-
-  // the starting snakeid is 0, which may not exist, but we only validate it when doing a move.
-  activeSnakeId = 0;
-  while (cursor < string.length) {
-    var snakeIdStr = "";
-    var c = string.charAt(cursor);
-    cursor += 1;
-    while ('0' <= c && c <= '9') {
-      snakeIdStr += c;
-      if (cursor >= string.length) throw new Error("replay string has unexpected end of input");
-      c = string.charAt(cursor);
-      cursor += 1;
-    }
-    if (snakeIdStr.length > 0) {
-      activeSnakeId = parseInt(snakeIdStr);
-      // don't just validate when switching snakes, but on every move.
-    }
-
-    // doing a move.
-    if (!getSnakes().some(function(snake) {
-      return snake.id === activeSnakeId;
-    })) {
-      throw new Error("invalid snake id: " + activeSnakeId);
-    }
-    switch (c) {
-      case 'l': move( 0, -1); break;
-      case 'u': move(-1,  0); break;
-      case 'r': move( 0,  1); break;
-      case 'd': move( 1,  0); break;
-      default: throw new Error("replay string has invalid direction: " + c);
-    }
-  }
-
-  // now that the replay was executed successfully, undo it all so that it's available in the redo buffer.
-  reset(unmoveStuff);
-  document.getElementById("removeButton").classList.add("click-me");
-}
-
-var currentSerializedLevel;
-function saveLevel() {
-  if (isDead()) return alert("Can't save while you're dead!");
-  var serializedLevel = compressSerialization(stringifyLevel(level));
-  currentSerializedLevel = serializedLevel;
-  var hash = "#level=" + serializedLevel;
-  expectHash = hash;
-  location.hash = hash;
-
-  // This marks a starting point for solving the level.
-  unmoveStuff.undoStack = [];
-  unmoveStuff.redoStack = [];
-  editorHasBeenTouched = false;
-  undoStuffChanged(unmoveStuff);
-}
-
-function saveReplay() {
-  if (dirtyState === EDITOR_DIRTY) return alert("Can't save a replay with unsaved editor changes.");
-  // preserve the level in the url bar.
-  var hash = "#level=" + currentSerializedLevel;
-  if (dirtyState === REPLAY_DIRTY) {
-    // there is a replay to save
-    hash += "#replay=" + compressSerialization(stringifyReplay());
-  }
-  expectHash = hash;
   location.hash = hash;
 }
 
@@ -457,8 +367,8 @@ document.addEventListener("keydown", function(event) {
       if (!persistentState.showEditor && modifierMask === 0)     { move(1, 0); break; }
       if ( persistentState.showEditor && modifierMask === 0)     { setPaintBrushTileCode(SPIKE); break; }
       if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("resize"); break; }
-      if (!persistentState.showEditor && modifierMask === CTRL)  { saveReplay(); break; }
-      if (modifierMask === (CTRL|SHIFT))                         { saveReplay(); break; }
+      if (modifierMask ===  CTRL       ) { saveToUrlBar(); break; }
+      if (modifierMask === (CTRL|SHIFT)) { saveToUrlBar(true); break; }
       return;
     case "X".charCodeAt(0):
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(EXIT); break; }
@@ -544,7 +454,7 @@ document.getElementById("showGridButton").addEventListener("click", function() {
   toggleGrid();
 });
 document.getElementById("saveProgressButton").addEventListener("click", function() {
-  saveReplay();
+  saveToUrlBar(true);
 });
 document.getElementById("restartButton").addEventListener("click", function() {
   reset(unmoveStuff);
@@ -1307,15 +1217,6 @@ function undoChanges(changes, changeLog) {
     var paradoxDescription = undoChange(changes[i]);
     if (paradoxDescription != null) paradoxes.push(paradoxDescription);
   }
-    
-  var lastChange = changes[changes.length - 1];
-  if (lastChange[0] === "i") {
-    // replay animation
-    animationQueue = lastChange[4];
-    animationQueueCursor = 0;
-    freshlyRemovedAnimatedObjects = lastChange[5];
-    animationStart = new Date().getTime();
-  }
 
   function undoChange(change) {
     // note: everything here is going backwards: to -> from
@@ -1458,57 +1359,6 @@ function undoStuffChanged(undoStuff) {
     paradoxDivContent += "Time Travel Paradox! " + uniqueParadoxes[i];
   });
   document.getElementById("paradoxDiv").innerHTML = paradoxDivContent;
-  
-    updateDirtyState();
-
-  if (unmoveStuff.redoStack.length === 0) {
-    document.getElementById("removeButton").classList.remove("click-me");
-  }
-}
-
-var CLEAN_NO_TIMELINES = 0;
-var CLEAN_WITH_REDO = 1;
-var REPLAY_DIRTY = 2;
-var EDITOR_DIRTY = 3;
-var dirtyState = CLEAN_NO_TIMELINES;
-var editorHasBeenTouched = false;
-function updateDirtyState() {
-  if (haveCheatcodesBeenUsed() || editorHasBeenTouched) {
-    dirtyState = EDITOR_DIRTY;
-  } else if (unmoveStuff.undoStack.length > 0) {
-    dirtyState = REPLAY_DIRTY;
-  } else if (unmoveStuff.redoStack.length > 0) {
-    dirtyState = CLEAN_WITH_REDO;
-  } else {
-    dirtyState = CLEAN_NO_TIMELINES;
-  }
-
-  var saveLevelButton = document.getElementById("saveLevelButton");
-  // the save button clears your timelines
-  saveLevelButton.disabled = dirtyState === CLEAN_NO_TIMELINES;
-  if (dirtyState >= EDITOR_DIRTY) {
-    // you should save
-    saveLevelButton.classList.add("click-me");
-    saveLevelButton.textContent = "*" + "Save Level";
-  } else {
-    saveLevelButton.classList.remove("click-me");
-    saveLevelButton.textContent = "Save Level";
-  }
-
-  var saveProgressButton = document.getElementById("saveProgressButton");
-  // you can't save a replay if your level is dirty
-  if (dirtyState === CLEAN_WITH_REDO) {
-    saveProgressButton.textContent = "Forget Progress";
-  } else {
-    saveProgressButton.textContent = "Save Progress";
-  }
-  saveProgressButton.disabled = dirtyState >= EDITOR_DIRTY || dirtyState === CLEAN_NO_TIMELINES;
-}
-function haveCheatcodesBeenUsed() {
-  return !unmoveStuff.undoStack.every(function(changeLog) {
-    // normal movement always starts with "i".
-    return changeLog[0][0] === "i";
-  });
 }
 
 var persistentState = {
@@ -2794,13 +2644,6 @@ function makeScaleCoordinatesFunction(width1, width2) {
 }
 
 window.addEventListener("hashchange", function() {
-  if (location.hash === expectHash) {
-    // We're in the middle of saveLevel() or saveReplay().
-    // Don't react to that event.
-    expectHash = null;
-    return;
-  }
-  // The user typed into the url bar or used Back/Forward browser buttons, etc.
   loadFromLocationHash();
 });
 function loadFromLocationHash() {
@@ -2820,14 +2663,12 @@ function loadFromLocationHash() {
     alert(e);
     return false;
   }
-  loadLevel(level);
   if (hashPairs.length > 1) {
-    if (hashPairs[1][0] !== "replay") throw new Error("unexpected hash pair: " + hashPairs[1][0]);
-      parseAndLoadReplay(hashPairs[1][1]);
-  } catch (e) {
-      alert(e);
-      return false;
-    }
+    if (hashPairs[1][0] !== "replay") return false;
+    if (!parseAndLoadReplay(hashPairs[1][1])) return false;
+  }
+  loadLevel(level);
+  return true;
 }
 
 loadPersistentState();
