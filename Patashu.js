@@ -955,6 +955,20 @@ function newBlock(location) {
     locations: [location],
   };
 }
+function newFruit(location) {
+  var fruits = getObjectsOfType(FRUIT);
+  fruits.sort(compareId);
+  for (var i = 0; i < fruits.length; i++) {
+    if (fruits[i].id !== i) break;
+  }
+  return {
+    type: FRUIT,
+    id: i,
+    dead: false, // unused
+    locations: [location],
+  };
+}
+
 function paintAtLocation(location, changeLog) {
   if (typeof paintBrushTileCode === "number") {
     removeAnyObjectAtLocation(location, changeLog);
@@ -2160,6 +2174,10 @@ function render() {
       } else if (paintBrushTileCode === "b") {
         if (!(objectHere != null && objectHere.type === "b" && objectHere.id === paintBrushBlockId)) {
           drawObject(newBlock(hoverLocation));
+        }
+      } else if (paintBrushTileCode === "f") {
+        if (!(objectHere != null && objectHere.type === "f")) {
+          drawObject(newFruit(hoverLocation));
         }
       } else if (paintBrushTileCode === "resize") {
         void 0; // do nothing
