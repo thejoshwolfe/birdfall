@@ -955,20 +955,6 @@ function newBlock(location) {
     locations: [location],
   };
 }
-function newFruit(location) {
-  var fruits = getObjectsOfType(FRUIT);
-  fruits.sort(compareId);
-  for (var i = 0; i < fruits.length; i++) {
-    if (fruits[i].id !== i) break;
-  }
-  return {
-    type: FRUIT,
-    id: i,
-    dead: false, // unused
-    locations: [location],
-  };
-}
-
 function paintAtLocation(location, changeLog) {
   if (typeof paintBrushTileCode === "number") {
     removeAnyObjectAtLocation(location, changeLog);
@@ -1660,61 +1646,6 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
   return true;
 }
 
-var themeName = "Spring";   //Gooby
-var background, surface, material, snakeColors, blockColors, spikeColors, fruitColors, textStyle;
-var curlyOutline = false;
-
-var bg1 = "rgba(145, 198, 254 * rgba(133, 192, 255";
-var bg2 = "rgba(254, 198, 145 * rgba(255, 192, 133";
-var bg3 = "rgba(145, 254, 198 * rgba(117, 255, 192";
-var bg4 = "rgba(7, 7, 83 * rgba(0, 0, 70";
-
-var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];
-var snakeColors2 = ["#f00", "#0f0", "#00f", "#ff0"];
-var snakeColors3 = ["#BA145C", "#E91624", "#F75802", "#FEFE28"];
-
-var fruitColors1 = ["#ff0066","#ff36a6","#ff6b1f","#ff9900","#ff2600"];
-var fruitColors2 = ["black","black","black","black","black"];
-
-var spikeColors1 = ["#999", "#444", "#555", "#777"];    //spike, support, box, bolt
-var spikeColors2 = ["black", "black", "black", "black"];
-var spikeColors3 = ["#333", "#333", "#333", "#777"];
-
-var blockColors1 = [
-    ["#de5a6d","#fa65dd","#c367e3","#9c62fa","#625ff0"],
-    ["#853641","#963c84","#753d88","#5d3a96","#3a3990"]
-];
-var blockColors2 = [
-    ["#f2f2f2"],
-    ["#f2f2f2"]
-];
-var blockColors3 = [
-    ["#de7913","#7d46a0","#39868b","#41ccc2","#ded800"],
-    ["#8d4d0c","#532f6a","#2c686d","#207973","#999400"]
-];
-var blockColors4 = [
-    ["#150612", "#a52e8b", "#990077", "#d917af", "#4d003c"],
-    ["#8d4d0c","#532f6a","#2c686d","#207973","#999400"]
-];
-
-var fontSize = tileSize*5;
-var textStyle1 = ["" + fontSize + "px Impact", "#fdc122", "#fd0c0b"];    //font, Win, Lose
-var textStyle2 = ["" + fontSize + "px Impact", "#5702c6", "#ff0098"];
-var textStyle3 = ["" + fontSize + "px Impact", "#BA145C", "#F75802"];
-var textStyle4 = ["" + fontSize + "px Impact", "#ff0", "#f00"];
-
-var themeCounter = 0;
-
-var themes = [  //name, background, material, surface, curlyOutline, blockColors, spikeColors, fruitColors, stemColor
-  //["sky",],
-  ["Spring", bg1, "#976537", "#95ff45", true, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
-  ["Winter", bg1, "#30455B", "white", true,  snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
-  ["Classic", "#8888ff", "#844204", "#282", false,  snakeColors2, blockColors1, spikeColors3, fruitColors1, "green", textStyle4],
-  ["Summer", bg2, "#734d26", "#009933", true,  snakeColors3, blockColors3, spikeColors1, fruitColors1, "green", textStyle3],
-  ["Dream", bg3, "#00aaff", "#ffb3ec", true,  snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2],
-  ["Midnight Rainbow", bg4, "black", "rainbow", false,  snakeColors1, blockColors2, spikeColors2, "white", "white", textStyle1]
-];
-
 function activateAnySnakePlease() {
   var snakes = getSnakes();
   if (snakes.length === 0) return; // nope.avi
@@ -1976,43 +1907,6 @@ function render() {
   var context = canvas.getContext("2d");
   context.fillStyle = "#88f"; // sky
   context.fillRect(0, 0, canvas.width, canvas.height);
-    
-    themeName = themes[themeCounter][0];
-    if(themeName!="sky"){
-        background = themes[themeCounter][1];
-        material = themes[themeCounter][2];
-        surface = themes[themeCounter][3];
-        snakeColors = themes[themeCounter][5];
-        blockColors = themes[themeCounter][6];
-        spikeColors = themes[themeCounter][7];
-        fruitColors = themes[themeCounter][8];
-        textStyle = themes[themeCounter][10];
-        
-        curlyOutline = themes[themeCounter][4];
-        if(background.substr(0,1) == "#") {
-            context.fillStyle = background;
-            context.fillRect(0, 0, canvas.width, canvas.height);
-        }
-        else{
-            for(var i = 0; i<level.width; i++){   //checkerboard background
-                for(var j = 0; j<level.height; j++){
-                    var bgColor1= background.substr(0, background.indexOf('*')); 
-                    var bgColor2= background.substr(background.indexOf('*')+2, background.length); 
-                    var shade = (j+1)*.03+.5;
-                    if((i+j) % 2 == 0) context.fillStyle = bgColor1 + ", " + shade + ")";
-                    else context.fillStyle = bgColor2 + ", " + shade + ")";
-                    context.fillRect(i*tileSize, j*tileSize, tileSize, tileSize);
-                    //context.fillText(i+" "+j,i*tileSize, j*tileSize);
-                  }      
-            }
-        }
-    }
-    else{
-      var img=document.createElement('img');
-      //img.src='/Snakefall/Snakebird Images/sky2.jpeg';    
-      //context.drawImage(img,0,0,canvas.width, canvas.height)
-      //context.fillRect(0, 0, canvas.width, canvas.height);
-    }
 
   if (persistentState.showGrid && !persistentState.showEditor) {
     drawGrid();
@@ -2076,54 +1970,34 @@ function render() {
     }
     // begin by rendering the background connections for blocks
     objects.forEach(function(object) {
-      if (object.type !== BLOCK) return;
+      if (object.type !== "b") return;
       var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
-      var minR = Infinity;
-      var maxR = -Infinity;
-      var minC = Infinity;
-      var maxC = -Infinity;
-      object.locations.forEach(function(location) {
-        var rowcol = getRowcol(level, location);
-        if (rowcol.r < minR) minR = rowcol.r;
-        if (rowcol.r > maxR) maxR = rowcol.r;
-        if (rowcol.c < minC) minC = rowcol.c;
-        if (rowcol.c > maxC) maxC = rowcol.c;
-      });
-      var image = blockSupportRenderCache[object.id];
-      if (image == null) {
-        // render the support beams to a buffer
-        blockSupportRenderCache[object.id] = image = document.createElement("canvas");
-        image.width  = (maxC - minC + 1) * tileSize;
-        image.height = (maxR - minR + 1) * tileSize;
-        var bufferContext = image.getContext("2d");
-        // Make a stencil that excludes the insides of blocks.
-        // Then when we render the support beams, we won't see the supports inside the block itself.
-        bufferContext.beginPath();
-        // Draw a path around the whole screen in the opposite direction as the rectangle paths below.
-        // This means that the below rectangles will be removing area from the greater rectangle.
-        bufferContext.rect(image.width, 0, -image.width, image.height);
-        for (var i = 0; i < object.locations.length; i++) {
-          var rowcol = getRowcol(level, object.locations[i]);
-          var r = rowcol.r - minR;
-          var c = rowcol.c - minC;
-          bufferContext.rect(c * tileSize, r * tileSize, tileSize, tileSize);
-        }
-        bufferContext.clip();
-        for (var i = 0; i < object.locations.length - 1; i++) {
-          var rowcol1 = getRowcol(level, object.locations[i]);
-          rowcol1.r -= minR;
-          rowcol1.c -= minC;
-          var rowcol2 = getRowcol(level, object.locations[i + 1]);
-          rowcol2.r -= minR;
-          rowcol2.c -= minC;
-          var cornerRowcol = {r:rowcol1.r, c:rowcol2.c};
-          drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, blockColors[1][object.id % blockColors[1].length]);
-          drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, blockColors[1][object.id % blockColors[1].length]);
-        }
+      // Make a stencil that excludes the insides of blocks.
+      // Then when we render the support beams, we won't see the supports inside the block itself.
+      context.save();
+      context.beginPath();
+      // Draw a path around the whole screen in the opposite direction as the rectangle paths below.
+      // This means that the below rectangles will be removing area from the greater rectangle.
+      context.rect(canvas.width, 0, -canvas.width, canvas.height);
+      for (var i = 0; i < object.locations.length; i++) {
+        var rowcol = getRowcol(level, object.locations[i]);
+        rowcol.r += animationDisplacementRowcol.r;
+        rowcol.c += animationDisplacementRowcol.c;
+        context.rect(rowcol.c * tileSize, rowcol.r * tileSize, tileSize, tileSize);
       }
-      var r = minR + animationDisplacementRowcol.r;
-      var c = minC + animationDisplacementRowcol.c;
-      context.drawImage(image, c * tileSize, r * tileSize);
+      context.clip();
+      for (var i = 0; i < object.locations.length - 1; i++) {
+        var rowcol1 = getRowcol(level, object.locations[i]);
+        rowcol1.r += animationDisplacementRowcol.r;
+        rowcol1.c += animationDisplacementRowcol.c;
+        var rowcol2 = getRowcol(level, object.locations[i + 1]);
+        rowcol2.r += animationDisplacementRowcol.r;
+        rowcol2.c += animationDisplacementRowcol.c;
+        var cornerRowcol = {r:rowcol1.r, c:rowcol2.c};
+        drawConnector(rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, blockBackground[object.id % blockBackground.length]);
+        drawConnector(rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, blockBackground[object.id % blockBackground.length]);
+      }
+      context.restore();
     });
 
     // terrain
@@ -2174,10 +2048,6 @@ function render() {
       } else if (paintBrushTileCode === "b") {
         if (!(objectHere != null && objectHere.type === "b" && objectHere.id === paintBrushBlockId)) {
           drawObject(newBlock(hoverLocation));
-        }
-      } else if (paintBrushTileCode === "f") {
-        if (!(objectHere != null && objectHere.type === "f")) {
-          drawObject(newFruit(hoverLocation));
         }
       } else if (paintBrushTileCode === "resize") {
         void 0; // do nothing
@@ -2357,40 +2227,6 @@ function render() {
       case "b":
         drawBlock(object);
         break;
-        case "f":
-        rowcol = getRowcol(level, object.locations[0]);
-        var c = rowcol.c;
-        var r = rowcol.r;
-        var startC = c*tileSize+tileSize/2;
-        var startR = r*tileSize+tileSize*.2;
-        var resize = tileSize * 1.7;
-        context.fillStyle = fruitColors[object.id % fruitColors.length];
-        if(themeName != "Classic"){
-            if(surface == "rainbow") {
-                context.fillStyle = "black";
-                context.lineWidth = tileSize/8;
-                context.strokeStyle = "white";
-                resize = tileSize * 1.4;
-            }
-            //context.fillStyle = "#ff6b45";
-            context.beginPath();
-            context.moveTo(startC, startR);
-            context.bezierCurveTo(startC-resize*.1, startR-resize*.05, startC-resize*.25, startR-resize*.1, startC-resize*.3, startR+resize*.05);
-            context.bezierCurveTo(startC-resize*.35, startR+resize*.15, startC-resize*.3, startR+resize*.6, startC, startR+resize*.5);
-            context.bezierCurveTo(startC+resize*.3, startR+resize*.6, startC+resize*.35, startR+resize*.15, startC+resize*.3, startR+resize*.05);
-            context.bezierCurveTo(startC+resize*.25, startR-resize*.05, startC+resize*.1, startR-resize*.1, startC, startR);
-            context.closePath();
-            context.fill();
-            if(surface == "rainbow") context.stroke();
-
-            context.beginPath();
-            context.moveTo(startC,startR);
-            context.bezierCurveTo(startC-resize*.1, startR-resize*.05, startC, startR-resize*.1, startC-resize*.1, startR-resize*.15);
-            context.bezierCurveTo(startC, startR-resize*.1, startC+resize*.05, startR-resize*.1, startC, startR);
-            context.fillStyle = themes[themeCounter][9];
-            context.fill();
-        }
-        break;
       default: throw asdf;
     }
   }
@@ -2516,223 +2352,16 @@ function render() {
   }
   
   function drawWall(r, c, adjacentTiles) {
-    //drawRect(r, c, "#976537");    
-    drawTileNew(r, c, isWall, 0.2, material, curlyOutline);
-    drawTileOutlines(r, c, isWall, 0.2, curlyOutline);
-    context.save();
-    if(curlyOutline) drawBushes(r, c, isWall);
-    context.restore();
-    context.fillStyle = "#895C33"; // dirt edge
-    //drawTileOutlines(r, c, isWall, 0.2, false);
+    drawRect(r, c, "#844204"); // dirt
+    context.fillStyle = "#282"; // grass
+    drawTileOutlines(r, c, isWall, 0.2);
 
     function isWall(dc, dr) {
       var tileCode = adjacentTiles[1 + dr][1 + dc];
       return tileCode == null || tileCode === WALL;
     }
   }
-  function drawTileNew(r, c, isOccupied, outlineThickness, fillStyle, curlyOutline){
-        context.fillStyle = fillStyle;  
-        var tileColor = "blue";
-        if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {bl:10,br:10}, true, false);
-        else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tl:10,bl:10}, true, false);
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tl:10,tr:10}, true, false);
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tr:10,br:10}, true, false);
-        else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {bl:10}, true, false);
-        else if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {br:10}, true, false);
-        else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tl:10}, true, false);
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tr:10}, true, false);
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 10, true, false);
-        else roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 0, true, false);
-        
-        if(isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(1, 1) && curlyOutline) {
-            context.fillRect((c+1)*tileSize, (r+1)*tileSize, tileSize/6, tileSize/6);
-            //context.globalCompositeOperation = "destination-out";
-            context.beginPath();
-            context.arc((c+1)*tileSize+tileSize/6, (r+1)*tileSize+tileSize/6, tileSize/6, 0, 2*Math.PI);
-            context.closePath();
-            
-            var bgColor;
-            if((c+r) % 2 == 0) bgColor = background.substr(0, background.indexOf('*'));
-            else bgColor = background.substr(background.indexOf('*')+2, background.length);
-            var r1, r2, b1, b2, g1, g2;
-            r1 = bgColor.substr(5, bgColor.indexOf(",")-5);
-            g1 = bgColor.substr(bgColor.indexOf(",")+1, bgColor.indexOf(",")-4);
-            b1 = bgColor.substr(bgColor.indexOf(",", bgColor.indexOf(",")+1)+1, bgColor.indexOf(",")-4);
-            var shade = (r+1)*.03+.5;
-            if(shade>1)
-                shade = 1;
-            r2 = 255 + (r1-255) * shade;
-            g2 = 255 + (g1-255) * shade;
-            b2 = 255 + (b1-255) * shade;
-            context.fillStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
-            context.fill();
-            context.globalCompositeOperation = "source-over";            
-        }
-        if(isOccupied(-1, 0) && isOccupied(0, 1) && !isOccupied(-1, 1) && curlyOutline) {
-            context.fillRect(c*tileSize-tileSize/6, (r+1)*tileSize, tileSize/6, tileSize/6);
-            //context.globalCompositeOperation = "destination-out";
-            context.beginPath();
-            context.arc(c*tileSize-tileSize/6, (r+1)*tileSize+tileSize/6, tileSize/6, 0, 2*Math.PI);
-            context.closePath();
-            
-            var bgColor;
-            if((c+r) % 2 == 0) bgColor = background.substr(0, background.indexOf('*'));
-            else bgColor = background.substr(background.indexOf('*')+2, background.length);
-            var r1, r2, b1, b2, g1, g2;
-            r1 = bgColor.substr(5, bgColor.indexOf(",")-5);
-            g1 = bgColor.substr(bgColor.indexOf(",")+1, bgColor.indexOf(",")-4);
-            b1 = bgColor.substr(bgColor.indexOf(",", bgColor.indexOf(",")+1)+1, bgColor.indexOf(",")-4);
-            var shade = (r+1)*.03+.5;
-            if(shade>1)
-                shade = 1;
-            r2 = 255 + (r1-255) * shade;
-            g2 = 255 + (g1-255) * shade;
-            b2 = 255 + (b1-255) * shade;
-            context.fillStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
-            context.fill();
-            context.globalCompositeOperation = "source-over";
-        }
-    }
-    
-  function drawTileOutlines(r, c, isOccupied, outlineThickness, curlyOutline) { //Gooby
-    if(surface != "rainbow") {
-        context.fillStyle = surface;
-    }
-    else{
-        context.fillStyle = "white";
-        var mod = (r+c) % 17;
-        switch(mod){
-            case 0: context.fillStyle = "#ff004c"; break;
-            case 1: context.fillStyle = "#e30000"; break;
-            case 2: context.fillStyle = "#ff4c00"; break;
-            case 3: context.fillStyle = "#ff9900"; break;
-            case 4: context.fillStyle = "#ffe500"; break;
-            case 5: context.fillStyle = "#cbff00"; break;
-            case 6: context.fillStyle = "#7fff00"; break;
-            case 7: context.fillStyle = "#00ff19"; break;
-            case 8: context.fillStyle = "#00ff66"; break;
-            case 9: context.fillStyle = "#00ffb2"; break;
-            case 10: context.fillStyle = "#00ffff"; break;
-            case 11: context.fillStyle = "#00b2ff"; break;
-            case 12: context.fillStyle = "#3200ff"; break;
-            case 13: context.fillStyle = "#5702c6"; break;
-            case 14: context.fillStyle = "#cc00ff"; break;
-            case 15: context.fillStyle = "#ff00e5"; break;
-            case 16: context.fillStyle = "#ff0098"; break;
-        }
-    }
-    var complement = 1 - outlineThickness;
-    var outlinePixels = outlineThickness * tileSize;
-    var complementPixels = (1 - 2 * outlineThickness) * tileSize;
-      
-    
-    if (curlyOutline && !isOccupied(0, -1)){  
-        if(!isOccupied(-1, 0) && isOccupied(1, 0)){
-            context.beginPath();
-            context.moveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.05, r*tileSize+tileSize*.3, c*tileSize+tileSize*.3, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.4, c*tileSize+tileSize*.6, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.4, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
-            context.lineTo(c*tileSize+tileSize, r*tileSize);
-            context.lineTo(c*tileSize+tileSize*.2, r*tileSize);
-            context.bezierCurveTo(c*tileSize-tileSize*.2, r*tileSize-tileSize*.05, c*tileSize-tileSize*.15, r*tileSize+tileSize*.5, c*tileSize+tileSize*.1, r*tileSize+tileSize*.25);
-            context.closePath();
-        }
-        else if(isOccupied(-1, 0) && !isOccupied(1, 0)){
-            context.beginPath();
-            context.moveTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.95, r*tileSize+tileSize*.3, c*tileSize+tileSize*.7, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.65, r*tileSize+tileSize*.4, c*tileSize+tileSize*.4, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.3, c*tileSize+tileSize*.1, r*tileSize+tileSize*.4, c*tileSize, r*tileSize+tileSize*.2);
-            context.lineTo(c*tileSize, r*tileSize);
-            context.lineTo(c*tileSize+tileSize*.8, r*tileSize);
-            context.bezierCurveTo((c+1)*tileSize+tileSize*.2, r*tileSize-tileSize*.05, (c+1)*tileSize+tileSize*.15, r*tileSize+tileSize*.5, (c+1)*tileSize-tileSize*.1, r*tileSize+tileSize*.25);
-            context.closePath();
-        }
-        else if(!isOccupied(-1, 0) && !isOccupied(1, 0)){
-            context.beginPath();
-            context.moveTo(c*tileSize+tileSize*.9, r*tileSize-tileSize*0);
-            context.lineTo(c*tileSize+tileSize*.2, r*tileSize);
-            context.bezierCurveTo(c*tileSize-tileSize*.2, r*tileSize-tileSize*.05, c*tileSize-tileSize*.15, r*tileSize+tileSize*.5, c*tileSize+tileSize*.1, r*tileSize+tileSize*.25);
-            context.bezierCurveTo(c*tileSize+tileSize*.05, r*tileSize+tileSize*.3, c*tileSize+tileSize*.3, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.4, c*tileSize+tileSize*.6, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.8, r*tileSize+tileSize*.4, c*tileSize+tileSize*.9, r*tileSize+tileSize*.2);
-            context.bezierCurveTo((c+1)*tileSize-tileSize*.1, r*tileSize+tileSize*.4, (c+1)*tileSize+tileSize*.3, r*tileSize+tileSize*.3, (c+1)*tileSize, r*tileSize+tileSize*.02);
-            context.closePath();
-        }
-        else{
-            context.beginPath();
-            context.moveTo(c*tileSize, r*tileSize);
-            context.lineTo(c*tileSize, r*tileSize+tileSize*.15);
-            context.bezierCurveTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.4, c*tileSize+tileSize*.3, r*tileSize+tileSize*.3, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.3, c*tileSize+tileSize*.6, r*tileSize+tileSize*.3, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.4, c*tileSize+tileSize*.9, r*tileSize+tileSize*.3, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
-            context.lineTo(c*tileSize+tileSize, r*tileSize);
-            context.closePath();
-        }
-            context.fill();
-    }
-      else if(!curlyOutline && !isOccupied(0, -1)){ context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels);
-          
-      }
-        if (!curlyOutline && !isOccupied(-1, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
-        if (!curlyOutline && !isOccupied( 1, -1)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
-        if (!curlyOutline && !isOccupied(-1,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
-        if (!curlyOutline && !isOccupied( 1,  1)) context.fillRect((c+complement) * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
-        if (!curlyOutline && !isOccupied( 0,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, tileSize, outlinePixels);
-        if (!curlyOutline && !isOccupied(-1,  0)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, tileSize);
-        if (!curlyOutline && !isOccupied( 1,  0)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, tileSize);
-  }
-
-    function drawBushes(r, c, isOccupied){
-        if(!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(1, -1)){
-            /*context.shadowColor = "#666";
-            context.shadowOffsetX = -.5;
-            context.shadowOffsetY = -.5;
-            context.shadowBlur = 1;*/
-            
-            context.beginPath();
-            context.moveTo((c+1)*tileSize, r*tileSize);
-            context.lineTo((c+1)*tileSize, r*tileSize-tileSize*.4);
-            context.bezierCurveTo((c+1)*tileSize-tileSize*.1,r*tileSize-tileSize*.4,(c+1)*tileSize-tileSize*.2,r*tileSize-tileSize*.4,(c+1)*tileSize-tileSize*.2, r*tileSize-tileSize*.2);
-            context.bezierCurveTo((c+1)*tileSize-tileSize*.3,r*tileSize-tileSize*.2,(c+1)*tileSize-tileSize*.4,r*tileSize-tileSize*.1,(c+1)*tileSize-tileSize*.3, r*tileSize);
-            context.lineTo((c+1)*tileSize, r*tileSize);
-            context.closePath();
-            context.fill();
-            
-            context.beginPath();
-            context.moveTo((c+1)*tileSize, r*tileSize-tileSize*.4);
-            context.bezierCurveTo((c+1)*tileSize-tileSize*.1,r*tileSize-tileSize*.4,(c+1)*tileSize-tileSize*.2,r*tileSize-tileSize*.4,(c+1)*tileSize-tileSize*.2, r*tileSize-tileSize*.2);
-            context.bezierCurveTo((c+1)*tileSize-tileSize*.3,r*tileSize-tileSize*.2,(c+1)*tileSize-tileSize*.4,r*tileSize-tileSize*.1,(c+1)*tileSize-tileSize*.3, r*tileSize);
-        }
-        
-        if(!isOccupied(0, -1) && isOccupied(-1, 0) && isOccupied(-1, -1)){
-            /*context.shadowColor = "#666";
-            context.shadowOffsetX = .5;
-            context.shadowOffsetY = -.5;
-            context.shadowBlur = 1;*/
-            
-            context.beginPath();
-            context.moveTo(c*tileSize, r*tileSize);
-            context.lineTo(c*tileSize, r*tileSize-tileSize*.4);
-            context.bezierCurveTo(c*tileSize+tileSize*.1,r*tileSize-tileSize*.4,c*tileSize+tileSize*.2,r*tileSize-tileSize*.4,c*tileSize+tileSize*.2, r*tileSize-tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.3,r*tileSize-tileSize*.2,c*tileSize+tileSize*.4,r*tileSize-tileSize*.1,c*tileSize+tileSize*.3, r*tileSize);
-            context.lineTo(c*tileSize, r*tileSize);
-            context.closePath();
-            context.fill();
-            
-            context.restore();
-            
-            context.beginPath();
-            context.moveTo(c*tileSize, r*tileSize-tileSize*.4);
-            context.bezierCurveTo(c*tileSize+tileSize*.1,r*tileSize-tileSize*.4,c*tileSize+tileSize*.2,r*tileSize-tileSize*.4,c*tileSize+tileSize*.2, r*tileSize-tileSize*.2);
-            context.bezierCurveTo(c*tileSize+tileSize*.3,r*tileSize-tileSize*.2,c*tileSize+tileSize*.4,r*tileSize-tileSize*.1,c*tileSize+tileSize*.3, r*tileSize);
-            /*context.strokeStyle = "#7dff1a";
-            context.stroke();*/        
-        }
-    }
-    
-    function drawTileOutlines2(r, c, isOccupied, outlineThickness) {
+  function drawTileOutlines(r, c, isOccupied, outlineThickness) {
     var complement = 1 - outlineThickness;
     var outlinePixels = outlineThickness * tileSize;
     var complementPixels = (1 - 2 * outlineThickness) * tileSize;
@@ -2745,43 +2374,17 @@ function render() {
     if (!isOccupied(-1,  0)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, tileSize);
     if (!isOccupied( 1,  0)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, tileSize);
   }
-    
-  function drawSpikes(r, c, adjacentTiles) {
+  function drawSpikes(r, c) {
     var x = c * tileSize;
     var y = r * tileSize;
-    context.fillStyle = spikeColors[0];
-      
+    context.fillStyle = "#333";
     context.beginPath();
-    context.moveTo(x + tileSize * 0.25, y + tileSize * 0.3); //top spikes
-    context.lineTo(x + tileSize * 0.35, y + tileSize * 0.0);
-    context.lineTo(x + tileSize * 0.45, y + tileSize * 0.3);
-    context.lineTo(x + tileSize * 0.55, y + tileSize * 0.3);
-    context.lineTo(x + tileSize * 0.65, y + tileSize * 0.0);
-    context.lineTo(x + tileSize * 0.75, y + tileSize * 0.3);
-      
-    context.moveTo(x + tileSize * 0.7, y + tileSize * 0.25); //right spikes
-    context.lineTo(x + tileSize * 1.0, y + tileSize * 0.35);
-    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.45);
-    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.55);
-    context.lineTo(x + tileSize * 1.0, y + tileSize * 0.65);
-    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.75);
-      
-    context.moveTo(x + tileSize * 0.75, y + tileSize * 0.7); //bottom spikes
-    context.lineTo(x + tileSize * 0.65, y + tileSize * 1.0);
-    context.lineTo(x + tileSize * 0.55, y + tileSize * 0.7);
-    context.lineTo(x + tileSize * 0.45, y + tileSize * 0.7);
-    context.lineTo(x + tileSize * 0.35, y + tileSize * 1.0);
-    context.lineTo(x + tileSize * 0.25, y + tileSize * 0.7);
-      
-    context.moveTo(x + tileSize * 0.3, y + tileSize * 0.75); //left spikes
-    context.lineTo(x + tileSize * 0.0, y + tileSize * 0.65);
-    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.55);
-    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.45);
-    context.lineTo(x + tileSize * 0.0, y + tileSize * 0.35);
-    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.25);
-    context.closePath();
-      
-    /*context.lineTo(x + tileSize * 1.0, y + tileSize * 0.4);      
+    context.moveTo(x + tileSize * 0.3, y + tileSize * 0.3);
+    context.lineTo(x + tileSize * 0.4, y + tileSize * 0.0);
+    context.lineTo(x + tileSize * 0.5, y + tileSize * 0.3);
+    context.lineTo(x + tileSize * 0.6, y + tileSize * 0.0);
+    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.3);
+    context.lineTo(x + tileSize * 1.0, y + tileSize * 0.4);
     context.lineTo(x + tileSize * 0.7, y + tileSize * 0.5);
     context.lineTo(x + tileSize * 1.0, y + tileSize * 0.6);
     context.lineTo(x + tileSize * 0.7, y + tileSize * 0.7);
@@ -2792,148 +2395,9 @@ function render() {
     context.lineTo(x + tileSize * 0.0, y + tileSize * 0.6);
     context.lineTo(x + tileSize * 0.3, y + tileSize * 0.5);
     context.lineTo(x + tileSize * 0.0, y + tileSize * 0.4);
-    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.3);*/
+    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.3);
     context.fill();
-    drawSpikeSupports(r, c, isSpike, isWall);
-      
-    function isSpike(dc, dr) {
-        var tileCode = adjacentTiles[1 + dr][1 + dc];
-        return tileCode == null || tileCode === SPIKE;
-    }
-    function isWall(dc, dr) {
-        var tileCode = adjacentTiles[1 + dr][1 + dc];
-        return tileCode == null || tileCode === WALL;
-    }
   }
-    
-    function drawSpikeSupports(r, c, isOccupied, canConnect){
-        var boltBool = false;
-        var occupiedCount = 0;
-        if(canConnect(0, 1)){
-            context.fillStyle = spikeColors[1];
-            context.fillRect(c*tileSize+(tileSize*.3), r*tileSize+(tileSize*.8), tileSize*.4, tileSize*.4);
-            boltBool = true;
-        }
-        if(canConnect(0, -1) && !canConnect(0, 1)){
-            if(!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(1, -1)){}
-            else{
-                context.fillStyle = spikeColors[1];
-                context.fillRect(c*tileSize+(tileSize*.3), r*tileSize, tileSize*.4, tileSize*.4);
-                boltBool = true;
-            }
-        }
-        if(canConnect(-1, 0) && !canConnect(0, 1)){
-            if(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(-1, 1)){}
-            else{
-                context.fillStyle = spikeColors[1];
-                context.fillRect(c*tileSize, r*tileSize+(tileSize*.3), tileSize*.4, tileSize*.4);
-                boltBool = true;
-            }
-        }
-        if(canConnect(1, 0) && !canConnect(0, 1)){
-            if(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(1, -1) && canConnect(1, 1)){}
-            else{
-                context.fillStyle = spikeColors[1];
-                context.fillRect(c*tileSize+(tileSize*.8), r*tileSize+(tileSize*.3), tileSize*.4, tileSize*.4);
-                boltBool = true;
-            }
-        }
-        
-        context.fillStyle = spikeColors[2];
-        if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)){                                             //TOUCHING ONE
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize*.8, {bl:4,br:4}, true, false);
-            boltBool = true;
-        }
-        else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)){
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize, tileSize*.6, {tl:4,bl:4}, true, false);
-            boltBool = true;
-        }
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)){
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.8, {tl:4,tr:4}, true, false);
-            boltBool = true;
-        }
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)){
-            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {tr:4,br:4}, true, false);
-            boltBool = true;
-        }
-        else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)){                                         //TOUCHING TWO (CORNERS)
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize*.8, {bl:4}, true, false);
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {bl:4}, true, false);
-            if(!canConnect(1, -1)) boltBool = true;
-        }
-        else if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)){
-            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {br:4}, true, false);
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize*.8, {br:4}, true, false);        
-            if(!canConnect(-1, -1)) boltBool = true;
-        }
-        else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)){
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {tl:4}, true, false);
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.8, {tl:4}, true, false);
-            if(!canConnect(1, 1)) boltBool = true;
-      }
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)){
-            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {tr:4}, true, false);
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.8, {tr:4}, true, false);
-            if(!canConnect(-1, 1)) boltBool = true;
-       }
-        else if (isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)){                                         //TOUCHING TWO (OPPOSITES)
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize, 0, true, false);
-        }
-        else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)){
-            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize, tileSize*.6, 0, true, false);
-        }
-        else if (isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)){                                         //TOUCHING THREE
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize, 0, true, false);
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, 0, true, false);
-             boltBool = true;
-       }
-        else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)){                                         
-            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize, tileSize*.6, 0, true, false);
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize*.8, 0, true, false);
-             boltBool = true;
-       }
-        else if (isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)){                                         
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize, 0, true, false);
-            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, 0, true, false);
-            boltBool = true;
-        }
-        else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)){                                         
-            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize, tileSize*.6, 0, true, false);
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.8, 0, true, false);
-             boltBool = true;
-       }
-        else if (isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)){                                              //TOUCHING FOUR                                 
-            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize, tileSize*.6, 0, true, false);
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize, 0, true, false);
-            //boltBool = true;
-        }
-        else{
-            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.6, 0, true, false);
-            boltBool = true;
-        }
-        
-        if (boltBool) drawBolt(r, c);
-    }
-    
-    function drawBolt(r, c){
-        context.strokeStyle = spikeColors[3];
-        context.beginPath();
-        context.arc(c*tileSize+(tileSize*.55), r*tileSize+(tileSize*.45), 4, -.7*Math.PI, .2*Math.PI);
-        context.lineTo(c*tileSize+(tileSize*.45),r*tileSize+(tileSize*.35));
-        context.closePath();
-        context.fillStyle = spikeColors[3];
-        context.fill();
-        context.stroke();
-        
-        context.beginPath();
-        context.moveTo(c*tileSize+(tileSize*.43),r*tileSize+(tileSize*.47));
-        context.arc(c*tileSize+(tileSize*.48), r*tileSize+(tileSize*.52), 4, .2*Math.PI, -.75*Math.PI);
-        //context.lineTo(c*tileSize+(tileSize*.4),r*tileSize+(tileSize*.6));
-        context.closePath();
-        context.fillStyle = spikeColors[3];
-        context.fill();
-        context.stroke();
-    }
   function drawConnector(r1, c1, r2, c2, color) {
     // either r1 and r2 or c1 and c2 must be equal
     if (r1 > r2 || c1 > c2) {
@@ -2959,8 +2423,8 @@ function render() {
     rowcols.forEach(function(rowcol) {
       var r = rowcol.r + animationDisplacementRowcol.r;
       var c = rowcol.c + animationDisplacementRowcol.c;
-      context.fillStyle = blockColors[0][block.id % blockColors[0].length];
-      drawTileOutlines2(r, c, isAlsoThisBlock, 0.3);
+      context.fillStyle = blockForeground[block.id % blockForeground.length];
+      drawTileOutlines(r, c, isAlsoThisBlock, 0.3);
       function isAlsoThisBlock(dc, dr) {
         for (var i = 0; i < rowcols.length; i++) {
           var otherRowcol = rowcols[i];
@@ -3001,50 +2465,6 @@ function render() {
     context.fillStyle = fillStyle;
     context.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
   }
-    
-    function roundRect(ctx, x, y, width, height, radius, fill, stroke) { //Gooby
-      if (typeof stroke === 'undefined') {
-        stroke = true;
-      }
-      if (typeof radius === 'undefined') {
-        radius = 5;
-      }
-      if (typeof radius === 'number') {
-        radius = {tl: radius, tr: radius, br: radius, bl: radius};
-      } else {
-        var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
-        for (var side in defaultRadius) {
-          radius[side] = radius[side] || defaultRadius[side];
-        }
-      }
-      ctx.beginPath();
-      ctx.moveTo(x + radius.tl, y);
-      ctx.lineTo(x + width - radius.tr, y);
-      ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
-      ctx.lineTo(x + width, y + height - radius.br);
-      ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
-      ctx.lineTo(x + radius.bl, y + height);
-      ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
-      ctx.lineTo(x, y + radius.tl);
-      ctx.quadraticCurveTo(x, y, x + radius.tl, y);
-      ctx.closePath();
-      if (fill) {
-        ctx.fill();
-      }
-      if (stroke) {
-        ctx.stroke();
-      }
-    }
-
-    
-    function drawR(r,c,fillStyle){ //Gooby
-        context.fillStyle = fillStyle;
-        var cornerRadius = 20;
-        context.lineJoin = "round";
-        context.lineWidth = 1;
-        context.strokeRect(c*tileSize, r*tileSize, tileSize, tileSize);
-        //context.fillRect(c*tileSize, r*tileSize, tileSize, tileSize);
-    }
 
   function drawGrid() {
     var buffer = document.createElement("canvas");
