@@ -21,7 +21,7 @@ var OPENGATE = "o".charCodeAt(0);
 var CLOSEDGATE = "c".charCodeAt(0);
 var validTileCodes = [SPACE, WALL, SPIKE, FRUIT, EXIT, PORTAL, WOODPLATFORM, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, FOAM, DIGGABLEDIRT, OPENGATE, CLOSEDGATE];
 
-var tileSize = 30;
+var tileSize = 34;
 var level;
 var unmoveStuff = {undoStack:[], redoStack:[], spanId:"movesSpan", undoButtonId:"unmoveButton", redoButtonId:"removeButton"};
 var uneditStuff = {undoStack:[], redoStack:[], spanId:"editsSpan", undoButtonId:"uneditButton", redoButtonId:"reeditButton"};
