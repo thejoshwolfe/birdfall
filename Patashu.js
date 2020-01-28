@@ -2319,7 +2319,7 @@ function render() {
       case "b":
         drawBlock(object);
         break;
-        case FRUIT:
+        case "f":
         rowcol = getRowcol(level, object.locations[0]);
         var c = rowcol.c;
         var r = rowcol.r;
