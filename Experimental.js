@@ -3216,6 +3216,12 @@ function drawPlatform(r, c) {
     }
   
     function drawCloud(c, x, y){
+        c.fillStyle = "white";
+        c.beginPath();
+        c.rect(x, y, tileSize, tileSize);
+        c.fill();
+        c.closePath();
+        
         c.beginPath();
         c.moveTo(x+tileSize*0, y+tileSize*0);
         
@@ -3240,9 +3246,7 @@ function drawPlatform(r, c) {
         c.bezierCurveTo(x-tileSize*.15, y+tileSize*.25, x-tileSize*.15, y+tileSize*0, x+tileSize*0, y+tileSize*0);
         
         c.closePath();
-        c.fillStyle = "white";
         c.fill();
-        //c.stroke();
     }
 
     
