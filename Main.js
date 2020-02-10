@@ -3359,4 +3359,3 @@ loadPersistentState();
 if (!loadFromLocationHash()) {
   loadLevel(parseLevel(exampleLevel));
 }
-
