@@ -500,7 +500,7 @@ document.addEventListener("keydown", function(event) {
     case "F".charCodeAt(0):
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
       return;
-    case "J".charCodeAt(0):
+    case "K".charCodeAt(0):
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOUD); break; }
       return;
     case "D".charCodeAt(0):
