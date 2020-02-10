@@ -31,7 +31,7 @@ var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM]; //Gooby
 var SNAKE = "s";
 var BLOCK = "b";
 var FRUIT = "f";
-var CLOUD = "j";
+var CLOUD = "k";
 
 var tileSize = 34;
 var level;
