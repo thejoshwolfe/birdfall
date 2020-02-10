@@ -1,0 +1,75 @@
+@keyframes click_me {
+    0%   { background-color: buttonface; }
+    50%  { background-color: yellow; }
+    100% { background-color: buttonface; }
+}
+
+button.click-me {
+    animation: click_me 1s 2 alternate;
+    font-weight: bold;
+}
+
+td{
+    text-align: center;
+}
+
+button.click-me {
+    animation: click_me 1s 2 alternate;
+    font-weight: bold;
+}
+
+body{
+    font-family: Futura;
+    background-color: aliceblue;
+}
+
+button{
+}    
+
+#levelTable{
+    border: 10px solid black;
+    margin: 0 auto;
+}   
+
+.buttonHeader{
+    font-size: 10pt;
+}
+
+#editsSpan{
+    font-size: 10pt;   
+}
+
+#editText{
+    font-size: 10pt;   
+}
+
+#saveLevelButton{
+}
+
+.standard{
+    background-color: lightsteelblue;   
+}
+
+.experimental{
+    background-color: lightblue;   
+}
+
+table{
+    border-collapse: collapse;   
+}
+
+.spacer{
+    height: 10px;
+}
+
+.controls{
+}
+
+#controls{
+    background-color: aliceblue;
+    width: 200px;
+}
+
+.header{
+    font-style: italic;
+}
