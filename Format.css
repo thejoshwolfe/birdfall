@@ -146,6 +146,7 @@ td a{
     margin-left: 25%;
     margin-right: 25%;
     position: relative;
+    padding-bottom: 1px;
 }
 
 #showButton{
