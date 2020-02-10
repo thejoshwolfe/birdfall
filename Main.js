@@ -32,23 +32,6 @@ var ONEWAYWALLR = "r".charCodeAt(0);
 var FOAM = "f".charCodeAt(0);
 var OPENGATE = "o".charCodeAt(0);
 var CLOSEDGATE = "c".charCodeAt(0);
-
-// tile codes
-/*var SPACE = 0;
-var WALL = 1;
-var SPIKE = 2;
-var FRUIT_v0 = 3; // legacy
-var EXIT = 4;
-var PORTAL = 5;
-var PLATFORM = 6;
-var WOODPLATFORM = 7;
-var ONEWAYWALLU = 8;
-var ONEWAYWALLD = 9;
-var ONEWAYWALLL = 10;
-var ONEWAYWALLR = 11;
-var OPENGATE = 12;
-var CLOSEDGATE = 13;
-var FOAM = 14;*/
 var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, WOODPLATFORM, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, OPENGATE, CLOSEDGATE, FOAM];
 
 // object types
@@ -2080,6 +2063,10 @@ function moveObjects(objects, dr, dc, portalLocations, portalActivationLocations
     var oldPortals = getSetIntersection(portalLocations, object.locations);
     for (var i = 0; i < object.locations.length; i++) {
       object.locations[i] = offsetLocation(object.locations[i], dr, dc);
+      if (level.map[object.locations[i]] == FOAM)
+      {
+        paintTileAtLocation(object.locations[i], SPACE, changeLog);
+      }
     }
     changeLog.push([object.type, object.id, oldState, serializeObjectState(object)]);
     animations.push([
