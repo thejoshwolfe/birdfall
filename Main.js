@@ -17,19 +17,45 @@ var img3 = document.createElement('img'); //Gooby
 
 var canvas = document.getElementById("canvas");
 
+var SPACE = "0".charCodeAt(0);
+var WALL = "1".charCodeAt(0);
+var SPIKE = "2".charCodeAt(0);
+var FRUIT_v0 = "3".charCodeAt(0); //legacy
+var EXIT = "4".charCodeAt(0);
+var PORTAL = "5".charCodeAt(0);
+var PLATFORM = "p".charCodeAt(0);
+var WOODPLATFORM = "w".charCodeAt(0);
+var ONEWAYWALLU = "u".charCodeAt(0);
+var ONEWAYWALLD = "d".charCodeAt(0);
+var ONEWAYWALLL = "l".charCodeAt(0);
+var ONEWAYWALLR = "r".charCodeAt(0);
+var FOAM = "f".charCodeAt(0);
+var OPENGATE = "o".charCodeAt(0);
+var CLOSEDGATE = "c".charCodeAt(0);
+
 // tile codes
-var SPACE = 0;
+/*var SPACE = 0;
 var WALL = 1;
 var SPIKE = 2;
 var FRUIT_v0 = 3; // legacy
 var EXIT = 4;
 var PORTAL = 5;
-var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL]; //Gooby
+var PLATFORM = 6;
+var WOODPLATFORM = 7;
+var ONEWAYWALLU = 8;
+var ONEWAYWALLD = 9;
+var ONEWAYWALLL = 10;
+var ONEWAYWALLR = 11;
+var OPENGATE = 12;
+var CLOSEDGATE = 13;
+var FOAM = 14;*/
+var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, WOODPLATFORM, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, OPENGATE, CLOSEDGATE, FOAM];
 
 // object types
 var SNAKE = "s";
 var BLOCK = "b";
 var FRUIT = "f";
+var CLOUD = "c";
 
 var tileSize = 34;
 var level;
@@ -114,7 +140,7 @@ function parseLevel(string) {
   var upconvertedObjects = [];
   var fruitCount = 0;
   for (var i = 0; i < mapData.length; i++) {
-    var tileCode = mapData[i].charCodeAt(0) - "0".charCodeAt(0);
+    var tileCode = mapData[i].charCodeAt(0);
     if (tileCode === FRUIT_v0 && versionTag === magicNumber_v0) {
       // fruit used to be a tile code. now it's an object.
       upconvertedObjects.push({
@@ -145,6 +171,7 @@ function parseLevel(string) {
     if      (object.type === SNAKE) locationsLimit = -1;
     else if (object.type === BLOCK) locationsLimit = -1;
     else if (object.type === FRUIT) locationsLimit = 1;
+    else if (object.type === CLOUD) locationsLimit = -1;
     else throw parserError("expected object type code");
     cursor += 1;
 
@@ -204,13 +231,17 @@ function parseLevel(string) {
   }
 }
 
+function serializeTileCode(tileCode) {
+  return String.fromCharCode(tileCode);
+}
+
 function stringifyLevel(level) {
   var output = magicNumber + "&";
   output += level.height + "&" + level.width + "\n";
 
   output += "?\n";
   for (var r = 0; r < level.height; r++) {
-    output += "  " + level.map.slice(r * level.width, (r + 1) * level.width).join("") + "\n";
+    output += "  " + level.map.slice(r * level.width, (r + 1) * level.width).map(serializeTileCode).join("") + "\n";
   }
   output += "/\n";
 
@@ -462,8 +493,8 @@ document.addEventListener("keydown", function(event) {
       if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("select"); break; }
       if (modifierMask === 0)     { reset(unmoveStuff);  break; }
       if (modifierMask === SHIFT) { unreset(unmoveStuff); break; }
+      if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLR); break; }
       return;
-
     case 220: // backslash
       if (modifierMask === 0) { toggleShowEditor(); break; }
       return;
@@ -481,6 +512,7 @@ document.addEventListener("keydown", function(event) {
     case "W".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(WALL); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(WOODPLATFORM); break; }
       return;
     case "S".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0)     { move(1, 0); break; }
@@ -497,12 +529,32 @@ document.addEventListener("keydown", function(event) {
     case "F".charCodeAt(0):
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
       return;
+    case "K".charCodeAt(0):
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOUD); break; }
+      return;
     case "D".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0) { move(0, 1); break; }
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SNAKE); break; }
+      if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLD); break; }
       return;
     case "B".charCodeAt(0):
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(BLOCK); break; }
+      return;
+    case "P".charCodeAt(0):
+      if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
+      return;
+    case "U".charCodeAt(0):
+      if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
+      if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLU); break; }
+      return;
+    case "L".charCodeAt(0):
+      if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
+      if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLL); break; }
+      return;
+    case "M".charCodeAt(0):
+      if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FOAM); break; }
       return;
     case "G".charCodeAt(0):
       if (modifierMask === 0) { toggleGrid(); break; }
@@ -646,8 +698,18 @@ var paintButtonIdAndTileCodes = [
   ["paintExitButton", EXIT],
   ["paintFruitButton", FRUIT],
   ["paintPortalButton", PORTAL],
+  ["paintPlatformButton", PLATFORM],
+  ["paintWoodPlatformButton", WOODPLATFORM],
+  ["paintOneWayWallUButton", ONEWAYWALLU],
+  ["paintOneWayWallDButton", ONEWAYWALLD],
+  ["paintOneWayWallLButton", ONEWAYWALLL],
+  ["paintOneWayWallRButton", ONEWAYWALLR],
+  ["paintOpenGateButton", OPENGATE],
+  ["paintClosedGateButton", CLOSEDGATE],
+  ["paintFoamButton", FOAM],
   ["paintSnakeButton", SNAKE],
   ["paintBlockButton", BLOCK],
+  ["paintCloudButton", CLOUD],
 ];
 paintButtonIdAndTileCodes.forEach(function(pair) {
   var id = pair[0];
@@ -753,6 +815,8 @@ canvas.addEventListener("dblclick", function(event) {
     } else if (object.type === FRUIT) {
       // edit fruits, i guess
       paintBrushTileCode = FRUIT;
+    } else if (object.type === CLOUD) {
+      paintBrushTileCode = CLOUD;
     } else throw unreachable();
     paintBrushTileCodeChanged();
   }
@@ -1096,6 +1160,19 @@ function newFruit(location) {
     locations: [location],
   };
 }
+function newDirt(location) {
+  var clouds = getObjectsOfType(CLOUD);
+  clouds.sort(compareId);
+  for (var i = 0; i < clouds.length; i++) {
+    if (clouds[i].id !== i) break;
+  }
+  return {
+    type: CLOUD,
+    id: i,
+    dead: false, // unused
+    locations: [location],
+  };
+}
 function paintAtLocation(location, changeLog) {
   if (typeof paintBrushTileCode === "number") {
     removeAnyObjectAtLocation(location, changeLog);
@@ -1125,6 +1202,8 @@ function paintAtLocation(location, changeLog) {
         object.id = newBlock().id;
       } else if (object.type === FRUIT) {
         object.id = newFruit().id;
+      } else if (object.type === CLOUD) {
+        object.id = newDirt().id;
       } else throw unreachable();
       level.objects.push(object);
       changeLog.push([object.type, object.id, [0,[]], serializeObjectState(object)]);
@@ -1201,6 +1280,12 @@ function paintAtLocation(location, changeLog) {
     var object = newFruit(location)
     level.objects.push(object);
     changeLog.push([object.type, object.id, serializeObjectState(null), serializeObjectState(object)]);
+  } else if (paintBrushTileCode === CLOUD) {
+    paintTileAtLocation(location, SPACE, changeLog);
+    removeAnyObjectAtLocation(location, changeLog);
+    var object1 = newDirt(location)
+    level.objects.push(object1);
+    changeLog.push([object1.type, object1.id, serializeObjectState(null), serializeObjectState(object1)]);
   } else throw unreachable();
   render();
 }
@@ -1298,7 +1383,7 @@ function reduceChangeLog(changeLog) {
         changeLog.splice(i, 1);
         i--;
       }
-    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT) {
+    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === CLOUD) {
       for (var j = i + 1; j < changeLog.length; j++) {
         var otherChange = changeLog[j];
         if (otherChange[0] === change[0] && otherChange[1] === change[1]) {
@@ -1422,7 +1507,7 @@ function undoChanges(changes, changeLog) {
       if (location >= level.map.length) return "Can't turn " + describe(toTileCode) + " into " + describe(fromTileCode) + " out of bounds";
       if (level.map[location] !== toTileCode) return "Can't turn " + describe(toTileCode) + " into " + describe(fromTileCode) + " because there's " + describe(level.map[location]) + " there now";
       paintTileAtLocation(location, fromTileCode, changeLog);
-    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT) {
+    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === CLOUD) {
       // change object
       var type = change[0];
       var id = change[1];
@@ -1477,6 +1562,15 @@ function describe(arg1, arg2) {
       case SPIKE: return "Spikes";
       case EXIT:  return "an Exit";
       case PORTAL:  return "a Portal";
+      case PLATFORM:  return "a Platform";
+      case WOODPLATFORM: return "a Wooden Platform";
+      case ONEWAYWALLU: return "A One Way Wall (facing U)";
+      case ONEWAYWALLD: return "A One Way Wall (facing D)";
+      case ONEWAYWALLL: return "A One Way Wall (facing L)";
+      case ONEWAYWALLR: return "A One Way Wall (facing R)";
+      case OPENGATE: return "An Open Gate";
+      case CLOSEDGATE: return "A Closed Gate";
+      case FOAM: return "Foam";
       default: throw unreachable();
     }
   }
@@ -1497,6 +1591,9 @@ function describe(arg1, arg2) {
   }
   if (arg1 === FRUIT) {
     return "Fruit";
+  }
+    if (arg1 === CLOUD) {
+    return "Cloud";
   }
   if (typeof arg1 === "object") return describe(arg1.type, arg1.id);
   throw unreachable();
@@ -1696,10 +1793,16 @@ function move(dr, dc) {
 
   var ate = false;
   var pushedObjects = [];
+    
+  //track OpenGates that had objects on them
+  var occupiedOpenGates = getOccupiedOpenGateLocations();
 
   if (isCollision()) {
     var newTile = level.map[newLocation];
-    if (!isTileCodeAir(newTile)) return; // can't go through that tile
+    if (!isTileCodeAir(activeSnake, null, newTile, dr, dc)) return; // can't go through that tile
+    if (newTile === FOAM) {
+      paintTileAtLocation(newLocation, SPACE, changeLog);
+    }
     var otherObject = findObjectAtLocation(newLocation);
     if (otherObject != null) {
       if (otherObject === activeSnake) return; // can't push yourself
@@ -1707,6 +1810,8 @@ function move(dr, dc) {
         // eat
         removeObject(otherObject, changeLog);
         ate = true;
+      } else if (otherObject.type === CLOUD) {
+        removeObject(otherObject, changeLog);
       } else {
         // push objects
         if (!checkMovement(activeSnake, otherObject, dr, dc, pushedObjects)) return false;
@@ -1753,6 +1858,8 @@ function move(dr, dc) {
   // push everything, too
   moveObjects(pushedObjects, dr, dc, portalLocations, portalActivationLocations, changeLog, slitherAnimations);
   animationQueue.push(slitherAnimations);
+    
+  occupiedOpenGates = combineOldAndNewGateOccupations(occupiedOpenGates);
 
   // gravity loop
   var stateToAnimationIndex = {};
@@ -1797,11 +1904,14 @@ function move(dr, dc) {
         }
       }
     }
+    
+    occupiedOpenGates = combineOldAndNewGateOccupations(occupiedOpenGates);
 
     // fall
     var dyingObjects = [];
     var fallingObjects = level.objects.filter(function(object) {
       if (object.type === FRUIT) return; // can't fall
+      if (object.type === CLOUD) return; // can't fall
       var theseDyingObjects = [];
       if (!checkMovement(null, object, 1, 0, [], theseDyingObjects)) return false;
       // this object can fall. maybe more will fall with it too. we'll check those separately.
@@ -1840,6 +1950,8 @@ function move(dr, dc) {
       moveObjects(fallingObjects, 1, 0, portalLocations, portalActivationLocations, changeLog, fallingAnimations);
       didAnything = true;
     }
+      
+    occupiedOpenGates = closeGates(occupiedOpenGates, changeLog);
 
     if (!didAnything) break;
     Array.prototype.push.apply(animationQueue, exitAnimationQueue);
@@ -1848,6 +1960,28 @@ function move(dr, dc) {
 
   pushUndo(unmoveStuff, changeLog);
   render();
+}
+
+function combineOldAndNewGateOccupations(oldOccupiedOpenGates)
+{
+  var newOccupiedOpenGates = getOccupiedOpenGateLocations();
+  var newlyOccupiedOpenGates = getSetSubtract(newOccupiedOpenGates, oldOccupiedOpenGates);
+  return oldOccupiedOpenGates.concat(newlyOccupiedOpenGates);
+}
+
+function closeGates(oldOccupiedOpenGates, changeLog)
+{
+  var newOccupiedOpenGates = getOccupiedOpenGateLocations();
+  var nowUnoccupiedOpenGates = getSetSubtract(oldOccupiedOpenGates, newOccupiedOpenGates);
+  for (var i = 0; i < nowUnoccupiedOpenGates.length; i++) {
+    paintTileAtLocation(nowUnoccupiedOpenGates[i], CLOSEDGATE, changeLog);
+  }
+  return newOccupiedOpenGates;
+}
+
+function getSetSubtract(array1, array2) {
+  if (array1.length === 0) return [];
+  return array1.filter(function(x) { return array2.indexOf(x) == -1; });
 }
 
 function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects) {
@@ -1872,9 +2006,22 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
         }
       }
       var forwardLocation = getLocation(level, forwardRowcol.r, forwardRowcol.c);
+      if (dr === 1 && level.map[forwardLocation] === PLATFORM) {
+        // this platform holds us, unless we're going through it
+        var neighborLocations;
+        if (pushedObject.type === SNAKE) {
+          neighborLocations = [];
+          if (j > 0) neighborLocations.push(pushedObject.locations[j - 1]);
+          if (j < pushedObject.locations.length - 1) neighborLocations.push(pushedObject.locations[j + 1]);
+        } else if (pushedObject.type === BLOCK) {
+          neighborLocations = pushedObject.locations;
+        } else throw asdf;
+        if (neighborLocations.indexOf(forwardLocation) === -1) return false; // flat surface
+        // we slip right past it
+      }
       var yetAnotherObject = findObjectAtLocation(forwardLocation);
       if (yetAnotherObject != null) {
-        if (yetAnotherObject.type === FRUIT) {
+        if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === CLOUD) {
           // not pushable
           return false;
         }
@@ -1900,7 +2047,8 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
     // but that means the tile must be air,
     // and we already know pushing that object.
     var tileCode = level.map[forwardLocation];
-    if (!isTileCodeAir(tileCode)) {
+    var object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
+    if (!isTileCodeAir(pusher, object, tileCode, dr, dc)) {
       if (dyingObjects != null) {
         if (tileCode === SPIKE) {
           // uh... which object was this again?
@@ -1970,7 +2118,7 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
 
   for (var i = 0; i < newLocations.length; i++) {
     var location = newLocations[i];
-    if (!isTileCodeAir(level.map[location])) return false; // blocked by tile
+    if (!isTileCodeAir(object, null, level.map[location], 0, 0)) return false; // blocked by tile
     var otherObject = findObjectAtLocation(location);
     if (otherObject != null && otherObject !== object) return false; // blocked by object
   }
@@ -1988,8 +2136,18 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
   return true;
 }
 
-function isTileCodeAir(tileCode) {
-  return tileCode === SPACE || tileCode === EXIT || tileCode === PORTAL;
+function isTileCodeAir(pusher, pushedObject, tileCode, dr, dc) {
+  switch (tileCode)
+  {
+    case SPACE: case EXIT: case PORTAL: case OPENGATE: return true;
+    case WOODPLATFORM: case FOAM: return pusher != null;
+    case PLATFORM: return dr != 1;
+    case ONEWAYWALLU: return dr != 1;
+    case ONEWAYWALLD: return dr != -1;
+    case ONEWAYWALLL: return dc != 1;
+    case ONEWAYWALLR: return dc != -1;
+    default: return false;
+  }
 }
 
 function addIfNotPresent(array, element) {
@@ -2077,6 +2235,17 @@ function getSnakes() {
 }
 function getBlocks() {
   return getObjectsOfType(BLOCK);
+}
+function getOccupiedOpenGateLocations()
+{
+  var result = [];
+  for (var i = 0; i < level.map.length; i++) {
+    if (level.map[i] === OPENGATE) {
+      if (findObjectAtLocation(i))
+          result.push(i);
+    }
+  }
+  return result;
 }
 function getObjectsOfType(type) {
   return level.objects.filter(function(object) {
@@ -2366,6 +2535,10 @@ function render() {
       if (typeof paintBrushTileCode === "number") {
         if (level.map[hoverLocation] !== paintBrushTileCode) {
           drawTile(paintBrushTileCode, hoverRowcol.r, hoverRowcol.c, level, hoverLocation);
+            if (paintBrushTileCode === PLATFORM) {
+            // make it bolder
+            hoverAlpha = 0.4;
+          }
         }
       } else if (paintBrushTileCode === SNAKE) {
         if (!(objectHere != null && objectHere.type === SNAKE && objectHere.id === paintBrushSnakeColorIndex)) {
@@ -2378,6 +2551,10 @@ function render() {
       } else if (paintBrushTileCode === FRUIT) {
         if (!(objectHere != null && objectHere.type === FRUIT)) {
           drawObject(newFruit(hoverLocation));
+        }
+      } else if (paintBrushTileCode === CLOUD) {
+        if (!(objectHere != null && objectHere.type === CLOUD)) {
+          drawObject(newDirt(hoverLocation));
         }
       } else if (paintBrushTileCode === "resize") {
         void 0; // do nothing
@@ -2424,6 +2601,33 @@ function render() {
         drawCircle(r, c, 0.6, "#111");
         if (activePortalLocations.indexOf(location) !== -1) drawCircle(r, c, 0.3, "#666");
         break;
+      case PLATFORM:
+        drawPlatform(r, c);
+        break;
+      case WOODPLATFORM:
+        drawOneWayWall("#D38345", r, c, -1, 0);
+        break;
+      case ONEWAYWALLU:
+        drawOneWayWall("#BACFD1", r, c, -1, 0);
+        break;
+      case ONEWAYWALLD:
+        drawOneWayWall("#BACFD1", r, c, 1, 0);
+        break;
+      case ONEWAYWALLL:
+        drawOneWayWall("#BACFD1", r, c, 0, -1);
+        break;
+      case ONEWAYWALLR:
+        drawOneWayWall("#BACFD1", r, c, 0, 1);
+        break;
+      case OPENGATE:
+        drawGate(r, c, false);
+        break;
+      case CLOSEDGATE:
+        drawGate(r, c, true);
+        break;
+      case FOAM:
+        drawFoam(r, c);
+        break;
       default: throw unreachable();
     }
     function getAdjacentTiles() {
@@ -2446,6 +2650,7 @@ function render() {
   }
 
   function drawObject(object) {
+    context.save();
     switch (object.type) {
       case SNAKE:
         var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
@@ -2567,35 +2772,135 @@ function render() {
         
         //context.drawImage(img3,rowcol.c*tileSize+(tileSize*.1), rowcol.r*tileSize+(tileSize*.1), tileSize*.8, tileSize*.8);
         break;
+      case CLOUD:
+        rowcol = getRowcol(level, object.locations[0]);
+        c = rowcol.c;
+        r = rowcol.r;
+        drawCloud(context, c*tileSize, r*tileSize);
+        break;
       default: throw unreachable();
+      context.restore();
+    }
+  }  
+    
+function drawPlatform(r, c) {
+    context.fillStyle = "slategray";
+    context.beginPath();
+    context.moveTo(c * tileSize, r * tileSize);
+    context.lineTo((c + 1) * tileSize, r * tileSize);
+    context.arc((c + 5/6) * tileSize, (r + 1/6) * tileSize, tileSize/6, 0, Math.PI);
+    context.arc((c + 3/6) * tileSize, (r + 1/6) * tileSize, tileSize/6, 0, Math.PI);
+    context.arc((c + 1/6) * tileSize, (r + 1/6) * tileSize, tileSize/6, 0, Math.PI);
+    context.lineTo(c*tileSize, r*tileSize);
+    context.fill();
+  }
+    function drawOneWayWall(fillStyle, r, c, dr, dc) {
+    context.fillStyle = fillStyle;
+    if (dr == -1)
+    {
+      context.fillRect(c * tileSize - tileSize/15, r * tileSize - tileSize/15, tileSize + 2*tileSize/15, tileSize/4 + 2*tileSize/15);
+    }
+    else if (dr == 1)
+    {
+      context.fillRect(c * tileSize - tileSize/15, (r + 1) * tileSize - tileSize/15 - tileSize/4, tileSize + 2*tileSize/15, tileSize/4 + 2*tileSize/15);
+    }
+    else if (dc == -1)
+    {
+      context.fillRect(c * tileSize - tileSize/15, r * tileSize - tileSize/15, tileSize/4 + 2*tileSize/15, tileSize + 2*tileSize/15);
+    }
+    else if (dc == 1)
+    {
+      context.fillRect((c + 1) * tileSize - tileSize/15 - tileSize/4, r * tileSize - tileSize/15, tileSize/4 + 2*tileSize/15, tileSize + 2*tileSize/15);
+    }
+    
+    context.lineWidth = 3;
+    context.strokeStyle = "#777";
+    context.beginPath();
+    
+    if (dr == -1)
+    {
+      context.moveTo(c * tileSize, r * tileSize + tileSize/2);
+      context.lineTo(c * tileSize + tileSize/4, r * tileSize + tileSize/4);
+      context.stroke();
+      context.moveTo(c * tileSize + 3*tileSize/4, r * tileSize + tileSize/4);
+      context.lineTo(c * tileSize + tileSize, r * tileSize + tileSize/2);
+    }
+    else if (dr == 1)
+    {
+      context.moveTo(c * tileSize, r * tileSize + tileSize/2);
+      context.lineTo(c * tileSize + tileSize/4, r * tileSize + 3*tileSize/4);
+      context.stroke();
+      context.moveTo(c * tileSize + 3*tileSize/4, r * tileSize + 3*tileSize/4);
+      context.lineTo(c * tileSize + tileSize, r * tileSize + tileSize/2);
+    }
+    else if (dc == -1)
+    {
+      context.moveTo(c * tileSize + tileSize/2, r * tileSize);
+      context.lineTo(c * tileSize + tileSize/4, r * tileSize + tileSize/4);
+      context.stroke();
+      context.moveTo(c * tileSize + tileSize/4, r * tileSize + 3*tileSize/4);
+      context.lineTo(c * tileSize + tileSize/2, r * tileSize + tileSize);
+    }
+    else if (dc == 1)
+    {
+      context.moveTo(c * tileSize + tileSize/2, r * tileSize);
+      context.lineTo(c * tileSize + 3*tileSize/4, r * tileSize + tileSize/4);
+      context.stroke();
+      context.moveTo(c * tileSize + 3*tileSize/4, r * tileSize + 3*tileSize/4);
+      context.lineTo(c * tileSize + tileSize/2, r * tileSize + tileSize);
+    }
+    
+    context.stroke();
+    context.lineWidth = 0;
+  }
+  
+  function drawFoam(r, c) {
+    context.fillStyle = "white";
+    for (var i = 0; i < 3; i++) {
+      for (var j = 0; j < 3; j++) {
+        context.beginPath();
+        context.arc(c*tileSize + (i*2+1)*tileSize/6, r*tileSize + (j*2+1)*tileSize/6, tileSize/6, 0, 2*Math.PI);
+        context.fill();
+      }
     }
   }
-    
-    function drawExit(r, c) { //Gooby
-        /*var cx = c+.5;
-        var rx = r+.5;
-        
-        var grd = context.createRadialGradient(cx*tileSize, rx*tileSize, 1, cx*tileSize, rx*tileSize, 13);
-        grd.addColorStop(1, "red");
-        grd.addColorStop(.8, "orange");
-        grd.addColorStop(.6, "yellow");
-        grd.addColorStop(.4, "green");
-        grd.addColorStop(.2, "blue");
-        grd.addColorStop(0, "violet");
-        context.fillStyle = grd;
-        
-        context.arc(cx*tileSize,rx*tileSize,tileSize/2,0,2*Math.PI);
-        context.fill();
+
+  function drawGate(r, c, isClosed) {
+    if (isClosed)
+    {
+      context.lineWidth = 3;
+      context.strokeStyle = "#444";
+      context.beginPath();
+      for (var i = 1; i < 3; i++) {
+        context.beginPath();
+        context.moveTo(c*tileSize + i*tileSize/3, r*tileSize);
+        context.lineTo(c*tileSize + i*tileSize/3, (r+1)*tileSize);
         context.stroke();
-        
-        var img2=document.createElement('img');
-        img2.src='/Snakefall/Snakebird Images/pinwheel.png';
-        
-        if(isUneatenFruit()==0)
-            context.drawImage(img2,c*tileSize-tileSize/2,r*tileSize-tileSize/2,2*tileSize, 2*tileSize);
-        else
-            context.drawImage(img2,c*tileSize,r*tileSize,tileSize, tileSize);*/
+      }
+      
+      for (var i = 1; i < 4; i++) {
+        context.beginPath();
+        context.moveTo(c*tileSize, r*tileSize + i*tileSize/4 + tileSize/15);
+        context.lineTo((c+1)*tileSize, r*tileSize + i*tileSize/4 + tileSize/15);
+        context.stroke();
+      }
+      
+      context.lineWidth = 0;
     }
+    
+    context.fillStyle = "#777";
+    context.beginPath();
+    context.moveTo(c*tileSize, r*tileSize);
+    context.lineTo((c+1)*tileSize, r*tileSize);
+    context.lineTo((c+1)*tileSize, (r+1)*tileSize);
+    context.lineTo(c*tileSize + 5*tileSize/6, (r+1)*tileSize);
+    context.lineTo(c*tileSize + 5*tileSize/6, r*tileSize + tileSize/2);
+    context.arc(c*tileSize + tileSize/2, r*tileSize + tileSize/2, tileSize/3, 0, Math.PI, true);
+    context.lineTo(c*tileSize + 1*tileSize/6, (r+1)*tileSize);
+    context.lineTo(c*tileSize, (r+1)*tileSize);
+    context.lineTo(c*tileSize, r*tileSize);
+    context.fill();
+  }
 
   function drawWall(r, c, adjacentTiles) {  //GOOBY
     //drawRect(r, c, "#976537");    
@@ -3085,6 +3390,40 @@ function render() {
     context.fillStyle = fillStyle;
     context.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
   }
+    
+    function drawCloud(c, x, y){
+        c.fillStyle = "white";
+        c.beginPath();
+        c.rect(x, y, tileSize, tileSize);
+        c.fill();
+        c.closePath();
+        
+        c.beginPath();
+        c.moveTo(x+tileSize*0, y+tileSize*0);
+        
+        c.bezierCurveTo(x+tileSize*0, y-tileSize*.15, x+tileSize*.25, y-tileSize*.15, x+tileSize*.25, y+tileSize*0);
+        c.bezierCurveTo(x+tileSize*.25, y-tileSize*.15, x+tileSize*.5, y-tileSize*.15, x+tileSize*.5, y+tileSize*0);
+        c.bezierCurveTo(x+tileSize*.5, y-tileSize*.15, x+tileSize*.75, y-tileSize*.15, x+tileSize*.75, y+tileSize*0);
+        c.bezierCurveTo(x+tileSize*.75, y-tileSize*.15, x+tileSize*1, y-tileSize*.15, x+tileSize*1, y+tileSize*0);
+        
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*0, x+tileSize*1.15, y+tileSize*.25, x+tileSize*1, y+tileSize*.25);
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*.25, x+tileSize*1.15, y+tileSize*.5, x+tileSize*1, y+tileSize*.5);
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*.5, x+tileSize*1.15, y+tileSize*.75, x+tileSize*1, y+tileSize*.75);
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*.75, x+tileSize*1.15, y+tileSize*1, x+tileSize*1, y+tileSize*1);
+        
+        c.bezierCurveTo(x+tileSize*1, y+tileSize*1.15, x+tileSize*.75, y+tileSize*1.15, x+tileSize*.75, y+tileSize*1);
+        c.bezierCurveTo(x+tileSize*.75, y+tileSize*1.15, x+tileSize*.5, y+tileSize*1.15, x+tileSize*.5, y+tileSize*1);
+        c.bezierCurveTo(x+tileSize*.5, y+tileSize*1.15, x+tileSize*.25, y+tileSize*1.15, x+tileSize*.25, y+tileSize*1);
+        c.bezierCurveTo(x+tileSize*.25, y+tileSize*1.15, x+tileSize*0, y+tileSize*1.15, x+tileSize*0, y+tileSize*1);
+        
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*1, x-tileSize*.15, y+tileSize*.75, x+tileSize*0, y+tileSize*.75);
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*.75, x-tileSize*.15, y+tileSize*.5, x+tileSize*0, y+tileSize*.5);
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*.5, x-tileSize*.15, y+tileSize*.25, x+tileSize*0, y+tileSize*.25);
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*.25, x-tileSize*.15, y+tileSize*0, x+tileSize*0, y+tileSize*0);
+        
+        c.closePath();
+        c.fill();
+    }
     
     function roundRect(ctx, x, y, width, height, radius, fill, stroke) { //Gooby
       if (typeof stroke === 'undefined') {
