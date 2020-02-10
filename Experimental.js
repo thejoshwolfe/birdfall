@@ -31,7 +31,7 @@ var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM]; //Gooby
 var SNAKE = "s";
 var BLOCK = "b";
 var FRUIT = "f";
-var JELLY = "j";
+var CLOUD = "j";
 
 var tileSize = 34;
 var level;
@@ -147,7 +147,7 @@ function parseLevel(string) {
     if      (object.type === SNAKE) locationsLimit = -1;
     else if (object.type === BLOCK) locationsLimit = -1;
     else if (object.type === FRUIT) locationsLimit = 1;
-    else if (object.type === JELLY) locationsLimit = -1;
+    else if (object.type === CLOUD) locationsLimit = -1;
     else throw parserError("expected object type code");
     cursor += 1;
 
@@ -501,7 +501,7 @@ document.addEventListener("keydown", function(event) {
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
       return;
     case "J".charCodeAt(0):
-      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(JELLY); break; }
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOUD); break; }
       return;
     case "D".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0) { move(0, 1); break; }
@@ -659,7 +659,7 @@ var paintButtonIdAndTileCodes = [
   ["paintPlatformButton", PLATFORM],
   ["paintSnakeButton", SNAKE],
   ["paintBlockButton", BLOCK],
-  ["paintJellyButton", JELLY],
+  ["paintCloudButton", CLOUD],
 ];
 paintButtonIdAndTileCodes.forEach(function(pair) {
   var id = pair[0];
@@ -765,8 +765,8 @@ canvas.addEventListener("dblclick", function(event) {
     } else if (object.type === FRUIT) {
       // edit fruits, i guess
       paintBrushTileCode = FRUIT;
-    } else if (object.type === JELLY) {
-      paintBrushTileCode = JELLY;
+    } else if (object.type === CLOUD) {
+      paintBrushTileCode = CLOUD;
     } else throw unreachable();
     paintBrushTileCodeChanged();
   }
@@ -1110,14 +1110,14 @@ function newFruit(location) {
     locations: [location],
   };
 }
-function newDirt(location) {
-  var jellys = getObjectsOfType(JELLY);
-  jellys.sort(compareId);
-  for (var i = 0; i < jellys.length; i++) {
-    if (jellys[i].id !== i) break;
+function newCloud(location) {
+  var clouds = getObjectsOfType(CLOUD);
+  clouds.sort(compareId);
+  for (var i = 0; i < clouds.length; i++) {
+    if (clouds[i].id !== i) break;
   }
   return {
-    type: JELLY,
+    type: CLOUD,
     id: i,
     dead: false, // unused
     locations: [location],
@@ -1152,8 +1152,8 @@ function paintAtLocation(location, changeLog) {
         object.id = newBlock().id;
       } else if (object.type === FRUIT) {
         object.id = newFruit().id;
-      } else if (object.type === JELLY) {
-        object.id = newDirt().id;
+      } else if (object.type === CLOUD) {
+        object.id = newCloud().id;
       } else throw unreachable();
       level.objects.push(object);
       changeLog.push([object.type, object.id, [0,[]], serializeObjectState(object)]);
@@ -1230,10 +1230,10 @@ function paintAtLocation(location, changeLog) {
     var object = newFruit(location)
     level.objects.push(object);
     changeLog.push([object.type, object.id, serializeObjectState(null), serializeObjectState(object)]);
-  } else if (paintBrushTileCode === JELLY) {
+  } else if (paintBrushTileCode === CLOUD) {
     paintTileAtLocation(location, SPACE, changeLog);
     removeAnyObjectAtLocation(location, changeLog);
-    var object1 = newDirt(location)
+    var object1 = newCloud(location)
     level.objects.push(object1);
     changeLog.push([object1.type, object1.id, serializeObjectState(null), serializeObjectState(object1)]);
   } else throw unreachable();
@@ -1333,7 +1333,7 @@ function reduceChangeLog(changeLog) {
         changeLog.splice(i, 1);
         i--;
       }
-    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === JELLY) {
+    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === CLOUD) {
       for (var j = i + 1; j < changeLog.length; j++) {
         var otherChange = changeLog[j];
         if (otherChange[0] === change[0] && otherChange[1] === change[1]) {
@@ -1457,7 +1457,7 @@ function undoChanges(changes, changeLog) {
       if (location >= level.map.length) return "Can't turn " + describe(toTileCode) + " into " + describe(fromTileCode) + " out of bounds";
       if (level.map[location] !== toTileCode) return "Can't turn " + describe(toTileCode) + " into " + describe(fromTileCode) + " because there's " + describe(level.map[location]) + " there now";
       paintTileAtLocation(location, fromTileCode, changeLog);
-    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === JELLY) {
+    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === CLOUD) {
       // change object
       var type = change[0];
       var id = change[1];
@@ -1534,8 +1534,8 @@ function describe(arg1, arg2) {
   if (arg1 === FRUIT) {
     return "Fruit";
   }
-    if (arg1 === JELLY) {
-    return "Dirt";
+    if (arg1 === CLOUD) {
+    return "Cloud";
   }
   if (typeof arg1 === "object") return describe(arg1.type, arg1.id);
   throw unreachable();
@@ -1747,7 +1747,7 @@ function move(dr, dc) {
         // eat
         removeObject(otherObject, changeLog);
         ate = true;
-      } else if (otherObject.type === JELLY) {
+      } else if (otherObject.type === CLOUD) {
         removeObject(otherObject, changeLog);
       } else {
         // push objects
@@ -1844,7 +1844,7 @@ function move(dr, dc) {
     var dyingObjects = [];
     var fallingObjects = level.objects.filter(function(object) {
       if (object.type === FRUIT) return; // can't fall
-      if (object.type === JELLY) return; // can't fall
+      if (object.type === CLOUD) return; // can't fall
       var theseDyingObjects = [];
       if (!checkMovement(null, object, 1, 0, [], theseDyingObjects)) return false;
       // this object can fall. maybe more will fall with it too. we'll check those separately.
@@ -1930,7 +1930,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
       }
       var yetAnotherObject = findObjectAtLocation(forwardLocation);
       if (yetAnotherObject != null) {
-        if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === JELLY) {
+        if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === CLOUD) {
           // not pushable
           return false;
         }
@@ -2439,9 +2439,9 @@ function render() {
         if (!(objectHere != null && objectHere.type === FRUIT)) {
           drawObject(newFruit(hoverLocation));
         }
-      } else if (paintBrushTileCode === JELLY) {
-        if (!(objectHere != null && objectHere.type === JELLY)) {
-          drawObject(newDirt(hoverLocation));
+      } else if (paintBrushTileCode === CLOUD) {
+        if (!(objectHere != null && objectHere.type === CLOUD)) {
+          drawObject(newCloud(hoverLocation));
         }
       } else if (paintBrushTileCode === "resize") {
         void 0; // do nothing
@@ -2634,12 +2634,11 @@ function render() {
         
         //context.drawImage(img3,rowcol.c*tileSize+(tileSize*.1), rowcol.r*tileSize+(tileSize*.1), tileSize*.8, tileSize*.8);
         break;
-      case JELLY:
+      case CLOUD:
         rowcol = getRowcol(level, object.locations[0]);
         c = rowcol.c;
         r = rowcol.r;
-        context.fillStyle = "white";
-        roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 10, true, false);
+        drawCloud(context, c*tileSize, r*tileSize);
         break;
       default: throw unreachable();
     }
@@ -3214,6 +3213,36 @@ function drawPlatform(r, c) {
       if (stroke) {
         ctx.stroke();
       }
+    }
+  
+    function drawCloud(c, x, y){
+        c.beginPath();
+        c.moveTo(x+tileSize*0, y+tileSize*0);
+        
+        c.bezierCurveTo(x+tileSize*0, y-tileSize*.15, x+tileSize*.25, y-tileSize*.15, x+tileSize*.25, y+tileSize*0);
+        c.bezierCurveTo(x+tileSize*.25, y-tileSize*.15, x+tileSize*.5, y-tileSize*.15, x+tileSize*.5, y+tileSize*0);
+        c.bezierCurveTo(x+tileSize*.5, y-tileSize*.15, x+tileSize*.75, y-tileSize*.15, x+tileSize*.75, y+tileSize*0);
+        c.bezierCurveTo(x+tileSize*.75, y-tileSize*.15, x+tileSize*1, y-tileSize*.15, x+tileSize*1, y+tileSize*0);
+        
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*0, x+tileSize*1.15, y+tileSize*.25, x+tileSize*1, y+tileSize*.25);
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*.25, x+tileSize*1.15, y+tileSize*.5, x+tileSize*1, y+tileSize*.5);
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*.5, x+tileSize*1.15, y+tileSize*.75, x+tileSize*1, y+tileSize*.75);
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*.75, x+tileSize*1.15, y+tileSize*1, x+tileSize*1, y+tileSize*1);
+        
+        c.bezierCurveTo(x+tileSize*1, y+tileSize*1.15, x+tileSize*.75, y+tileSize*1.15, x+tileSize*.75, y+tileSize*1);
+        c.bezierCurveTo(x+tileSize*.75, y+tileSize*1.15, x+tileSize*.5, y+tileSize*1.15, x+tileSize*.5, y+tileSize*1);
+        c.bezierCurveTo(x+tileSize*.5, y+tileSize*1.15, x+tileSize*.25, y+tileSize*1.15, x+tileSize*.25, y+tileSize*1);
+        c.bezierCurveTo(x+tileSize*.25, y+tileSize*1.15, x+tileSize*0, y+tileSize*1.15, x+tileSize*0, y+tileSize*1);
+        
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*1, x-tileSize*.15, y+tileSize*.75, x+tileSize*0, y+tileSize*.75);
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*.75, x-tileSize*.15, y+tileSize*.5, x+tileSize*0, y+tileSize*.5);
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*.5, x-tileSize*.15, y+tileSize*.25, x+tileSize*0, y+tileSize*.25);
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*.25, x-tileSize*.15, y+tileSize*0, x+tileSize*0, y+tileSize*0);
+        
+        c.closePath();
+        c.fillStyle = "white";
+        c.fill();
+        //c.stroke();
     }
 
     
