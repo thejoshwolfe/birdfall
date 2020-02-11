@@ -1,11 +1,11 @@
 @keyframes click_me {
     0%   { background-color: buttonface; }
-    50%  { background-color: yellow; }
+    50%  { background-color: #ffff00; }
     100% { background-color: buttonface; }
 }
 
 button.click-me {
-    animation: click_me 1s 2 alternate;
+    animation: click_me 1s linear infinite alternate;
     font-weight: bold;
 }
 
@@ -13,9 +13,8 @@ td{
     text-align: center;
 }
 
-button.click-me {
-    animation: click_me 1s 2 alternate;
-    font-weight: bold;
+tr{
+    text-align: center;
 }
 
 body{
@@ -24,6 +23,16 @@ body{
 }
 
 button{
+    background-image: linear-gradient(white, #f2f2f2);
+    border: .4px solid black;
+    border-radius: 3px;
+    margin: 1px;
+    box-shadow: .5px .5px 1px black;
+}
+
+button:focus{
+    background-image: linear-gradient(#4b91ff, #055ce4);
+    color: white;
 }    
 
 #levelTable{
@@ -72,4 +81,12 @@ table{
 
 .header{
     font-style: italic;
+}
+
+#selectHolder{
+    display: inline-block;
+}
+
+#controlsRow button{
+    vertical-align: top;   
 }
