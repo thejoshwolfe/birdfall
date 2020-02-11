@@ -20,7 +20,7 @@
           
           <tr class="spacer"><td></td></tr>
           <tr><td class="buttonHeader">Controls</td></tr>
-              <tr id="controlsRow"><td><button id="resizeButton" title="Shift+S">Resize</button><div id="selectHolder"><button id="selectButton" title="Shift+R - double click to edit objects">Select</button><div><button id="cutButton" title="Cut (Ctrl+X)" disabled>X</button><button id="copyButton" title="Copy (Ctrl+C)" disabled>C</button><button id="pasteButton" title="Paste (Ctrl+V)" disabled>V</button></div></div><button id="paintSpaceButton" title="E">Erase</button></td></tr>
+              <tr id="controlsRow"><td><button id="resizeButton" title="Shift+R">Resize</button><div id="selectHolder"><button id="selectButton" title="Shift+A - double click to edit objects">Select</button><div><button id="cutButton" title="Ctrl+X" disabled>X</button><button id="copyButton" title="Ctrl+C" disabled>C</button><button id="pasteButton" title="Ctrl+V" disabled>V</button></div></div><button id="paintSpaceButton" title="E">Erase</button></td></tr>
           <tr class="spacer"><td></td></tr>
               
           <tr><td class="buttonHeader">Physics</td></tr>
@@ -30,35 +30,35 @@
           <tr class="spacer standard"><td></td></tr>
           <tr class="standard header"><td>Standard Elements</td></tr>
           <tr class="standard"><td class="buttonHeader">Stationaries</td></tr>
-          <tr class="standard"><td><button id="paintWallButton" title="W">Wall</button><button id="paintSpikeButton" title="S">Spike</button><button id="paintExitButton" title="X">Exit</button><button id="paintPortalButton" title="A">Portal</button></td></tr>
+          <tr class="standard"><td><button id="paintWallButton" title="W">Wall</button><button id="paintSpikeButton" title="S">Spike</button><button id="paintExitButton" title="Shift+E">Exit</button><button id="paintPortalButton" title="A">Portal</button></td></tr>
             
           <tr class="spacer standard"><td></td></tr>
           <tr class="standard"><td class="buttonHeader">Moveables</td></tr>
-          <tr class="standard"><td><button id="paintSnakeButton" title="D">Snake</button><button id="paintFruitButton" title="F">Fruit</button><button id="paintBlockButton" title="B">Block</button></td></tr>
+          <tr class="standard"><td><button id="paintSnakeButton" title="Shift+S">Snake</button><button id="paintFruitButton" title="F">Fruit</button><button id="paintBlockButton" title="B">Block</button></td></tr>
           <tr class="spacer standard"><td></td></tr>
             
           <tr class="spacer experimental"><td></td></tr>
           <tr class="experimental header"><td>Experimental Elements</td></tr>
           <tr class="experimental"><td class="buttonHeader">Removeables</td></tr>
-          <tr class="experimental"><td><button id="paintCloudButton" title="K">Cloud</button><button id="paintFoamButton" title="M">Foam</button></td></tr>
+          <tr class="experimental"><td><button id="paintCloudButton" title="C">Cloud</button><button id="paintFoamButton" title="Shift+F">Foam</button></td></tr>
           
           <tr class="spacer experimental"><td></td></tr>
-          <tr class="experimental"><td class="buttonHeader">Gates</td></tr>
-          <tr class="experimental"><td><button id="paintOpenGateButton" title="OpenGate">Open</button><button id="paintClosedGateButton" title="ClosedGate">Closed</button></td></tr>
+          <tr class="experimental"><td class="buttonHeader">Glass Ledges</td></tr>
+          <tr class="experimental"><td><button id="paintBrokenGlassButton" title="X">Broken</button><button id="paintFixedGlassButton" title="Shift+X">Fixed</button></td></tr>
             
           <tr class="spacer experimental"><td></td></tr>
           <tr class="experimental"><td class="buttonHeader">Platforms</td></tr>
-          <tr class="experimental"><td><button id="paintPlatformButton" title="P">Platform</button></td></tr>
-          <tr class="experimental"><td><button id="paintWoodPlatformButton" title="SHIFT+W">Wooden Platform</button></td></tr>
-          <tr class="experimental"><td><button id="paintOneWayWallUButton" title="OneWayWallU">Up</button><button id="paintOneWayWallDButton" title="OneWayWallD">Down</button><button id="paintOneWayWallLButton" title="OneWayWallL">Left</button><button id="paintOneWayWallRButton" title="OneWayWallR">Right</button></td></tr>
+          <tr class="experimental"><td><button id="paintPlatformButton" title="P">Rainbow</button><button id="paintWoodPlatformButton" title="Shift+W">Wooden</button></td></tr>
+          <tr class="experimental"><td><button id="paintOneWayWallUButton" title="Ctrl+U">Up</button><button id="paintOneWayWallDButton" title="Ctrl+D">Down</button><button id="paintOneWayWallLButton" title="Ctrl+L">Left</button><button id="paintOneWayWallRButton" title="Ctrl+R">Right</button></td></tr>
           <tr class="spacer experimental"><td></td></tr>
             
         </table>
       </td>
     </tr></table>
 
-    <div style="text-align:center;">
+    <div style="text-align:center;font-size:10pt;font-family: Arial">
       <div id="paradoxDiv" style="background:#f88;"></div>
+      <div id="levelType" style="font-family:Arial;font-size: 10pt;color:blue; margin: 10px 0 10px 0;">STANDARD LEVEL: does not contain experimental elements</div>
       Controls (hover for hotkeys):
       <br>
       Arrows<span id="wasdSpan">/WASD</span> to move
