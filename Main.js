@@ -30,9 +30,9 @@ var ONEWAYWALLD = "d".charCodeAt(0);
 var ONEWAYWALLL = "l".charCodeAt(0);
 var ONEWAYWALLR = "r".charCodeAt(0);
 var FOAM = "f".charCodeAt(0);
-var OPENGATE = "o".charCodeAt(0);
-var CLOSEDGATE = "c".charCodeAt(0);
-var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, WOODPLATFORM, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, OPENGATE, CLOSEDGATE, FOAM];
+var BROKENGLASS = "o".charCodeAt(0);
+var FIXEDGLASS = "c".charCodeAt(0);
+var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, WOODPLATFORM, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, BROKENGLASS, FIXEDGLASS, FOAM];
 
 // object types
 var SNAKE = "s";
@@ -122,6 +122,7 @@ function parseLevel(string) {
   if (level.height * level.width !== mapData.length) throw parserError("height, width, and map.length do not jive");
   var upconvertedObjects = [];
   var fruitCount = 0;
+  var tileCounter = 0;
   for (var i = 0; i < mapData.length; i++) {
     var tileCode = mapData[i].charCodeAt(0);
     if (tileCode === FRUIT_v0 && versionTag === magicNumber_v0) {
@@ -134,9 +135,13 @@ function parseLevel(string) {
       });
       tileCode = SPACE;
     }
+    if(tileCode === PLATFORM || tileCode === WOODPLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === BROKENGLASS || tileCode === FIXEDGLASS || tileCode === FOAM || tileCode === CLOUD) tileCounter++;
     if (validTileCodes.indexOf(tileCode) === -1) throw parserError("invalid tilecode: " + JSON.stringify(mapData[i]));
     level.map.push(tileCode);
   }
+    
+  if(tileCounter>0) document.getElementById("levelType").innerHTML = "EXPERIMENTAL LEVEL: contains experimental elements";
+  else document.getElementById("levelType").innerHTML = "STANDARD LEVEL: does not contain experimental elements";
 
   // objects
   skipWhitespace();
@@ -508,8 +513,8 @@ document.addEventListener("keydown", function(event) {
       if (modifierMask === (CTRL|SHIFT))                         { saveReplay(); break; }
       return;
     case "X".charCodeAt(0):
-      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(OPENGATE); break; }
-      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(CLOSEDGATE); break; }
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(BROKENGLASS); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(FIXEDGLASS); break; }
       if ( persistentState.showEditor && modifierMask === CTRL) { cutSelection(); break; }
       return;
     case "F".charCodeAt(0):
@@ -684,8 +689,8 @@ var paintButtonIdAndTileCodes = [
   ["paintOneWayWallDButton", ONEWAYWALLD],
   ["paintOneWayWallLButton", ONEWAYWALLL],
   ["paintOneWayWallRButton", ONEWAYWALLR],
-  ["paintOpenGateButton", OPENGATE],
-  ["paintClosedGateButton", CLOSEDGATE],
+  ["paintBrokenGlassButton", BROKENGLASS],
+  ["paintFixedGlassButton", FIXEDGLASS],
   ["paintFoamButton", FOAM],
   ["paintSnakeButton", SNAKE],
   ["paintBlockButton", BLOCK],
@@ -1551,8 +1556,8 @@ function describe(arg1, arg2) {
       case ONEWAYWALLD: return "A One Way Wall (facing D)";
       case ONEWAYWALLL: return "A One Way Wall (facing L)";
       case ONEWAYWALLR: return "A One Way Wall (facing R)";
-      case OPENGATE: return "An Open Gate";
-      case CLOSEDGATE: return "A Closed Gate";
+      case BROKENGLASS: return "Broken Glass";
+      case FIXEDGLASS: return "Fixed Glass";
       case FOAM: return "Foam";
       default: throw unreachable();
     }
@@ -1957,7 +1962,7 @@ function closeGates(oldOccupiedOpenGates, changeLog)
   var newOccupiedOpenGates = getOccupiedOpenGateLocations();
   var nowUnoccupiedOpenGates = getSetSubtract(oldOccupiedOpenGates, newOccupiedOpenGates);
   for (var i = 0; i < nowUnoccupiedOpenGates.length; i++) {
-    paintTileAtLocation(nowUnoccupiedOpenGates[i], CLOSEDGATE, changeLog);
+    paintTileAtLocation(nowUnoccupiedOpenGates[i], FIXEDGLASS, changeLog);
   }
   return newOccupiedOpenGates;
 }
@@ -2126,7 +2131,7 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
 function isTileCodeAir(pusher, pushedObject, tileCode, dr, dc) {
   switch (tileCode)
   {
-    case SPACE: case EXIT: case PORTAL: case OPENGATE: return true;
+    case SPACE: case EXIT: case PORTAL: case BROKENGLASS: return true;
     case WOODPLATFORM: case FOAM: return pusher != null;
     case PLATFORM: return dr != 1;
     case ONEWAYWALLU: return dr != 1;
@@ -2227,7 +2232,7 @@ function getOccupiedOpenGateLocations()
 {
   var result = [];
   for (var i = 0; i < level.map.length; i++) {
-    if (level.map[i] === OPENGATE) {
+    if (level.map[i] === BROKENGLASS) {
       if (findObjectAtLocation(i))
           result.push(i);
     }
@@ -2606,11 +2611,11 @@ function render() {
       case ONEWAYWALLR:
         drawOneWayWall("#BACFD1", r, c, 0, 1);
         break;
-      case OPENGATE:
-        drawGate(r, c, false);
+      case BROKENGLASS:
+        drawGlass(r, c, false);
         break;
-      case CLOSEDGATE:
-        drawGate(r, c, true);
+      case FIXEDGLASS:
+        drawGlass(r, c, true);
         break;
       case FOAM:
         drawFoam(r, c);
@@ -2769,7 +2774,7 @@ function render() {
   }  
     
 function drawPlatform(r, c, adjacentTiles) {
-    drawPlatform2(r, c, isPlatform);
+    newPlatform(r, c, isPlatform);
     
     function isPlatform(dc, dr) {
         var tileCode = adjacentTiles[1 + dr][1 + dc];
@@ -2813,9 +2818,9 @@ function drawPlatform(r, c, adjacentTiles) {
     //context.stroke();
 }
     
-function drawPlatform2(r, c, isOccupied){
+function newPlatform(r, c, isOccupied){
     
-    var x1 = .05 
+    var x1 = .05;
     var x2 = .05;
     if(isOccupied(-1,0)) x1 = 0;
     if(isOccupied(1,0)) x2 = 0;        
@@ -2825,10 +2830,10 @@ function drawPlatform2(r, c, isOccupied){
         var j = i-1;
         if(j<0) j = 0;
         context.beginPath();
-        context.moveTo(c*tileSize+tileSize*(i*x1), r*tileSize+tileSize*(.15 * i - (j * .03)));
+        context.moveTo(c*tileSize+tileSize*(i*x1), r*tileSize+tileSize*(.05 + (.1 * i) - (j * .02)));
         context.strokeStyle = platformColors[i];
-        context.lineWidth = tileSize*(.15-(i*.03));
-        context.lineTo(c*tileSize+tileSize*(1-(i*x2)), r*tileSize+tileSize*(.15 * i - (j * .03)));
+        context.lineWidth = tileSize*(.1-(i*.02));
+        context.lineTo(c*tileSize+tileSize*(1-(i*x2)), r*tileSize+tileSize*(.05 + (.1 * i) - (j * .02)));
         context.stroke();
     }
 }
@@ -2904,41 +2909,105 @@ function drawPlatform2(r, c, isOccupied){
     }
   }
 
-  function drawGate(r, c, isClosed) {
-    if (isClosed)
-    {
-      context.lineWidth = 2;
-      context.strokeStyle = "#555";
-      context.beginPath();
-      for (var i = 1; i < 6; i++) {
-        context.beginPath();
-        context.moveTo(c*tileSize + i*tileSize/6, r*tileSize);
-        context.lineTo(c*tileSize + i*tileSize/6, (r+1)*tileSize);
-        context.stroke();
-      }
-      
-      for (var i = 1; i < 6; i++) {
-        context.beginPath();
-        context.moveTo(c*tileSize, r*tileSize + i*tileSize/6 + tileSize/15);
-        context.lineTo((c+1)*tileSize, r*tileSize + i*tileSize/6 + tileSize/15);
-        context.stroke();
-      }
-      
-      context.lineWidth = 0;
+  function drawGlass(r, c, isFixed) {
+    if(isFixed){
+        var grd = context.createLinearGradient(c*tileSize, r*tileSize, (c+1)*tileSize, (r+1)*tileSize);
+        grd.addColorStop(0, "rgba(255,255,255,.4)");
+        grd.addColorStop(.1, "rgba(255,255,255,.5)");
+        grd.addColorStop(.2, "rgba(255,255,255,.3)");
+        grd.addColorStop(.3, "rgba(255,255,255,.4)");
+        grd.addColorStop(.4, "rgba(255,255,255,.6)");
+        grd.addColorStop(.5, "rgba(255,255,255,.5)");
+        grd.addColorStop(.6, "rgba(255,255,255,.3)");
+        grd.addColorStop(.7, "rgba(255,255,255,.4)");
+        grd.addColorStop(.8, "rgba(255,255,255,.5)");
+        grd.addColorStop(.9, "rgba(255,255,255,.6)");
+        grd.addColorStop(1, "rgba(255,255,255,.5)");
+
+        context.fillStyle = grd;
+        roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 10, true, false);
     }
-    
-    context.fillStyle = "#111";
-    context.beginPath();
-    context.moveTo(c*tileSize, r*tileSize);
-    context.lineTo((c+1)*tileSize, r*tileSize);
-    context.lineTo((c+1)*tileSize, (r+1)*tileSize);
-    context.lineTo(c*tileSize + 5*tileSize/6, (r+1)*tileSize);
-    context.lineTo(c*tileSize + 5*tileSize/6, r*tileSize + tileSize/2);
-    context.arc(c*tileSize + tileSize/2, r*tileSize + tileSize/2, tileSize/3, 0, Math.PI, true);
-    context.lineTo(c*tileSize + 1*tileSize/6, (r+1)*tileSize);
-    context.lineTo(c*tileSize, (r+1)*tileSize);
-    context.lineTo(c*tileSize, r*tileSize);
-    context.fill();
+    else{
+        context.fillStyle = "rgba(255,255,255,.5)";
+        context.beginPath();
+        context.moveTo(c*tileSize, r*tileSize);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize);
+        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.1);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.2);
+        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize, r*tileSize);
+        context.closePath();
+        context.fill();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize, r*tileSize+tileSize*.4);
+        context.lineTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.4);
+        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.5);
+        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize, r*tileSize+tileSize*.4);
+        context.closePath();
+        context.fill();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize, r*tileSize+tileSize*1);
+        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.7);
+        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.7);
+        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.8);
+        context.lineTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*1);
+        context.lineTo(c*tileSize, r*tileSize+tileSize*1);
+        context.closePath();
+        context.fill();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize, r*tileSize+tileSize*1);
+        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*1);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.8);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.7);
+        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.8);
+        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.7);
+        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.65);
+        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.5);
+        context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.4);
+        context.lineTo(c*tileSize+tileSize, r*tileSize+tileSize*.5);
+        context.closePath();
+        context.fill();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize, r*tileSize+tileSize*.4);
+        context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.4);
+        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.2);
+        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*0);
+        context.lineTo(c*tileSize+tileSize, r*tileSize+tileSize*0);
+        context.lineTo(c*tileSize+tileSize, r*tileSize+tileSize*.4);
+        context.closePath();
+        context.fill();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.15);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.2);
+        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.05);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.15);
+        context.closePath();
+        context.fill();  
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.4);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.55);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*.55, r*tileSize+tileSize*.55);
+        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*.65, r*tileSize+tileSize*.55);
+        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.4);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.4);
+        context.closePath();
+        context.fill();
+    }
   }
 
   function drawWall(r, c, adjacentTiles) {  //GOOBY
@@ -3440,28 +3509,25 @@ function drawPlatform2(r, c, isOccupied){
         c.beginPath();
         c.moveTo(x+tileSize*0, y+tileSize*0);
         
-        c.bezierCurveTo(x+tileSize*0, y-tileSize*.15, x+tileSize*.25, y-tileSize*.15, x+tileSize*.25, y+tileSize*0);
-        c.bezierCurveTo(x+tileSize*.25, y-tileSize*.15, x+tileSize*.5, y-tileSize*.15, x+tileSize*.5, y+tileSize*0);
-        c.bezierCurveTo(x+tileSize*.5, y-tileSize*.15, x+tileSize*.75, y-tileSize*.15, x+tileSize*.75, y+tileSize*0);
-        c.bezierCurveTo(x+tileSize*.75, y-tileSize*.15, x+tileSize*1, y-tileSize*.15, x+tileSize*1, y+tileSize*0);
+        c.bezierCurveTo(x+tileSize*0, y-tileSize*.15, x+tileSize*.33, y-tileSize*.15, x+tileSize*.33, y+tileSize*0);
+        c.bezierCurveTo(x+tileSize*.33, y-tileSize*.15, x+tileSize*.67, y-tileSize*.15, x+tileSize*.67, y+tileSize*0);
+        c.bezierCurveTo(x+tileSize*.67, y-tileSize*.15, x+tileSize*1, y-tileSize*.15, x+tileSize*1, y+tileSize*0);
         
-        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*0, x+tileSize*1.15, y+tileSize*.25, x+tileSize*1, y+tileSize*.25);
-        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*.25, x+tileSize*1.15, y+tileSize*.5, x+tileSize*1, y+tileSize*.5);
-        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*.5, x+tileSize*1.15, y+tileSize*.75, x+tileSize*1, y+tileSize*.75);
-        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*.75, x+tileSize*1.15, y+tileSize*1, x+tileSize*1, y+tileSize*1);
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*0, x+tileSize*1.15, y+tileSize*.33, x+tileSize*1, y+tileSize*.33);
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*.33, x+tileSize*1.15, y+tileSize*.67, x+tileSize*1, y+tileSize*.67);
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*.67, x+tileSize*1.15, y+tileSize*1, x+tileSize*1, y+tileSize*1);
         
-        c.bezierCurveTo(x+tileSize*1, y+tileSize*1.15, x+tileSize*.75, y+tileSize*1.15, x+tileSize*.75, y+tileSize*1);
-        c.bezierCurveTo(x+tileSize*.75, y+tileSize*1.15, x+tileSize*.5, y+tileSize*1.15, x+tileSize*.5, y+tileSize*1);
-        c.bezierCurveTo(x+tileSize*.5, y+tileSize*1.15, x+tileSize*.25, y+tileSize*1.15, x+tileSize*.25, y+tileSize*1);
-        c.bezierCurveTo(x+tileSize*.25, y+tileSize*1.15, x+tileSize*0, y+tileSize*1.15, x+tileSize*0, y+tileSize*1);
+        c.bezierCurveTo(x+tileSize*1, y+tileSize*1.15, x+tileSize*.67, y+tileSize*1.15, x+tileSize*.67, y+tileSize*1);
+        c.bezierCurveTo(x+tileSize*.67, y+tileSize*1.15, x+tileSize*.33, y+tileSize*1.15, x+tileSize*.33, y+tileSize*1);
+        c.bezierCurveTo(x+tileSize*.33, y+tileSize*1.15, x+tileSize*0, y+tileSize*1.15, x+tileSize*0, y+tileSize*1);
         
-        c.bezierCurveTo(x-tileSize*.15, y+tileSize*1, x-tileSize*.15, y+tileSize*.75, x+tileSize*0, y+tileSize*.75);
-        c.bezierCurveTo(x-tileSize*.15, y+tileSize*.75, x-tileSize*.15, y+tileSize*.5, x+tileSize*0, y+tileSize*.5);
-        c.bezierCurveTo(x-tileSize*.15, y+tileSize*.5, x-tileSize*.15, y+tileSize*.25, x+tileSize*0, y+tileSize*.25);
-        c.bezierCurveTo(x-tileSize*.15, y+tileSize*.25, x-tileSize*.15, y+tileSize*0, x+tileSize*0, y+tileSize*0);
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*1, x-tileSize*.15, y+tileSize*.67, x+tileSize*0, y+tileSize*.67);
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*.67, x-tileSize*.15, y+tileSize*.33, x+tileSize*0, y+tileSize*.33);
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*.33, x-tileSize*.15, y+tileSize*0, x+tileSize*0, y+tileSize*0);
         
         c.closePath();
         c.fill();
+        //c.stroke();
     }
     
     function roundRect(ctx, x, y, width, height, radius, fill, stroke) { //Gooby
