@@ -1713,7 +1713,7 @@ var fruitColors1 = ["#ff0066","#ff36a6","#ff6b1f","#ff9900","#ff2600"];
 var fruitColors2 = ["black","black","black","black","black"];
 
 var spikeColors1 = ["#999", "#444", "#555", "#777"];    //spike, support, box, bolt
-var spikeColors2 = ["black", "black", "black", "black"];
+var spikeColors2 = ["gray", "black", "white", "black"];
 var spikeColors3 = ["#333", "#333", "#333", "#777"];
 
 var blockColors1 = [
@@ -1721,8 +1721,8 @@ var blockColors1 = [
     ["#853641","#963c84","#753d88","#5d3a96","#3a3990"]
 ];
 var blockColors2 = [
-    ["#f2f2f2"],
-    ["#f2f2f2"]
+    ["#999"],
+    ["#999"]
 ];
 var blockColors3 = [
     ["#de7913","#7d46a0","#39868b","#41ccc2","#ded800"],
@@ -1741,7 +1741,7 @@ var textStyle4 = ["" + fontSize + "px Impact", "#ff0", "#f00"];
 
 var themeCounter = 0;
 
-var themes = [  //name, background, material, surface, curlyOutline, blockColors, spikeColors, fruitColors, stemColor
+var themes = [  //name, background, material, surface, curlyOutline, blockColors, spikeColors, fruitColors, stemColor, textStyle
   //["sky",],
   ["Spring", bg1, "#976537", "#95ff45", true, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
   ["Winter", bg1, "#30455B", "white", true,  snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
@@ -2912,7 +2912,6 @@ function newPlatform(r, c, isOccupied){
   }
 
   function drawGlass(r, c, isFixed) {
-    if(isFixed){
         var grd = context.createLinearGradient(c*tileSize, r*tileSize, (c+1)*tileSize, (r+1)*tileSize);
         grd.addColorStop(0, "rgba(255,255,255,.4)");
         grd.addColorStop(.1, "rgba(255,255,255,.5)");
@@ -2928,87 +2927,89 @@ function newPlatform(r, c, isOccupied){
 
         context.fillStyle = grd;
         roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 10, true, false);
-    }
-    else{
-        context.fillStyle = "rgba(255,255,255,.5)";
+      
+    if(!isFixed){
+        var bgColor;
+        if((c+r) % 2 == 0) bgColor = background.substr(0, background.indexOf('*'));
+        else bgColor = background.substr(background.indexOf('*')+2, background.length);
+        var r1, r2, b1, b2, g1, g2;
+        r1 = bgColor.substr(5, bgColor.indexOf(",")-5);
+        g1 = bgColor.substr(bgColor.indexOf(",")+1, bgColor.indexOf(",")-4);
+        b1 = bgColor.substr(bgColor.indexOf(",", bgColor.indexOf(",")+1)+1, bgColor.indexOf(",")-4);
+        var shade = (r+1)*.03+.5;
+        if(shade>1)
+            shade = 1;
+        r2 = 255 + (r1-255) * shade;
+        g2 = 255 + (g1-255) * shade;
+        b2 = 255 + (b1-255) * shade;
+        context.strokeStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
+        //context.fillStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
+        
         context.beginPath();
-        context.moveTo(c*tileSize, r*tileSize);
-        context.lineTo(c*tileSize+tileSize*.5, r*tileSize);
-        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.1);
-        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.3);
+        context.moveTo(c*tileSize+tileSize*.5, r*tileSize);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.2);
+        context.lineTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.15);
+        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.3);
         context.lineTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.2);
-        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.3);
-        context.lineTo(c*tileSize, r*tileSize);
-        context.closePath();
-        context.fill();
+        context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.4);
+        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.35);
+        context.stroke();
         
         context.beginPath();
-        context.moveTo(c*tileSize, r*tileSize+tileSize*.4);
-        context.lineTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.3);
-        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.4);
-        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.5);
-        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.6);
-        context.lineTo(c*tileSize, r*tileSize+tileSize*.4);
-        context.closePath();
-        context.fill();
-        
-        context.beginPath();
-        context.moveTo(c*tileSize, r*tileSize+tileSize*1);
-        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.7);
+        context.moveTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.4);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.5);
         context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.6);
-        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.7);
-        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.8);
-        context.lineTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*1);
-        context.lineTo(c*tileSize, r*tileSize+tileSize*1);
-        context.closePath();
-        context.fill();
+        context.lineTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.5);
+        context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.5);
+        context.stroke();
         
         context.beginPath();
-        context.moveTo(c*tileSize+tileSize, r*tileSize+tileSize*1);
-        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*1);
-        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.8);
+        context.moveTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.6);
         context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.7);
-        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.8);
-        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.7);
-        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.65);
-        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.5);
-        context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.4);
-        context.lineTo(c*tileSize+tileSize, r*tileSize+tileSize*.5);
-        context.closePath();
-        context.fill();
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.8);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.9);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*1);
+        context.stroke();
         
         context.beginPath();
-        context.moveTo(c*tileSize+tileSize, r*tileSize+tileSize*.4);
-        context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.3);
-        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.4);
-        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.3);
-        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.2);
-        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*0);
-        context.lineTo(c*tileSize+tileSize, r*tileSize+tileSize*0);
-        context.lineTo(c*tileSize+tileSize, r*tileSize+tileSize*.4);
-        context.closePath();
-        context.fill();
+        context.moveTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.5);
+        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.7);
+        context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.8);
+        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.8);
+        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*1);
+        context.stroke();
         
         context.beginPath();
-        context.moveTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.15);
-        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.3);
-        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.2);
-        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.05);
-        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.15);
-        context.closePath();
-        context.fill();  
-        
-        context.beginPath();
-        context.moveTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.4);
-        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.55);
-        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.6);
-        context.lineTo(c*tileSize+tileSize*.55, r*tileSize+tileSize*.55);
+        context.moveTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.2);
+        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.35);
+        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.5);
         context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.6);
-        context.lineTo(c*tileSize+tileSize*.65, r*tileSize+tileSize*.55);
-        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.4);
-        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.4);
-        context.closePath();
-        context.fill();
+        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.8);
+        context.stroke();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.35);
+        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.1);
+        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.2);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize);
+        context.stroke();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.35);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.55, r*tileSize+tileSize*.45);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*.45, r*tileSize+tileSize*.7);
+        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.8);
+        context.lineTo(c*tileSize+tileSize*.15, r*tileSize+tileSize*.7);
+        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*1);
+        context.stroke();
     }
   }
 
@@ -3030,7 +3031,6 @@ function newPlatform(r, c, isOccupied){
     
     function drawTileNew(r, c, isOccupied, outlineThickness, fillStyle, curlyOutline){
         context.fillStyle = fillStyle;  
-        var tileColor = "blue";
         if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {bl:10,br:10}, true, false);
         else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tl:10,bl:10}, true, false);
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tl:10,tr:10}, true, false);
@@ -3041,6 +3041,23 @@ function newPlatform(r, c, isOccupied){
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tr:10}, true, false);
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 10, true, false);
         else roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 0, true, false);
+        
+        /*var randomSpot = Math.floor(Math.random() * 5);   //random spots on dirt
+        var randomColor = Math.floor(Math.random() * 5);
+        context.beginPath();
+        switch(randomSpot){
+            case 0:
+                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 5, 0, 2*Math.PI);
+            case 1:
+                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 4, 0, 2*Math.PI);
+            case 2:
+                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 3, 0, 2*Math.PI);
+            case 3:
+                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 2, 0, 2*Math.PI);
+            case 4:
+                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 1, 0, 2*Math.PI);
+        }
+        context.stroke();*/
         
         if(isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(1, 1) && curlyOutline) {
             context.fillRect((c+1)*tileSize, (r+1)*tileSize, tileSize/6, tileSize/6);
