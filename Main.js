@@ -2902,10 +2902,10 @@ function newPlatform(r, c, isOccupied){
   
   function drawFoam(r, c) {
     context.fillStyle = "#ffccff";
-    for (var i = 0; i < 4; i++) {
-      for (var j = 0; j < 4; j++) {
+    for (var i = 0; i < 5; i++) {
+      for (var j = 0; j < 5; j++) {
         context.beginPath();
-        context.arc(c*tileSize + (i*2+1)*tileSize/8, r*tileSize + (j*2+1)*tileSize/8, tileSize/8, 0, 2*Math.PI);
+        context.arc(c*tileSize + (i*2+1)*tileSize/10, r*tileSize + (j*2+1)*tileSize/10, tileSize/10, 0, 2*Math.PI);
         context.fill();
       }
     }
@@ -2913,20 +2913,20 @@ function newPlatform(r, c, isOccupied){
 
   function drawGlass(r, c, isFixed) {
         var grd = context.createLinearGradient(c*tileSize, r*tileSize, (c+1)*tileSize, (r+1)*tileSize);
-        grd.addColorStop(0, "rgba(255,255,255,.4)");
-        grd.addColorStop(.1, "rgba(255,255,255,.5)");
-        grd.addColorStop(.2, "rgba(255,255,255,.3)");
-        grd.addColorStop(.3, "rgba(255,255,255,.4)");
-        grd.addColorStop(.4, "rgba(255,255,255,.6)");
-        grd.addColorStop(.5, "rgba(255,255,255,.5)");
-        grd.addColorStop(.6, "rgba(255,255,255,.3)");
-        grd.addColorStop(.7, "rgba(255,255,255,.4)");
-        grd.addColorStop(.8, "rgba(255,255,255,.5)");
-        grd.addColorStop(.9, "rgba(255,255,255,.6)");
-        grd.addColorStop(1, "rgba(255,255,255,.5)");
+        grd.addColorStop(0, "rgba(255,255,255,.6)");
+        grd.addColorStop(.1, "rgba(255,255,255,.7)");
+        grd.addColorStop(.2, "rgba(255,255,255,.5)");
+        grd.addColorStop(.3, "rgba(255,255,255,.6)");
+        grd.addColorStop(.4, "rgba(255,255,255,.8)");
+        grd.addColorStop(.5, "rgba(255,255,255,.7)");
+        grd.addColorStop(.6, "rgba(255,255,255,.5)");
+        grd.addColorStop(.7, "rgba(255,255,255,.6)");
+        grd.addColorStop(.8, "rgba(255,255,255,.7)");
+        grd.addColorStop(.9, "rgba(255,255,255,.8)");
+        grd.addColorStop(1, "rgba(255,255,255,.7)");
 
         context.fillStyle = grd;
-        roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 10, true, false);
+        roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 5, true, false);
       
     if(!isFixed){
         var bgColor;
@@ -2939,9 +2939,9 @@ function newPlatform(r, c, isOccupied){
         var shade = (r+1)*.03+.5;
         if(shade>1)
             shade = 1;
-        r2 = 255 + (r1-255) * shade;
-        g2 = 255 + (g1-255) * shade;
-        b2 = 255 + (b1-255) * shade;
+        r2 = 255 + (r1-255) * shade - 20;
+        g2 = 255 + (g1-255) * shade - 20;
+        b2 = 255 + (b1-255) * shade - 20;
         context.strokeStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
         //context.fillStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
         
@@ -2969,9 +2969,9 @@ function newPlatform(r, c, isOccupied){
         context.moveTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.6);
         context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.6);
         context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.7);
-        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.8);
-        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.9);
-        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*1);
+        context.lineTo(c*tileSize+tileSize*.45, r*tileSize+tileSize*.8);
+        context.lineTo(c*tileSize+tileSize*.55, r*tileSize+tileSize*.9);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*1);
         context.stroke();
         
         context.beginPath();
@@ -3005,10 +3005,16 @@ function newPlatform(r, c, isOccupied){
         context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.3);
         context.lineTo(c*tileSize+tileSize*.55, r*tileSize+tileSize*.45);
         context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.6);
-        context.lineTo(c*tileSize+tileSize*.45, r*tileSize+tileSize*.7);
+        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.7);
         context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.8);
         context.lineTo(c*tileSize+tileSize*.15, r*tileSize+tileSize*.7);
-        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*1);
+        context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.96);
+        context.stroke();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.35);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.25);
+        context.lineTo(c*tileSize+tileSize*.45, r*tileSize+tileSize*.2);
         context.stroke();
     }
   }
