@@ -135,13 +135,10 @@ function parseLevel(string) {
       });
       tileCode = SPACE;
     }
-    if(tileCode === PLATFORM || tileCode === WOODPLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === BROKENGLASS || tileCode === FIXEDGLASS || tileCode === FOAM || tileCode === CLOUD) tileCounter++;
+    if(tileCode === PLATFORM || tileCode === WOODPLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === BROKENGLASS || tileCode === FIXEDGLASS || tileCode === FOAM) tileCounter++;
     if (validTileCodes.indexOf(tileCode) === -1) throw parserError("invalid tilecode: " + JSON.stringify(mapData[i]));
     level.map.push(tileCode);
   }
-    
-  if(tileCounter>0) document.getElementById("levelType").innerHTML = "EXPERIMENTAL LEVEL: contains experimental elements";
-  else document.getElementById("levelType").innerHTML = "STANDARD LEVEL: does not contain experimental elements";
 
   // objects
   skipWhitespace();
@@ -154,12 +151,13 @@ function parseLevel(string) {
     };
 
     // type
+    var cloudCounter = 0;
     object.type = string[cursor];
     var locationsLimit;
     if      (object.type === SNAKE) locationsLimit = -1;
     else if (object.type === BLOCK) locationsLimit = -1;
     else if (object.type === FRUIT) locationsLimit = 1;
-    else if (object.type === CLOUD) locationsLimit = -1;
+    else if (object.type === CLOUD) {locationsLimit = -1; cloudCounter++;}
     else throw parserError("expected object type code");
     cursor += 1;
 
@@ -181,6 +179,10 @@ function parseLevel(string) {
     level.objects.push(object);
     skipWhitespace();
   }
+    
+    if(tileCounter>0 || cloudCounter>0) document.getElementById("levelType").innerHTML = "EXPERIMENTAL LEVEL: contains experimental elements";
+    else document.getElementById("levelType").innerHTML = "STANDARD LEVEL: does not contain experimental elements";
+    
   for (var i = 0; i < upconvertedObjects.length; i++) {
     level.objects.push(upconvertedObjects[i]);
   }
