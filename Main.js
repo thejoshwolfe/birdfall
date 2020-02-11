@@ -473,7 +473,7 @@ document.addEventListener("keydown", function(event) {
       if (persistentState.showEditor && modifierMask === CTRL)  { redo(uneditStuff); break; }
       return;
     case "R".charCodeAt(0):
-      if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("select"); break; }
+      if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("resize"); break; }
       if (modifierMask === 0)     { reset(unmoveStuff);  break; }
       if (modifierMask === SHIFT) { unreset(unmoveStuff); break; }
       if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLR); break; }
@@ -484,10 +484,12 @@ document.addEventListener("keydown", function(event) {
     case "A".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0)    { move(0, -1); break; }
       if ( persistentState.showEditor && modifierMask === 0)    { setPaintBrushTileCode(PORTAL); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("select"); break; }
       if ( persistentState.showEditor && modifierMask === CTRL) { selectAll(); break; }
       return;
     case "E".charCodeAt(0):
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPACE); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(EXIT); break; }
       return;
     case 46: // delete
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPACE); break; }
@@ -500,24 +502,22 @@ document.addEventListener("keydown", function(event) {
     case "S".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0)     { move(1, 0); break; }
       if ( persistentState.showEditor && modifierMask === 0)     { setPaintBrushTileCode(SPIKE); break; }
-      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("resize"); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(SNAKE); break; }
       if ( persistentState.showEditor && modifierMask === CTRL)  { saveLevel(); break; }
       if (!persistentState.showEditor && modifierMask === CTRL)  { saveReplay(); break; }
       if (modifierMask === (CTRL|SHIFT))                         { saveReplay(); break; }
       return;
     case "X".charCodeAt(0):
-      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(EXIT); break; }
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(OPENGATE); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(CLOSEDGATE); break; }
       if ( persistentState.showEditor && modifierMask === CTRL) { cutSelection(); break; }
       return;
     case "F".charCodeAt(0):
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
-      return;
-    case "K".charCodeAt(0):
-      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOUD); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(FOAM); break; }
       return;
     case "D".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0) { move(0, 1); break; }
-      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SNAKE); break; }
       if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLD); break; }
       return;
     case "B".charCodeAt(0):
@@ -535,15 +535,12 @@ document.addEventListener("keydown", function(event) {
       if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
       if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLL); break; }
       return;
-    case "M".charCodeAt(0):
-      if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
-      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FOAM); break; }
-      return;
     case "G".charCodeAt(0):
       if (modifierMask === 0) { toggleGrid(); break; }
       if ( persistentState.showEditor && modifierMask === SHIFT) { toggleGravity(); break; }
       return;
     case "C".charCodeAt(0):
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOUD); break; }
       if ( persistentState.showEditor && modifierMask === SHIFT) { toggleCollision(); break; }
       if ( persistentState.showEditor && modifierMask === CTRL)  { copySelection();   break; }
       return;
@@ -942,15 +939,18 @@ function paintBrushTileCodeChanged() {
     var id = pair[0];
     var tileCode = pair[1];
     var backgroundStyle = "";
+    var textColor = "";
     if (tileCode === paintBrushTileCode) {
       if (tileCode === SNAKE) {
         // show the color of the active snake in the color of the button
         backgroundStyle = snakeColors[paintBrushSnakeColorIndex];
       } else {
-        backgroundStyle = "#fdc122";
+        backgroundStyle = "linear-gradient(#4b91ff, #055ce4)";
+        textColor = "white";
       }
     }
     document.getElementById(id).style.background = backgroundStyle;
+    document.getElementById(id).style.color = textColor;
   });
 
   var isSelectionMode = paintBrushTileCode === "select";
@@ -2589,7 +2589,7 @@ function render() {
         if (activePortalLocations.indexOf(location) !== -1) drawCircle(r, c, 0.3, "#666");
         break;
       case PLATFORM:
-        drawPlatform(r, c);
+        drawPlatform(r, c, getAdjacentTiles());
         break;
       case WOODPLATFORM:
         drawOneWayWall("#D38345", r, c, -1, 0);
@@ -2637,7 +2637,6 @@ function render() {
   }
 
   function drawObject(object) {
-    context.save();
     switch (object.type) {
       case SNAKE:
         var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
@@ -2766,21 +2765,74 @@ function render() {
         drawCloud(context, c*tileSize, r*tileSize);
         break;
       default: throw unreachable();
-      context.restore();
     }
   }  
     
-function drawPlatform(r, c) {
-    context.fillStyle = "slategray";
-    context.beginPath();
-    context.moveTo(c * tileSize, r * tileSize);
-    context.lineTo((c + 1) * tileSize, r * tileSize);
-    context.arc((c + 5/6) * tileSize, (r + 1/6) * tileSize, tileSize/6, 0, Math.PI);
+function drawPlatform(r, c, adjacentTiles) {
+    drawPlatform2(r, c, isPlatform);
+    
+    function isPlatform(dc, dr) {
+        var tileCode = adjacentTiles[1 + dr][1 + dc];
+        return tileCode == null || tileCode === PLATFORM;
+    }
+    
+    /*context.lineTo(c*tileSize, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*.1429, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*.1429, r*tileSize+tileSize*.1429);
+    context.lineTo(c*tileSize+tileSize*.2857, r*tileSize+tileSize*.1429);
+    context.lineTo(c*tileSize+tileSize*.2857, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*.4286, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*.4286, r*tileSize+tileSize*.1429);
+    context.lineTo(c*tileSize+tileSize*.5714, r*tileSize+tileSize*.1429);
+    context.lineTo(c*tileSize+tileSize*.5714, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*.7143, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*.7143, r*tileSize+tileSize*.1429);
+    context.lineTo(c*tileSize+tileSize*.8571, r*tileSize+tileSize*.1429);
+    context.lineTo(c*tileSize+tileSize*.8571, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*1, r*tileSize);
+    context.lineTo(c*tileSize, r*tileSize);
+    context.closePath();
+    context.rect(c*tileSize, r*tileSize+tileSize*.2857, tileSize, tileSize*.1429);*/
+    
+    /*context.lineTo(c*tileSize, r*tileSize+tileSize*.2);
+    context.bezierCurveTo(c*tileSize+tileSize*.25, r*tileSize+tileSize*.2, c*tileSize+tileSize*.25, r*tileSize+tileSize*.3, c*tileSize+tileSize*.5, r*tileSize+tileSize*.3);
+    context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.75, r*tileSize+tileSize*.2, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
+    context.lineTo((c+1)*tileSize, r*tileSize);
+    context.lineTo(c*tileSize, r*tileSize);*/
+    
+    /*context.arc((c + 5/6) * tileSize, (r + 1/6) * tileSize, tileSize/6, 0, Math.PI);
     context.arc((c + 3/6) * tileSize, (r + 1/6) * tileSize, tileSize/6, 0, Math.PI);
     context.arc((c + 1/6) * tileSize, (r + 1/6) * tileSize, tileSize/6, 0, Math.PI);
     context.lineTo(c*tileSize, r*tileSize);
-    context.fill();
-  }
+    context.lineTo(c*tileSize+tileSize, r*tileSize);*/
+    
+    //context.closePath();
+    //context.fillStyle = "#000066";
+    //ontext.fill();
+    //context.stroke();
+}
+    
+function drawPlatform2(r, c, isOccupied){
+    
+    var x1 = .05 
+    var x2 = .05;
+    if(isOccupied(-1,0)) x1 = 0;
+    if(isOccupied(1,0)) x2 = 0;        
+    
+    var platformColors = ["#ffcccc", "#ffe0cc", "#ffffcc", "#e6ffe6", "#e6e6ff"];    
+    for(var i = 0; i<5; i++){
+        var j = i-1;
+        if(j<0) j = 0;
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*(i*x1), r*tileSize+tileSize*(.15 * i - (j * .03)));
+        context.strokeStyle = platformColors[i];
+        context.lineWidth = tileSize*(.15-(i*.03));
+        context.lineTo(c*tileSize+tileSize*(1-(i*x2)), r*tileSize+tileSize*(.15 * i - (j * .03)));
+        context.stroke();
+    }
+}
+    
     function drawOneWayWall(fillStyle, r, c, dr, dc) {
     context.fillStyle = fillStyle;
     if (dr == -1)
@@ -2842,11 +2894,11 @@ function drawPlatform(r, c) {
   }
   
   function drawFoam(r, c) {
-    context.fillStyle = "white";
-    for (var i = 0; i < 3; i++) {
-      for (var j = 0; j < 3; j++) {
+    context.fillStyle = "#ffccff";
+    for (var i = 0; i < 4; i++) {
+      for (var j = 0; j < 4; j++) {
         context.beginPath();
-        context.arc(c*tileSize + (i*2+1)*tileSize/6, r*tileSize + (j*2+1)*tileSize/6, tileSize/6, 0, 2*Math.PI);
+        context.arc(c*tileSize + (i*2+1)*tileSize/8, r*tileSize + (j*2+1)*tileSize/8, tileSize/8, 0, 2*Math.PI);
         context.fill();
       }
     }
@@ -2855,27 +2907,27 @@ function drawPlatform(r, c) {
   function drawGate(r, c, isClosed) {
     if (isClosed)
     {
-      context.lineWidth = 3;
-      context.strokeStyle = "#444";
+      context.lineWidth = 2;
+      context.strokeStyle = "#555";
       context.beginPath();
-      for (var i = 1; i < 3; i++) {
+      for (var i = 1; i < 6; i++) {
         context.beginPath();
-        context.moveTo(c*tileSize + i*tileSize/3, r*tileSize);
-        context.lineTo(c*tileSize + i*tileSize/3, (r+1)*tileSize);
+        context.moveTo(c*tileSize + i*tileSize/6, r*tileSize);
+        context.lineTo(c*tileSize + i*tileSize/6, (r+1)*tileSize);
         context.stroke();
       }
       
-      for (var i = 1; i < 4; i++) {
+      for (var i = 1; i < 6; i++) {
         context.beginPath();
-        context.moveTo(c*tileSize, r*tileSize + i*tileSize/4 + tileSize/15);
-        context.lineTo((c+1)*tileSize, r*tileSize + i*tileSize/4 + tileSize/15);
+        context.moveTo(c*tileSize, r*tileSize + i*tileSize/6 + tileSize/15);
+        context.lineTo((c+1)*tileSize, r*tileSize + i*tileSize/6 + tileSize/15);
         context.stroke();
       }
       
       context.lineWidth = 0;
     }
     
-    context.fillStyle = "#777";
+    context.fillStyle = "#111";
     context.beginPath();
     context.moveTo(c*tileSize, r*tileSize);
     context.lineTo((c+1)*tileSize, r*tileSize);
