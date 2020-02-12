@@ -1784,8 +1784,8 @@ function move(dr, dc) {
   var ate = false;
   var pushedObjects = [];
     
-  //track OpenGates that had objects on them
-  var occupiedOpenGates = getOccupiedOpenGateLocations();
+  //track BrokenGlass that had objects on them
+  var occupiedBrokenGlass = getOccupiedBrokenGlassLocations();
 
   if (isCollision()) {
     var newTile = level.map[newLocation];
@@ -1849,7 +1849,7 @@ function move(dr, dc) {
   moveObjects(pushedObjects, dr, dc, portalLocations, portalActivationLocations, changeLog, slitherAnimations);
   animationQueue.push(slitherAnimations);
     
-  occupiedOpenGates = combineOldAndNewGateOccupations(occupiedOpenGates);
+  occupiedBrokenGlass = combineOldAndNewGlassOccupations(occupiedBrokenGlass);
 
   // gravity loop
   var stateToAnimationIndex = {};
@@ -1895,7 +1895,7 @@ function move(dr, dc) {
       }
     }
     
-    occupiedOpenGates = combineOldAndNewGateOccupations(occupiedOpenGates);
+    occupiedBrokenGlass = combineOldAndNewGlassOccupations(occupiedBrokenGlass);
 
     // fall
     var dyingObjects = [];
@@ -1941,7 +1941,7 @@ function move(dr, dc) {
       didAnything = true;
     }
       
-    occupiedOpenGates = closeGates(occupiedOpenGates, changeLog);
+    occupiedBrokenGlass = fixGlass(occupiedBrokenGlass, changeLog);
 
     if (!didAnything) break;
     Array.prototype.push.apply(animationQueue, exitAnimationQueue);
@@ -1952,21 +1952,21 @@ function move(dr, dc) {
   render();
 }
 
-function combineOldAndNewGateOccupations(oldOccupiedOpenGates)
+function combineOldAndNewGlassOccupations(oldOccupiedBrokenGlass)
 {
-  var newOccupiedOpenGates = getOccupiedOpenGateLocations();
-  var newlyOccupiedOpenGates = getSetSubtract(newOccupiedOpenGates, oldOccupiedOpenGates);
-  return oldOccupiedOpenGates.concat(newlyOccupiedOpenGates);
+  var newOccupiedBrokenGlass = getOccupiedBrokenGlassLocations();
+  var newlyOccupiedBrokenGlass = getSetSubtract(newOccupiedBrokenGlass, oldOccupiedBrokenGlass);
+  return oldOccupiedBrokenGlass.concat(newlyOccupiedBrokenGlass);
 }
 
-function closeGates(oldOccupiedOpenGates, changeLog)
+function fixGlass(oldOccupiedBrokenGlass, changeLog)
 {
-  var newOccupiedOpenGates = getOccupiedOpenGateLocations();
-  var nowUnoccupiedOpenGates = getSetSubtract(oldOccupiedOpenGates, newOccupiedOpenGates);
-  for (var i = 0; i < nowUnoccupiedOpenGates.length; i++) {
-    paintTileAtLocation(nowUnoccupiedOpenGates[i], FIXEDGLASS, changeLog);
+  var newOccupiedBrokenGlass = getOccupiedBrokenGlassLocations();
+  var nowUnoccupiedBrokenGlass = getSetSubtract(oldOccupiedBrokenGlass, newOccupiedBrokenGlass);
+  for (var i = 0; i < nowUnoccupiedBrokenGlass.length; i++) {
+    paintTileAtLocation(nowUnoccupiedBrokenGlass[i], FIXEDGLASS, changeLog);
   }
-  return newOccupiedOpenGates;
+  return newOccupiedBrokenGlass;
 }
 
 function getSetSubtract(array1, array2) {
@@ -2230,7 +2230,7 @@ function getSnakes() {
 function getBlocks() {
   return getObjectsOfType(BLOCK);
 }
-function getOccupiedOpenGateLocations()
+function getOccupiedBrokenGlassLocations()
 {
   var result = [];
   for (var i = 0; i < level.map.length; i++) {
@@ -3008,7 +3008,7 @@ function newPlatform(r, c, isOccupied){
         context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.7);
         context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.8);
         context.lineTo(c*tileSize+tileSize*.15, r*tileSize+tileSize*.7);
-        context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.96);
+        context.lineTo(c*tileSize+tileSize*.02, r*tileSize+tileSize*.98);
         context.stroke();
         
         context.beginPath();
@@ -3525,7 +3525,7 @@ function newPlatform(r, c, isOccupied){
   }
     
     function drawCloud(c, x, y){
-        c.fillStyle = "white";
+        c.fillStyle = "black";
         c.beginPath();
         c.rect(x, y, tileSize, tileSize);
         c.fill();
