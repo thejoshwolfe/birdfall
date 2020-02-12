@@ -3525,7 +3525,7 @@ function newPlatform(r, c, isOccupied){
   }
     
     function drawCloud(c, x, y){
-        c.fillStyle = "black";
+        c.fillStyle = "white";
         c.beginPath();
         c.rect(x, y, tileSize, tileSize);
         c.fill();
