@@ -2713,7 +2713,7 @@ function render() {
                         orientation = 3;
                         break;
                     case 3:
-                        orientation = 7;
+                        orientation = 5;
                         break;
                 }
             }
@@ -2729,7 +2729,7 @@ function render() {
                         orientation = 1;
                         break;
                     case 3:
-                        orientation = 5;
+                        orientation = 7;
                         break;
                 }
             }
@@ -2745,7 +2745,7 @@ function render() {
                         orientation = 2;
                         break;
                     case 3:
-                        orientation = 6;
+                        orientation = 4;
                         break;
                 }
             }
@@ -2761,7 +2761,7 @@ function render() {
                         orientation = 0;
                         break;
                     case 3:
-                        orientation = 4;
+                        orientation = 6;
                         break;
                 }
             }
