@@ -40,6 +40,9 @@ var BLOCK = "b";
 var FRUIT = "f";
 var CLOUD = "c";
 
+var headRowMove;
+var headColMove;
+
 var tileSize = 34;
 var level;
 var unmoveStuff = {undoStack:[], redoStack:[], spanId:"movesSpan", undoButtonId:"unmoveButton", redoButtonId:"removeButton"};
@@ -1150,7 +1153,7 @@ function newFruit(location) {
     locations: [location],
   };
 }
-function newDirt(location) {
+function newCloud(location) {
   var clouds = getObjectsOfType(CLOUD);
   clouds.sort(compareId);
   for (var i = 0; i < clouds.length; i++) {
@@ -1193,7 +1196,7 @@ function paintAtLocation(location, changeLog) {
       } else if (object.type === FRUIT) {
         object.id = newFruit().id;
       } else if (object.type === CLOUD) {
-        object.id = newDirt().id;
+        object.id = newCloud().id;
       } else throw unreachable();
       level.objects.push(object);
       changeLog.push([object.type, object.id, [0,[]], serializeObjectState(object)]);
@@ -1273,7 +1276,7 @@ function paintAtLocation(location, changeLog) {
   } else if (paintBrushTileCode === CLOUD) {
     paintTileAtLocation(location, SPACE, changeLog);
     removeAnyObjectAtLocation(location, changeLog);
-    var object1 = newDirt(location)
+    var object1 = newCloud(location)
     level.objects.push(object1);
     changeLog.push([object1.type, object1.id, serializeObjectState(null), serializeObjectState(object1)]);
   } else throw unreachable();
@@ -1645,10 +1648,8 @@ function updateDirtyState() {
   if (dirtyState >= EDITOR_DIRTY) {
     // you should save
     saveLevelButton.classList.add("click-me");
-    saveLevelButton.textContent = "*" + "Save Level";
   } else {
     saveLevelButton.classList.remove("click-me");
-    saveLevelButton.textContent = "Save Level";
   }
 
   var saveProgressButton = document.getElementById("saveProgressButton");
@@ -1697,7 +1698,7 @@ function isAnyCheatcodeEnabled() {
   );
 }
 var themeName = "Spring";   //Gooby
-var background, surface, material, snakeColors, blockColors, spikeColors, fruitColors, textStyle;
+var background, surface, material, snakeColors, blockColors, spikeColors, fruitColors, textStyle, experimentalColors;
 var curlyOutline = false;
 
 var bg1 = "rgba(145, 198, 254 * rgba(133, 192, 255";
@@ -1739,16 +1740,19 @@ var textStyle2 = ["" + fontSize + "px Impact", "#5702c6", "#ff0098"];
 var textStyle3 = ["" + fontSize + "px Impact", "#BA145C", "#F75802"];
 var textStyle4 = ["" + fontSize + "px Impact", "#ff0", "#f00"];
 
+var experimentalColors1 = ["white", "#ffccff"];
+var experimentalColors2 = ["white", "#FEFE28"];
+
 var themeCounter = 0;
 
-var themes = [  //name, background, material, surface, curlyOutline, blockColors, spikeColors, fruitColors, stemColor, textStyle
+var themes = [  //name, background, material, surface, curlyOutline, blockColors, spikeColors, fruitColors, stemColor, textStyle, experimentalColors
   //["sky",],
-  ["Spring", bg1, "#976537", "#95ff45", true, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
-  ["Winter", bg1, "#30455B", "white", true,  snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1],
-  ["Classic", "#8888ff", "#844204", "#282", false,  snakeColors2, blockColors1, spikeColors3, fruitColors1, "green", textStyle4],
-  ["Summer", bg2, "#734d26", "#009933", true,  snakeColors3, blockColors3, spikeColors1, fruitColors1, "green", textStyle3],
-  ["Dream", bg3, "#00aaff", "#ffb3ec", true,  snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2],
-  ["Midnight Rainbow", bg4, "black", "rainbow", false,  snakeColors1, blockColors2, spikeColors2, "white", "white", textStyle1]
+  ["Spring", bg1, "#976537", "#95ff45", true, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
+  ["Winter", bg1, "#30455B", "white", true,  snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
+  ["Classic", "#8888ff", "#844204", "#282", false,  snakeColors2, blockColors1, spikeColors3, fruitColors1, "green", textStyle4, experimentalColors1],
+  ["Summer", bg2, "#734d26", "#009933", true,  snakeColors3, blockColors3, spikeColors1, fruitColors1, "green", textStyle3, experimentalColors2],
+  ["Dream", bg3, "#00aaff", "#ffb3ec", true,  snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2, experimentalColors2],
+  ["Midnight Rainbow", bg4, "black", "rainbow", false,  snakeColors1, blockColors2, spikeColors2, "white", "white", textStyle1, experimentalColors1]
 ];
 
 
@@ -1802,10 +1806,14 @@ function move(dr, dc) {
         ate = true;
       } else if (otherObject.type === CLOUD) {
         removeObject(otherObject, changeLog);
-      } else {
-        // push objects
-        if (!checkMovement(activeSnake, otherObject, dr, dc, pushedObjects)) return false;
-      }
+      } else if (isTileCodeAir(activeSnake, null, newTile, dr, dc)) {
+          var otherObject = findObjectAtLocation(newLocation);
+          if (otherObject != null) {
+            if (otherObject === activeSnake) return; // can't push yourself
+            // push objects
+            if (!checkMovement(activeSnake, otherObject, dr, dc, pushedObjects)) return false;
+          }
+        } else return; // can't go through that tile
     }
   }
 
@@ -1996,19 +2004,6 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
         }
       }
       var forwardLocation = getLocation(level, forwardRowcol.r, forwardRowcol.c);
-      if (dr === 1 && level.map[forwardLocation] === PLATFORM) {
-        // this platform holds us, unless we're going through it
-        var neighborLocations;
-        if (pushedObject.type === SNAKE) {
-          neighborLocations = [];
-          if (j > 0) neighborLocations.push(pushedObject.locations[j - 1]);
-          if (j < pushedObject.locations.length - 1) neighborLocations.push(pushedObject.locations[j + 1]);
-        } else if (pushedObject.type === BLOCK) {
-          neighborLocations = pushedObject.locations;
-        } else throw asdf;
-        if (neighborLocations.indexOf(forwardLocation) === -1) return false; // flat surface
-        // we slip right past it
-      }
       var yetAnotherObject = findObjectAtLocation(forwardLocation);
       if (yetAnotherObject != null) {
         if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === CLOUD) {
@@ -2019,7 +2014,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
           // indirect pushing ourselves.
           // special check for when we're indirectly pushing the tip of our own tail.
           if (forwardLocation === pusher.locations[pusher.locations.length -1]) {
-            // for some reason this is ok.
+            // for some reason this is ok. ------------ THIS IS THE TAIL GLITCH
             continue;
           }
           return false;
@@ -2332,13 +2327,14 @@ function render() {
         background = themes[themeCounter][1];
         material = themes[themeCounter][2];
         surface = themes[themeCounter][3];
+        curlyOutline = themes[themeCounter][4];
         snakeColors = themes[themeCounter][5];
         blockColors = themes[themeCounter][6];
         spikeColors = themes[themeCounter][7];
         fruitColors = themes[themeCounter][8];
         textStyle = themes[themeCounter][10];
+        experimentalColors = themes[themeCounter][11];
         
-        curlyOutline = themes[themeCounter][4];
         if(background.substr(0,1) == "#") {
             context.fillStyle = background;
             context.fillRect(0, 0, canvas.width, canvas.height);
@@ -2483,14 +2479,31 @@ function render() {
         for (var c = 0; c < level.width; c++) {
           var location = getLocation(level, r, c);
           var tileCode = level.map[location];
-          drawTile(tileCode, r, c, level, location);
+          drawTile(tileCode, r, c, level, location, true);   //draws all but walls
         }
       }
     }
-
-    // objects
-    objects.forEach(drawObject);
-
+      
+    for(var i = 0; i<objects.length; i++){  
+        var object = objects[i];
+        if(object.type === SNAKE || object.type === BLOCK) drawObject(object);  //draws snakes and blocks
+    }
+      
+    if (onlyTheseObjects == null) {
+      for (var r = 0; r < level.height; r++) {
+        for (var c = 0; c < level.width; c++) {
+          location = getLocation(level, r, c);
+          tileCode = level.map[location];
+          if(tileCode === WALL) drawTile(tileCode, r, c, level, location, false);  //draws only walls
+        }
+      }
+    }
+      
+    for(var i = 0; i<objects.length; i++){  
+        var object = objects[i];
+        if(object.type === FRUIT || object.type === CLOUD) drawObject(object);  //draws fruit and clouds
+    }
+      
     // banners
     if (countSnakes() === 0) {
       context.fillStyle = textStyle[1];
@@ -2548,7 +2561,7 @@ function render() {
         }
       } else if (paintBrushTileCode === CLOUD) {
         if (!(objectHere != null && objectHere.type === CLOUD)) {
-          drawObject(newDirt(hoverLocation));
+          drawObject(newCloud(hoverLocation));
         }
       } else if (paintBrushTileCode === "resize") {
         void 0; // do nothing
@@ -2570,14 +2583,16 @@ function render() {
       context.globalAlpha = 0.2;
       context.drawImage(buffer, 0, 0);
       context.restore();
-    }
+    }      
   }
-  function drawTile(tileCode, r, c, level, location) {
+    
+  function drawTile(tileCode, r, c, level, location, isCurve) {
     switch (tileCode) {
       case SPACE:
         break;
       case WALL:
-        drawWall(r, c, getAdjacentTiles());
+        if(isCurve && curlyOutline) drawCurves(r, c, getAdjacentTiles());
+        else drawWall(r, c, getAdjacentTiles());
         break;
       case SPIKE:
         drawSpikes(r, c, getAdjacentTiles(), level);
@@ -2642,15 +2657,17 @@ function render() {
       return level.map[getLocation(level, r, c)];
     }
   }
-
+    
   function drawObject(object) {
     switch (object.type) {
       case SNAKE:
         var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
         var lastRowcol = null
         var color = snakeColors[object.id % snakeColors.length];
+        var colorIndex = object.id % snakeColors.length;
         //var altColor = snakeAltColors[object.id % snakeAltColors.length];
         var headRowcol;
+        var orientation = 10;
         for (var i = 0; i <= object.locations.length; i++) {
           var animation;
           var rowcol;
@@ -2678,38 +2695,103 @@ function render() {
           rowcol.c += animationDisplacementRowcol.c;
           if (i === 0) {
             // head
+            context.fillStyle = color;
+            roundRect(context, rowcol.c*tileSize, rowcol.r*tileSize, tileSize, tileSize, 10, true, false);  //draw head
             headRowcol = rowcol;
-            drawDiamond(rowcol.r, rowcol.c, color);
+            
+            //determines orientation of face
+            lastRowcol = getRowcol(level, object.locations[1]);            
+            if (lastRowcol.r < rowcol.r) {  //last move down
+                switch(colorIndex){
+                    case 0:
+                        orientation = 2;
+                        break;
+                    case 1:
+                        orientation = 6;
+                        break;
+                    case 2:
+                        orientation = 3;
+                        break;
+                    case 3:
+                        orientation = 7;
+                        break;
+                }
+            }
+            else if (lastRowcol.r > rowcol.r) {  //last move up
+                switch(colorIndex){
+                    case 0:
+                        orientation = 0;
+                        break;
+                    case 1:
+                        orientation = 4;
+                        break;
+                    case 2:
+                        orientation = 1;
+                        break;
+                    case 3:
+                        orientation = 5;
+                        break;
+                }
+            }
+            else if (lastRowcol.c < rowcol.c) {  //last move right
+                switch(colorIndex){
+                    case 0:
+                        orientation = 1;
+                        break;
+                    case 1:
+                        orientation = 5;
+                        break;
+                    case 2:
+                        orientation = 2;
+                        break;
+                    case 3:
+                        orientation = 6;
+                        break;
+                }
+            }
+            else if (lastRowcol.c > rowcol.c) {  //last move left
+                switch(colorIndex){
+                    case 0:
+                        orientation = 3;
+                        break;
+                    case 1:
+                        orientation = 7;
+                        break;
+                    case 2:
+                        orientation = 0;
+                        break;
+                    case 3:
+                        orientation = 4;
+                        break;
+                }
+            }
+            else orientation = 10;   
           } else {
             // middle
             var cx = (rowcol.c + 0.5) * tileSize;
             var cy = (rowcol.r + 0.5) * tileSize;
             /*if(i % 2 == 0)*/ context.fillStyle = color;
             //else context.fillStyle = altColor;
-            var orientation;
             if (lastRowcol.r < rowcol.r) {
-              orientation = 0;
               context.beginPath();
               context.moveTo((lastRowcol.c + 0) * tileSize, (lastRowcol.r + 0.5) * tileSize);
               context.lineTo((lastRowcol.c + 1) * tileSize, (lastRowcol.r + 0.5) * tileSize);
               context.arc(cx, cy, tileSize/2, 0, Math.PI);
               context.fill();
             } else if (lastRowcol.r > rowcol.r) {
-              orientation = 2;
               context.beginPath();
               context.moveTo((lastRowcol.c + 1) * tileSize, (lastRowcol.r + 0.5) * tileSize);
               context.lineTo((lastRowcol.c + 0) * tileSize, (lastRowcol.r + 0.5) * tileSize);
               context.arc(cx, cy, tileSize/2, Math.PI, 0);
               context.fill();
             } else if (lastRowcol.c < rowcol.c) {
-              orientation = 3;
               context.beginPath();
               context.moveTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 1) * tileSize);
               context.lineTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 0) * tileSize);
+              //roundRect(context, cx, cy, tileSize, tileSize, 10, true, false);
               context.arc(cx, cy, tileSize/2, 1.5 * Math.PI, 2.5 * Math.PI);
               context.fill();
             } else if (lastRowcol.c > rowcol.c) {
-              orientation = 1;
               context.beginPath();
               context.moveTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 0) * tileSize);
               context.lineTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 1) * tileSize);
@@ -2719,16 +2801,12 @@ function render() {
           }
           lastRowcol = rowcol;
         }
-        // eye
-        if (object.id === activeSnakeId) {
-          drawCircle(headRowcol.r, headRowcol.c, 0.5, "#fff");
-          drawCircle(headRowcol.r, headRowcol.c, 0.2, "#000");
-        }
+        drawFace(object.id, headRowcol.c, headRowcol.r, orientation);
         break;
       case BLOCK:
         drawBlock(object);
         break;
-      case FRUIT:   //Gooby
+      case FRUIT:
         rowcol = getRowcol(level, object.locations[0]);
         var c = rowcol.c;
         var r = rowcol.r;
@@ -2762,8 +2840,6 @@ function render() {
             context.fill();
         }
         else drawCircle(rowcol.r, rowcol.c, 1, "#f0f");
-        
-        //context.drawImage(img3,rowcol.c*tileSize+(tileSize*.1), rowcol.r*tileSize+(tileSize*.1), tileSize*.8, tileSize*.8);
         break;
       case CLOUD:
         rowcol = getRowcol(level, object.locations[0]);
@@ -2901,7 +2977,7 @@ function newPlatform(r, c, isOccupied){
   }
   
   function drawFoam(r, c) {
-    context.fillStyle = "#ffccff";
+    context.fillStyle = experimentalColors[1];
     for (var i = 0; i < 5; i++) {
       for (var j = 0; j < 5; j++) {
         context.beginPath();
@@ -3021,7 +3097,7 @@ function newPlatform(r, c, isOccupied){
 
   function drawWall(r, c, adjacentTiles) {  //GOOBY
     //drawRect(r, c, "#976537");    
-    drawTileNew(r, c, isWall, 0.2, material, curlyOutline);
+    drawTileNew(r, c, isWall, 0.2, material);
     drawTileOutlines(r, c, isWall, 0.2, curlyOutline);
     context.save();
     if(curlyOutline) drawBushes(r, c, isWall);
@@ -3035,8 +3111,8 @@ function newPlatform(r, c, isOccupied){
     }
   }
     
-    function drawTileNew(r, c, isOccupied, outlineThickness, fillStyle, curlyOutline){
-        context.fillStyle = fillStyle;  
+    function drawTileNew(r, c, isOccupied, outlineThickness, fillStyle){
+        context.fillStyle = fillStyle;
         if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {bl:10,br:10}, true, false);
         else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tl:10,bl:10}, true, false);
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tl:10,tr:10}, true, false);
@@ -3064,7 +3140,19 @@ function newPlatform(r, c, isOccupied){
                 context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 1, 0, 2*Math.PI);
         }
         context.stroke();*/
+    }
+    
+    function drawCurves(r, c, adjacentTiles){
+        drawCurves2(r, c, isWall, material);
         
+        function isWall(dc, dr) {
+          var tileCode = adjacentTiles[1 + dr][1 + dc];
+          return tileCode == null || tileCode === WALL;
+        }
+    }
+    
+    function drawCurves2(r, c, isOccupied, material){
+        context.fillStyle = material;
         if(isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(1, 1) && curlyOutline) {
             context.fillRect((c+1)*tileSize, (r+1)*tileSize, tileSize/6, tileSize/6);
             //context.globalCompositeOperation = "destination-out";
@@ -3145,7 +3233,6 @@ function newPlatform(r, c, isOccupied){
     var complement = 1 - outlineThickness;
     var outlinePixels = outlineThickness * tileSize;
     var complementPixels = (1 - 2 * outlineThickness) * tileSize;
-      
     
     if (curlyOutline && !isOccupied(0, -1)){  
         if(!isOccupied(-1, 0) && isOccupied(1, 0)){
@@ -3254,17 +3341,16 @@ function newPlatform(r, c, isOccupied){
     }
     
     function drawTileOutlines2(r, c, isOccupied, outlineThickness) {
-    var complement = 1 - outlineThickness;
-    var outlinePixels = outlineThickness * tileSize;
-    var complementPixels = (1 - 2 * outlineThickness) * tileSize;
-    if (!isOccupied(-1, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
-    if (!isOccupied( 1, -1)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
-    if (!isOccupied(-1,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
-    if (!isOccupied( 1,  1)) context.fillRect((c+complement) * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
-    if (!isOccupied( 0, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels);
-    if (!isOccupied( 0,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, tileSize, outlinePixels);
-    if (!isOccupied(-1,  0)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, tileSize);
-    if (!isOccupied( 1,  0)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, tileSize);
+        var complement = 1 - outlineThickness;
+        var outlinePixels = outlineThickness * tileSize;
+        if (!isOccupied(-1, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
+        if (!isOccupied( 1, -1)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
+        if (!isOccupied(-1,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
+        if (!isOccupied( 1,  1)) context.fillRect((c+complement) * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
+        if (!isOccupied( 0, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels);
+        if (!isOccupied( 0,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, tileSize, outlinePixels);
+        if (!isOccupied(-1,  0)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, tileSize);
+        if (!isOccupied( 1,  0)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, tileSize);
   }
     
   function drawSpikes(r, c, adjacentTiles) {
@@ -3505,13 +3591,7 @@ function newPlatform(r, c, isOccupied){
     var x = c * tileSize;
     var y = r * tileSize;
     context.fillStyle = fillStyle;
-    context.beginPath();
-    context.moveTo(x + tileSize/2, y);
-    context.lineTo(x + tileSize, y + tileSize/2);
-    context.lineTo(x + tileSize/2, y + tileSize);
-    context.lineTo(x, y + tileSize/2);
-    context.lineTo(x + tileSize/2, y);
-    context.fill();
+    roundRect(context, x, y, tileSize, tileSize, 10, true, false);
   }
   function drawCircle(r, c, radiusFactor, fillStyle) {
     context.fillStyle = fillStyle;
@@ -3525,11 +3605,11 @@ function newPlatform(r, c, isOccupied){
   }
     
     function drawCloud(c, x, y){
-        c.fillStyle = "white";
-        c.beginPath();
+        c.fillStyle = experimentalColors[0];
+        /*c.beginPath();
         c.rect(x, y, tileSize, tileSize);
         c.fill();
-        c.closePath();
+        c.closePath();*/
         
         c.beginPath();
         c.moveTo(x+tileSize*0, y+tileSize*0);
@@ -3554,6 +3634,290 @@ function newPlatform(r, c, isOccupied){
         c.fill();
         //c.stroke();
     }
+
+function drawFace(snake, headCol, headRow, orientation){
+    var x = headCol * tileSize;
+    var y = headRow * tileSize;
+    
+    var scaleFactor = 1.5;
+    var scale1;
+    var scale2;
+    var eye1 = tileSize*.8;
+    var eye2 = tileSize*.4;
+
+    var eyeSize = tileSize/5;
+    var eyeRotation = 2;
+    var z1, z2, z3, z4, z5, z6, z7, z8;
+    var a1, a2, a3, a4, a5, a6, a7, a8;
+    var beakRotation = 1.5;
+    var arcDirection = false;
+    
+    switch(orientation){
+        case 0:    //red up and blue left
+            z1 = eye2; 
+            z2 = tileSize-eye1; 
+            z3 = eye2; 
+            z4 = tileSize-eye2; 
+            z5 = eye2; 
+            z6 = tileSize-eye1;  
+            z7 = eye2; 
+            z8 = tileSize-eye2 
+            eyeRotation = 1.5; 
+            scale1 = scaleFactor; 
+            scale2 = 1;
+
+            a1 = tileSize*.7;
+            a2 = tileSize-tileSize*.7;
+            a3 = tileSize*.7;
+            a4 = -tileSize*.3;
+            a5 = tileSize*.7;
+            a6 = tileSize*.3;
+            a7 = tileSize/6;
+            a8 = 0;
+            beakRotation = 1;
+            arcDirection = false;
+            break;
+        case 1:    //red right and blue up
+            z1 = eye1; 
+            z2 = eye2; 
+            z3 = eye2; 
+            z4 = eye2; 
+            z5 = eye1; 
+            z6 = eye2; 
+            z7 = eye2; 
+            z8 = eye2; 
+            eyeRotation = 2; 
+            scale1 = 1; 
+            scale2 = scaleFactor;
+
+            a1 = tileSize*.7;
+            a2 = tileSize*.7;
+            a3 = tileSize*1.3;
+            a4 = tileSize*.7;
+            a5 = tileSize*.7;
+            a6 = tileSize*.7;
+            a7 = 0;
+            a8 = tileSize/6;
+            beakRotation = 1.5;
+            arcDirection = false;
+            break;
+        case 2:    //red down and blue right
+            z1 = tileSize-eye2; 
+            z2 = eye1; 
+            z3 = tileSize-eye2; 
+            z4 = eye2; 
+            z5 = tileSize-eye2; 
+            z6 = eye1; 
+            z7 = tileSize-eye2; 
+            z8 = eye2; 
+            eyeRotation = 2.5; 
+            scale1 = scaleFactor; 
+            scale2 = 1;
+
+            a1 = tileSize-tileSize*.7;
+            a2 = tileSize*.7;
+            a3 = tileSize-tileSize*.7;
+            a4 = tileSize*1.3;
+            a5 = tileSize-tileSize*.7;
+            a6 = tileSize*.7;
+            a7 = tileSize/6;
+            a8 = 0;
+            beakRotation = 1;
+            arcDirection = true;
+            break;
+        case 3:    //red left and blue down
+            z1 = tileSize-eye1; 
+            z2 = tileSize-eye2; 
+            z3 = tileSize-eye2; 
+            z4 = tileSize-eye2; 
+            z5 = tileSize-eye1; 
+            z6 = tileSize-eye2; 
+            z7 = tileSize-eye2; 
+            z8 = tileSize-eye2; 
+            eyeRotation = 3; 
+            scale1 = 1; 
+            scale2 = scaleFactor;
+
+            a1 = tileSize-tileSize*.7;
+            a2 = tileSize-tileSize*.7;
+            a3 = tileSize-tileSize*1.3;
+            a4 = tileSize-tileSize*.7;
+            a5 = tileSize-tileSize*.7;
+            a6 = tileSize-tileSize*.7;
+            a7 = 0;
+            a8 = tileSize/6;
+            beakRotation = 1.5;
+            arcDirection = true;
+            break;
+        case 4:    //green up and yellow right
+            z1 = tileSize-eye2; 
+            z2 = tileSize-eye1; 
+            z3 = tileSize-eye2; 
+            z4 = tileSize-eye2; 
+            z5 = tileSize-eye2; 
+            z6 = tileSize-eye1;  
+            z7 = tileSize-eye2; 
+            z8 = tileSize-eye2 
+            eyeRotation = 2.5; 
+            scale1 = scaleFactor; 
+            scale2 = 1;
+
+            a1 = tileSize-tileSize*.7;
+            a2 = tileSize-tileSize*.7;
+            a3 = tileSize-tileSize*.7;
+            a4 = -tileSize*.3;
+            a5 = tileSize-tileSize*.7;
+            a6 = tileSize*.3;
+            a7 = tileSize/6;
+            a8 = 0;
+            beakRotation = 1;
+            arcDirection = false;
+            break;
+        case 5:    //green right and yellow down
+            z1 = eye1; 
+            z2 = tileSize-eye2; 
+            z3 = eye2; 
+            z4 = tileSize-eye2; 
+            z5 = eye1; 
+            z6 = tileSize-eye2; 
+            z7 = eye2; 
+            z8 = tileSize-eye2; 
+            eyeRotation = 3; 
+            scale1 = 1; 
+            scale2 = scaleFactor;
+
+            a1 = tileSize*.7;
+            a2 = tileSize-tileSize*.7;
+            a3 = tileSize*1.3;
+            a4 = tileSize-tileSize*.7;
+            a5 = tileSize*.7;
+            a6 = tileSize-tileSize*.7;
+            a7 = 0;
+            a8 = tileSize/6;
+            beakRotation = 1.5;
+            arcDirection = false;
+            break;
+        case 6:    //green down and yellow left
+            z1 = eye2; 
+            z2 = eye1; 
+            z3 = eye2; 
+            z4 = eye2; 
+            z5 = eye2; 
+            z6 = eye1; 
+            z7 = eye2; 
+            z8 = eye2; 
+            eyeRotation = 1.5; 
+            scale1 = scaleFactor; 
+            scale2 = 1;
+
+            a1 = tileSize*.7;
+            a2 = tileSize*.7;
+            a3 = tileSize*.7;
+            a4 = tileSize*1.3;
+            a5 = tileSize*.7;
+            a6 = tileSize*.7;
+            a7 = tileSize/6;
+            a8 = 0;
+            beakRotation = 1;
+            arcDirection = true;
+            break;
+        case 7:    //green left and yellow up
+            z1 = tileSize-eye1; 
+            z2 = eye2; 
+            z3 = tileSize-eye2; 
+            z4 = eye2; 
+            z5 = tileSize-eye1; 
+            z6 = eye2; 
+            z7 = tileSize-eye2; 
+            z8 = eye2; 
+            eyeRotation = 2; 
+            scale1 = 1; 
+            scale2 = scaleFactor;
+
+            a1 = tileSize-tileSize*.7;
+            a2 = tileSize*.7;
+            a3 = tileSize-tileSize*1.3;
+            a4 = tileSize*.7;
+            a5 = tileSize-tileSize*.7;
+            a6 = tileSize*.7;
+            a7 = 0;
+            a8 = tileSize/6;
+            beakRotation = 1.5;
+            arcDirection = true;
+            break;
+        case 10:    //single unit snake
+            z1 = eye1; 
+            z2 = eye2; 
+            z3 = eye2; 
+            z4 = eye2; 
+            z5 = eye1; 
+            z6 = eye2; 
+            z7 = eye2; 
+            z8 = eye2; 
+            eyeRotation = 2; 
+            scale1 = 1; 
+            scale2 = scaleFactor;
+
+            a1 = tileSize*.7;
+            a2 = tileSize*.7;
+            a3 = tileSize*1.3;
+            a4 = tileSize*.7;
+            a5 = tileSize*.7;
+            a6 = tileSize*.7;
+            a7 = 0;
+            a8 = tileSize/6;
+            beakRotation = 1.5;
+            arcDirection = false;
+            break;
+    }
+    
+    if (snake === activeSnakeId) {     //draw eyes for active snake only    
+        context.fillStyle = "white";
+        context.save();
+        context.scale(scale1,scale2);
+        context.beginPath();
+        context.arc((x+z1)/scale1, (y+z2)/scale2, eyeSize, (eyeRotation-1)*Math.PI, eyeRotation*Math.PI, true);
+        context.closePath();
+        context.restore();
+        context.fill();
+
+        context.fillStyle = "white";
+        context.save();
+        context.scale(scale1,scale2);
+        context.beginPath();
+        context.arc((x+z3)/scale1, (y+z4)/scale2, eyeSize, (eyeRotation-1)*Math.PI, eyeRotation*Math.PI, true);
+        context.closePath();
+        context.restore();
+        context.fill();
+
+        context.fillStyle = "black";
+        context.save();
+        context.scale(scale1,scale2);
+        context.beginPath();
+        context.arc((x+z5)/scale1, (y+z6)/scale2, eyeSize/2, (eyeRotation-1)*Math.PI, eyeRotation*Math.PI, true);
+        context.closePath();
+        context.restore();
+        context.fill();
+
+        context.fillStyle = "black";
+        context.save();
+        context.scale(scale1,scale2);
+        context.beginPath();
+        context.arc((x+z7)/scale1, (y+z8)/scale2, eyeSize/2, (eyeRotation-1)*Math.PI, eyeRotation*Math.PI, true);
+        context.closePath();
+        context.restore();
+        context.fill();
+    }
+    
+    //beak
+    context.fillStyle = "yellow";
+    context.beginPath();
+    context.arc(x+a1, y+a2, tileSize/6, (beakRotation-1)*Math.PI, beakRotation*Math.PI, arcDirection);
+    context.lineTo(x+a3, y+a4);
+    context.lineTo(x+a5+a7, y+a6+a8);
+    context.closePath();
+    context.fill();
+}
     
     function roundRect(ctx, x, y, width, height, radius, fill, stroke) { //Gooby
       if (typeof stroke === 'undefined') {
