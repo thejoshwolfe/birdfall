@@ -1,11 +1,11 @@
 @keyframes click_me {
-    0%   { background: buttonface; }
+    0%   { background: linear-gradient(white, #e6e6e6); }
     50%  { background: yellow; }
-    100% { background: buttonface; }
+    100% { background: linear-gradient(white, #e6e6e6); }
 }
 
 button.click-me {
-    animation: click_me 1s linear infinite;
+    background: yellow;
     font-weight: bold;
 }
 
@@ -24,16 +24,21 @@ body{
 
 button{
     background-image: linear-gradient(white, #e6e6e6);
-    border: .4px solid black;
+    border: none;
     border-radius: 3px;
-    margin: 1px;
+    margin: 2px;
     box-shadow: .5px .5px 1px black;
 }
 
 button:focus{
     background-image: linear-gradient(#4b91ff, #055ce4);
     color: white;
-}    
+}
+
+button:active{
+    box-shadow: .5px .5px 1px black inset;
+    color: black;
+}
 
 #levelTable{
     margin: 0 auto;
