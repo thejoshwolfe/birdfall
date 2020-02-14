@@ -2663,15 +2663,17 @@ function render() {
       case SNAKE:
         var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
         var lastRowcol = null
+        var nextRowcol = null
         var color = snakeColors[object.id % snakeColors.length];
         var colorIndex = object.id % snakeColors.length;
-        //var altColor = snakeAltColors[object.id % snakeAltColors.length];
+        var altColor = snakeAltColors[object.id % snakeAltColors.length];
         var headRowcol;
         var orientation = 10;
-        for (var i = 0; i <= object.locations.length; i++) {
+        for (var i = object.locations.length-1; i > -1; i--) { //runs 3 times per move. When animation is comment out, alert(i) shows decrement 3x. When not comment out, it shows decrement 1x, then 2 not
+          //alert(i);
           var animation;
           var rowcol;
-          if (i === 0 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {
+          /*if (i === 0 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {
             // animate head slithering forward
             rowcol = getRowcol(level, object.locations[i]);
             rowcol.r += animation[2] * (animationProgress - 1);
@@ -2687,21 +2689,25 @@ function render() {
               // no animated tail needed
               break;
             }
-          } else {
+          } else {*/
             rowcol = getRowcol(level, object.locations[i]);
-          }
+          //}
+          if(i != 0) nextRowcol = getRowcol(level, object.locations[i-1]); //new
+          if(i != object.locations.length) lastRowcol = getRowcol(level, object.locations[i+1]); //new
+            
           if (object.dead) rowcol.r += 0.5;
           rowcol.r += animationDisplacementRowcol.r;
           rowcol.c += animationDisplacementRowcol.c;
           if (i === 0) {
             // head
             context.fillStyle = color;
-            roundRect(context, rowcol.c*tileSize, rowcol.r*tileSize, tileSize, tileSize, 10, true, false);  //draw head
+            //roundRect(context, rowcol.c*tileSize, rowcol.r*tileSize, tileSize, tileSize, 10, true, false);  //draw head
             headRowcol = rowcol;
             
             //determines orientation of face
             lastRowcol = getRowcol(level, object.locations[1]);            
             if (lastRowcol.r < rowcol.r) {  //last move down
+                roundRect(context, rowcol.c*tileSize, rowcol.r*tileSize, tileSize, tileSize, {bl:10,br:10}, true, false);  //draw head
                 switch(colorIndex){
                     case 0:
                         orientation = 2;
@@ -2717,7 +2723,8 @@ function render() {
                         break;
                 }
             }
-            else if (lastRowcol.r > rowcol.r) {  //last move up
+            else if (lastRowcol.r > rowcol.r) {  //last move up -------- this is the orientation when any snake falls (needs to be fixed)
+                roundRect(context, rowcol.c*tileSize, rowcol.r*tileSize, tileSize, tileSize, {tl:10,tr:10}, true, false);  //draw head
                 switch(colorIndex){
                     case 0:
                         orientation = 0;
@@ -2734,6 +2741,7 @@ function render() {
                 }
             }
             else if (lastRowcol.c < rowcol.c) {  //last move right
+                roundRect(context, rowcol.c*tileSize, rowcol.r*tileSize, tileSize, tileSize, {tr:10,br:10}, true, false);  //draw head
                 switch(colorIndex){
                     case 0:
                         orientation = 1;
@@ -2750,6 +2758,7 @@ function render() {
                 }
             }
             else if (lastRowcol.c > rowcol.c) {  //last move left
+                roundRect(context, rowcol.c*tileSize, rowcol.r*tileSize, tileSize, tileSize, {tl:10,bl:10}, true, false);  //draw head
                 switch(colorIndex){
                     case 0:
                         orientation = 3;
@@ -2765,41 +2774,36 @@ function render() {
                         break;
                 }
             }
-            else orientation = 10;   
+            else {
+                roundRect(context, rowcol.c*tileSize, rowcol.r*tileSize, tileSize, tileSize, 10, true, false);  //draw head
+                orientation = 10;
+            }  
           } else {
-            // middle
-            var cx = (rowcol.c + 0.5) * tileSize;
-            var cy = (rowcol.r + 0.5) * tileSize;
-            /*if(i % 2 == 0)*/ context.fillStyle = color;
-            //else context.fillStyle = altColor;
-            if (lastRowcol.r < rowcol.r) {
-              context.beginPath();
-              context.moveTo((lastRowcol.c + 0) * tileSize, (lastRowcol.r + 0.5) * tileSize);
-              context.lineTo((lastRowcol.c + 1) * tileSize, (lastRowcol.r + 0.5) * tileSize);
-              context.arc(cx, cy, tileSize/2, 0, Math.PI);
-              context.fill();
-            } else if (lastRowcol.r > rowcol.r) {
-              context.beginPath();
-              context.moveTo((lastRowcol.c + 1) * tileSize, (lastRowcol.r + 0.5) * tileSize);
-              context.lineTo((lastRowcol.c + 0) * tileSize, (lastRowcol.r + 0.5) * tileSize);
-              context.arc(cx, cy, tileSize/2, Math.PI, 0);
-              context.fill();
-            } else if (lastRowcol.c < rowcol.c) {
-              context.beginPath();
-              context.moveTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 1) * tileSize);
-              context.lineTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 0) * tileSize);
-              //roundRect(context, cx, cy, tileSize, tileSize, 10, true, false);
-              context.arc(cx, cy, tileSize/2, 1.5 * Math.PI, 2.5 * Math.PI);
-              context.fill();
-            } else if (lastRowcol.c > rowcol.c) {
-              context.beginPath();
-              context.moveTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 0) * tileSize);
-              context.lineTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 1) * tileSize);
-              context.arc(cx, cy, tileSize/2, 2.5 * Math.PI, 1.5 * Math.PI);
-              context.fill();
+            var cx = rowcol.c * tileSize;
+            var cy = rowcol.r * tileSize;
+            if(i % 2 == 0) context.fillStyle = color;
+            else context.fillStyle = altColor;
+              
+            if (i === object.locations.length-1){
+                if(nextRowcol.r > rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10,tr:10}, true, false);}
+                else if(nextRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {bl:10,br:10}, true, false);}
+                else if(nextRowcol.c < rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tr:10,br:10}, true, false);}
+                else if(nextRowcol.c > rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10,bl:10}, true, false);}
+            }
+            else{
+                if (nextRowcol.r > rowcol.r && lastRowcol.c < rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tr:10}, true, false);}
+                else if (nextRowcol.r > rowcol.r && lastRowcol.c > rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10}, true, false);}
+                else if (nextRowcol.r < rowcol.r && lastRowcol.c < rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {br:10}, true, false);}
+                else if (nextRowcol.r < rowcol.r && lastRowcol.c > rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {bl:10}, true, false);}
+                
+                else if (nextRowcol.c > rowcol.c && lastRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {bl:10}, true, false);}
+                else if (nextRowcol.c > rowcol.c && lastRowcol.r > rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10}, true, false);}
+                else if (nextRowcol.c < rowcol.c && lastRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {br:10}, true, false);}
+                else if (nextRowcol.c < rowcol.c && lastRowcol.r > rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {tr:10}, true, false);}
+                
+                else if (nextRowcol.c < rowcol.c && lastRowcol.c > rowcol.c || nextRowcol.c > rowcol.c && lastRowcol.c < rowcol.c || nextRowcol.r < rowcol.r && lastRowcol.r > rowcol.r || nextRowcol.r > rowcol.r && lastRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, 0, true, false);}
             }
           }
-          lastRowcol = rowcol;
         }
         drawFace(object.id, headRowcol.c, headRowcol.r, orientation);
         break;
@@ -3910,7 +3914,7 @@ function drawFace(snake, headCol, headRow, orientation){
     }
     
     //beak
-    context.fillStyle = "yellow";
+    context.fillStyle = "#F9921C";
     context.beginPath();
     context.arc(x+a1, y+a2, tileSize/6, (beakRotation-1)*Math.PI, beakRotation*Math.PI, arcDirection);
     context.lineTo(x+a3, y+a4);
