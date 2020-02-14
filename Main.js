@@ -1909,7 +1909,7 @@ function move(dr, dc) {
     var dyingObjects = [];
     var fallingObjects = level.objects.filter(function(object) {
       if (object.type === FRUIT) return; // can't fall
-      if (object.type === CLOUD) return; // can't fall
+      if (object.type === BLOCK) return; // can't fall
       var theseDyingObjects = [];
       if (!checkMovement(null, object, 1, 0, [], theseDyingObjects)) return false;
       // this object can fall. maybe more will fall with it too. we'll check those separately.
@@ -2020,13 +2020,12 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
           return false;
         }
         addIfNotPresent(pushedObjects, yetAnotherObject);
-      } else {
-        addIfNotPresent(forwardLocations, forwardLocation);
       }
+      addIfNotPresent(forwardLocations, forwardLocation);             //this made wooden platform work
     }
   }
   // check forward locations
-  for (var i = 0; i < forwardLocations.length; i++) {
+   for (var i = 0; i < forwardLocations.length; i++) {          //changed this section trying to fix wooden platform
     var forwardLocation = forwardLocations[i];
     // many of these locations can be inside objects,
     // but that means the tile must be air,
@@ -2037,10 +2036,9 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
       if (dyingObjects != null) {
         if (tileCode === SPIKE) {
           // uh... which object was this again?
-          var deadObject = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
-          if (deadObject.type === SNAKE) {
+          if (object.type === SNAKE) {
             // ouch!
-            addIfNotPresent(dyingObjects, deadObject);
+            addIfNotPresent(dyingObjects, object);
             continue;
           }
         }
@@ -2109,20 +2107,21 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
     var location = newLocations[i];
     if (!isTileCodeAir(object, null, level.map[location], 0, 0)) return false; // blocked by tile
     var otherObject = findObjectAtLocation(location);
-    if (otherObject != null && otherObject !== object) return false; // blocked by object
+    if (otherObject != null && otherObject !== object) return; // blocked by object
   }
 
   // zappo presto!
   var oldState = serializeObjectState(object);
   object.locations = newLocations;
+  for (var i = 0; i < newLocations.length; i++) {
+    var location = newLocations[i];
+    if (level.map[location] == FOAM)                        //changed this despite foam working perfectly without it
+    {
+      //dig
+      paintTileAtLocation(location, SPACE, changeLog);
+    }
+  }
   changeLog.push([object.type, object.id, oldState, serializeObjectState(object)]);
-  animations.push([
-    "t" + object.type, // TELEPORT_SNAKE | TELEPORT_BLOCK
-    object.id,
-    delta.r,
-    delta.c,
-  ]);
-  return true;
 }
 
 function isTileCodeAir(pusher, pushedObject, tileCode, dr, dc) {
@@ -2670,7 +2669,6 @@ function render() {
         var headRowcol;
         var orientation = 10;
         for (var i = object.locations.length-1; i > -1; i--) { //runs 3 times per move. When animation is comment out, alert(i) shows decrement 3x. When not comment out, it shows decrement 1x, then 2 not
-          //alert(i);
           var animation;
           var rowcol;
           /*if (i === 0 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {
@@ -2689,11 +2687,33 @@ function render() {
               // no animated tail needed
               break;
             }
-          } else {*/
+          } else {
             rowcol = getRowcol(level, object.locations[i]);
-          //}
-          if(i != 0) nextRowcol = getRowcol(level, object.locations[i-1]); //new
-          if(i != object.locations.length) lastRowcol = getRowcol(level, object.locations[i+1]); //new
+          }*/
+            
+          /*if (i === object.locations.length-1 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {
+            // animate head slithering forward
+            rowcol = getRowcol(level, object.locations[i]);
+            rowcol.r += animation[2] * (animationProgress - 1);
+            rowcol.c += animation[3] * (animationProgress - 1);
+          } else if (i === 0) {
+            // animated tail?
+            if ((animation = findAnimation([SLITHER_TAIL], object.id)) != null) {
+              // animate tail slithering to catch up
+              rowcol = getRowcol(level, object.locations[i + 1]);
+              rowcol.r += animation[2] * (animationProgress - 1);
+              rowcol.c += animation[3] * (animationProgress - 1);
+            } else {
+              // no animated tail needed
+              break;
+            }
+          } else {
+            rowcol = getRowcol(level, object.locations[i]);
+          }*/
+              
+          rowcol = getRowcol(level, object.locations[i]);
+          if(i != 0) nextRowcol = getRowcol(level, object.locations[i-1]);
+          if(i != object.locations.length) lastRowcol = getRowcol(level, object.locations[i+1]);
             
           if (object.dead) rowcol.r += 0.5;
           rowcol.r += animationDisplacementRowcol.r;
@@ -3997,10 +4017,7 @@ function findAnimation(animationTypes, objectId) {
   var currentAnimation = animationQueue[animationQueueCursor];
   for (var i = 1; i < currentAnimation.length; i++) {
     var animation = currentAnimation[i];
-    if (animationTypes.indexOf(animation[0]) !== -1 &&
-        animation[1] === objectId) {
-      return animation;
-    }
+    if (animationTypes.indexOf(animation[0]) !== -1 && animation[1] === objectId) return animation;
   }
 }
 function findAnimationDisplacementRowcol(objectType, objectId) {
