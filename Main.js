@@ -1909,7 +1909,7 @@ function move(dr, dc) {
     var dyingObjects = [];
     var fallingObjects = level.objects.filter(function(object) {
       if (object.type === FRUIT) return; // can't fall
-      if (object.type === BLOCK) return; // can't fall
+      if (object.type === CLOUD) return; // can't fall
       var theseDyingObjects = [];
       if (!checkMovement(null, object, 1, 0, [], theseDyingObjects)) return false;
       // this object can fall. maybe more will fall with it too. we'll check those separately.
