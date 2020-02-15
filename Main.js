@@ -1807,7 +1807,7 @@ function move(dr, dc) {
       } else if (otherObject.type === CLOUD) {
         removeObject(otherObject, changeLog);
       } else if (isTileCodeAir(activeSnake, null, newTile, dr, dc)) {
-          var otherObject = findObjectAtLocation(newLocation);
+          otherObject = findObjectAtLocation(newLocation);
           if (otherObject != null) {
             if (otherObject === activeSnake) return; // can't push yourself
             // push objects
@@ -1834,7 +1834,7 @@ function move(dr, dc) {
   if (!ate) {
     // drag your tail forward
     var oldRowcol = getRowcol(level, activeSnake.locations[activeSnake.locations.length - 1]);
-    var newRowcol = getRowcol(level, activeSnake.locations[activeSnake.locations.length - 2]);
+    newRowcol = getRowcol(level, activeSnake.locations[activeSnake.locations.length - 2]);
     if (!size1) {
       slitherAnimations.push([
         SLITHER_TAIL,
@@ -2020,12 +2020,13 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
           return false;
         }
         addIfNotPresent(pushedObjects, yetAnotherObject);
-      }
-      addIfNotPresent(forwardLocations, forwardLocation);             //this made wooden platform work
+        if(level.map[forwardLocation] === WOODPLATFORM) addIfNotPresent(forwardLocations, forwardLocation);   //this made wooden platform work          
+      } else
+          addIfNotPresent(forwardLocations, forwardLocation);             
     }
   }
   // check forward locations
-   for (var i = 0; i < forwardLocations.length; i++) {          //changed this section trying to fix wooden platform
+   for (var i = 0; i < forwardLocations.length; i++) {          //changed this section trying to fix wooden platform, saw no effect but left new code
     var forwardLocation = forwardLocations[i];
     // many of these locations can be inside objects,
     // but that means the tile must be air,
@@ -2249,14 +2250,6 @@ function isDead() {
 function isAlive() {
   return countSnakes() > 0 && !isDead();
 }
-
-
-var snakeAltColors = [
-  "#ff6666",
-  "#66ff66",
-  "#6666ff",
-  "#ffff66",
-];
 
 var activeSnakeId = null;
 
@@ -2657,6 +2650,21 @@ function render() {
     }
   }
     
+function getTintedColor(color, v) {
+    if (color.length >6) { color= color.substring(1,color.length)}
+    var rgb = parseInt(color, 16); 
+    var r = Math.abs(((rgb >> 16) & 0xFF)+v); if (r>255) r=r-(r-255);
+    var g = Math.abs(((rgb >> 8) & 0xFF)+v); if (g>255) g=g-(g-255);
+    var b = Math.abs((rgb & 0xFF)+v); if (b>255) b=b-(b-255);
+    r = Number(r < 0 || isNaN(r)) ? 0 : ((r > 255) ? 255 : r).toString(16); 
+    if (r.length == 1) r = '0' + r;
+    g = Number(g < 0 || isNaN(g)) ? 0 : ((g > 255) ? 255 : g).toString(16); 
+    if (g.length == 1) g = '0' + g;
+    b = Number(b < 0 || isNaN(b)) ? 0 : ((b > 255) ? 255 : b).toString(16); 
+    if (b.length == 1) b = '0' + b;
+    return "#" + r + g + b;
+} 
+    
   function drawObject(object) {
     switch (object.type) {
       case SNAKE:
@@ -2665,14 +2673,14 @@ function render() {
         var nextRowcol = null
         var color = snakeColors[object.id % snakeColors.length];
         var colorIndex = object.id % snakeColors.length;
-        var altColor = snakeAltColors[object.id % snakeAltColors.length];
+        //var altColor = snakeAltColors[object.id % snakeAltColors.length];
+        var altColor = getTintedColor(color, 75);
         var headRowcol;
         var orientation = 10;
-        for (var i = object.locations.length-1; i > -1; i--) { //runs 3 times per move. When animation is comment out, alert(i) shows decrement 3x. When not comment out, it shows decrement 1x, then 2 not
+        for (var i = 0; i <= object.locations.length; i++) {
           var animation;
           var rowcol;
-          /*if (i === 0 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {
-            // animate head slithering forward
+          if (i === 0 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {  // animate head slithering forward
             rowcol = getRowcol(level, object.locations[i]);
             rowcol.r += animation[2] * (animationProgress - 1);
             rowcol.c += animation[3] * (animationProgress - 1);
@@ -2689,44 +2697,21 @@ function render() {
             }
           } else {
             rowcol = getRowcol(level, object.locations[i]);
-          }*/
-            
-          /*if (i === object.locations.length-1 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {
-            // animate head slithering forward
-            rowcol = getRowcol(level, object.locations[i]);
-            rowcol.r += animation[2] * (animationProgress - 1);
-            rowcol.c += animation[3] * (animationProgress - 1);
-          } else if (i === 0) {
-            // animated tail?
-            if ((animation = findAnimation([SLITHER_TAIL], object.id)) != null) {
-              // animate tail slithering to catch up
-              rowcol = getRowcol(level, object.locations[i + 1]);
-              rowcol.r += animation[2] * (animationProgress - 1);
-              rowcol.c += animation[3] * (animationProgress - 1);
-            } else {
-              // no animated tail needed
-              break;
-            }
-          } else {
-            rowcol = getRowcol(level, object.locations[i]);
-          }*/
+          }
               
-          rowcol = getRowcol(level, object.locations[i]);
-          if(i != 0) nextRowcol = getRowcol(level, object.locations[i-1]);
-          if(i != object.locations.length) lastRowcol = getRowcol(level, object.locations[i+1]);
+          lastRowcol = getRowcol(level, object.locations[i-1]); //closer to head
+          nextRowcol = getRowcol(level, object.locations[i+1]); //closer to tail
             
           if (object.dead) rowcol.r += 0.5;
           rowcol.r += animationDisplacementRowcol.r;
           rowcol.c += animationDisplacementRowcol.c;
           if (i === 0) {
-            // head
             context.fillStyle = color;
-            //roundRect(context, rowcol.c*tileSize, rowcol.r*tileSize, tileSize, tileSize, 10, true, false);  //draw head
             headRowcol = rowcol;
             
             //determines orientation of face
-            lastRowcol = getRowcol(level, object.locations[1]);            
-            if (lastRowcol.r < rowcol.r) {  //last move down
+            nextRowcol = getRowcol(level, object.locations[1]);            
+            if (nextRowcol.r < rowcol.r) {  //last move down
                 roundRect(context, rowcol.c*tileSize, rowcol.r*tileSize, tileSize, tileSize, {bl:10,br:10}, true, false);  //draw head
                 switch(colorIndex){
                     case 0:
@@ -2743,7 +2728,7 @@ function render() {
                         break;
                 }
             }
-            else if (lastRowcol.r > rowcol.r) {  //last move up -------- this is the orientation when any snake falls (needs to be fixed)
+            else if (nextRowcol.r > rowcol.r) {  //last move up -------- this is the orientation when any snake falls (needs to be fixed)
                 roundRect(context, rowcol.c*tileSize, rowcol.r*tileSize, tileSize, tileSize, {tl:10,tr:10}, true, false);  //draw head
                 switch(colorIndex){
                     case 0:
@@ -2760,7 +2745,7 @@ function render() {
                         break;
                 }
             }
-            else if (lastRowcol.c < rowcol.c) {  //last move right
+            else if (nextRowcol.c < rowcol.c) {  //last move right
                 roundRect(context, rowcol.c*tileSize, rowcol.r*tileSize, tileSize, tileSize, {tr:10,br:10}, true, false);  //draw head
                 switch(colorIndex){
                     case 0:
@@ -2777,7 +2762,7 @@ function render() {
                         break;
                 }
             }
-            else if (lastRowcol.c > rowcol.c) {  //last move left
+            else if (nextRowcol.c > rowcol.c) {  //last move left
                 roundRect(context, rowcol.c*tileSize, rowcol.r*tileSize, tileSize, tileSize, {tl:10,bl:10}, true, false);  //draw head
                 switch(colorIndex){
                     case 0:
@@ -2805,23 +2790,23 @@ function render() {
             else context.fillStyle = altColor;
               
             if (i === object.locations.length-1){
-                if(nextRowcol.r > rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10,tr:10}, true, false);}
-                else if(nextRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {bl:10,br:10}, true, false);}
-                else if(nextRowcol.c < rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tr:10,br:10}, true, false);}
-                else if(nextRowcol.c > rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10,bl:10}, true, false);}
+                if(lastRowcol.r > rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10,tr:10}, true, false);}
+                else if(lastRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {bl:10,br:10}, true, false);}
+                else if(lastRowcol.c < rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tr:10,br:10}, true, false);}
+                else if(lastRowcol.c > rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10,bl:10}, true, false);}
             }
             else{
-                if (nextRowcol.r > rowcol.r && lastRowcol.c < rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tr:10}, true, false);}
-                else if (nextRowcol.r > rowcol.r && lastRowcol.c > rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10}, true, false);}
-                else if (nextRowcol.r < rowcol.r && lastRowcol.c < rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {br:10}, true, false);}
-                else if (nextRowcol.r < rowcol.r && lastRowcol.c > rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {bl:10}, true, false);}
+                if (lastRowcol.r > rowcol.r && nextRowcol.c < rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tr:10}, true, false);}
+                else if (lastRowcol.r > rowcol.r && nextRowcol.c > rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10}, true, false);}
+                else if (lastRowcol.r < rowcol.r && nextRowcol.c < rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {br:10}, true, false);}
+                else if (lastRowcol.r < rowcol.r && nextRowcol.c > rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {bl:10}, true, false);}
                 
-                else if (nextRowcol.c > rowcol.c && lastRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {bl:10}, true, false);}
-                else if (nextRowcol.c > rowcol.c && lastRowcol.r > rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10}, true, false);}
-                else if (nextRowcol.c < rowcol.c && lastRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {br:10}, true, false);}
-                else if (nextRowcol.c < rowcol.c && lastRowcol.r > rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {tr:10}, true, false);}
+                else if (lastRowcol.c > rowcol.c && nextRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {bl:10}, true, false);}
+                else if (lastRowcol.c > rowcol.c && nextRowcol.r > rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10}, true, false);}
+                else if (lastRowcol.c < rowcol.c && nextRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {br:10}, true, false);}
+                else if (lastRowcol.c < rowcol.c && nextRowcol.r > rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {tr:10}, true, false);}
                 
-                else if (nextRowcol.c < rowcol.c && lastRowcol.c > rowcol.c || nextRowcol.c > rowcol.c && lastRowcol.c < rowcol.c || nextRowcol.r < rowcol.r && lastRowcol.r > rowcol.r || nextRowcol.r > rowcol.r && lastRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, 0, true, false);}
+                else if (lastRowcol.c < rowcol.c && nextRowcol.c > rowcol.c || lastRowcol.c > rowcol.c && nextRowcol.c < rowcol.c || lastRowcol.r < rowcol.r && nextRowcol.r > rowcol.r || lastRowcol.r > rowcol.r && nextRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, 0, true, false);}
             }
           }
         }
@@ -3976,6 +3961,27 @@ function drawFace(snake, headCol, headRow, orientation){
         ctx.stroke();
       }
     }
+    
+function shadeColor(color, percent) {
+
+    var R = parseInt(color.substring(1,3),16);
+    var G = parseInt(color.substring(3,5),16);
+    var B = parseInt(color.substring(5,7),16);
+
+    R = parseInt(R * (100 + percent) / 100);
+    G = parseInt(G * (100 + percent) / 100);
+    B = parseInt(B * (100 + percent) / 100);
+
+    R = (R<255)?R:255;  
+    G = (G<255)?G:255;  
+    B = (B<255)?B:255;  
+
+    var RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
+    var GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
+    var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
+
+    return "#"+RR+GG+BB;
+}
 
     
     function drawR(r,c,fillStyle){ //Gooby
