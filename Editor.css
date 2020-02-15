@@ -5,7 +5,7 @@
 }
 
 button.click-me {
-    background: yellow;
+    animation: click_me 1s infinite;
     font-weight: bold;
 }
 
