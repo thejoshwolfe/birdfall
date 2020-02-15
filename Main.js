@@ -2674,7 +2674,7 @@ function getTintedColor(color, v) {
         var color = snakeColors[object.id % snakeColors.length];
         var colorIndex = object.id % snakeColors.length;
         //var altColor = snakeAltColors[object.id % snakeAltColors.length];
-        var altColor = getTintedColor(color, 75);
+        var altColor = getTintedColor(color, 50);
         var headRowcol;
         var orientation = 10;
         for (var i = 0; i <= object.locations.length; i++) {
