@@ -29,10 +29,10 @@ var ONEWAYWALLU = "u".charCodeAt(0);
 var ONEWAYWALLD = "d".charCodeAt(0);
 var ONEWAYWALLL = "l".charCodeAt(0);
 var ONEWAYWALLR = "r".charCodeAt(0);
-var FOAM = "f".charCodeAt(0);
+var BUBBLE = "b".charCodeAt(0);
 var CLOSEDLIFT = "c".charCodeAt(0);
 var OPENLIFT = "o".charCodeAt(0);
-var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, WOODPLATFORM, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, CLOSEDLIFT, OPENLIFT, FOAM];
+var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, WOODPLATFORM, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, CLOSEDLIFT, OPENLIFT, BUBBLE];
 
 // object types
 var SNAKE = "s";
@@ -138,7 +138,7 @@ function parseLevel(string) {
       });
       tileCode = SPACE;
     }
-    if(tileCode === PLATFORM || tileCode === WOODPLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === FOAM) tileCounter++;
+    if(tileCode === PLATFORM || tileCode === WOODPLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === BUBBLE) tileCounter++;
     if (validTileCodes.indexOf(tileCode) === -1) throw parserError("invalid tilecode: " + JSON.stringify(mapData[i]));
     level.map.push(tileCode);
   }
@@ -522,7 +522,7 @@ document.addEventListener("keydown", function(event) {
       return;
     case "F".charCodeAt(0):
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
-      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(FOAM); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(BUBBLE); break; }
       return;
     case "D".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0) { move(0, 1); break; }
@@ -530,6 +530,7 @@ document.addEventListener("keydown", function(event) {
       return;
     case "B".charCodeAt(0):
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(BLOCK); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(BUBBLE); break; }
       return;
     case "P".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
@@ -696,7 +697,7 @@ var paintButtonIdAndTileCodes = [
   ["paintOneWayWallRButton", ONEWAYWALLR],
   ["paintClosedLiftButton", CLOSEDLIFT],
   ["paintOpenLiftButton", OPENLIFT],
-  ["paintFoamButton", FOAM],
+  ["paintBubbleButton", BUBBLE],
   ["paintSnakeButton", SNAKE],
   ["paintBlockButton", BLOCK],
   ["paintCloudButton", CLOUD],
@@ -1563,7 +1564,7 @@ function describe(arg1, arg2) {
       case ONEWAYWALLR: return "a One Way Wall (facing R)";
       case CLOSEDLIFT: return "a Closed Lift";
       case OPENLIFT: return "an Open Lift";
-      case FOAM: return "Foam";
+      case BUBBLE: return "a Bubble";
       default: throw unreachable();
     }
   }
@@ -1794,7 +1795,7 @@ function move(dr, dc) {
   if (isCollision()) {
     var newTile = level.map[newLocation];
     if (!isTileCodeAir(activeSnake, null, newTile, dr, dc)) return; // can't go through that tile
-    if (newTile === FOAM) {
+    if (newTile === BUBBLE) {
       paintTileAtLocation(newLocation, SPACE, changeLog);
     }
     var otherObject = findObjectAtLocation(newLocation);
@@ -2079,7 +2080,7 @@ function moveObjects(objects, dr, dc, portalLocations, portalActivationLocations
     var oldPortals = getSetIntersection(portalLocations, object.locations);
     for (var i = 0; i < object.locations.length; i++) {
       object.locations[i] = offsetLocation(object.locations[i], dr, dc);
-      if (level.map[object.locations[i]] == FOAM)
+      if (level.map[object.locations[i]] == BUBBLE)
       {
         paintTileAtLocation(object.locations[i], SPACE, changeLog);
       }
@@ -2131,7 +2132,7 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
   object.locations = newLocations;
   for (var i = 0; i < newLocations.length; i++) {
     var location = newLocations[i];
-    if (level.map[location] == FOAM)                        //changed this despite foam working perfectly without it
+    if (level.map[location] == BUBBLE)                        //changed this despite bubble working perfectly without it
     {
       //dig
       paintTileAtLocation(location, SPACE, changeLog);
@@ -2144,7 +2145,7 @@ function isTileCodeAir(pusher, pushedObject, tileCode, dr, dc) {
   switch (tileCode)
   {
     case SPACE: case EXIT: case PORTAL: case CLOSEDLIFT: return true;
-    case WOODPLATFORM: case FOAM: return pusher != null;
+    case WOODPLATFORM: case BUBBLE: return pusher != null;
     case PLATFORM: return dr != 1;
     case ONEWAYWALLU: return dr != 1;
     case ONEWAYWALLD: return dr != -1;
@@ -2641,8 +2642,8 @@ function render() {
       case OPENLIFT:
         drawLift(r, c, true);
         break;
-      case FOAM:
-        drawFoam(r, c);
+      case BUBBLE:
+        drawBubble(r, c);
         break;
       default: throw unreachable();
     }
@@ -2973,15 +2974,19 @@ function newPlatform(r, c, isOccupied){
     context.lineWidth = 0;
   }
   
-  function drawFoam(r, c) {
-    context.fillStyle = experimentalColors[1];
-    for (var i = 0; i < 5; i++) {
-      for (var j = 0; j < 5; j++) {
-        context.beginPath();
-        context.arc(c*tileSize + (i*2+1)*tileSize/10, r*tileSize + (j*2+1)*tileSize/10, tileSize/10, 0, 2*Math.PI);
-        context.fill();
-      }
-    }
+  function drawBubble(r, c) { 
+      bubbleX = c*tileSize;
+      var grd = context.createRadialGradient(bubbleX, r*tileSize, 0, bubbleX, r*tileSize, tileSize);
+      grd.addColorStop(0, "rgba(255,255,255,.9)");
+      grd.addColorStop(1, "rgba(255,255,255,.2)");
+      context.fillStyle = grd;
+      context.lineWidth = .5;
+      context.strokeStyle = "rgba(200,200,200,.2)";
+      
+      context.beginPath();
+      context.arc(c*tileSize+tileSize*.5, r*tileSize+tileSize*.5, tileSize/2, 0, 2*Math.PI);
+      context.fill();
+      context.stroke();
   }
 
   function drawLift(r, c, isFixed) {
