@@ -30,9 +30,9 @@ var ONEWAYWALLD = "d".charCodeAt(0);
 var ONEWAYWALLL = "l".charCodeAt(0);
 var ONEWAYWALLR = "r".charCodeAt(0);
 var FOAM = "f".charCodeAt(0);
-var BROKENGLASS = "o".charCodeAt(0);
-var FIXEDGLASS = "c".charCodeAt(0);
-var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, WOODPLATFORM, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, BROKENGLASS, FIXEDGLASS, FOAM];
+var CLOSEDLIFT = "c".charCodeAt(0);
+var OPENLIFT = "o".charCodeAt(0);
+var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, WOODPLATFORM, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, CLOSEDLIFT, OPENLIFT, FOAM];
 
 // object types
 var SNAKE = "s";
@@ -138,7 +138,7 @@ function parseLevel(string) {
       });
       tileCode = SPACE;
     }
-    if(tileCode === PLATFORM || tileCode === WOODPLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === BROKENGLASS || tileCode === FIXEDGLASS || tileCode === FOAM) tileCounter++;
+    if(tileCode === PLATFORM || tileCode === WOODPLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === FOAM) tileCounter++;
     if (validTileCodes.indexOf(tileCode) === -1) throw parserError("invalid tilecode: " + JSON.stringify(mapData[i]));
     level.map.push(tileCode);
   }
@@ -518,8 +518,8 @@ document.addEventListener("keydown", function(event) {
       if (modifierMask === (CTRL|SHIFT))                         { saveReplay(); break; }
       return;
     case "X".charCodeAt(0):
-      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(BROKENGLASS); break; }
-      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(FIXEDGLASS); break; }
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOSEDLIFT); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(OPENLIFT); break; }
       if ( persistentState.showEditor && modifierMask === CTRL) { cutSelection(); break; }
       return;
     case "F".charCodeAt(0):
@@ -694,8 +694,8 @@ var paintButtonIdAndTileCodes = [
   ["paintOneWayWallDButton", ONEWAYWALLD],
   ["paintOneWayWallLButton", ONEWAYWALLL],
   ["paintOneWayWallRButton", ONEWAYWALLR],
-  ["paintBrokenGlassButton", BROKENGLASS],
-  ["paintFixedGlassButton", FIXEDGLASS],
+  ["paintClosedLiftButton", CLOSEDLIFT],
+  ["paintOpenLiftButton", OPENLIFT],
   ["paintFoamButton", FOAM],
   ["paintSnakeButton", SNAKE],
   ["paintBlockButton", BLOCK],
@@ -1557,12 +1557,12 @@ function describe(arg1, arg2) {
       case PORTAL:  return "a Portal";
       case PLATFORM:  return "a Platform";
       case WOODPLATFORM: return "a Wooden Platform";
-      case ONEWAYWALLU: return "A One Way Wall (facing U)";
-      case ONEWAYWALLD: return "A One Way Wall (facing D)";
-      case ONEWAYWALLL: return "A One Way Wall (facing L)";
-      case ONEWAYWALLR: return "A One Way Wall (facing R)";
-      case BROKENGLASS: return "Broken Glass";
-      case FIXEDGLASS: return "Fixed Glass";
+      case ONEWAYWALLU: return "a One Way Wall (facing U)";
+      case ONEWAYWALLD: return "a One Way Wall (facing D)";
+      case ONEWAYWALLL: return "a One Way Wall (facing L)";
+      case ONEWAYWALLR: return "a One Way Wall (facing R)";
+      case CLOSEDLIFT: return "a Closed Lift";
+      case OPENLIFT: return "an Open Lift";
       case FOAM: return "Foam";
       default: throw unreachable();
     }
@@ -1788,8 +1788,8 @@ function move(dr, dc) {
   var ate = false;
   var pushedObjects = [];
     
-  //track BrokenGlass that had objects on them
-  var occupiedBrokenGlass = getOccupiedBrokenGlassLocations();
+  //track ClosedLifts that had objects on them
+  var occupiedClosedLift = getOccupiedClosedLiftLocations();
 
   if (isCollision()) {
     var newTile = level.map[newLocation];
@@ -1859,7 +1859,7 @@ function move(dr, dc) {
   moveObjects(pushedObjects, dr, dc, portalLocations, portalActivationLocations, changeLog, slitherAnimations);
   animationQueue.push(slitherAnimations);
     
-  occupiedBrokenGlass = combineOldAndNewGlassOccupations(occupiedBrokenGlass);
+  occupiedClosedLift = combineOldAndNewLiftOccupations(occupiedClosedLift);
 
   // gravity loop
   var stateToAnimationIndex = {};
@@ -1905,7 +1905,7 @@ function move(dr, dc) {
       }
     }
     
-    occupiedBrokenGlass = combineOldAndNewGlassOccupations(occupiedBrokenGlass);
+    occupiedClosedLift = combineOldAndNewLiftOccupations(occupiedClosedLift);
 
     // fall
     var dyingObjects = [];
@@ -1951,7 +1951,7 @@ function move(dr, dc) {
       didAnything = true;
     }
       
-    occupiedBrokenGlass = fixGlass(occupiedBrokenGlass, changeLog);
+    occupiedClosedLift = openLift(occupiedClosedLift, changeLog);
 
     if (!didAnything) break;
     Array.prototype.push.apply(animationQueue, exitAnimationQueue);
@@ -1962,21 +1962,21 @@ function move(dr, dc) {
   render();
 }
 
-function combineOldAndNewGlassOccupations(oldOccupiedBrokenGlass)
+function combineOldAndNewLiftOccupations(oldOccupiedClosedLift)
 {
-  var newOccupiedBrokenGlass = getOccupiedBrokenGlassLocations();
-  var newlyOccupiedBrokenGlass = getSetSubtract(newOccupiedBrokenGlass, oldOccupiedBrokenGlass);
-  return oldOccupiedBrokenGlass.concat(newlyOccupiedBrokenGlass);
+  var newOccupiedClosedLift = getOccupiedClosedLiftLocations();
+  var newlyOccupiedClosedLift = getSetSubtract(newOccupiedClosedLift, oldOccupiedClosedLift);
+  return oldOccupiedClosedLift.concat(newlyOccupiedClosedLift);
 }
 
-function fixGlass(oldOccupiedBrokenGlass, changeLog)
+function openLift(oldOccupiedClosedLift, changeLog)
 {
-  var newOccupiedBrokenGlass = getOccupiedBrokenGlassLocations();
-  var nowUnoccupiedBrokenGlass = getSetSubtract(oldOccupiedBrokenGlass, newOccupiedBrokenGlass);
-  for (var i = 0; i < nowUnoccupiedBrokenGlass.length; i++) {
-    paintTileAtLocation(nowUnoccupiedBrokenGlass[i], FIXEDGLASS, changeLog);
+  var newOccupiedClosedLift = getOccupiedClosedLiftLocations();
+  var nowUnoccupiedClosedLift = getSetSubtract(oldOccupiedClosedLift, newOccupiedClosedLift);
+  for (var i = 0; i < nowUnoccupiedClosedLift.length; i++) {
+    paintTileAtLocation(nowUnoccupiedClosedLift[i], OPENLIFT, changeLog);
   }
-  return newOccupiedBrokenGlass;
+  return newOccupiedClosedLift;
 }
 
 function getSetSubtract(array1, array2) {
@@ -2143,7 +2143,7 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
 function isTileCodeAir(pusher, pushedObject, tileCode, dr, dc) {
   switch (tileCode)
   {
-    case SPACE: case EXIT: case PORTAL: case BROKENGLASS: return true;
+    case SPACE: case EXIT: case PORTAL: case CLOSEDLIFT: return true;
     case WOODPLATFORM: case FOAM: return pusher != null;
     case PLATFORM: return dr != 1;
     case ONEWAYWALLU: return dr != 1;
@@ -2240,11 +2240,11 @@ function getSnakes() {
 function getBlocks() {
   return getObjectsOfType(BLOCK);
 }
-function getOccupiedBrokenGlassLocations()
+function getOccupiedClosedLiftLocations()
 {
   var result = [];
   for (var i = 0; i < level.map.length; i++) {
-    if (level.map[i] === BROKENGLASS) {
+    if (level.map[i] === CLOSEDLIFT) {
       if (findObjectAtLocation(i))
           result.push(i);
     }
@@ -2635,11 +2635,11 @@ function render() {
       case ONEWAYWALLR:
         drawOneWayWall("#BACFD1", r, c, 0, 1);
         break;
-      case BROKENGLASS:
-        drawGlass(r, c, false);
+      case CLOSEDLIFT:
+        drawLift(r, c, false);
         break;
-      case FIXEDGLASS:
-        drawGlass(r, c, true);
+      case OPENLIFT:
+        drawLift(r, c, true);
         break;
       case FOAM:
         drawFoam(r, c);
@@ -2719,7 +2719,11 @@ function getTintedColor(color, v) {
           var lrc = lastRowcol;
           var nrc = nextRowcol;
             
-          if (object.dead) rowcol.r += 0.5;
+          if (object.dead) {    //if snake dies after moving left or right, head is positioned down
+              rowcol.r += .5;
+              lastRowcol.r += .5;
+              nextRowcol.r += .5;
+          }
           rowcol.r += animationDisplacementRowcol.r;
           rowcol.c += animationDisplacementRowcol.c;
           lastRowcol.r += animationDisplacementRowcol.r;
@@ -2980,8 +2984,70 @@ function newPlatform(r, c, isOccupied){
     }
   }
 
-  function drawGlass(r, c, isFixed) {
-        var grd = context.createLinearGradient(c*tileSize, r*tileSize, (c+1)*tileSize, (r+1)*tileSize);
+  function drawLift(r, c, isFixed) {
+        context.lineWidth = .5;
+        context.strokeStyle = "#777";
+        if(!isFixed) {
+            context.fillStyle = "#e68a00";
+            roundRect(context, c*tileSize+tileSize*.05, r*tileSize+tileSize, tileSize*.9, tileSize*.2, 2, true, true);
+            context.fillStyle = "#cc0000";
+            roundRect(context, c*tileSize+tileSize*.3, r*tileSize+tileSize*.8, tileSize*.4, tileSize*.2, 2, true, true);
+        }
+        else if(isFixed) {
+            context.fillStyle = "#e68a00";
+            roundRect(context, c*tileSize+tileSize*.05, r*tileSize+tileSize*.8, tileSize*.9, tileSize*.2, 2, true, true);
+            roundRect(context, c*tileSize+tileSize*.05, r*tileSize, tileSize*.9, tileSize*.2, 2, true, true);
+            
+            context.fillStyle = "#333";
+            
+            context.beginPath();
+            context.moveTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.8);
+            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.5);
+            context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.45);
+            context.bezierCurveTo(c*tileSize+tileSize*.16,r*tileSize+tileSize*.45,c*tileSize+tileSize*.16,r*tileSize+tileSize*.55,c*tileSize+tileSize*.2,r*tileSize+tileSize*.55);
+            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.8);
+            context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.8);
+            context.closePath();
+            context.fill();
+            
+            context.beginPath();
+            context.moveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.8);
+            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.5);
+            context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.45);
+            context.bezierCurveTo(c*tileSize+tileSize*.84,r*tileSize+tileSize*.45,c*tileSize+tileSize*.84,r*tileSize+tileSize*.55,c*tileSize+tileSize*.8,r*tileSize+tileSize*.55);
+            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.8);
+            context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.8);
+            context.closePath();
+            context.fill();
+            
+            /*context.beginPath();
+            context.moveTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.9);
+            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.5);
+            context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.1);
+            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.1);
+            context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.5);
+            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.9);
+            context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.9);
+            context.closePath();
+            context.fill();
+            
+            context.beginPath();
+            context.moveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.9);
+            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.5);
+            context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.1);
+            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.1);
+            context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.5);
+            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.9);
+            context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.9);
+            context.closePath();
+            context.fill();*/
+        }
+      
+        /*var grd = context.createLinearGradient(c*tileSize, r*tileSize, (c+1)*tileSize, (r+1)*tileSize);
         grd.addColorStop(0, "rgba(255,255,255,.6)");
         grd.addColorStop(.1, "rgba(255,255,255,.7)");
         grd.addColorStop(.2, "rgba(255,255,255,.5)");
@@ -3085,7 +3151,7 @@ function newPlatform(r, c, isOccupied){
         context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.25);
         context.lineTo(c*tileSize+tileSize*.45, r*tileSize+tileSize*.2);
         context.stroke();
-    }
+    }*/
   }
 
   function drawWall(r, c, adjacentTiles) {  //GOOBY
