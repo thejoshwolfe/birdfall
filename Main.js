@@ -3610,7 +3610,7 @@ function newPlatform(r, c, isOccupied){
     var xHi = (c2 + 0.45) * tileSize;
     var yHi = (r2 + 0.45) * tileSize;
     context.fillStyle = color;
-    context.fillRect(xLo+.1*tileSize, yLo+.1*tileSize, xHi - xLo, yHi - yLo);
+    context.fillRect(xLo+.15*tileSize, yLo+.15*tileSize, xHi - xLo, yHi - yLo);
   }
   function drawBlock(block) {
     var animationDisplacementRowcol = findAnimationDisplacementRowcol(block.type, block.id);
