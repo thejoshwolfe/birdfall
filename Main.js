@@ -3605,12 +3605,12 @@ function newPlatform(r, c, isOccupied){
       r2 = rTmp;
       c2 = cTmp;
     }
-    var xLo = (c1 + 0.4) * tileSize;
-    var yLo = (r1 + 0.4) * tileSize;
-    var xHi = (c2 + 0.6) * tileSize;
-    var yHi = (r2 + 0.6) * tileSize;
+    var xLo = (c1 + 0.3) * tileSize;
+    var yLo = (r1 + 0.3) * tileSize;
+    var xHi = (c2 + 0.45) * tileSize;
+    var yHi = (r2 + 0.45) * tileSize;
     context.fillStyle = color;
-    context.fillRect(xLo, yLo, xHi - xLo, yHi - yLo);
+    context.fillRect(xLo+.1*tileSize, yLo+.1*tileSize, xHi - xLo, yHi - yLo);
   }
   function drawBlock(block) {
     var animationDisplacementRowcol = findAnimationDisplacementRowcol(block.type, block.id);
