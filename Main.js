@@ -3406,19 +3406,6 @@ function newPlatform(r, c, isOccupied){
         }
     }
     
-    function drawTileOutlines2(r, c, isOccupied, outlineThickness) {
-        var complement = 1 - outlineThickness;
-        var outlinePixels = outlineThickness * tileSize;
-        if (!isOccupied(-1, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
-        if (!isOccupied( 1, -1)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
-        if (!isOccupied(-1,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
-        if (!isOccupied( 1,  1)) context.fillRect((c+complement) * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
-        if (!isOccupied( 0, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels);
-        if (!isOccupied( 0,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, tileSize, outlinePixels);
-        if (!isOccupied(-1,  0)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, tileSize);
-        if (!isOccupied( 1,  0)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, tileSize);
-  }
-    
   function drawSpikes(r, c, adjacentTiles) {
     var x = c * tileSize;
     var y = r * tileSize;
@@ -3634,7 +3621,19 @@ function newPlatform(r, c, isOccupied){
       var r = rowcol.r + animationDisplacementRowcol.r;
       var c = rowcol.c + animationDisplacementRowcol.c;
       context.fillStyle = blockColors[0][block.id % blockColors[0].length];
-      drawTileOutlines2(r, c, isAlsoThisBlock, 0.3);
+      var outlineThickness = .2;
+        
+      var complement = 1 - outlineThickness;
+      var outlinePixels = outlineThickness * tileSize;
+      if (!isAlsoThisBlock(-1, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
+      if (!isAlsoThisBlock( 1, -1)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
+      if (!isAlsoThisBlock(-1,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
+      if (!isAlsoThisBlock( 1,  1)) context.fillRect((c+complement) * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
+      if (!isAlsoThisBlock( 0, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels);
+      if (!isAlsoThisBlock( 0,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, tileSize, outlinePixels);
+      if (!isAlsoThisBlock(-1,  0)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, tileSize);
+      if (!isAlsoThisBlock( 1,  0)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, tileSize);
+        
       function isAlsoThisBlock(dc, dr) {
         for (var i = 0; i < rowcols.length; i++) {
           var otherRowcol = rowcols[i];
