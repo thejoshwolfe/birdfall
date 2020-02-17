@@ -2724,6 +2724,7 @@ function getTintedColor(color, v) {
               rowcol.r += .5;
               lastRowcol.r += .5;
               nextRowcol.r += .5;
+              falling = true;
           }
           rowcol.r += animationDisplacementRowcol.r;
           rowcol.c += animationDisplacementRowcol.c;
