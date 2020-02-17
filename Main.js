@@ -2992,7 +2992,7 @@ function newPlatform(r, c, isOccupied){
             context.fillStyle = "#e68a00";
             roundRect(context, c*tileSize+tileSize*.05, r*tileSize+tileSize, tileSize*.9, tileSize*.2, 2, true, strokeBool);
             context.fillStyle = "#cc0000";
-            roundRect(context, c*tileSize+tileSize*.3, r*tileSize+tileSize*.8, tileSize*.4, tileSize*.2, 2, true, strokeBool);
+            roundRect(context, c*tileSize+tileSize*.3, r*tileSize+tileSize*.8, tileSize*.4, tileSize*.2, {tl:2, tr:2}, true, strokeBool);
         }
         else if(isFixed) {
             context.fillStyle = "#e68a00";
