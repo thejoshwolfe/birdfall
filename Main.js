@@ -183,8 +183,8 @@ function parseLevel(string) {
     skipWhitespace();
   }
     
-    if(tileCounter>0 || cloudCounter>0) document.getElementById("levelType").innerHTML = "EXPERIMENTAL LEVEL: contains experimental elements";
-    else document.getElementById("levelType").innerHTML = "STANDARD LEVEL: does not contain experimental elements";
+    if(tileCounter>0 || cloudCounter>0) document.getElementById("levelType").innerHTML = "EXPERIMENTAL LEVEL<br><span style='font-size:8pt'>contains experimental elements</span>";
+    else document.getElementById("levelType").innerHTML = "STANDARD LEVEL<br><span style='font-size:8pt'>does not contain experimental elements</span>";
     
   for (var i = 0; i < upconvertedObjects.length; i++) {
     level.objects.push(upconvertedObjects[i]);
@@ -518,8 +518,6 @@ document.addEventListener("keydown", function(event) {
       if (modifierMask === (CTRL|SHIFT))                         { saveReplay(); break; }
       return;
     case "X".charCodeAt(0):
-      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOSEDLIFT); break; }
-      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(OPENLIFT); break; }
       if ( persistentState.showEditor && modifierMask === CTRL) { cutSelection(); break; }
       return;
     case "F".charCodeAt(0):
@@ -543,6 +541,8 @@ document.addEventListener("keydown", function(event) {
       return;
     case "L".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOSEDLIFT); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(OPENLIFT); break; }
       if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLL); break; }
       return;
     case "G".charCodeAt(0):
@@ -2987,16 +2987,17 @@ function newPlatform(r, c, isOccupied){
   function drawLift(r, c, isFixed) {
         context.lineWidth = .5;
         context.strokeStyle = "#777";
+        var strokeBool = false;
         if(!isFixed) {
             context.fillStyle = "#e68a00";
-            roundRect(context, c*tileSize+tileSize*.05, r*tileSize+tileSize, tileSize*.9, tileSize*.2, 2, true, true);
+            roundRect(context, c*tileSize+tileSize*.05, r*tileSize+tileSize, tileSize*.9, tileSize*.2, 2, true, strokeBool);
             context.fillStyle = "#cc0000";
-            roundRect(context, c*tileSize+tileSize*.3, r*tileSize+tileSize*.8, tileSize*.4, tileSize*.2, 2, true, true);
+            roundRect(context, c*tileSize+tileSize*.3, r*tileSize+tileSize*.8, tileSize*.4, tileSize*.2, 2, true, strokeBool);
         }
         else if(isFixed) {
             context.fillStyle = "#e68a00";
-            roundRect(context, c*tileSize+tileSize*.05, r*tileSize+tileSize*.8, tileSize*.9, tileSize*.2, 2, true, true);
-            roundRect(context, c*tileSize+tileSize*.05, r*tileSize, tileSize*.9, tileSize*.2, 2, true, true);
+            roundRect(context, c*tileSize+tileSize*.05, r*tileSize+tileSize*.8, tileSize*.9, tileSize*.2, 2, true, strokeBool);
+            roundRect(context, c*tileSize+tileSize*.05, r*tileSize, tileSize*.9, tileSize*.2, 2, true, strokeBool);
             
             context.fillStyle = "#333";
             
