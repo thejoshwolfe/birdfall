@@ -895,16 +895,11 @@ function setPaintBrushTileCode(tileCode) {
       selectionEnd = null;
       return;
     }
-    if (typeof tileCode === "number" && tileCode !== PORTAL) {
       // fill in the selection
       fillSelection(tileCode);
       selectionStart = null;
       selectionEnd = null;
       return;
-    }
-    // ok, just select something else then.
-    selectionStart = null;
-    selectionEnd = null;
   }
   if (tileCode === SNAKE) {
     if (paintBrushTileCode === SNAKE) {
