@@ -29,18 +29,18 @@ var ONEWAYWALLU = "u".charCodeAt(0);
 var ONEWAYWALLD = "d".charCodeAt(0);
 var ONEWAYWALLL = "l".charCodeAt(0);
 var ONEWAYWALLR = "r".charCodeAt(0);
+var CLOUD = "C".charCodeAt(0);
 var BUBBLE = "b".charCodeAt(0);
 var CLOSEDLIFT = "c".charCodeAt(0);
 var OPENLIFT = "o".charCodeAt(0);
 var LAVA = "v".charCodeAt(0);
 var WATER = "w".charCodeAt(0);
-var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, WOODPLATFORM, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, CLOSEDLIFT, OPENLIFT, BUBBLE, LAVA, WATER];
+var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, WOODPLATFORM, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, CLOSEDLIFT, OPENLIFT, CLOUD, BUBBLE, LAVA, WATER];
 
 // object types
 var SNAKE = "s";
 var BLOCK = "b";
 var FRUIT = "f";
-var CLOUD = "c";
 
 var headRowMove;
 var headColMove;
@@ -140,7 +140,7 @@ function parseLevel(string) {
       });
       tileCode = SPACE;
     }
-    if(tileCode === PLATFORM || tileCode === WOODPLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
+    if(tileCode === PLATFORM || tileCode === WOODPLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
     if (validTileCodes.indexOf(tileCode) === -1) throw parserError("invalid tilecode: " + JSON.stringify(mapData[i]));
     level.map.push(tileCode);
   }
@@ -156,13 +156,11 @@ function parseLevel(string) {
     };
 
     // type
-    var cloudCounter = 0;
     object.type = string[cursor];
     var locationsLimit;
     if      (object.type === SNAKE) locationsLimit = -1;
     else if (object.type === BLOCK) locationsLimit = -1;
     else if (object.type === FRUIT) locationsLimit = 1;
-    else if (object.type === CLOUD) {locationsLimit = -1; cloudCounter++;}
     else throw parserError("expected object type code");
     cursor += 1;
 
@@ -185,7 +183,7 @@ function parseLevel(string) {
     skipWhitespace();
   }
     
-    if(tileCounter>0 || cloudCounter>0) document.getElementById("levelType").innerHTML = "EXPERIMENTAL LEVEL<br><span style='font-size:8pt'>contains experimental elements</span>";
+    if(tileCounter>0) document.getElementById("levelType").innerHTML = "EXPERIMENTAL LEVEL<br><span style='font-size:8pt'>contains experimental elements</span>";
     else document.getElementById("levelType").innerHTML = "STANDARD LEVEL<br><span style='font-size:8pt'>does not contain experimental elements</span>";
     
   for (var i = 0; i < upconvertedObjects.length; i++) {
@@ -525,7 +523,6 @@ document.addEventListener("keydown", function(event) {
       return;
     case "F".charCodeAt(0):
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
-      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(BUBBLE); break; }
       return;
     case "D".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0) { move(0, 1); break; }
@@ -701,12 +698,12 @@ var paintButtonIdAndTileCodes = [
   ["paintOneWayWallRButton", ONEWAYWALLR],
   ["paintClosedLiftButton", CLOSEDLIFT],
   ["paintOpenLiftButton", OPENLIFT],
+  ["paintCloudButton", CLOUD],
   ["paintBubbleButton", BUBBLE],
   ["paintLavaButton", LAVA],
   ["paintWaterButton", WATER],
   ["paintSnakeButton", SNAKE],
   ["paintBlockButton", BLOCK],
-  ["paintCloudButton", CLOUD],
 ];
 paintButtonIdAndTileCodes.forEach(function(pair) {
   var id = pair[0];
@@ -813,8 +810,6 @@ canvas.addEventListener("dblclick", function(event) {
     } else if (object.type === FRUIT) {
       // edit fruits, i guess
       paintBrushTileCode = FRUIT;
-    } else if (object.type === CLOUD) {
-      paintBrushTileCode = CLOUD;
     } else throw unreachable();
     paintBrushTileCodeChanged();
   }
@@ -1156,19 +1151,6 @@ function newFruit(location) {
     locations: [location],
   };
 }
-function newCloud(location) {
-  var clouds = getObjectsOfType(CLOUD);
-  clouds.sort(compareId);
-  for (var i = 0; i < clouds.length; i++) {
-    if (clouds[i].id !== i) break;
-  }
-  return {
-    type: CLOUD,
-    id: i,
-    dead: false, // unused
-    locations: [location],
-  };
-}
 function paintAtLocation(location, changeLog) {
   if (typeof paintBrushTileCode === "number") {
     removeAnyObjectAtLocation(location, changeLog);
@@ -1198,8 +1180,6 @@ function paintAtLocation(location, changeLog) {
         object.id = newBlock().id;
       } else if (object.type === FRUIT) {
         object.id = newFruit().id;
-      } else if (object.type === CLOUD) {
-        object.id = newCloud().id;
       } else throw unreachable();
       level.objects.push(object);
       changeLog.push([object.type, object.id, [0,[]], serializeObjectState(object)]);
@@ -1276,12 +1256,6 @@ function paintAtLocation(location, changeLog) {
     var object = newFruit(location)
     level.objects.push(object);
     changeLog.push([object.type, object.id, serializeObjectState(null), serializeObjectState(object)]);
-  } else if (paintBrushTileCode === CLOUD) {
-    paintTileAtLocation(location, SPACE, changeLog);
-    removeAnyObjectAtLocation(location, changeLog);
-    var object1 = newCloud(location)
-    level.objects.push(object1);
-    changeLog.push([object1.type, object1.id, serializeObjectState(null), serializeObjectState(object1)]);
   } else throw unreachable();
   render();
 }
@@ -1379,7 +1353,7 @@ function reduceChangeLog(changeLog) {
         changeLog.splice(i, 1);
         i--;
       }
-    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === CLOUD) {
+    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT) {
       for (var j = i + 1; j < changeLog.length; j++) {
         var otherChange = changeLog[j];
         if (otherChange[0] === change[0] && otherChange[1] === change[1]) {
@@ -1503,7 +1477,7 @@ function undoChanges(changes, changeLog) {
       if (location >= level.map.length) return "Can't turn " + describe(toTileCode) + " into " + describe(fromTileCode) + " out of bounds";
       if (level.map[location] !== toTileCode) return "Can't turn " + describe(toTileCode) + " into " + describe(fromTileCode) + " because there's " + describe(level.map[location]) + " there now";
       paintTileAtLocation(location, fromTileCode, changeLog);
-    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === CLOUD) {
+    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT) {
       // change object
       var type = change[0];
       var id = change[1];
@@ -1566,6 +1540,7 @@ function describe(arg1, arg2) {
       case ONEWAYWALLR: return "a One Way Wall (facing R)";
       case CLOSEDLIFT: return "a Closed Lift";
       case OPENLIFT: return "an Open Lift";
+      case CLOUD: return "a Cloud";
       case BUBBLE: return "a Bubble";
       case LAVA: return "Lava";
       case WATER: return "Water";
@@ -1589,9 +1564,6 @@ function describe(arg1, arg2) {
   }
   if (arg1 === FRUIT) {
     return "Fruit";
-  }
-    if (arg1 === CLOUD) {
-    return "Cloud";
   }
   if (typeof arg1 === "object") return describe(arg1.type, arg1.id);
   throw unreachable();
@@ -1798,10 +1770,9 @@ function move(dr, dc) {
 
   if (isCollision()) {
     var newTile = level.map[newLocation];
-    if (!isTileCodeAir(activeSnake, null, newTile, dr, dc)) return; // can't go through that tile
-    if (newTile === BUBBLE) {
+    if (newTile === BUBBLE || newTile === CLOUD)
       paintTileAtLocation(newLocation, SPACE, changeLog);
-    }
+    else if (!isTileCodeAir(activeSnake, null, newTile, dr, dc)) return; // can't go through that tile
     var otherObject = findObjectAtLocation(newLocation);
     if (otherObject != null) {
       if (otherObject === activeSnake) return; // can't push yourself
@@ -1809,8 +1780,6 @@ function move(dr, dc) {
         // eat
         removeObject(otherObject, changeLog);
         ate = true;
-      } else if (otherObject.type === CLOUD) {
-        removeObject(otherObject, changeLog);
       } else if (isTileCodeAir(activeSnake, null, newTile, dr, dc)) {
           otherObject = findObjectAtLocation(newLocation);
           if (otherObject != null) {
@@ -1916,7 +1885,6 @@ function move(dr, dc) {
     var dyingObjects = [];
     var fallingObjects = level.objects.filter(function(object) {
       if (object.type === FRUIT) return; // can't fall
-      if (object.type === CLOUD) return; // can't fall
       var theseDyingObjects = [];
       if (!checkMovement(null, object, 1, 0, [], theseDyingObjects)) return false;
       // this object can fall. maybe more will fall with it too. we'll check those separately.
@@ -2026,7 +1994,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
       }
       var yetAnotherObject = findObjectAtLocation(forwardLocation);
       if (yetAnotherObject != null) {
-        if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === CLOUD) {
+        if (yetAnotherObject.type === FRUIT) {
           // not pushable
           return false;
         }
@@ -2097,10 +2065,8 @@ function moveObjects(objects, dr, dc, portalLocations, portalActivationLocations
     var oldPortals = getSetIntersection(portalLocations, object.locations);
     for (var i = 0; i < object.locations.length; i++) {
       object.locations[i] = offsetLocation(object.locations[i], dr, dc);
-      if (level.map[object.locations[i]] == BUBBLE)
-      {
+      if (level.map[object.locations[i]] == BUBBLE || level.map[object.locations[i]] == CLOUD)
         paintTileAtLocation(object.locations[i], SPACE, changeLog);
-      }
     }
     changeLog.push([object.type, object.id, oldState, serializeObjectState(object)]);
     animations.push([
@@ -2149,11 +2115,8 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
   object.locations = newLocations;
   for (var i = 0; i < newLocations.length; i++) {
     var location = newLocations[i];
-    if (level.map[location] == BUBBLE)                        //changed this despite bubble working perfectly without it
-    {
-      //dig
+    if (level.map[location] == BUBBLE || level.map[location] == CLOUD)                        //changed this despite bubble working perfectly without it
       paintTileAtLocation(location, SPACE, changeLog);
-    }
   }
   changeLog.push([object.type, object.id, oldState, serializeObjectState(object)]);
 }
@@ -2519,14 +2482,24 @@ function render() {
         for (var c = 0; c < level.width; c++) {
           location = getLocation(level, r, c);
           tileCode = level.map[location];
-          if(tileCode === WALL) drawTile(tileCode, r, c, level, location, false);    //draws only walls and liquids
+          if(tileCode === WALL) drawTile(tileCode, r, c, level, location, false);    //draws only walls
+        }
+      }
+    }
+      
+    if (onlyTheseObjects == null) {
+      for (var r = 0; r < level.height; r++) {
+        for (var c = 0; c < level.width; c++) {
+          location = getLocation(level, r, c);
+          tileCode = level.map[location];
+          if(tileCode === CLOUD) drawTile(tileCode, r, c, level, location, false);    //draws only clouds
         }
       }
     }
       
     for(var i = 0; i<objects.length; i++){  
         var object = objects[i];
-        if(object.type === FRUIT || object.type === CLOUD) drawObject(object);  //draws fruit and clouds
+        if(object.type === FRUIT) drawObject(object);  //draws fruit
     }
       
     // banners
@@ -2583,10 +2556,6 @@ function render() {
       } else if (paintBrushTileCode === FRUIT) {
         if (!(objectHere != null && objectHere.type === FRUIT)) {
           drawObject(newFruit(hoverLocation));
-        }
-      } else if (paintBrushTileCode === CLOUD) {
-        if (!(objectHere != null && objectHere.type === CLOUD)) {
-          drawObject(newCloud(hoverLocation));
         }
       } else if (paintBrushTileCode === "resize") {
         void 0; // do nothing
@@ -2665,6 +2634,9 @@ function render() {
       case OPENLIFT:
         drawLift(r, c, true);
         break;
+      case CLOUD:
+        drawCloud(context, c*tileSize, r*tileSize);
+        break;        
       case BUBBLE:
         drawBubble(r, c);
         break;
@@ -2869,12 +2841,6 @@ function getTintedColor(color, v) {
             context.fill();
         }
         else drawCircle(rowcol.r, rowcol.c, 1, "#f0f");
-        break;
-      case CLOUD:
-        rowcol = getRowcol(level, object.locations[0]);
-        c = rowcol.c;
-        r = rowcol.r;
-        drawCloud(context, c*tileSize, r*tileSize);
         break;
       default: throw unreachable();
     }
