@@ -44,6 +44,9 @@ var FRUIT = "f";
 
 var headRowMove;
 var headColMove;
+var checkResult = false;
+var cr = false;
+var cs = false;
 
 var tileSize = 34;
 var level;
@@ -621,6 +624,9 @@ document.getElementById("showGridButton").addEventListener("click", function() {
 });
 document.getElementById("saveProgressButton").addEventListener("click", function() {
   saveReplay();
+});
+document.getElementById("checkSolutionButton").addEventListener("click", function() {
+  redoAll(unmoveStuff);
 });
 document.getElementById("restartButton").addEventListener("click", function() {
   reset(unmoveStuff);
@@ -1408,6 +1414,30 @@ function redo(undoStuff) {
   paradoxes = [];
   redoOneFrame(undoStuff);
   undoStuffChanged(undoStuff);
+}
+function redoAll(undoStuff) {
+  if (dirtyState === EDITOR_DIRTY) return alert("Can't save a replay with unsaved editor changes.");
+  // preserve the level in the url bar.
+  var hash = "#level=" + currentSerializedLevel;
+  if (dirtyState === REPLAY_DIRTY) {
+    // there is a replay to save
+    hash += "#replay=" + compressSerialization(stringifyReplay());
+  }
+  
+  var sv = "https://jmdiamond3.github.io/Snakefall-Redesign/SolutionVerification.html" + hash;
+  copyToClipboard(sv);
+}
+function copyToClipboard(text) {
+    var dummy = document.createElement("textarea");
+    // to avoid breaking orgain page when copying more words
+    // cant copy when adding below this code
+    // dummy.style.display = 'none'
+    document.body.appendChild(dummy);
+    //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
+    dummy.value = text;
+    dummy.select();
+    document.execCommand("copy");
+    document.body.removeChild(dummy);
 }
 function unreset(undoStuff) {
   animationQueue = [];
@@ -2461,49 +2491,51 @@ function render() {
        context.drawImage(image, c * tileSize, r * tileSize);    
        });
 
-    // terrain
-    if (onlyTheseObjects == null) {
-      for (var r = 0; r < level.height; r++) {
-        for (var c = 0; c < level.width; c++) {
-          var location = getLocation(level, r, c);
-          var tileCode = level.map[location];
-          drawTile(tileCode, r, c, level, location, true);   //draws all but walls and liquids
+      if(!cs) {
+        // terrain
+        if (onlyTheseObjects == null) {
+          for (var r = 0; r < level.height; r++) {
+            for (var c = 0; c < level.width; c++) {
+              var location = getLocation(level, r, c);
+              var tileCode = level.map[location];
+              drawTile(tileCode, r, c, level, location, true);   //draws all but walls and liquids
+            }
+          }
+        }
+
+        for(var i = 0; i<objects.length; i++){  
+            var object = objects[i];
+            if(object.type === SNAKE || object.type === BLOCK) drawObject(object);  //draws snakes and blocks
+        }
+
+        if (onlyTheseObjects == null) {
+          for (var r = 0; r < level.height; r++) {
+            for (var c = 0; c < level.width; c++) {
+              location = getLocation(level, r, c);
+              tileCode = level.map[location];
+              if(tileCode === WALL) drawTile(tileCode, r, c, level, location, false);    //draws only walls
+            }
+          }
+        }
+
+        if (onlyTheseObjects == null) {
+          for (var r = 0; r < level.height; r++) {
+            for (var c = 0; c < level.width; c++) {
+              location = getLocation(level, r, c);
+              tileCode = level.map[location];
+              if(tileCode === CLOUD || tileCode === LAVA || tileCode === WATER) drawTile(tileCode, r, c, level, location, false);    //draws only clouds
+            }
+          }
+        }
+
+        for(var i = 0; i<objects.length; i++){  
+            var object = objects[i];
+            if(object.type === FRUIT) drawObject(object);  //draws fruit
         }
       }
-    }
-      
-    for(var i = 0; i<objects.length; i++){  
-        var object = objects[i];
-        if(object.type === SNAKE || object.type === BLOCK) drawObject(object);  //draws snakes and blocks
-    }
-      
-    if (onlyTheseObjects == null) {
-      for (var r = 0; r < level.height; r++) {
-        for (var c = 0; c < level.width; c++) {
-          location = getLocation(level, r, c);
-          tileCode = level.map[location];
-          if(tileCode === WALL) drawTile(tileCode, r, c, level, location, false);    //draws only walls
-        }
-      }
-    }
-      
-    if (onlyTheseObjects == null) {
-      for (var r = 0; r < level.height; r++) {
-        for (var c = 0; c < level.width; c++) {
-          location = getLocation(level, r, c);
-          tileCode = level.map[location];
-          if(tileCode === CLOUD) drawTile(tileCode, r, c, level, location, false);    //draws only clouds
-        }
-      }
-    }
-      
-    for(var i = 0; i<objects.length; i++){  
-        var object = objects[i];
-        if(object.type === FRUIT) drawObject(object);  //draws fruit
-    }
       
     // banners
-    if (countSnakes() === 0) {
+    if (countSnakes() === 0 && !cs) {
       context.fillStyle = textStyle[1];
       context.font = textStyle[0];
       context.shadowOffsetX = 5;
@@ -2513,6 +2545,7 @@ function render() {
       var textString = "WIN";
       var textWidth = context.measureText(textString).width;
       context.fillText(textString, (canvas.width/2) - (textWidth/2), canvas.height/2);
+      checkResult = true;
     }
     if (isDead()) {
       context.fillStyle = textStyle[2];
@@ -2523,6 +2556,30 @@ function render() {
       context.shadowBlur = 4;
       textString = "LOSE";
       textWidth = context.measureText(textString).width;
+      context.fillText(textString, (canvas.width/2) - (textWidth/2), canvas.height/2);
+      checkResult = false;
+    }
+      
+    if(cs && cr){
+      context.fillStyle = "green";
+      context.font = textStyle[0];
+      context.shadowOffsetX = 5;
+      context.shadowOffsetY = 5;
+      context.shadowColor = "rgba(0,0,0,0.5)";
+      context.shadowBlur = 4;
+      var textString = "\u2713";
+      var textWidth = context.measureText(textString).width;
+      context.fillText(textString, (canvas.width/2) - (textWidth/2), canvas.height/2);
+    }
+    else if(cs && !cr){
+      context.fillStyle = "red";
+      context.font = textStyle[0];
+      context.shadowOffsetX = 5;
+      context.shadowOffsetY = 5;
+      context.shadowColor = "rgba(0,0,0,0.5)";
+      context.shadowBlur = 4;
+      var textString = "X";
+      var textWidth = context.measureText(textString).width;
       context.fillText(textString, (canvas.width/2) - (textWidth/2), canvas.height/2);
     }
 
