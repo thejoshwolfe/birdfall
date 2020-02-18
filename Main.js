@@ -741,7 +741,7 @@ document.getElementById("themeButton").addEventListener("click", function() {
 function toggleTheme() {
     if(themeCounter<themes.length-1) themeCounter++;
     else themeCounter = 0;
-    //blockSupportRenderCache = null;   //get working
+    blockSupportRenderCache = [];
     render();
     document.getElementById("themeButton").innerHTML = "Theme: <b>" + themes[themeCounter][0] + "</b>";
 }
