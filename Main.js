@@ -1,827 +1,4310 @@
-<html>
-    <head>
-        <title>Snakefall</title>
-        <link rel="stylesheet" href="/Snakefall/Format.css"/>
-        <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee" src="//local.adguard.org?ts=1579613273701&amp;type=content-script&amp;dmn=wolfesoftware.com&amp;css=1&amp;js=1&amp;gcss=1&amp;rel=1&amp;rji=1&amp;stealth=1&amp;uag="></script>
-        <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee" src="//local.adguard.org?ts=1579613273701&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Assistant&amp;type=user-script"></script>
-        <script src="jquery.min.js"></script>
-        <script src="version.js"></script>
-        <script src="Main.js"></script>
-    </head>
-    <body>
-        <div id="passWindow">
-            <form name="passwordField" id="passForm">
-                <label for="passInput" style="margin-bottom: 5px">Enter Password</label>
-                <input style="margin-bottom: 11px; margin-top: 8px;" type="text" id="passInput" name="passInput" autofocus><br>
-                <input type="button" value="Submit" onclick="validatePass();">
-            </form>
-        </div>
-        <div id="body">
-        <!--<div id="backgroundBox">-->
-            <div id="title">Snakefall Redesign</div>
-            <div id="buttonContainer">
-                <a class="topButton" style="background-color:rgba(0,0,0,.4)" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html">Demo Level</a>
-                <a class="topButton" style="background-color:rgba(0,0,0,.4); color:white" href="https://github.com/jmdiamond3/Snakefall-Redesign/">Snakefall Redesign Github</a>
-                <a class="topButton" style="background-color:rgba(0,0,0,.4)" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&29?*z0*z0*z0*z0*z0*z0*z0*Y0/">Template</a>
-                <a class="topButton" style="background-color:rgba(0,0,0,.4); color:white" href="https://github.com/thejoshwolfe/snakefall">Original Snakefall Github</a>
-            </div>
-            <div id="showButtonContainer"><div id="showButton">Show Hidden Options</div><div id="note">Most checkmarks contain links to solutions, though some are not accessible without a password.</div></div>
-            <div class="tableContainer" style="margin-top:5px">
-                <table>
-                    <div class="tableTitle">Standard Puzzles</div>
-                    <thead>
-                        <th></th>
-                        <th>Solution</th>
-                        <th>Level</th>
-                        <th>Creator</th>
-                        <th>Note</th>
-                    </thead>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&29?*z0*10*11*I0111000111*z0*z0*z00001*704*C01*E0122*002211122*00221*401110*910111*z0*M0/s0?323&322&351/s1?43/s2?101&102&131&160&159&158&129&100/f0?130/f1?292/f2?321/#replay=nmGTi8PB&ullurrdllu*1rdrrr1*1lr0urrr1rrr0uurr1rr0ulll1lll0urrrd2d1rr0dr1r0rrd1rr0rr1rr0r1rr0u*0r1*1r0ru">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=3tFRIoTU&17&29?*z0*10*11*I0111000111*K03*z0*z0*R03*701*704*003*701*E0122*002211122*00221*401110*910111*z0*M0/s0?323&322&351/s1?43/s2?101&102&131&160&159&158&129&100/">Disabilities Act</a></td>
-                        <td><a class="tableLink" href="https://github.com/thejoshwolfe">thejoshwolfe</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>   
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*z0*z0*z0*c04*z0*H01*P0111*N0*11*L0*31*D0111000*51000111*60*H1*X0/b0?199&170&168&167&197&171&203&165&173&205&195&164&163&194&174&175&206&106&201&44&108&46/s1?426/s0?408/f0?225/f1?377/f2?395/#replay=nmGTi8PB&1u*0lulululululu*3lululu*0ruldl0rrr1urr0rr1ur0r1ur0r1ur0r1ur0r1uu0r1*1rulululuuluu*3lu*1rurrrurrru*1ld*2rururu*2l0r1urrr0rrr1r0r1*0u">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=3tFRIoTU&17&31?*z0*z0*z0*Q03*704*z0*H01*P0111*G03*20*11*203*E0*31*D0111000*51000111*60*H1*X0/b0?199&170&168&167&197&171&203&165&173&205&195&164&163&194&174&175&206&106&201&44&108&46/s1?426/s0?408/">Crashing Down</a></td>
-                        <td><a class="tableLink" href="https://github.com/thejoshwolfe">thejoshwolfe</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&14&21?*M0*71*601*501*601*501*601*501*601*501*601*004*001*601*501*601*501*601*501*601*501*601*521*50*91*40*91*00/s0?70/s1?202/f0?48/f1?49/f2?50/f3?51/f4?52/f5?53/f6?54/f7?55/f8?56/f9?69/f10?71/f11?72/f12?73/f13?74/f14?75/f15?76/f16?77/f17?90/f18?91/f19?92/f20?93/f21?94/f22?95/f23?96/f24?97/f25?98/f26?111/f27?112/f28?113/f29?114/f30?115/f31?116/f32?117/f33?118/f34?119/f35?132/f36?133/f37?134/f38?135/f39?137/f40?138/f41?139/f42?140/f43?153/f44?154/f45?155/f46?156/f47?157/f48?158/f49?159/f50?160/f51?161/f52?174/f53?175/f54?176/f55?177/f56?178/f57?179/f58?180/f59?181/f60?182/f61?195/f62?196/f63?197/f64?198/f65?199/f66?200/f67?201/f68?203/f69?216/f70?217/f71?218/f72?219/f73?220/f74?221/f75?222/f76?223/f77?224/#replay=nmGTi8PB&lu*4rd*2ldlldrrdlldrrdllddrurd*2r*2u1*0l*1ur0l*0dlllurruuulddl1d">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=3tFRIoTU&14&21?*M0*71*601*531*60130*331*601*531*601*531*601*034*031*601*531*601*531*601*33031*601*531*601*521*50*91*40*91*00/s0?70/s1?202/">Etch-a-sketch</a></td>
-                        <td><a class="tableLink" href="https://github.com/inukoblainc">inukoblainc</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&16&14?*n022*702112*002*10*01*001*10100102*70121*101*101110002*3011*001*3011*8011*60201100100200021411*10100011211*101000*01/s0?171&170&184&198&199/s1?92&106&105/f0?31/f1?95/f2?147/f3?166/#replay=nmGTi8PB&1l0uluurdrrr1ldd*0l0ul1ur0uruulllurrr1r0rruurruullu*1ruru*2luurrddllddlll*0u1ulul0lddlddrruuu1lur0ru1u*1r0lluuurdrrr1ullddruu*0luu0ul1r0ul*0u1uuu0uul*0urd1r0ruullddrrululdd1uu0dr1l0uuu1urr0r1rur0uuru*0ruluul1uluur0l1rrrdrrrd0*0u*2rd1d0d">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=3tFRIoTU&16&14?*R03*H022*702112*002*10*01*001*10130102*70121*101*101110002*3011*00103*1011*70311*60201100100200021411*10100011211*101000*01/s0?171&170&184&198&199/s1?92&106&105/">Fruit Fall</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&15&9?*z0*602*401*101001*401*40101*201*10400*21/b0?121&112&103&104&114&87&105&96/s0?115&116&125&124/s1?98&97&106&107/f0?20/f1?30/#replay=nmGTi8PB&uruuu1uuldddluulu0ldllluuu1rrulul0r1uu0uluuur1uluu0u1ru0u1luu0u1ullulu*1rddl0r1l0uuu1uuu0l1rrulll*0u0lddr1r0r1rruu0ul1uuull0uuurull1ddluuul0lldl1llluuurrd0uurddl1ldl">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&15&9?*z0*602*401*101001*401*40101*201*10400*21/b0?121&112&103&104&114&87&105&96/s0?115&116&125&124/s1?98&97&106&107/f0?20/f1?30/">Block Valley</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&26?*601*L01*L01*L01*L01*L01*I04001*L01*L01*L01*L01*502*B01*501*D01*301*L01*701*90101*J01*L0*21/b0?411&385&359&333&307&308&309&335&361&387/s1?337&336&362&363/s0?388&389&415&414/f0?44/f1?71/f2?96/f3?123/#replay=nmGTi8PB&uruuldluuu1ulu0r1uuluuu0uuldl1rrd*0luurulu0uurul1rr0urruuu1u0l1luuu0ulll*0u1rddlluuu0lur*1ulu*1r*1dl1ruuu0*1u*3l1*6l0*0ldd*1luu1ld*0luul0*0uru">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&26?*601*L01*L01*L01*L01*L01*I04001*L01*L01*L01*L01*502*B01*501*D01*301*L01*701*90101*J01*L0*21/b0?411&385&359&333&307&308&309&335&361&387/s1?337&336&362&363/s0?388&389&415&414/f0?44/f1?71/f2?96/f3?123/">Block Valley 2</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&25?*70111*I0141*I0101000*01*B01010001001*B01011001001*00*8100*0100111*K010011000202*2021102020*010002*B010001102010001*5010012011010001*101*5010110020002001000201210200011*901*30201102021002*5022010011*902*402110001221*002111*00*412*0122*3122*21/b3?351&363/s1?386&385&384&383/s0?391&392&393&394/f0?119/#replay=nmGTi8PB&1ulllu*1ldll0ulu*0lddl1u0uurrru1*5rdrurruu0ulurrrulll1u0lurrdrrr1lldlllulluu0ururrddl1luuu0luldl1rru*4rurrr0dddrdrrrulllululldlldllulluulluuurru*8ruu*4l1uurrddllluu*6ldrdr0dddluuul1druruu*1ldddrrddrr0u*0l1drrulllu*3ldrru0*0lddr1*4r0u*3rurrrulll1urruu*0l0ddru1dr0ruurru1ru0ulluulldddr1ul0uuruuu1uurulldluu0ldllulluuluuurrurrurull1llurrddluul0ull1u*1r0llu*5ru1rrrururr*0uluurddd*3l0u*7l1uulllulll0u*0r1llu*5ruurruul0*3ru1*1lul*0u0ulluu*0lul*0u">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&25?*70111*I0141*I0101000*01*B01010001001*B01011001001*00*8100*0100111*K010011000202*2021102020*010002*B010001102010001*5010012011010001*101*5010110020002001000201210200011*901*30201102021002*5022010011*902*402110001221*002111*00*412*0122*3122*21/b3?351&363/s1?386&385&384&383/s0?391&392&393&394/f0?119/">Spike Maze</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&25?*z0*G0*41*D01*20111*A011011010001*A01*30101*A010101010101*50*21*501*5014*10101010101*50*2101*301*A010001011011*A0111*201*D0*41*z0*C0/s0?234&233&232&231/f0?111/f1?113/f2?115/f3?139/f4?141/f5?143/f6?161/f7?162/f8?163/f9?164/f10?165/f11?166/f12?185/f13?187/f14?189/f15?191/f16?193/f17?211/f18?212/f19?213/f20?214/f21?215/f22?216/f23?217/f24?235/f25?237/f26?239/f27?241/f28?243/f29?262/f30?263/f31?264/f32?265/f33?266/f34?267/f35?285/f36?287/f37?289/f38?313/f39?315/f40?317/#replay=nmGTi8PB&rddrrd*1ruur*1ullu*1lddl*1drrdrruurruurruuulldlluulllddrddlldddrrd*1ruur*1ulldlluulllddrddlldddrrd*1ruur*1ull*1dll*2ulllddl*1drrd*1ruur*1ull*1d*0luurr*0ulllddl*1drrd*1ruur*1ull*1d*0l*0urruulllddl*1drrd*1ruur*1ulldddllddll*0urruulllddlddd*1l">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&25?*z0*G0*41*D01*20111*A011011010001*A01*30101*A010101010101*50*21*501*5014*10101010101*50*2101*301*A010001011011*A0111*201*D0*41*z0*C0/s0?234&233&232&231/f0?111/f1?113/f2?115/f3?139/f4?141/f5?143/f6?161/f7?162/f8?163/f9?164/f10?165/f11?166/f12?185/f13?187/f14?189/f15?191/f16?193/f17?211/f18?212/f19?213/f20?214/f21?215/f22?216/f23?217/f24?235/f25?237/f26?239/f27?241/f28?243/f29?262/f30?263/f31?264/f32?265/f33?266/f34?267/f35?285/f36?287/f37?289/f38?313/f39?315/f40?317/">Fruit Maze</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&14&24?*z0*z0*00*012*F0*11*F011*2040011*z021*5011211*202*70*31*D0*3102*50/b1?227&251&252&228/b2?169&145&146&170/b3?87&88&112&111/s0?249&248&247/s1?225&224&223/#replay=nmGTi8PB&r1rurr0uurrru1uruuruurrrdlll0luu1ll0urdlul1ull0ll1ulluullldr0l1urr0lluruulluuurrrdluulurdlluruuluuluullullld*2rullld*0rulu1u0rruu*1rul1rruuruu*0r0uu1dluulurdlluull0luuluullldr1uruldruur0rruurruulur1uu*2rull0ullldruuruurruurru*1ldrr1*0ldld0rrr1drdrululurrr0r1r0ull1rurruu*1rdlulll0lluruu*0r1urrruu0*0ruu">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&14&24?*z0*z0*00*012*F0*11*F011*2040011*z021*5011211*202*70*31*D0*3102*50/b1?227&251&252&228/b2?169&145&146&170/b3?87&88&112&111/s0?249&248&247/s1?225&224&223/">Box Bridge</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&19?*z0*V01*z005*605*z0*G02*B0222*40242*C0111*60/s0?159&158&139&120&121&122&103&84&83&82&81/f0?224/#replay=nmGTi8PB&dd">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&19?*z0*V01*z005*605*z0*G02*B0222*40242*C0111*60/s0?159&158&139&120&121&122&103&84&83&82&81/f0?224/">Please add animations</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&23&29?*Q1*02*30124001*20*02112*60122201*50211*701*001*6011*701*001004*3011*701*001*6011*402001*001*20110011*70122001*6011*70120001*6011*701*001*20110011221001*10102221*50111*6011*001*6011*701*001*60111001*30122021*401211*50101*00111*4011*701*001*6011212021011001*001*301221100202*201*001001*301100242*101100101*601100222*201*001*20122211*401001*00111*4011*701*00111*40*Q1/b0?188&194&182/b1?596&588&604/s0?620&619&618&617/s2?632&631&630&629/s1?625&624&623&622/f0?246/#replay=nmGTi8PB&2rrrulll0uulllddll1ululluuruuru0uuu2llluuluuurrdruruuuruuuruuldddl1rulld2u1dr2u1uu0rruurruuruu*0luu2ruuuruuuruuurullurrdldd*2luuluuuruuuluururullddrru0*1luuulu*0ruu2rruuuruuuruuuruuuru*3ldr0luuulurrrullldrrr2rruuuruuuruuuruuuru*0luuuru*0l0urruu2ld*1ruuuruuuruuuru*0luuuru*0ldr0lu*0rdlluruuuru*0lullddrrdrrrulllul2ddluuluuuruuuruuu0*0luuulurrruuulurrrullldrrr2rddd0urr1luu0dddr1rur0uulldddrrruuluru2luuulluuurrdr0ruulluurrdddl1uluu0u2ruuuruuuru*0lurrdlllu1ul2ul*0urru1l2u1u0uluu2luuuluuurrrdlluuluuuruuuluurrdlluruuul1ururruuu0ruuuru*0lu2uuu0lddrruru*0ldrru2*1ruuuruuuruuuru*0l0*0lu*2ruuruuuruu*1luuur2uu0rulldrrruuruuuruuluurddluu2lurur1ll2rdll0ruullldl2ddrrrullldl0llddr2dldldrrr0rrrdllullddd2ruuuruuuruuuru*3l*0u">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&23&29?*Q1*02*30124001*20*02112*60122201*50211*701*001*6011*701*001004*3011*701*001*6011*402001*001*20110011*70122001*6011*70120001*6011*701*001*20110011221001*10102221*50111*6011*001*6011*701*001*60111001*30122021*401211*50101*00111*4011*701*001*6011212021011001*001*301221100202*201*001001*301100242*101100101*601100222*201*001*20122211*401001*00111*4011*701*00111*40*Q1/b0?188&194&182/b1?596&588&604/s0?620&619&618&617/s2?632&631&630&629/s1?625&624&623&622/f0?246/">The Ordeal</a></td>
-                        <td><a class="tableLink" href="">thejoshwolfe</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*X01*z0*z0*A04*z0*z0*M02*z0*j02*z0*30/b0?6&68&36&67&65&128&161&224&254&190&189&221&252&253&316&346&313&344&345&315&379&348&317&287&320&289&227&228&196&102&101&39&40&71&72&135&167&199&168&136&104&73&133&164&195&258&288&318&285&223&193&162&130&129&97&66&5&4&3&2&1&32&31&62&93&94&124&155&156&187&218&217&249&250&280&311&310&341&372&373&404&435&434&466&499&500&438&406&405&437&471&472&473&474&475&506&507&508&509&478&479&448&419&389&360&391&390&420&450&449&355&325&203&263&262&232&201&202&234&265&296&297&327&326&356&386&417&416&513&512&515&516&485&486&487&518&519&520&521&522&492&523&524&525&494&463&464&433&402&371&370&338&400&430&490&459&456&457&458&428&429&399&369&340&309&278&247&216&185&154&123&122&91&29&30&28&27&90&120&89&88&87&56&25&24&54&23&22&21&207&236&205&206&176&145&210&240&209&242&336&366&335&303&334&395&394&364&333&305&274&243&245&244&211&179&148&149&116&147&146&114&113&143&142&112&83&52&51&50&19&18&79&109&78&48&17&16&15&45&107&76&75&14&13&12&11/s8?443&442&441/s7?412&411&410&409/f0?299/#replay=nmGTi8PB&7rrru8urrurr7lluuurrruuu8u7ruu*0rdddrrddluuluuu*0lddlldldddruuuruu8uruu*0rddrddr7ruluuruu*0rdddrrdrrddlddrrrurruruururuullluurrrddllddldlld*1lddllurrulldrruur8rdrrrurruruurr7*0rurruruurr8uullu7uuulul">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*X01*z0*z0*A04*z0*z0*M02*z0*j02*z0*30/b0?6&68&36&67&65&128&161&224&254&190&189&221&252&253&316&346&313&344&345&315&379&348&317&287&320&289&227&228&196&102&101&39&40&71&72&135&167&199&168&136&104&73&133&164&195&258&288&318&285&223&193&162&130&129&97&66&5&4&3&2&1&32&31&62&93&94&124&155&156&187&218&217&249&250&280&311&310&341&372&373&404&435&434&466&499&500&438&406&405&437&471&472&473&474&475&506&507&508&509&478&479&448&419&389&360&391&390&420&450&449&355&325&203&263&262&232&201&202&234&265&296&297&327&326&356&386&417&416&513&512&515&516&485&486&487&518&519&520&521&522&492&523&524&525&494&463&464&433&402&371&370&338&400&430&490&459&456&457&458&428&429&399&369&340&309&278&247&216&185&154&123&122&91&29&30&28&27&90&120&89&88&87&56&25&24&54&23&22&21&207&236&205&206&176&145&210&240&209&242&336&366&335&303&334&395&394&364&333&305&274&243&245&244&211&179&148&149&116&147&146&114&113&143&142&112&83&52&51&50&19&18&79&109&78&48&17&16&15&45&107&76&75&14&13&12&11/s8?443&442&441/s7?412&411&410&409/f0?299/">Coral Block</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&20&27?104110010*4100*21011011*0011002000*01*00*0101*0011*601011*30100110001020102*002010001000101010100010001201100102012111000121211201*201*20101100011100010201101012010111*20111*401*0020001001*101010120101011210101*0021001*40101001*7011002210101210010221201202001200010001110111*101*101001011121100021011101002111*3011001*2010110110110210001*201010001*0011*2011*001*10111001001*A01*402*00120001*101*10100100011*T0100/s0?137&110&111&112/#replay=nmGTi8PB&dllddrrruurrddrrdd*0ruluuu*0lddlldllddrruulurrruu*0rdddlldd*1ruurrddrrruruuulururrddrrrdlluluulldddldllluulluulurrruuuru*0lullurrdd*1luulluullddllluurruurrururuulddldlluluuur">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&20&27?104110010*4100*21011011*0011002000*01*00*0101*0011*601011*30100110001020102*002010001000101010100010001201100102012111000121211201*201*20101100011100010201101012010111*20111*401*0020001001*101010120101011210101*0021001*40101001*7011002210101210010221201202001200010001110111*101*101001011121100021011101002111*3011001*2010110110110210001*201010001*0011*2011*001*10111001001*A01*402*00120001*101*10100100011*T0100/s0?137&110&111&112/">Adventure</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&15&15?40*74044*9044*9044002000200020044*9044*9044*10202*1044002*3020044*10202*1044*9044*9044002000200020044*9044*90*C4/s1?13/s0?1/f0?16/f1?20/f2?24/f3?28/f4?76/f5?80/f6?84/f7?88/f8?112/f9?136/f10?140/f11?144/f12?148/f13?196/f14?200/f15?204/f16?208/#replay=nmGTi8PB&dd1ddd0d*0r*1u1*0l*0uruulu0lurruur1l0rruuu1ur0uu1*0u0ur*1ullluuulluuul*0d*0r1ruull0r1urruuul0uu1*1l0u1urrddl0ll1ldlll0llldrddd*4r1d">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&15&15?40*74044*9044*9044002000200020044*9044*9044*10202*1044002*3020044*10202*1044*9044*9044002000200020044*9044*90*C4/s1?13/s0?1/f0?16/f1?20/f2?24/f3?28/f4?76/f5?80/f6?84/f7?88/f8?112/f9?136/f10?140/f11?144/f12?148/f13?196/f14?200/f15?204/f16?208/">Sky Grid</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&7&31?*F02*O020002202020004*C0202*402*702*902*202*C02*402*002*S0*31*H2111/b0?159&163/s0?127&126&125&124/s3?158&157&156&155/#replay=nmGTi8PB&3ur0rrullld*5rurrr3r0rrdrrulluru3u*2r0llurrdl3u0l3rrur0lllu*1ru3uu*0lu*0rddll0rullur3l0r3ll0urd3u0rdrr3rruurrrdrr0urr3rdrr0rrr3rr*0u0rr*0u">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&7&31?*F02*O020002202020004*C0202*402*702*902*202*C02*402*002*S0*31*H2111/b0?159&163/s0?127&126&125&124/s3?158&157&156&155/">Block Train</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&9&14?*A01*90111*70*112*40100011*40104001*401*001*40111*70*210012*00/s0?103&102&88&74/s1?101&87&73&59/#replay=nmGTi8PB&rrruu1rrruruuruulddldl0luurddl1luul0llluull">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&9&14?*A01*90111*70*112*40100011*40104001*401*001*40111*70*210012*00/s0?103&102&88&74/s1?101&87&73&59/">Turn Around</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&9&14?*A01*90111*70*112*40100011*40104001*401*001*40111*70*21012*10/s0?102&88&74/s1?101&87&73/#replay=nmGTi8PB&rrruu1rrr0lurdl1ruruldlllulu0*0lulu">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&9&14?*A01*90111*70*112*40100011*40104001*401*001*40111*70*21012*10/s0?102&88&74/s1?101&87&73/">Turn Around 2</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*z0*z0*p04011*A0*51*z0*z0*z0*g01*A0*21*602*101*001000*A1002*101*001/b1?403&435&467&437&407&375&343&373&405/b0?479&293/s0?445&444&443&442/s4?476&475&474/f0?17/f1?30/#replay=nmGTi8PB&u*3lu4ullullulluulululld*6r0ur4rrullddrrru0ruulll4ldrru0u4rdruu0lldrrr4l0ruuu4lurulddl0lulullldrrulldddrr4u0ruur4l0uulurull4lluu0uuurururruururrrdllul*0urddlllulld*1rdllulldlu4rrruur0l*0u4ulur0r4r0*0u4ulurr0r*0u4uur0rrrdll4ulurrddllu0uulul*0urrulur4lurdr0u4r0uuluruuu*5rulluurrru*0ruu*2ldddrruu*Aldd4uruul0rrurruuu4ldd0ulllurrruuu4ruu0lldddr4l0ruuu4lur0uuru4urul0lu4uu0u4rr0*5ruu4ulld*4r0u4r0r*0uluuruull4ur0uu*1r4*2rdd0rd">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*z0*z0*p04011*A0*51*z0*z0*z0*g01*A0*21*602*101*001000*A1002*101*001/b1?403&435&467&437&407&375&343&373&405/b0?479&293/s0?445&444&443&442/f0?17/f1?30/s1?476&475&474/">There and Back Again</a></td>
-                        <td><a class="tableLink" href="https://github.com/gavinksong">gavinksong</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&16&15?*K1000*51001*10*3100102020*3100102224*3100100022*31*40*310122*00*11*005*1011*205*201101*50101101*5210110*71011*9011*9011*901/b0?102&42/s0?137&136&151&166&181/f0?36/#replay=nmGTi8PB&*2ruuuluuu*2l*0u*3rdddlulurulurruululuuull*0urrdrrdd">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&16&15?*K1000*51001*10*3100102020*3100102224*3100100022*31*40*310122*00*11*005*1011*205*201101*50101101*5210110*71011*9011*9011*901/b0?102&42/s0?137&136&151&166&181/f0?36/">You Don't Have To Wait For Animations</a></td>
-                        <td><a class="tableLink" href="">thejoshwolfe</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&27&12?*z0*L02*702*702*702*702*702*50402*702*702*702*702*702*q0*21*20*21*20*21000222*21222/b0?256&244&232&233&234&246&258&257&269&65&66&67&68&64&63&62&61/s1?184&185&197&196/s2?208&209&221&220/f0?128/#replay=nmGTi8PB&1lddd*0rull2lu*0r1u2rruuldl1rrrurruuulluuu2uuu1u2*2luur1luuurrrd*1lu2rur1rrru*3luuu2rrruuu1r*0uru2luuu1*0u">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&27&12?*z0*L02*702*702*702*702*702*50402*702*702*702*702*702*q0*21*20*21*20*21000222*21222/b0?256&244&232&233&234&246&258&257&269&65&66&67&68&64&63&62&61/s1?184&185&197&196/s2?208&209&221&220/f0?128/">Keyhole</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&7&27?*K20002*M02*602*B02*6020002*50402*302*E02*M0*K2000/b0?30&31&29&137&138&139/s0?58&57&56&55/s3?85&84&83&82/s2?112&111&110&109/#replay=nmGTi8PB&3rr0rrru*2lururu2rrr0rrr3rrr2urrdrr0rrr3rd2rrul3r0ur3r0u2lu3r0urr3rrr2r0rrr2r3r0rdru2uurr3rrr0r2urrr0*2r2*2r3u*1r0ur">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&7&27?*K20002*M02*602*B02*6020002*50402*302*E02*M0*K2000/b0?30&31&29&137&138&139/s0?58&57&56&55/s3?85&84&83&82/s2?112&111&110&109/">Block Train 2</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*z0*f0111000111*H010001110001*D04*001*10101*G010001010001*H0101000101*I0100010001*J01011101*J0100010001*I0101000101*H010001010001*G0101*10101*G010001110001*H0111000111*W0/f0?141/f1?143/f2?147/f3?149/s1?172&171&170&169/f4?176/f5?203/f6?205/f7?209/f8?211/f9?235/f10?237/f11?238/f12?239/f13?241/f14?267/f15?268/f16?270/f17?271/f18?298/f19?302/f20?329/f21?330/f22?332/f23?333/f24?359/f25?361/f26?362/f27?363/f28?365/f29?389/f30?391/f31?395/f32?397/f33?424/f34?451/f35?453/f36?457/f37?459/#replay=nmGTi8PB&1drddrruruurrurrddlddlddrddrddllulluululuuluuluurrdrrddrdrddrddrddllu*0ldlluuruuruuluuluurrd*0rurrddlddlddldlddlldlluuruuruuluuluurrd*0rurrddlddlddrddld*0ldlluuruuruuluuluurrd*0rurrddlddlddrddrddllu*0luluuruuluuluurrd*0rurrddlddlddrddrddllu*0ldlluuruuruuluuru*0rurrddlddlddrddrddllu*0ldlluuruuruuluuluurrd*0rdrddlddrddrddllu*0ldlluuruuruuluulu*0l">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*z0*f0111000111*H010001110001*D04*001*10101*G010001010001*H0101000101*I0100010001*J01011101*J0100010001*I0101000101*H010001010001*G0101*10101*G010001110001*H0111000111*W0/f0?141/f1?143/f2?147/f3?149/s1?172&171&170&169/f4?176/f5?203/f6?205/f7?209/f8?211/f9?235/f10?237/f11?238/f12?239/f13?241/f14?267/f15?268/f16?270/f17?271/f18?298/f19?302/f20?329/f21?330/f22?332/f23?333/f24?359/f25?361/f26?362/f27?363/f28?365/f29?389/f30?391/f31?395/f32?397/f33?424/f34?451/f35?453/f36?457/f37?459/">Fruit Maze 2</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&14&21?*D02*G02*G02*G02*601*b0*72*5052002*60*42002*G02*B04*002*G0*12*F052*20*71*02*20/s2?28&27&26&25&24&23&22&21/s1?49&48&47&46&45&44&43&42/s0?70&69&68/f0?102/#replay=nmGTi8PB&1rrruu*2l2rrru*0l0ul2ldd*1r0ll2u*2l0*0luu*2r2uurrru*0rdrruu*0l0u*0l2uull0l1u0lur1ururr0u*2r1uru*1rddlllul0*0ru*1ld1l0rurulld1l0ru*1rdrrruulllu*1lu*9luu1lluu*6luull2*3luull">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&14&21?*D02*G02*G02*G02*601*b0*72*5052002*60*42002*G02*B04*002*G0*12*F052*20*71*02*20/s2?28&27&26&25&24&23&22&21/s1?49&48&47&46&45&44&43&42/s0?70&69&68/f0?102/">Tight Space</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&10&9?*804*v02*012*60/f0?24/f1?37/f2?43/s0?69&68&67&66/#replay=nmGTi8PB&uuurulldluurr*1ulddlluullurrrdruull*2u">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&10&9?*804*v02*012*60/f0?24/f1?37/f2?43/s0?69&68&67&66/">Floating Fruits</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&20&28?*z0*004*z0*z0*z0*z0*z0*z0*C0*810110*K1*00*a1/b0?429&430&458&457/b1?432&460&459&431/b2?433&461&462&434/b3?463&435&436&464/b4?466&465&437&438/s0?407&406&405&404/#replay=nmGTi8PB&*0rd*0lddllluuluuluru*3lddrruu*1ruu*0rdddllluuuluuluru*1lddrruurrruuruurrrdddllluuluulurulllddrruurruu*1rulluulurrdlddllluululurrddrrruuruulluuluulluuuruur*0u">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&20&28?*z0*004*z0*z0*z0*z0*z0*z0*C0*810110*K1*00*a1/b0?429&430&458&457/b1?432&460&459&431/b2?433&461&462&434/b3?463&435&436&464/b4?466&465&437&438/s0?407&406&405&404/">Skyscraper</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&16&12?*114*4141000*31*2014*01*401114001*10*01*404111*301114*001*1011*601*704*01*30*11001000*114*00*4101004*214000*614*21/f0?16/f1?17/f2?18/f3?26/f4?27/f5?28/f6?29/f7?30/f8?31/f9?38/f10?39/f11?40/f12?41/f13?42/f14?43/f15?44/f16?45/f17?50/f18?51/f19?53/f20?54/f21?55/f22?56/f23?57/f24?62/f25?63/f26?64/f27?65/f28?66/f29?67/f30?68/f31?69/f32?74/f33?75/f34?76/f35?77/f36?78/f37?79/f38?80/f39?85/f40?86/f41?87/f42?88/f43?90/f44?91/f45?92/f46?93/f47?94/f48?97/f49?98/f50?99/f51?100/f52?101/f53?102/f54?103/f55?104/f56?105/f57?106/s0?108/f58?109/f59?110/f60?111/f61?112/f62?113/f63?114/f64?115/f65?116/f66?117/f67?118/f68?124/f69?125/f70?126/f71?127/f72?128/f73?129/f74?130/f75?136/f76?137/f77?139/f78?140/f79?141/f80?148/f81?149/f82?150/f83?151/f84?160/f85?162/f86?163/f87?172/f88?173/f89?174/#replay=nmGTi8PB&ruurddrurululuruluurdrrulurrdrdldldldrrurururddldldldldl*1drrurulluururururrdldldldrrurur">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&16&12?*114*4141000*31*2014*01*401114001*10*01*404111*301114*001*1011*601*704*01*30*11001000*114*00*4101004*214000*614*21/f0?16/f1?17/f2?18/f3?26/f4?27/f5?28/f6?29/f7?30/f8?31/f9?38/f10?39/f11?40/f12?41/f13?42/f14?43/f15?44/f16?45/f17?50/f18?51/f19?53/f20?54/f21?55/f22?56/f23?57/f24?62/f25?63/f26?64/f27?65/f28?66/f29?67/f30?68/f31?69/f32?74/f33?75/f34?76/f35?77/f36?78/f37?79/f38?80/f39?85/f40?86/f41?87/f42?88/f43?90/f44?91/f45?92/f46?93/f47?94/f48?97/f49?98/f50?99/f51?100/f52?101/f53?102/f54?103/f55?104/f56?105/f57?106/s0?108/f58?109/f59?110/f60?111/f61?112/f62?113/f63?114/f64?115/f65?116/f66?117/f67?118/f68?124/f69?125/f70?126/f71?127/f72?128/f73?129/f74?130/f75?136/f76?137/f77?139/f78?140/f79?141/f80?148/f81?149/f82?150/f83?151/f84?160/f85?162/f86?163/f87?172/f88?173/f89?174/">Fruit Maze 3</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href=""></a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&12&10?1114*4100114*01*30111*30411*00100114001*10110001*0011*4041001*00114*304*014110*91/s0?106/f0?12/f1?13/f2?21/f3?22/f4?23/f5?24/f6?25/f7?26/f8?27/f9?31/f10?32/f11?33/f12?34/f13?35/f14?36/f15?37/f16?41/f17?42/f18?43/f19?44/f20?46/f21?47/f22?51/f23?52/f24?54/f25?55/f26?56/f27?57/f28?58/f29?61/f30?62/f31?63/f32?65/f33?66/f34?67/f35?68/f36?71/f37?72/f38?73/f39?74/f40?75/f41?76/f42?77/f43?78/f44?81/f45?82/f46?84/f47?85/f48?86/f49?87/f50?91/f51?92/f52?93/f53?94/f54?95/f55?96/f56?97/">Fruit Maze 4</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href=""></a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&11&14?*O0*B1*001*3011*001*3011*001*3011*004*30*31*301*101*301*101*301*10*51/s0?88&87&86&85&71&57&43&44&45&46/b5?65/b10?67/b15?91/b20?93/b25?95/b30?123/b40?121/b35?119/b0?63/f0?49/f1?51/f2?53/f3?62/f4?64/f5?66/f6?68/f7?77/f8?78/f9?79/f10?80/f11?81/f12?90/f13?92/f14?94/f15?96/f16?105/f17?106/f18?107/f19?108/f20?109/f21?118/f22?120/f23?122/f24?124/f25?133/f26?135/f27?137/">Fruit Maze 5</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href=""></a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&13&17?*I0*71*201*501*201*501*201*5010*21*501014*9010*21*501*201*501*201*501*201*501*20*71*E0/b0?59&58&75/b5?61/b10?63&81&64/b15?94/b20?96/b25?109/b30?115/b35?128/b40?130/b45?143&160&161/b50?163/b55?165&166&149/s4?107&106&105&104/f9?62/f28?116/f37?145/f17?92/f8?60/f12?77/f18?93/f24?110/f25?111/f26?113/f27?114/f43?164/f42?162/f31?127/f30?126/f16?91/f11?74/f7?57/f0?41/f1?42/f2?43/f3?44/f4?45/f5?46/f6?47/f10?65/f15?82/f22?99/f21?98/f20?97/f14?79/f13?78/f19?95/f32?129/f38?146/f39?147/f33?131/f34?132/f35?133/f40?150/f44?167/f51?183/f50?182/f49?181/f48?180/f47?179/f46?178/f45?177/f41?159/f36?142/f29?125/f23?108/">Fruit Maze 6</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href=""></a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&13&17?*I0*71*201*501*201*501*201*5010*21*50104*A010*21*501*201*501*201*501*201*501*20*71*E0/s0?107&106&105&104&103/b0?95&129/b1?113&111/b2?93&97/b3?131&127/b4?145&77/b5?147&79/f0?112/f2?130/f4?94/f3?96/f7?78/f1?128/f12?146/f9?114/f8?80/f6?76/f5?110/f10?148/f11?144/f13?126/f14?92/f15?60/f17?62/f16?98/f18?132/f19?164/f20?162/f21?160/f22?166/f23?64/f24?58/f26?57/f27?74/f28?91/f29?108/f30?125/f31?142/f32?159/f33?176/f34?177/f35?178/f36?179/f37?180/f38?181/f39?182/f40?183/f41?184/f42?167/f43?150/f44?133/f45?116/f46?99/f47?82/f48?65/f49?48/f50?47/f51?46/f52?45/f53?44/f54?43/f55?42/f56?41/f25?40/">Disarm</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&27&30?*z0*z0*O04*z0*z0*z0*z0*X01*z0*z000*11*z0*U0*31*z0*f0/s2?513&543&573&603&633&663/s0?634&664&665&666/s1?667&668&669&670/b0?559&563&501&621/#replay=nmGTi8PB&rrdrru*1ruulll2*1rurrru*3ruururruu*1rulllullullulldllul0ul2*0l1lllu0lurrddluuu1rru0l2ldlluluurrrdl*0dl*0urulu*0ru*0l0urruu1urruuulluuluurr2u0luuulluuluurr2*0ull*0urrrddl0rruul1rullddru2l1ruu2*0u0uurrrullululuurddlu1lddr2r1r0ulu2*2rull0urrr1rr2uluuu1ul0uul2uuu">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&27&30?*z0*z0*O04*z0*z0*z0*z0*X01*z0*z000*11*z0*U0*31*z0*f0/s2?513&543&573&603&633&663/s0?634&664&665&666/s1?667&668&669&670/b0?559&563&501&621/">Level 1</a></td>
-                        <td><a class="tableLink" href="">DoctorEndugu</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&27&30?*z0*z0*z0*z0*z0*z0*J02*z0*Y04*b0222*01*c0*21*W0101010101*g0*02*z0*W0/b0?383&443/s0?627&626&625&624/s1?533&534/#replay=nmGTi8PB&uluuululuul1lurr0lldr1ul0r1ll0r1l0u*0rddlll1urrrd*0l0*0l1*0l0ldll1ll0uurull1lll0*2l1u*1l0u1l0ull">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&27&30?*z0*z0*z0*z0*z0*z0*J02*z0*Y04*b0222*01*c0*21*W0101010101*g0*02*z0*W0/b0?383&443/s0?627&626&625&624/s1?533&534/">Level 2</a></td>
-                        <td><a class="tableLink" href="">DoctorEndugu</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&15&30?*z0*z0*z0*z0*z0*t04*10220022002200220022002200220022112211221122112211221122112211/b0?335/b1?365/s1?277&276&275&274&273&272/s0?307&306&305&304&303&302/s2?247&246&245&244&243&242/#replay=nmGTi8PB&uull1u*0lddrruuul2u*0ldddr1u2r1uuu2rr1rrr2ull0luurrrdlll2u1rru*2ldrr0u1r0l1uu*1r0lll2*0r0ul2r1ru*0luullld*1rulll0ul1ulllddrru*6r0lu*0rddlll1u*2lu*1rur2*2rurrru*1rddd1rruu*0rddd0u*2r">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&15&30?*z0*z0*z0*z0*z0*t04*10220022002200220022002200220022112211221122112211221122112211/b0?335/b1?365/s1?277&276&275&274&273&272/s0?307&306&305&304&303&302/s2?247&246&245&244&243&242/">Bumpy Road</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*t1000*L1*20*D1*A0*61*H0*41*J0*41*J0*51*I011100*31*101*9011100*01*701*6011100111*201*C01100011*K0110*01*101*F010*02*50111222*601*30111*G011*001000*812*B04*I0/b0?417&418&388&358&359&328&416&385&329/b1?344&473&474/s1?414&413&412/s2?228/f0?360/f1?455/#replay=nmGTi8PB&1rdrruuldl2rlrrr1ur2rrr1uururrrdll2r1uuldldllddr2lll1r2l1u2*1l1llluuruu*3rurrrdd*6lu*1ld*1luuururuulddlddd*2rdd">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*t1000*L1*20*D1*A0*61*H0*41*J0*41*J0*51*I011100*31*101*9011100*01*701*6011100111*201*C01100011*K0110*01*101*F010*02*50111222*601*30111*G011*001000*812*B04*I0/b0?417&418&388&358&359&328&416&385&329/b1?344&473&474/s1?414&413&412/s2?228/f0?360/f1?455/">Level 0 "Checkmark Underpass"</a></td>
-                        <td><a class="tableLink" href="">Teal Knight</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*R10*51*40*91001000111*80*61*J011100111*001*3010111*301000111*202*0022002202*101000111*G02*4011*805*101*6011*I04*2011*705*202*6011*P011*20202*0020002*801*Q01*B02*z0*d0/b1?263&294&325&356&387&379&196&195&164&133&134&132&131/s0?255&254&285&316/s2?66&97/f3?266/f0?102/b2?348&317&286/f1?198/f2?233/#replay=nmGTi8PB&*2rullu*1lurru2*5rddrr0r2r0rddll2r0ulllurr2d0rd*0r2rrrd0r">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*R10*51*40*91001000111*80*61*J011100111*001*3010111*301000111*202*0022002202*101000111*G02*4011*805*101*6011*I04*2011*705*202*6011*P011*20202*0020002*801*Q01*B02*z0*d0/b1?263&294&325&356&387&379&196&195&164&133&134&132&131/s0?255&254&285&316/s2?66&97/f3?266/f0?102/b2?348&317&286/f1?198/f2?233/">Level 1 "Hanging spikes"</a></td>
-                        <td><a class="tableLink" href="">Teal Knight</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*z0*z0*q0*21*H0*81*D0*C1*90*G1*50*D1*305*105*304*K101010*M121212*z1*x1/s1?318/b0?323&321&319/#replay=nmGTi8PB&1*5rl*5rl*4rl*5r">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*z0*z0*q0*21*H0*81*D0*C1*90*G1*50*D1*305*105*304*K101010*M121212*z1*x1/s1?318/b0?323&321&319/">Level 2 "Trap Mine"</a></td>
-                        <td><a class="tableLink" href="">Teal Knight</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*Y101010*L1*60*G1*70*G1*401000*710*31202020202110*7100*31*4011*70100*31*H0100*31*401*80100*21*601*A0*21*601*70100*21*I0100*21*I0100114*O0*0101121212121222122121122212*C1*101100*Z1/b0?425&394&487/b1?363/b2?332/b3?301/b4?316&347&378&409&379/b5?264&265&266&267&268&269&270&271&272&273&274/b7?420&481/s0?426&427&428&397&366&335&336/s2?98/s11?42/s7?40/s3?38/b6?405&139&231&129&74&75&76&73&71&69&400&369&338/s5?152&183&214&245&276&307/f0?138/#replay=nmGTi8PB&*1ulldd*4ld*1rurruuururrdrrdllluruluruluurul*0u*0ldddrurdrurulllurrulurru*0ld*5lululuul2r0u*4r2*4r0*0r2*0r0uurrddr2rrr*0l0uur2r0rr2rr0uuur2rr0uurrulll*0d*0luu*4luuluull*0d*3r*0urrddrrdd*1ru*0ld2*1l0lu2*0l0ulldlul2l0u2l0uulll*1drr2uu0uuu2r0uurrdddrddrurulldluuuru*1lu*1rdd*2ru*3l*0ulllddlddrr*0urrrdd*2rullldlululddl2lr0uul2rl0u2rr0ruluulllu*0r*1dr2l0uuuldl2ll0uu2l0uulllurrr*0d*0r2rr*1lrrr0ulll2lll0ul2l0uu2l0*0rdd*0l*1u2l0u2rr0*2ru*0luuulluull*0d*1r2rrr0*0ur2rr0rr*0d*1rurrdr*0urrr*0dlluuruluruluu*0ldddrurdrurulluru*0ldd*0l2r0u*0r2*0r0ur2r0urrddr2rrr*0l0rrr2rrr0uur2rr0ulldlluu*0rd*1luullluu*0l*0drrr*0urrddrrru*0rd*0l2*1l0ul2lll0ullldlul2l0u2l0uu*0l*0d*0r2r0uuu2r0uurrdddrddrurulllddrru*1rd*0lullluuu*0l*0drr*0urrrdd*2rd*0lululddl2lr0uul2rl0u2rr0ruluulllurrrdddrddr2l0urullddrurrru*0l2r0ul2l0uu2l0uulllurrr*0d*0r2rrlll0ddl2r0ll2l0uul2l0uu2l0*0rdd*0l*1u2l0u2rr0rrdd2rr0rrr2*0r0ullldluuluull*0d*0r*0urrddrrrdd*1ruuurrru*0lddd*0l2r0urrrdr2*0r0uur2rr0ulldlllulu*0rdrr*0urrrdddllurul2l0uullddlllullld*0rururdrurull2lrr0lllurrrddruuulld*1luluuull*0dr*0urrddrrdruurrrddr2lll0rr2llrr0r2r0ulll2lll0l2lll0d*0ruurru*0ldlluulldl2u0ul2l0u2l0uu*1lddd*0ruuu2r0uurrdddrddrurulldluurululllurrr*0drru*1ru*3luuu*0l*0drr*0urrrddrd*1rd*0lululddl2lr0uul2rl0u2rr0rululllurrrddrdddr2l0u*0r2r0rrd*0l2r0ulll2lll0ul2l0uu2l0uulllurrr*0drrrd2rrlrr0dll2ll0uul2l0uu2l0urrdddll*1u2l0u2rr0rrddrurullddluuluullldddrrr*0ur*1u2rrr0ulldddrrrddrd*2rururrdd*1r2dr5r*1uldd0uuu5*8luuull0u*7l5*4l0uluu*0lddldd*1l3l7u2u7*1l11*2l3rrlll2l7lll11*0l3*0l2ulld*3ld*0l0ld*0l5*1l">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*Y101010*L1*60*G1*70*G1*401000*710*31202020202110*7100*31*4011*70100*31*H0100*31*401*80100*21*601*A0*21*601*70100*21*I0100*21*I0100114*O0*0101121212121222122121122212*C1*101100*Z1/b0?425&394&487/b1?363/b2?332/b3?301/b4?316&347&378&409&379/b5?264&265&266&267&268&269&270&271&272&273&274/b7?420&481/s0?426&427&428&397&366&335&336/s2?98/s11?42/s7?40/s3?38/b6?405&139&231&129&74&75&76&73&71&69&400&369&338/s5?152&183&214&245&276&307/f0?138/">Level 3 "The Servant"</a></td>
-                        <td><a class="tableLink" href="">Teal Knight</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*81*50*I1*50*I1*50*I1*50*I1*50*I1*50*I1*004*00111000*C1*501*30*21*D01011*00*1100110011*801*10*0100*31*60111*10*01*F0111*02*112101001112*50*A10122*01*001*00*A10*31*001*00*91*901*00*910*11011*50*61/b2?257&313&256/s1?357/s2?326/s0?388/s3?295/f1?253/f11?470/b1?283&475&469/b0?512&350&351/f12?476/f0?239/f3?300/f2?258/f10?389/f4?325/f5?327/f8?358/f7?356/f9?387/#replay=nmGTi8PB&lu1ru0rr2luruld1lulul2rur0ull2ul1uruu*2ruu*0ru*0ldd*2l3ll2lul0uu1lurrdddl0r1l0r1lurr0ulll3lll0ll3l2lullulu*3l3*1r1ullldrrulluldll2dlddrddd*3r1uu2r1lurrr3l1uuur3r1uulll3*1l1lulu*3l2rruruurrru*0l1dldd*6r3*1r1urr2urruluu3u1rrrdddll2ruuu0uruuuru1*2u">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*81*50*I1*50*I1*50*I1*50*I1*50*I1*50*I1*004*00111000*C1*501*30*21*D01011*00*1100110011*801*10*0100*31*60111*10*01*F0111*02*112101001112*50*A10122*01*001*00*A10*31*001*00*91*901*00*910*11011*50*61/b2?257&313&256/s1?357/s2?326/s0?388/s3?295/f1?253/f11?470/b1?283&475&469/b0?512&350&351/f12?476/f0?239/f3?300/f2?258/f10?389/f4?325/f5?327/f8?358/f7?356/f9?387/">Level 4 "Greed that goes well"</a></td>
-                        <td><a class="tableLink" href="">Teal Knight</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*01*20*L1*405*I1*20*L1*B0104*91*B010*A1*B01*00*71*B01101*00*41*G0100*L10*81*50*51*505111*50*51*60111*50*51*60111*50*51*601112*2020*51*601112*2022*51*601*A04002*80*01*20101101*12*60/b0?4&407/b1?5&377/b2?6&378/b7?468&375&344&313&282/b8?478&175/b3?7&472/b4?8&442/b5?9&443/b6?35&36&37&38&39&40&42/s0?166&167&168&169&170&171&172&173&204&203&202&201&200&199&198&197&196&227&228&229&230&231&232&233&234&235/s1?41/s2?467/f0?113/f1?236/f2?243/f3?477/#replay=nmGTi8PB&lldd*1lurulurulurrrdrrdrrdlldd*1lurrrulllu1r2*9r0uuu*0rdddrrdddr1ll*Arurrrdlullullluur0*6ruuluur">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*01*20*L1*405*I1*20*L1*B0104*91*B010*A1*B01*00*71*B01101*00*41*G0100*L10*81*50*51*505111*50*51*60111*50*51*60111*50*51*601112*2020*51*601112*2022*51*601*A04002*80*01*20101101*12*60/b0?4&407/b1?5&377/b2?6&378/b7?468&375&344&313&282/b8?478&175/b3?7&472/b4?8&442/b5?9&443/b6?35&36&37&38&39&40&42/s0?166&167&168&169&170&171&172&173&204&203&202&201&200&199&198&197&196&227&228&229&230&231&232&233&234&235/s1?41/s2?467/f0?113/f1?236/f2?243/f3?477/">Level 5 "Collapse"</a></td>
-                        <td><a class="tableLink" href="">Teal Knight</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*21*50*D1000111*C04111000*510*3122022*71*D02*7011*P011*P011*301*901*3011*3011*7011*3011*301*901*3011*3011100*1100111*3011*30*B1*3011*40*91*4011*P011*P01120222*F022202140011*H211004*R1/b2?6&7&8&48&9&10&11&12&13/b1?59&429&430&431/b0?33&405&406&407/s1?257/s2?269/s0?263/f11?494/f0?53/f14?52/f8?397/f10?467/f5?377/f7?236/f12?237/f6?235/f1?227/f2?228/f3?229/f4?232/#replay=nmGTi8PB&1ru*0ru*0ru*2l2lu*0lu*1ldr0lll2ull0ll1lullu*4ld*1ru*1lurrrur2uul0l2ull0ll2ll0ll2ll0l2dr1ruulll2r0r1dll2ull1*0d2uu0l2ruu1rrur2r1*3u2rrr1*4rdddllluul2r1ul2uluu1u2*Br0*1l1*8ruuu*5rd*1lu*1rdlddrr">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*21*50*D1000111*C04111000*510*3122022*71*D02*7011*P011*P011*301*901*3011*3011*7011*3011*301*901*3011*3011100*1100111*3011*30*B1*3011*40*91*4011*P011*P01120222*F022202140011*H211004*R1/b2?6&7&8&48&9&10&11&12&13/b1?59&429&430&431/b0?33&405&406&407/s1?257/s2?269/s0?263/f11?494/f0?53/f14?52/f8?397/f10?467/f5?377/f7?236/f12?237/f6?235/f1?227/f2?228/f3?229/f4?232/">Level 6 "Decisions"</a></td>
-                        <td><a class="tableLink" href="">Teal Knight</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&13&21?*z0*P04*r0111*10111*60111*10111*60111*10111*60111*10111*60111*10111*60111*10111*10/s1?98&119&140/s0?90&111&132/f4?176/f3?177/f2?180/f1?179/f0?178/#replay=nmGTi8PB&1lldldlul0*2rulll1luu*1ru*1ldd0uu1l0ll1uuur0urrr1*1rddruuru*1lu*0ruuur0uluurrdllur*0u1uulll">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&13&21?*z0*P04*r0111*10111*60111*10111*60111*10111*60111*10111*60111*10111*60111*10111*10/s1?98&119&140/s0?90&111&132/f4?176/f3?177/f2?180/f1?179/f0?178/">Level 1</a></td>
-                        <td><a class="tableLink" href="https://steamcommunity.com/app/1014140/discussions/0/1814296273120173053/#c1814296273122350024">Cookie</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&13&14?*z0*G04*P01*221*t0/s0?73&87&101/s1?94&108/b0?59/f1?62/b1?80/#replay=nmGTi8PB&lurruruurullldrrurr1l0rrurrd*2lurrdr1u*3lull0uull">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&13&14?*z0*G04*P01*221*t0/s0?73&87&101/s1?94&108/b0?59/f1?62/b1?80/">Level 2</a></td>
-                        <td><a class="tableLink" href="https://steamcommunity.com/app/1014140/discussions/0/1814296273120173053/#c1814296273122350024">Cookie</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&11&19?*a04*t0111*10111*40111*2011*40111001*90*71*40*71*40*71000/b0?81&85/s0?89&90/s2?70&71/f0?147/f2?41/f1?42/#replay=nmGTi8PB&ll2lll0ulu2u*0lullu*0ru*0rul0rul2luu0lll2rru*0luu0llurrurrrul2rul0lu2uu*0lulu*3rdrd*1ruuu*0ldd0rur2dl0rul2ulll0ll2*0u*0l0*2l2llu">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&11&19?*a04*t0111*10111*40111*2011*40111001*90*71*40*71*40*71000/b0?81&85/s0?89&90/s2?70&71/f0?147/f2?41/f1?42/">Level 3</a></td>
-                        <td><a class="tableLink" href="https://steamcommunity.com/app/1014140/discussions/0/1814296273120173053/#c1814296273122350024">Cookie</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink disabled" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&11&19?*p04*e0111*1011*50111*1011*50111*C01110*21*50*61*50*61*00/b0?87&83/f0?147/f2?41/f1?42/s0?45&64/s2?49&68/#replay=nmGTi8PB&2rrrulll0lurdlullurrulldrr2uru0*0rdr2l0ru2lur0ulu2ru0rurrull2llurrdrrruruld*2lulu0lluulu*0lurr2ullulllu*1r0*3rullulld*0r2rrr0uul2uuuruuu*1r*0u">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&11&19?*p04*e0111*1011*50111*1011*50111*C01110*21*50*61*50*61*00/b0?87&83/f0?147/f2?41/f1?42/s0?45&64/s2?49&68/">Level 3 2</a></td>
-                        <td><a class="tableLink" href="https://joelthefox.github.io">Joel Fox</a></td>
-                        <td>Derived from Cookie's level above</td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*01*M011011*J0*11*N0*0101110001*G01110111*L011011*M011*P011*P01101*N0*01*9011*80*11*70*01*101*10*11*70*0100*01*10*01*101001*0011*0011*20111*201001*704*20111*201001*402*50111*201001*701*20111*201001*701*201/b0?299&294/f0?416/f3?153/b1?390&219&188/s0?64&63&32/s1?265&266&297/s2?28&29/f1?148/#replay=nmGTi8PB&1u*2rurr2*0l1ulluuruu2u1ullddlll2*0l1ul2u*1lur1ullu*5l0*6r1u*0ruuu0*0rul2r1rulluu0l2r0ld2u0r2*0l1rr2ll1ruuluuulu*1r0ur1*1r0*1r1rr0urdrrrulllulldrrrurrull1uluruuu*2r*0u*1l0urd1*1l0*1l1ul0ulll1ulu*2l0*4l1*1l2u*0l1u2u1r2l1rr0lllurrrdrdrru1r0llu2llur0*0lull2*0r0urrruur1uu2ul0rul1ululu0ul2ll0ul1u2*1lur0ur1rrr0*0rdd2urr0r1rrdruuuldlullddlllurrr0u*2l2*0r0ur1r2*0r0urrr1uuururrullldddluur0rulldrrur1ululllu0rulldrurr1*0rddldluuluuurr2*1r1rrurrrdrdddrdrd*0ru2*2r0rrddrdrrr1ll">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&31?*01*M011011*J0*11*N0*0101110001*G01110111*L011011*M011*P011*P01101*N0*01*9011*80*11*70*01*101*10*11*70*0100*01*10*01*101001*0011*0011*20111*201001*704*20111*201001*402*50111*201001*701*20111*201001*701*201/b0?299&294/f0?416/f3?153/b1?390&219&188/s0?64&63&32/s1?265&266&297/s2?28&29/f1?148/">Balancing Act</a></td>
-                        <td><a class="tableLink" href="https://steamcommunity.com/id/IHNN/">IHNN</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href=""></a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&20&40?*b1*A0*31*D0110*32*40111*70*3201102*102*I02*10201102022202*30*02*70202220201102024202*I0202420201100020002*401*902000200011000*12*30*02*70*1200011*Y0*01*W0*01*U0*21*U0*21*U0*21*U0*21*V0*11*202*O0*11*202*N0*212*102*N0*81222*410*510*j1/f25?325/f26?483/f27?526/f10?569/f0?652/s4?705/f8?670/f11?550/f6?220/f12?258/f1?196/f4?238/f2?665/b3?612/b4?625/f3?255/f5?138/">Temple</a></td>
-                        <td><a class="tableLink" href="https://joelthefox.github.io">Joel Fox</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink disabled" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&20&40?*b1*A0*31*D0110*32*40111*70*3201102*102*I02*10201102022202*30*02*70202220201102020202*I0202020201100024002*401*902040200011000*12*30*02*70*1200011*Y0*01*W0*01*U0*21*U0*21*U0*21*U0*21*V0*11*202*O0*11*202*N0*212*102*N0*81222*410*510*j1/f25?325/f26?483/f27?526/f10?569/f0?652/s4?705/f8?670/f11?550/f6?220/f12?258/f1?196/f4?238/f2?665/b3?612/b4?625/f3?255/f5?138/#replay=nmGTi8PB&4u*1ru*1lu*9lu*Cruruuuru*Eluluuu*3l*0ulurrddrrruuurrdd*Dru*2rdrrruurul*1urruuulddllur*4uruluurrdddllluruurruuld*2l*0d*Fluluullldddllul*4ur*0druururrddd*5rur*7ur*2d*2lul*7u*2ruu*1ldd*1r*7d*1lul*6urrurrdrr*7d*5luluullddd*0l*5ullur*0u*0rdddll">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&20&40?*b1*A0*31*D0110*32*40111*70*3201102*102*I02*10201102022202*30*02*70202220201102020202*I0202020201100024002*401*902040200011000*12*30*02*70*1200011*Y0*01*W0*01*U0*21*U0*21*U0*21*U0*21*V0*11*202*O0*11*202*N0*212*102*N0*81222*410*510*j1/f25?325/f26?483/f27?526/f10?569/f0?652/s4?705/f8?670/f11?550/f6?220/f12?258/f1?196/f4?238/f2?665/b3?612/b4?625/f3?255/f5?138/">Renovated Temple</a></td>
-                        <td><a class="tableLink" href="https://joelthefox.github.io">Joel Fox</a></td>
-                        <td>Addresses a common criticism of Temple</td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&49&40?*b1*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*70*81*B011*Y011*40*910111*9011*50*810111*90110*320*810111*901102*102*40111*80*2201102022202*O0201102024202*30*02*3020*12020201102020202*E02020002020201102020202*301*602020202020001102000202*30*02*30202020202000110*12*G02024202*1011*M02022202*1011*M02002002000*01*M02200022000*0102*L0*12*00*01*W0*01*X0111*3022*O0*01*2022*N0*11*020022*N0*81222*A10*n1/b0?1102&1103/b1?1772/b2?1785/f23?64/f0?358/f5?1161/f3?1121/f2?1081/f7?1222/f6?1182/f4?1142/f15?1417/f8?1297/f9?1298/f11?1380/f14?1415/f19?1729/f12?1398/f10?1356/f13?1409/f17?1686/f16?1643/f18?1710/f20?1750/f21?1812/f22?1825/s0?1865/#replay=nmGTi8PB&uru*Alurulu*Er*0u*Eluuluu*0lu*0ldlluu*1rdruuluuruuurr*3u*Nruurul*1urruuulddllur*4uruluurrdddllluruurruuldll*3d*Jluulu*0ldddl*0u*1rdd*0r*7uldl*0d*3r*8urrdr*0d*4l*8u*1ruu*2lddrrrdrrr*7d*2lurrrururr*7ulllu*4l*1uluu*Ar*3d*9l*1uluurruu*Brdd*Blu*5l*Bd*2rurrrdrrdd*4r*8u*7l*1uluuruu*2ruuu*5ldd*0rd*8ru*6rddlu*2lddluullu*4ru*Fldd*Brddd*5rurrr*Iul*2d*2lddd*1r*2drr*4u*3ld*1l*0ulu*9r*6dll*2u*4lull*0ulluu*9ldd*7r*2d*0r*1urrululllu*9ldd*7r*0d*0r*0ulurrullu*Alddd*7r*Fd*4l*2u*0l*2druurdrd*0ruuu*4lu*1l*0u*2rd*0ldd*1r*0d*9rulul*Durrruuul*Jul*7dld*5r*0u*Gldd*Br*0d*1ru*3r*4dll*2u*6l*1ulu*9r*7dll*4d*7lurrulllu*7rddd*8lurrulllu*9rddd*Alurrulllu*8rddd*9lurrulllu*9rddd*Alurrulllu*8rddd*9lurrulllu*7rddd*8lurrulllu*8rddd*9luurrullu*2rdddrd*3luluulurru*0l*6u*0l*1drruuu">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&49&40?*b1*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*Y011*70*81*B011*Y011*40*910111*9011*50*810111*90110*320*810111*901102*102*40111*80*2201102022202*O0201102024202*30*02*3020*12020201102020202*E02020002020201102020202*301*602020202020001102000202*30*02*30202020202000110*12*G02024202*1011*M02022202*1011*M02002002000*01*M02200022000*0102*L0*12*00*01*W0*01*X0111*3022*O0*01*2022*N0*11*020022*N0*81222*A10*n1/b0?1102&1103/b1?1772/b2?1785/f23?64/f0?358/f5?1161/f3?1121/f2?1081/f7?1222/f6?1182/f4?1142/f15?1417/f8?1297/f9?1298/f11?1380/f14?1415/f19?1729/f12?1398/f10?1356/f13?1409/f17?1686/f16?1643/f18?1710/f20?1750/f21?1812/f22?1825/s0?1865/">Basilica</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td>Based on Joel's levels above</td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&32?*30101*901*12005*7010222*0122*002000104*20101*401100010011*701010201*40220020001*B01200021011002*A011*001*002011122*001*302011*1010002022202*A011101*2010500020001*401010101*0010001120001*601000101*10201222*201*301000101010002*F010001010*01221*401*4010100010022202*E010101*F01*30101010110*0200020110001*401010101*4020*11011*301110111*60*41*301110*H1/b0?442/s1?59/s0?30/b1?535&534&533&532&531&530&529&528&431/f5?361/b2?503&403/f7?463/f1?102/f2?174/f3?247/f4?343/f0?94/f6?415/f8?475/#replay=nmGTi8PB&1rldrrul0ll1l0l1u0l1lul0l1lururrr0rrrll1rururuuluuruuluuruulldddllulullulu*2rdll0rr1uurr0rr1*0ur0r1ul0l1uul0l1urr0rr1ul0l1uu0r1lurruuru0r1uuullddldldll0rrru1dlll0*0ldlu1*4l*0uruuu*0luul*0u*8rdrrrddluuulldlldr*0dlddrrddl0ru*2luulu1d*2luul0u1*0u0ulluuu1ruuu*0luulll*0ur0ll1rulluuu0ullu1uurruuu*0lddd*1rddrruu*1l*1d0rrdrruuu1rruull*2ur0lluluruullu1rull0uu1uu0l1uullu0lu*1rdrru1uu*0ruuu*0lddd*0r0lluul1r0uuluuu*6l1ruuu*6l">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&32?*30101*901*12005*7010222*0122*002000104*20101*401100010011*701010201*40220020001*B01200021011002*A011*001*002011122*001*302011*1010002022202*A011101*2010500020001*401010101*0010001120001*601000101*10201222*201*301000101010002*F010001010*01221*401*4010100010022202*E010101*F01*30101010110*0200020110001*401010101*4020*11011*301110111*60*41*301110*H1/b0?442/s1?59/s0?30/b1?535&534&533&532&531&530&529&528&431/f5?361/b2?503&403/f7?463/f1?102/f2?174/f3?247/f4?343/f0?94/f6?415/f8?475/">The Birdcage</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink disabled" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&30?4*00101*901222*005*5010222*0122*00200012*10101*50100010011*501012201*40220020001*901200021011002*8011*001*002011122*001*1020112*0010002022202*8011101*001010500020001*201000101*401120001*401000101*10201222*201*101000101010002*D0100010100111221*401*20101000100222*E010101011*C01*10101010110*02*10110001*2010101011*20222*11011*101110*H1/s1?55/b0?414/s0?28/f0?94/f6?162/f2?231/f1?337/f8?433/f5?321/f4?88/f3?389/f7?445/#replay=nmGTi8PB&1rldrrul0ll1l0l1u0l1lul0l1lururrr0rrrll1rururuuluuruuluuruulllddlddlll0l1luurrrulldd*0ld*1luuuluuuruuululluu*0luuullddd*3rddrrdrrurrddrddrr*0drr0l1urrr0rrr1*1u0r1lldluu*2ruruuluul0r1ul0l1*2ur0rrr1uuldlddlul0rrru1ddrrru0*0r1ruu0u1uu0l1ruluuul*2ulurrdddlddldll*0dllluuulluur0u1uuu0l1uulllddllurul0llulll1ll0lll1u*0rdrrruruu*8ldllddd*0ru0u1u0l1ll0ld*0l1ullddd*1rddl*2dllull*0ulluurru*0rddrrdddrrruulllullulu*2luuurrrddd*0ruurrdrrddrddlllullulullluuullddd*1r0*0l1rr0lluluu1rrr*0ulld*4lu">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&30?4*00101*901222*005*5010222*0122*00200012*10101*50100010011*501012201*40220020001*901200021011002*8011*001*002011122*001*1020112*0010002022202*8011101*001010500020001*201000101*401120001*401000101*10201222*201*101000101010002*D0100010100111221*401*20101000100222*E010101011*C01*10101010110*02*10110001*2010101011*20222*11011*101110*H1/s1?55/b0?414/s0?28/f0?94/f6?162/f2?231/f1?337/f8?433/f5?321/f4?88/f3?389/f7?445/">The Birds Uncaged</a></td>
-                        <td><a class="tableLink" href="https://joelthefox.github.io">Joel Fox</a></td>
-                        <td>Derived from Gooby's level above</td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&41?*701*101*F01005*Z01*801*101*C0211*B01*101*H01*n01*O01*F0101*60222*J011101*605*201*G0101*60112001*K0101*C01*F010101*W010101*B01*G0101*Y01*G01*F010110*02002220110001*G01011*60*110114*E0111*70*4101*B010*I1/b0?688&687&686&685&684&683&682&681&680&556/b1?568/b2?647/s3?39/s2?77/f8?673/f6?597/f2?132/f0?21/f1?441/f3?121/f5?532/f7?610/f4?320/#replay=nmGTi8PB&2rldrrul3ll2l3l2u3l2lul3l2lururrr3rrrll2rururuuluuruuluuruulldd*3ldd*3rdll3r2ulll3lll2uul3ll2ll3lld2luuld3lu2*1lul*0uruuull*1ulll*0u*5lddd*5ru*0r*2drddd*1r3l2uu*1l3*2lu2l*2u3*0l2ruuulll*0dlll*3dr*3urruuu3urrul2ull3l2uu3ull2rrrdd*5lulluuurrd*0r3ll2urrr3*0l2*0dldllulu*8l3*5l2llld3l">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&41?*701*101*F01005*Z01*801*101*C0211*B01*101*H01*n01*O01*F0101*60222*J011101*605*201*G0101*60112001*K0101*C01*F010101*W010101*B01*G0101*Y01*G01*F010110*02002220110001*G01011*60*110114*E0111*70*4101*B010*I1/b0?688&687&686&685&684&683&682&681&680&556/b1?568/b2?647/s3?39/s2?77/f8?673/f6?597/f2?132/f0?21/f1?441/f3?121/f5?532/f7?610/f4?320/">Stripped</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td>Based on The Birdcage and The Birds Uncaged</td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&20&39?1121101211211100012*0121121201200*22111210101121200021210112112*010002*0121*401010111011*0012*3022141*O0111*002101*N0112110022101*O011120002101*Q0120022101*Q0120002101*Q0122022101*Q0120002101*Q0122022101*Q0120002101*Q0122022101*Q0120202101*302*I01*12101*3022*B02*10*3101*4022*A022*801*40222*80*02*7011*20*12*70*12*601*Y21/b0?626&665&704&666&705&707&668&708&669&630&631&706&277&317&357&356&355&316/s2?117&156&195&234&273&312&351&390&429&468&507&546&585&624&663/s3?629&628&627/b1?54/">Serpentine</a></td>
-                        <td><a class="tableLink" href="">Collaboration</a></td>
-                        <td class="noteColumn">Created by Gooby & Joel Fox</td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&30&32?*F02*202*R02*R02*301*C20022202*E01*802*5011*301002*A02*901*E02*80100220222*3021*A01*D051*801000*11011*301*801000*11*601*801000*61*101*8010*51001222001*801000*31051220001*801000*210001120001*801*A020001*80*610*51*T02022*60*020020020002*E02*00202020002*E0*020222020202*B04*1020202022022*E0*020202020002*k02000202020002*F02202202020002*F02020202020002*F02000202020002*B01000200020202220222*U0/b3?115&147&179&211/b4?207&208&176/b0?78/b2?379&347&315&283/s2?508&509&510&478&446/s1?44/s0?46&45&77&76/f1?6/b1?255&220&188&156&124&92&60&28/f3?534/f2?341/f7?116/f4?221/#replay=nmGTi8PB&1*5rl0rdddrr2urruuul0rrruuu2ddru0ruluruuuluuul2ulldrr0llurrrddrddldl2u0*5l*0urruuu*4rululul1d*0rdllluurru*6ldd*7ruldll0d*5l*0d*6ruruuulullulurrrddrddldl2lldrru0d1u0*5l*0urruuu*6rddlll1*7lur2l*0uruuluruuldd*5l1ulu2lu1urruu2uuuruuu*6ru0luu*3luur2*3lu0rrururuurrurrr*1dllluu2uururuurrrurrdddl0*4ldddr1l0uu1lu0uu1r2*2lu1rrrururu2u*0l*0d0uluu*8ruu2ruul*0urruuu*2rddrrruul0*0lurrr2uruu0uu*5lul1uru*2l2*3luuururuurulllu1urrurrd2l1*1lulll2llul0ul1lll0ddl1l0dd*2r1lllull2dluu*2ru*0l1luu0*0r2ldd*0r*0dlll1rdd*7rul2ur0*2ur">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&30&32?*F02*202*R02*R02*301*C20022202*E01*802*5011*301002*A02*901*E02*80100220222*3021*A01*D051*801000*11011*301*801000*11*601*801000*61*101*8010*51001222001*801000*31051220001*801000*210001120001*801*A020001*80*610*51*T02022*60*0200220020002*D02*002002020002*D0*020*02020202*A04*10202002022022*D0*0202002020002*j02000202020002*F02202202020002*F02020202020002*F02000202020002*B01000200020202220222*U0/b3?115&147&179&211/b4?207&208&176/b0?78/b2?379&347&315&283/s2?508&509&510&478&446/s1?44/s0?46&45&77&76/f1?6/b1?255&220&188&156&124&92&60&28/f3?534/f2?341/f7?116/f4?221/">The Sawmill</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink disabled" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&24&32?*F02*202*R02*R02*301*C20022202*E01*802*601*301002*A02*901*E02*001*30100220222*3021*A01*D051*801000*11011*301*801000*11*601*801000*61*101*8010*51001222001*801000*31051220001*801000*210001120001*801*A020001*80*610*51*T02022*4020020020022200222*B0200202020200202002004*70*0202220222002002*A0200202020202002002*A020020202020020222*U0/b3?115&147&179&211/b4?207&208&176/b0?78/b2?379&347&315&283/s2?508&509&510&478&446/s1?44/s0?46&45&77&76/f1?6/f3?534/f2?341/f7?116/f4?221/b1?255&220&188&156&124&92&60&28/#replay=nmGTi8PB&1*5rl0rddd2urruuul0*1ruuu2ddru0r2ul0ulu2uuu0r2uru0u*1l2lu*1lulluull1d*0rdllluurrru*5lddlldd*7rull0*0luu*4lddd*6r2u*3ruuu0uruuldld1u0*5luurdd*0r1ll0*1ruruuld1*7lur0*5l1ulu0lu1ur0uuurr1ruu*2r2ll0uuu*3ru*1rd*0l2lllu*0r1*1r2r1ruuluu2ddl*0dluur1ll2*0uruulllu1u2u1urrdrd2uu1d2r1d2rrd0lluu1luuru2dddluu1uld*6l2ruluuruluruuld*2l1urr2lll1ulluu2ul0r1rruu2*0u1u2r1llur2ruuur0rrddlll2*5ru*7l1uu2uur0uu*0lu2rrururuurrrurr*0dlll0uururuurrrurr*0d*5ld1luu0dl1ru0uuu1rr2uu*0lu1rururuur2ull0u2ll*0d0lurru*6rull2ruul*0urruuu*3rurruu0uuu2l0r2ulllu*0rullul1uu*1rdlll0u*3luuururu1*2lu*1l0uu*5l1*1l0*0l1lll0*0l2dddr1ll*0dldddr0l*0dldddr">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&24&32?*F02*202*R02*R02*301*C20022202*E01*802*601*301002*A02*901*E02*001*30100220222*3021*A01*D051*801000*11011*301*801000*11*601*801000*61*101*8010*51001222001*801000*31051220001*801000*210001120001*801*A020001*80*610*51*T02022*4020020020022200222*B0200202020200202002004*70*0202220222002002*A0200202020202002002*A020020202020020222*U0/b3?115&147&179&211/b4?207&208&176/b0?78/b2?379&347&315&283/s2?508&509&510&478&446/s1?44/s0?46&45&77&76/f1?6/f3?534/f2?341/f7?116/f4?221/b1?255&220&188&156&124&92&60&28/">The Hardmill</a></td>
-                        <td><a class="tableLink" href="https://joelthefox.github.io">Joel Fox</a></td>
-                        <td>Derived from Gooby's level above</td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&33&55?*o04*N02*41011*00*21*101*M0211*241011000*11010001110*21*E02111444*01011000100010112014102*012*D02*014441*00110001010101110141002112*D02*510*11000101*3014100022*D021141*30144410001011101100141*H02*110*314441*60*0141*G021100110*51411001100010001441*F0211*2011*2014410011*301441*E02111*20110*01014410111*00*01441*D0211*701441011410111*001*141*C02110001*202014410011101*20*01441*B02111*602014410001101*501441*A021141*60201441*20*11001001441*90211441*6020144*21*00111*001441*90114441*3010020144*21*001100*31*901*041*602014110001100011*4011*602101*041010*420111*101002100102010011*5021001*041*801*002001002101*3011*40211011*04*A10*71*002201011*302*00*014441*00*41*701*5011*20510*010011441021001*00*01*9012022111*2011*40*01*4010*0101*30100111011141*10*0101200101*3012001011*701001410144410002*1101*1010120221100010100110010001011011101444100211100051000111*3010101000111*70110014441*00110*0100*01011*201000111*60110100014441011*50*010011*001110*0100102*10211010001444*310111*4011*20101441001020020221101000144411*0410*810010100101441001022020221101010144411*041*B01*0010144*012220*0211010101444*H12*210*D10*51/b1?1275/b2?1617&1616&1560&1505&1450&1449&1448/b6?1357/b7?1302&1247/b8?1361&1306&1251/b9?1192&1193/b10?1527/b11?1245&1190/b12?1579&1524&1469&1414/b13?1359&1304/b14?1521/b16?764&763&762/b0?1279&1224/b15?1201&1202&1203&1147&1196/b21?627&572&517&518&463/b18?267/b19?212/b20?157/b4?1339/b3?1176/s0?114&115&116/s3?113&112&111/s1?1473/s2?1478&1533&1532&1587&1588&1643&1642&1697&1752/f1?91/f10?1682/f2?1518/f5?1519/f9?1026/f0?1177/f3?831/f6?886/b5?322&323&46&47&48&49/f7?809/b22?810&424&369&370&371/f4?868/#replay=nmGTi8PB&3rru*3rddlddlllddrr0*2luurrrd*4ruurururruullurrddll3rrdruruldlulllddllur0ululllddlur3uruu0*0ur3ldlururul0rrdrdlldddld*2rur*0u*2rulld*0lddrrrddrdldd*Aluuu*1rd*1rur*0u*2rurrrddlddl3lldd*9rururrddrru0lllu*0ruuruullulullldddrrru*0rurr*1dlluuu3uluurruuruururrddrruru*1r0luuurrr*0drrururrrddrrru3uurrdll0urrddrruuulldlldlluulluururdrruurrddrrd3l0lldlldldlluuuluu*1rddld*0ruululll3ldrr1*4l3uruuluuru*0lulluurrruurrddrululldllldd*8ruu1llddluuruuu*0r0dd*3ruulu3u0u3rurururrruulllu*1ldrrurrruuurrrul0uurruruuluruululluurrruuuruu*1l*0urrdd*2ruuull3luulldddlldrrulldllurrdrrdrdrrruulllullurrdrrddllddlldldd1u*4ruuluullulldd*1ruuluu3rruruulururruullu*1ldrrurrruuuruullddlldrrulldllurrdrrdrdrrruulllullurrdrrddlldldldldd1llulldd*1ruuluu3rruruulururruullu*1ldrrurrruuuruu*0ldrrulldllurrdrrdrdrrruulllullurrdrrddlldldldldd1llulldd*1ruuluu3rruruulururruullu*1ldrrurrruuurrrul2r*3ulluluruulldlddrruruulldlddd1*0lur2dll*0drrruulu1ruurruuu2u1rurruurruullulu2*0ururur*0u1ruuruu2lll*1ullluuldl*0ururu1*3lddldddruuluuu3luu*3lddldddrrrdllululllululdd*1rdrrrdldl1rulu*1luru3ddl*1u*0l1luu3lu1u*1lddd*7luur3*0u*1l*1d*5luuulu*0ru1r3rr1uurrulll3u*1l*1u*0rdd*0l1l3lur*1urrruulll*1d1uu3llu1rruuulld3u*1r1*1r3r1uuldd*0ldddrruulu3r1uu*1ruuururuu3ul*0ururu1u*2ruurrruu3*0u*2ruur1u2ru*8r0u*0rur1u*Er3rr*0u*Er">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&33&55?*o04*N02*41011*00*21*101*M0211*241011000*11010001110*21*E02111444*01011000100010112014102*012*D02*014441*00110001010101110141002112*D02*510*11000101*3014100022*D021141*30144410001011101100141*H02*110*314441*60*0141*G021100110*51411001100010001441*F0211*2011*2014410011*301441*E02111*20110*01014410111*00*01441*D0211*701441011410111*001*141*C02110001*202014410011101*20*01441*B02111*602014410001101*501441*A021141*60201441*20*11001001441*90211441*6020144*21*00111*001441*90114441*3010020144*21*001100*31*901*041*602014110001100011*4011*602101*041010*420111*101002100102010011*5021001*041*801*002001002101*3011*40211011*04*A10*71*002201011*302*00*014441*00*41*701*5011*20510*010011441021001*00*01*9012022111*2011*40*01*4010*0101*30100111011141*10*0101200101*3012001011*701001410144410002*1101*1010120221100010100110010001011011101444100211100051000111*3010101000111*70110014441*00110*0100*01011*201000111*60110100014441011*50*010011*001110*0100102*10211010001444*310111*4011*20101441001020020221101000144411*0410*810010100101441001022020221101010144411*041*B01*0010144*012220*0211010101444*H12*210*D10*51/b1?1275/b2?1617&1616&1560&1505&1450&1449&1448/b6?1357/b7?1302&1247/b8?1361&1306&1251/b9?1192&1193/b10?1527/b11?1245&1190/b12?1579&1524&1469&1414/b13?1359&1304/b14?1521/b16?764&763&762/b0?1279&1224/b15?1201&1202&1203&1147&1196/b21?627&572&517&518&463/b18?267/b19?212/b20?157/b4?1339/b3?1176/s0?114&115&116/s3?113&112&111/s1?1473/s2?1478&1533&1532&1587&1588&1643&1642&1697&1752/f1?91/f10?1682/f2?1518/f5?1519/f9?1026/f0?1177/f3?831/f6?886/b5?322&323&46&47&48&49/f7?809/b22?810&424&369&370&371/f4?868/">Mine Rescue</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td>Allow time for solution to load</td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href=""></a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&38&55?*I01*901*c0*71*b01004*504001*a0*210*21*Z01004*00101*004001*Y0*1101010*11*X0100400010101010004001*W0*01010101010*01*V010040010101010101004001*U01110101010101010111*T01004*D04001*S0110101010101010101011*R01004*F04001*Q0111010101010*11010111*P01004*901*304001*O0*21010101010101010*01*N01004*J04001*M0*11010101010101010*31*L01004*B01*504001*K0*2101010101011101010*21*J01004*601*C04001*I0*510101110101110*51*H01004*901*B04001*G0*4101010101010101010*41*F01004*R04001*E0*51010101010111010*71*D01004*301*101*101*904001*C0*410101011101010111010*61*B01004*201*301*501*604001*A0*31011101010101010101010*71*901004*101*R04001*80*210*1101010101010101010*81*701004*001*101*701*101*604001*60*110*11011101110101011101110*71*5010040001*101*1010001010001*101*504001*40*010*110*31010101010*310*61*901*101*501010101*501*80*510*110*7101010*710*71/s2?1983&1928&1873&1818&1763&1708&1653&1598&1543&1488&1433&1378&1323&1268&1213&1158&1103&1048&993&938&883&828&773&718&663&608&553&498&443&388&333&278&223&168&113&58&3&2&57&112&167&222&277&332&387&442&497&552&607&662&717&772&827&882&937&992&1047&1102&1157&1212&1267&1322&1377&1432&1487&1542&1597&1652&1707&1762&1817&1872&1927&1982&1981&1926&1871&1816&1761&1706&1651&1596&1541&1486&1431&1376&1321&1266&1211&1156&1101&1046&991&936&881&826&771&716&661&606&551&496&441&386&331&276&221&166&111&56&1&0&55&110&165&220&275&330&385&440&495&550&605&660&715&770&825&880&935&990&1045&1100&1155&1210&1265&1320&1375&1430&1485&1540&1595&1650&1705&1760&1815&1870&1925&1980/b0?132&133/b1?146&145/b2?241&242/b3?257&256/b4?350&351/b5?368&367/b6?459&460/b7?479&478/b8?569&568/f0?571/f1?573/f2?575/f3?577/f4?579/f5?581/f6?583/f7?585/f8?587/b9?590&589/b10?678&677/f9?681/f10?683/f11?685/f12?687/f13?689/f14?691/f15?693/f16?695/f17?697/b11?701&700/b12?786&787/f18?791/f19?793/f20?795/f21?797/f22?799/f23?801/f24?803/f25?805/f26?807/b13?812&811/b14?895&896/f27?901/f28?903/f29?905/f30?907/f31?909/f32?911/f33?913/f34?915/f35?917/b15?923&922/b16?1004&1005/f36?1011/f37?1013/f38?1015/f39?1017/f40?1019/f41?1021/f42?1023/f43?1025/f44?1027/b17?1034&1033/b18?1114&1113/f45?1121/f46?1123/f47?1125/f48?1127/f49?1129/f50?1131/f51?1133/f52?1135/f53?1137/b19?1145&1144/b20?1222&1223/f54?1231/f55?1233/f56?1235/f57?1237/f58?1239/f59?1241/f60?1243/f61?1245/f62?1247/b21?1256&1255/b22?1332&1331/f63?1341/f64?1343/f65?1345/f66?1347/f67?1349/f68?1351/f69?1353/f70?1355/f71?1357/b23?1367&1366/f72?1451/f73?1453/f74?1455/f75?1457/f76?1459/f77?1461/f78?1463/f79?1465/f80?1467/b24?1478&1477/f81?1561/f82?1563/f83?1565/f84?1567/f85?1569/f86?1571/f87?1573/f88?1575/f89?1577/b25?1589&1588/f90?1671/f91?1673/f92?1675/f93?1677/f94?1679/f95?1681/f96?1683/f97?1685/f98?1687/b26?1699&1700/f99?1781/f100?1783/f101?1785/f102?1787/f103?1789/f104?1791/f105?1793/f106?1795/f107?1797/b27?1810&1811/b28?1921&1922/b29?1441&1440/b30?1550&1549/b31?1659&1658/b32?1768&1767/b33?1877&1876/">Fruit Temple</a></td>
-                        <td><a class="tableLink" href="">XeroI0</a></td>
-                        <td>I'm sorry</td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&27&55?*q0*n4004*72*a04004*702*Z04004*802*Y04004*90*02*U04004*D02*T04004*E02*S04004*F0*32*L04004*M02*K04004*N02*J04004*O0*62*904004*Y02*804004*Z02*704004*a0222*404004*d02*304004*e02*20400400*040*04*004000*04040004*C0*02004004004*004004000404004*0040004*G0204004004*004004004000404*0040004*I04004004*00*0400400040*040*14*I04004004*00404000*14*004040004*I04004004*0040040040004*004040004*I0400400*040400040400040*04040004*I04004*l0400*n4*q0/b0?61&226&281&336&391&446&501&556&611&666&390&389&388&387&331&441&386&392&338&339&340&395&450&449&448&393/s3?394/#replay=nmGTi8PB&3*br">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&27&55?*q0*n4004*72*a04004*702*Z04004*802*Y04004*90*02*U04004*D02*T04004*E02*S04004*F0*32*L04004*M02*K04004*N02*J04004*O0*62*904004*Y02*804004*Z02*704004*a0222*404004*d02*304004*e02*20400400*040*04*004000*04040004*C0*02004004004*004004000404004*0040004*G0204004004*004004004000404*0040004*I04004004*00*0400400040*040*14*I04004004*00404000*14*004040004*I04004004*0040040040004*004040004*I0400400*040400040400040*04040004*I04004*l0400*n4*q0/b0?61&226&281&336&391&446&501&556&611&666&390&389&388&387&331&441&386&392&338&339&340&395&450&449&448&393/s3?394/">Plane Crash</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td>Novelty Guess-the-Exit Special</td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&27&28?*z0*V01*N01*G0*41*B0111*z0*z0*z0*z0*604*z0*z0*z0*z0*K0*1100*51*60/b1?95&123&124&96/b2?97&125&126&98/b4?146&145&144&649/s2?706&705&704&703&702/b3?99&127&659/b0?93&94&122&121/#replay=nmGTi8PB&2uuulld*8ruulld*1luullluru*1rurrdlluulluuuluuulll*0druurulluruluuulldrdrruururrdllullldddrruuru*0ldd*1rulullullldrruuurrrddrdlluullurrrdruurulluruurulu*2rdddllluululurruru*5lddruu*0rddldlullurrulllurrrdrurullurrulurruurrururrrddd*0luululurullurrruurullurrulurru*2ld*0ruuurdruulurul*0ur*0urulurrulllddruuurru*1ld*0ruur*0urullurrulurruu*3r">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&26&28?*z0*V01*N01*G0*41*B0111*z0*z0*z0*h04*z0*z0*z0*z0*K0*1100*51*60/b0?93&94&122&121/b1?95&123&124&96/b2?97&125&126&98/b3?99&127&631/b4?146&145&144&621/s2?678&677&676&675&674/">Top Shelf</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td class="numberColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&30&28?*z0*z0*o01*N01*G0*41*B0111*z0*z0*z0*z0*z0*P04*z0*z0*z0*10*1100*51*60/b0?180&208&209&181/b1?183&211&743/b2?207&206&205/b3?210/b4?230&229&228&733/s2?790&789&788&787&786/#replay=nmGTi8PB&2uuulld*8ruullluulluuulldlllururrurrrdlluuu*0ldddrdrurrullurululurrddllluurul*0ullldddrruu*0rddldlullurrurrurrdllullldddrdrurrulluruluulldluurulu*0rdddldlullurruurullddrdrurru*1luruuluulull*0druuluruuruulldddrrruuulurullldrruuu*1rdddldlullurruluruluuullldrrruuurulllddrrruuurulu*0ldrruurulurrullddrrdrurrullurululullldddruuluruu*2rdllldlulluuurrrdrddldlullurrulururullddrrrulurruuldddrrulur*0u*0rdddluulullurrru*0ldddruurullddrrrulurrururullurrddlulllddrruluurulu*0rddllurulluuru*1ldrruuurulurullddrruulur*0urulurruurrulluullddruulurullddrruuruulurruulurrulllddrruluruuur*0urrdll*0ullururrdllldrruuurulllddruurur*0u*3r">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&25&28?*z0*z0*o01*N01*G0*41*B0111*z0*z0*z0*F04*z0*z0*z0*10*1100*51*60/b0?180&208&209&181/b1?183&211&603/b2?207&206&205/b3?210/b4?230&229&228&593/s2?650&649&648&647&646/">Top Shelf 2</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&23&29?*u011*N01*O0110*91*A0101*M0101*M01011*001*G01041*401*C01011*L01010001*I0101*A01*70101*M0101*501*C010102*K01012001*I0101*C01*5010102*K0101*301*E01*O01*O0101*M010102*H0/s0?90/b12?180&181&182&183&184&213/s2?69&68&67&66&65&64/s1?70&71&72&73&74&75/b0?93/b1?94/b2?95/b3?96/b4?97/b5?98/b6?99/b7?100/b8?101/b9?102/b10?103/b11?104/#replay=nmGTi8PB&2*2ru*9ldrrru*9rdddl1*1l2lllurrrd*0l1lll2lll1l2dl1u2l1ur2uuurul*1ulldddrrr1rr2ruuur1ullururddd*2l2ulll*1ulldddrrrdlllu*0ruur1ururrruurr*0ull2uluuull*1uluu*6rdrruuu*0lu*0rd*8l1luurr*1ullld*0rullldddrdrrrurrurr2uurrurru*5r*0d*1l1rrrurrddllluldluurulurrrdllld*1l2*3lulurrruuu1u2r1lulurr*0dld*0l2rrullldd*1l1uu*2ruuuruu*0luuuru*2rdd*1ld*0rddllulllurrrddrddllulllurrrd*0l2ulur1*1urul2rrulll1u*2rddlllurrrddll2uu*0r1lul2r1*0u2u1lll2urr*0u*0lullldrrrurrr*0dlluuurrull*1u1uuurul*1ul2*0rddlllull1ldddrdl*0drurrrurrdd*0lurrur2urrurruruulll1*0ullluu*1r2uuurruuullldrrrullldd*2ru*3r1uulu*2rur2ulll1rrd*0l2uuur1lu2u1uu2urulurru*3lu*1rurrulluuul1r*1uluuu*Bl2*9l*1dr0rr1l*1dr">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&23&29?*u011*N01*O0110*91*A0101*M0101*M01011*001*G01041*401*C01011*L01010001*I0101*A01*70101*M0101*501*C010102*K01012001*I0101*C01*5010102*K0101*301*E01*O01*O0101*M010102*H0/s0?90/b12?180&181&182&183&184&213/s2?69&68&67&66&65&64/s1?70&71&72&73&74&75/b0?93/b1?94/b2?95/b3?96/b4?97/b5?98/b6?99/b7?100/b8?101/b9?102/b10?103/b11?104/">Plinko</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&21&41?*002*F02*G02*U04*102*F02*G02*501*502*H0*F1*D05*q05*801*z0*z0*002221*I01*z0*B01*z0*z0*z0*z0*h0*F1*D0/b1?146&719&593&473&311&273&285/b0?128&744&629&507&345&189&248&577/b2?372&331&290/s1?752&793&794/s3?55&96/f0?537/#replay=nmGTi8PB&1*5ruu*Elurdrruul3*3lulld*2ru*6rurrd*2l1urr3u*0ld*1l1uur3u*1rurrdrr1ul3r1u3r1ruurrurrr3rr1rr3u*2lu*3lulld*2r1rruuruuluu*2r3u*5rurrd*2l1rrr3ulldrr1ul3urrdl1ll3l1*0l3ulld*2r1*0lurr3urrd*2lu*0ld*3lu*3ru*0rdl1rrddllu*7ruuruuuruulldrrruuullu3ul1uruul3ldrr1urururuuururrr3urrdll1rullddr*0u3u*7lu1rrulldrrdddld*0ruuurrddllluruuul3*3rurrd*3rur1u*Bruu3*0ru*0l1ru*Dluuulld*9ruuurrrdd3*0l1luurulu*0rulll3urul1luuu3ll1*Alurrrurrd*2ruurr3ururrr1uurruuuru3ul1lul3ll1ulur3urr1ur3r1uruu3r1urur3rr1rr3rr1u*0r3rrr1uuru3rrrurr1luu*2r3*0r1uluru3uldruruu1uuu">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&21&41?*002*F02*G02*U04*102*F02*G02*501*502*H0*F1*D05*q05*801*z0*z0*002221*I01*z0*B01*z0*z0*z0*z0*h0*F1*D0/b1?146&719&593&473&311&273&285/b0?128&744&629&507&345&189&248&577/b2?372&331&290/s1?752&793&794/s3?55&96/f0?537/">The Puppet Master</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&14&40?*z0*z0*N04*z0*F0*N1*z0*z0*z0*10*21*z0*G0/b2?206/b8?212/b9?213/b10?214/b3?207/b13?217/b18?222/b14?218/b19?223/b6?210/b5?209/b4?208/b23?227/b12?216/b17?221/b24?228/b20?224/b0?204/s0?203&202/b7?211/b15?219/b1?205/b11?215/b16?220/b21?225/b22?226/f1?109/#replay=nmGTi8PB&*Krurruu*1rdluululluuluruluruurulurulddlldruldruldruruluruuruluruurulurullldruruluruuruluruuruluruu*0r">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&14&40?*z0*z0*N04*z0*F0*N1*z0*z0*z0*10*21*z0*G0/b2?206/b8?212/b9?213/b10?214/b3?207/b13?217/b18?222/b14?218/b19?223/b6?210/b5?209/b4?208/b23?227/b12?216/b17?221/b24?228/b20?224/b0?204/s0?203&202/b7?211/b15?219/b1?205/b11?215/b16?220/b21?225/b22?226/f1?109/">Rainbow Bridge</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&25&43?*z0*v04*z0*z0*H0101*Y02110112*G0101010101*3011000110001010101010101*00*51*2011*101100*91*00*51*1011*30110*91*00*21*30110021012001000*71*00*01*401100011011*20*71*00*31*00110001110111*00*81*00*31*40*010*0100*91*00*310011000*110*11000*71*00*310112*60*11002*61*00*51000*3100*21000*51*00*41000*01001101100*01000*41*00*31000*11001101100*11000*31*00*21000*21*50*21000*21*00*1100011*F011000*11*00*01000*810*81000*01*00111*T0111*00*Z100/b0?237/s0?238&281/s1?234&277/b1?524&525&526&527&528/f0?791/f1?798/#replay=nmGTi8PB&1rrd0lldldrrruruurd*2luluuldd*0r1*Alu0dd*9l1rurururururu*4r0llurrd*9ru1urrdl0uurr1ll0uuuru*3lullddldldldldldd*8r1urd*Aru0*Ar1lululululululululur0uulululululululu1rul0urul1u0u1lul0urullluluu*2lddldld*0luurururururuurru*3rdrddlulu1llull0rruuulluluu*2lddldldldd*3rdld1d*2l0dd*9luururururur1l0uurullullurrdrdddld1ulululllur0ldldldlddluurrururururuuullulld1ur0druuluruururruulurrdldlldlddluur1u0r1l0urur1ur0ur1ur0ur1ur0ur1ur0ur1ururrr0uuurrr1urrru*0lulldrr0ur1ur0rr1rr0rr1rr0rddru1drru0r1r0rr1rr0rr1rr0rr1rr0rr1rr0rr1rr0rr1*0r0ur*0u">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&25&43?*z0*v04*z0*z0*H0101*Y02110112*G0101010101*3011000110001010101010101*00*51*2011*101100*91*00*51*1011*30110*91*00*21*30110021012001000*71*00*01*401100011011*20*71*00*31*00110001110111*00*81*00*31*40*010*0100*91*00*310011000*110*11000*71*00*310112*60*11002*61*00*51000*3100*21000*51*00*41000*01001101100*01000*41*00*31000*11001101100*11000*31*00*21000*21*50*21000*21*00*1100011*F011000*11*00*01000*810*81000*01*00111*T0111*00*Z100/b0?237/s0?238&281/s1?234&277/b1?524&525&526&527&528/f0?791/f1?798/">Castle</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr> 
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&25&20?*K01001*504*Q02*B010002*F021*A010002*F02*B010002*F02*B010002*F02*B010002*F02*B010002*F02*B01*Y0100202*F02*A01*002*F02*F021*N02*00*41*101*00/b0?48&49&50/s3?70&69&89&90&91&71/f0?336/#replay=nmGTi8PB&3uruulllullddllluuu*1rdrurrddlluruluruuluuluu*1l*1d*0ru*5ru*Blu*5ruuluuurrulluuurul*0ululllullddrdruuullddrr*0ullddrr*0ullddrr*0ullddrr*0ullddrr*0ullddrr*0ulurruullldd*0rulllurururrd*5r">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&27&20?*O02*V01001*504*Q02*B010002*F021*A010002*F02*B010002*F02*B010002*F02*B010002*F02*B010002*F0222*901*Y0100222*F02*F02*F02*F021*N02*00*312*0021*00/b0?88&89&90/s3?110&109&129&130&131&111/f0?376/">Perch</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&21&55?*j01001*l01*A01*H2*E01001*D0*C2*4020100010001*U042*402010001000110101*K0*32*40201*301*401*70*320*42*4020100010001001*102*70*320*42*4020100010001*G0*320*42*4020100010001001*501*B0*42*40201*301*802*B0*42*4020100010001001*L0*42*402*1010001*401*F0*4202*2020100010001001*102*702*30*4202*002020100010001*O0*420202*0020100010001001*202*102*301*00*42*202220100010001*F0*110*A1000222*501*Q011*H021*10*A1*80*41*10*71*10100110*41*70110*21*20111000*01*10*01*001100*B1000111*40111011*40/b4?200&219/b8?530&547/b12?750&767/b9?845&75/b6?420&437/b5?310&327/b10?640&657/b11?637&638&639/b2?844&789&790/b3?149/b15?151&153&154&155&157/s2?967&966&965&964&963&962/b1?90&107/#replay=nmGTi8PB&2rruuluuurrruulluurruulluurruullu*0rdrru*4rdld*1lull*1u*0ruurr*0ulluuurrru*8ldr*0dll*0drrddll*0urrddll*0urrddll*0urrddll*0urrddllulurrullurrruulllddrrrullurruru*4rd*1lu*5lu*6rd*2ldllluurrdlddd*0rddlllurr*0ulluurdrrru*0luurr*0ulluu*5ru*1lulldddlluu*0ru*0luurr*0ulluurrrulluurrddllluurrruullluru*0lurrulluu*Jl*1d*7r*0urulllu*0rurddllullullulldddldd*2r*0uru*0ldlllu*2r*0d*1luu*2lu*0ruulurruuu*0rd*1ldrdlllururuluuu*2lddrruurruurrr*0dluuulldlluu*0rdddluluulllurrrddldrrrulllullurrrddlu*0ldluluurdrrrullluuullldddruurrddluluuuluruuuldddrur*1urruuull*1uruuuluu*5rd*4l*0dlluurruu*0r*1urulld*0lulurrruurdrrddrrdrrd*5lu*1r*0ullluullldddld*6ru*1luuurrrdruuluruuu*1rurrdrrrddd*1luulluuulurrdrrrddlluu*8luulldd*4rur*0u*1rurrd*2rddlu*5lddd*3r*0urululllulldllu*1lddruruuruurullldddrruruulurruulllddd*0r*0uluru*0r*0d*2lurru*0rurr*1drrululuuuruuruluuullddd*0l*0urulluruul*1ur*1dlddrdd*4ru*4luulll*1urddruuruullurruuulur*0uru*1rddd*0luuulu*3r*0dll*0ulururr*1u*3r">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&21&55?*j01001*l01*A01*H2*E01001*D0*C2*4020100010001*U042*402010001000110101*K0*32*40201*301*401*70*320*42*4020100010001001*102*70*320*42*4020100010001*G0*320*42*4020100010001001*501*B0*42*40201*301*802*B0*42*4020100010001001*L0*42*402*1010001*401*F0*4202*2020100010001001*102*702*30*4202*002020100010001*O0*420202*0020100010001001*202*102*301*00*42*202220100010001*F0*110*A1000222*501*Q011*H021*10*A1*80*41*10*71*10100110*41*70110*21*20111000*01*10*01*001100*B1000111*40111011*40/b4?200&219/b8?530&547/b12?750&767/b9?845&75/b6?420&437/b5?310&327/b10?640&657/b11?637&638&639/b2?844&789&790/b3?149/b15?151&153&154&155&157/s2?967&966&965&964&963&962/b1?90&107/">Black Mamba</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                </table>
-            </div>
-            <div class="tableContainer">
-                <table>
-                    <div class="tableTitle">Experimental Puzzles</div>
-                    <thead>
-                        <th></th>
-                        <th>Solution</th>
-                        <th>Level</th>
-                        <th>Creator</th>
-                        <th>Note</th>
-                    </thead>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&11&14?001*80111*W02*501P1P1000*2P00101*30201110140002001*101200210012120111001100*0121*001*001*20/s4?48&49&50&51&52/f1?81/f0?79/s3?34&35&36&37&38/">Under Cover</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&19&9?*L04*702112*A01PP12*001001001*101*0011001*20PP*t0*11*00*11*00/b0?61&35/b1?83&74&75/s1?147&146&145&144/s2?138&137&136&135/">Snake Filter</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&16?04*l0P*B0P*F0*02*30P*00*012*50P0*112000PP*40111*50P022111*10P*501*60P*001*20101*201*10100*41*30*41*001*00*21*10*2100111*20*01*0011000/s0?114&113&129/b0?187&188&139/">Platformway to Heaven</a></td>
-                        <td><a class="tableLink" href="https://github.com/thejoshwolfe">thejoshwolfe</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&7&12?*j021*6042*1P*402*30/s1?31&30&29&28&27/s2?15&16&17&18&19/s3?55&54&53&52&51/s0?39&40&41&42&43/f0?73/">Under Cover 2</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&15&31?*B01*Q01*Q01*Q01*Q01*D04*801*Q01*m0*FP*z0*z0*w0/b0?204&235&234&203/s0?196&195&194&193&192/s2?134&133&132&131&130/s1?165&164&163&162&161/s3?227&226&225&224&223/">Low Clearance</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&16&13?*F04*J0*11*4010001*4010001*4010001*401PPP1*u0*11*d0/s0?134&135&136&137&138&151&150&149&148&147/f0?71/">Baited Trap</a></td>
-                        <td><a class="tableLink" href="https://github.com/XeroOl">XeroOl</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&17&20?*z0*F01*00*11cc*90*11*20*12*10*012*10*11*20*01*10*11*20*01*12*01*40*81*50*61*90*31*B01114*E011101221110c0c0011001110*21*2011001110*11*301100/s3?64&65/s5?73&72&71/b0?262&277/f0?56/">Gateway to Freedom</a></td>
-                        <td><a class="tableLink" href="https://github.com/Fargogoosey">LevelWorld</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&35&49?*z0*o0*41*Z0*81*G0101*80*C1*E0101*60*G1*C0101*40*K1*A0101*20*O1*80101*00*S1*6010100*010*R1*4010*310*B1*00*A1*20101*H02*001100*02*80101P*110*6100100020001002000*21*20101P*9021120*0122*A01*20101P00011002*01*601112*002P*201*201012*002000*11002P*70122P*201*20101P00101010100011000P*202*0022*301*20101P002*601122P*502022P*201*20101P*40211101*002120001212022P*002*40101P02*40110101*002P*3022P*30P*10101P022P0211101*202002P0222*002P1*0011P*10101P000P02002*3010002P*402P*201P*10101P222P22000P01001*502000112P*30P*10101P000P00020P*501001020*12P*202P*10101P0001*10P000*110022*002*00P*30P*10101P*101002P20010001*00P2001P*71P*10101P*3010P00010401*401P1*60P*10101P01*30P10010001002210011P1*4011P*10101P0001*5010001*0010001P*601P*10101P*101*3010051005000201*701P*10101P0002*002*0010001*0010001*701P2*001000*9210001202210001*50201P*10*E1000*I1P1*z0*V0/b0?151&150&149/b1?795&746&697&648&599&550&452/b2?572&621&669&668&667&816/b3?578&676&725&823/b4?579/b5?580&678&727&776&874/b6?764&763&762&761&760&711&710&708&810&859&1105/b7?822/b8?842&844&850&1438/b9?848/b10?871/b11?920/b12?944/b13?969/b14?1215&1166&1068&1019&970/b15?1216&1167&1069&971/b16?1020/b18?1067&1116&1214/b20?1347&1151&1150/b21?1290/b22?1364&1363&1362/b23?1410/b24?1412/b25?1459/b26?1461/b27?1506&1555/b28?1557&1508/b29?1559&1510/b30?1511&1560/b34?1046/b17?1449&1448&1497/s3?1565/f6?1495/b19?1106/f8?1548/f5?1403/f3?1062/f0?567/f1?793/f7?1524/f2?876/f4?1318/">House on Fire</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&23&33?0*BC0*zC*zC*zC*zC*zC*XC4*zC*zC*zC*zC*WC0*zC*CC0/s3?758/s1?0/f1?676/b0?16/">Underground</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&21&15?*s04*90222*E01*F010002*A0200010001*101*D02*501*501*R010001*202*202002*E020202020002002*B0*BC*B1/b8?3/b9?4/b10?5/b11?8/b13?9/b14?11/b1?6/b0?13&118/s0?205&206&207&208/s2?282&283/">Bundók</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/">Gooby</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>                    
-                </table>
-            </div>            
-            <div class="tableContainer hiddenItem">
-                <table>
-                    <div class="tableTitle">nohatcoder Puzzles</div>
-                    <thead>
-                        <th></th>
-                        <th style="width:10px">Solution</th>
-                        <th>Level</th>
-                        <th>Creator</th>
-                        <th>Note</th>
-                    </thead>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&9&14?*Q01002*K01*I01*301*104*Q0/s2?46&60&74&75/s0?48&62&61/f0?49/#replay=nmGTi8PB&2rur0l2ullul0uululullurr2luu*0r0rrrdrr2*2r0uluurrdllu*1r2rddl0ddl">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&9&14?*Q01002*K01*I01*301*104*Q0/s2?46&60&74&75/s0?48&62&61/f0?49/">Fruity Gap</a></td>
-                        <td><a class="tableLink" href="http://nohatcoder.dk/snakebird.htm#Alb_rnwk4mQvImxf_EsEmElEic-E25E0iNuCV4MnE-oswHlCcgWuF_oH0gWetFdcwAkqE8EgpcoVRsizGqQmiqL8EEwec4mY_66dD1jD2EC07wkgME41YkD_OFwdAlOf-qXvhV8bnhkI3EkGo-LkFG-bzG0MlMOviElIEupO458oWpAU0qEsMMR4wUOyuEBC1gzlR2I_5Mt5A0HSulgH1ooWx_Es4loHcN43EHuNdK_qchlGP1JfNM3Ms5Mkoywc0im4VuSkyM14">nohatcoder</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&16&24?*v0*51*z0*V04*h0111*40*51*00111*40*51*00111*40*51*00111*40*51*0011122*0022*51*k0/b0?160&136&112/b1?161&137&113/b2?186&185&184/s1?206&205/b3?210&209&208/#replay=nmGTi8PB&1rru*0rdlululurdrdlululurdrdlululurdrdlulullurrdrdlulllurrrdllullurrdllullurrdlulllurrrd*4lu">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&16&24?*v0*51*z0*V04*h0111*40*51*00111*40*51*00111*40*51*00111*40*51*0011122*0022*51*k0/b0?160&136&112/b1?161&137&113/b2?186&185&184/s1?206&205/b3?210&209&208/">Bridge</a></td>
-                        <td><a class="tableLink" href="http://nohatcoder.dk/snakebird.htm#Alb_rnwk4mQvImxf_EsEmElEic-E25E0iNuCV4MnE-oswHlCcgWuF_oH0gWetFdcwAkqE8EgpcoVRsizGqQmiqL8EEwec4mY_66dD1jD2EC07wkgME41YkD_OFwdAlOf-qXvhV8bnhkI3EkGo-LkFG-bzG0MlMOviElIEupO458oWpAU0qEsMMR4wUOyuEBC1gzlR2I_5Mt5A0HSulgH1ooWx_Es4loHcN43EHuNdK_qchlGP1JfNM3Ms5Mkoywc0im4VuSkyM14">nohatcoder</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&19&12?*M0*41*m0*01201*50201*D04*90100011*D011*H01*70111*R0/s2?77&76/s0?65&64/f0?115/#replay=nmGTi8PB&2r0rrd2rrrdllur0r2rr0rrul2u*0l0u*2ldrr2lulldlddrdrru0ulll2lluluuuruul">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&19&12?*M0*41*m0*01201*50201*D04*90100011*D011*H01*70111*R0/s2?77&76/s0?65&64/f0?115/">Abyss</a></td>
-                        <td><a class="tableLink" href="http://nohatcoder.dk/snakebird.htm#Alb_rnwk4mQvImxf_EsEmElEic-E25E0iNuCV4MnE-oswHlCcgWuF_oH0gWetFdcwAkqE8EgpcoVRsizGqQmiqL8EEwec4mY_66dD1jD2EC07wkgME41YkD_OFwdAlOf-qXvhV8bnhkI3EkGo-LkFG-bzG0MlMOviElIEupO458oWpAU0qEsMMR4wUOyuEBC1gzlR2I_5Mt5A0HSulgH1ooWx_Es4loHcN43EHuNdK_qchlGP1JfNM3Ms5Mkoywc0im4VuSkyM14">nohatcoder</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&13&16?*U0*81*001*30*01*001*5011*001*301011*00*51011*001*601*001*2011001*001011*00*01*0040*61*U0/f0?67/s2?71&72&73&74/s0?87&88&89/s1?152&151&150/f1?153/#replay=nmGTi8PB&*0lu1uu*0rdl2u*0rddd*4l0*2rurrddd*2l1ulllddl2urrurrd*0lurrr1uul2dr1lldluru*0r2u1dd2u*0ldd1r2l0ll1u0*0lddl1u*0lddl">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&13&16?*U0*81*001*30*01*001*5011*001*301011*00*51011*001*601*001*2011001*001011*00*01*0040*61*U0/f0?67/s2?71&72&73&74/s0?87&88&89/s1?152&151&150/f1?153/">Tube</a></td>
-                        <td><a class="tableLink" href="http://nohatcoder.dk/snakebird.htm#Alb_rnwk4mQvImxf_EsEmElEic-E25E0iNuCV4MnE-oswHlCcgWuF_oH0gWetFdcwAkqE8EgpcoVRsizGqQmiqL8EEwec4mY_66dD1jD2EC07wkgME41YkD_OFwdAlOf-qXvhV8bnhkI3EkGo-LkFG-bzG0MlMOviElIEupO458oWpAU0qEsMMR4wUOyuEBC1gzlR2I_5Mt5A0HSulgH1ooWx_Es4loHcN43EHuNdK_qchlGP1JfNM3Ms5Mkoywc0im4VuSkyM14">nohatcoder</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&26?*o0*E1*J0111*J0111*J0111*J0111*I0*01*I0*01*I0*01*I0*01*I0*01*I0*01*504*M01*30101*J0*31*t0/s0?300&299&298&297/f0?309/s2?326&325&324&323/b0?352/#replay=nmGTi8PB&2rdrrrulldl0ulld*1rdllulllurrr2ll0drrurrrurrrulllurrdlll2ll0ll2l0llullldrr2u0r2rrdllluuu0*0uru2ll0lldrd*3l2uu*5l0*1ld2l">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&26?*o0*E1*J0111*J0111*J0111*J0111*I0*01*I0*01*I0*01*I0*01*I0*01*I0*01*504*M01*30101*J0*31*t0/s0?300&299&298&297/f0?309/s2?326&325&324&323/b0?352/">Tunnel</a></td>
-                        <td><a class="tableLink" href="http://nohatcoder.dk/snakebird.htm#Alb_rnwk4mQvImxf_EsEmElEic-E25E0iNuCV4MnE-oswHlCcgWuF_oH0gWetFdcwAkqE8EgpcoVRsizGqQmiqL8EEwec4mY_66dD1jD2EC07wkgME41YkD_OFwdAlOf-qXvhV8bnhkI3EkGo-LkFG-bzG0MlMOviElIEupO458oWpAU0qEsMMR4wUOyuEBC1gzlR2I_5Mt5A0HSulgH1ooWx_Es4loHcN43EHuNdK_qchlGP1JfNM3Ms5Mkoywc0im4VuSkyM14">nohatcoder</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&20&28?*s01*F0111*101*F0101*101*A0*2101*101*A011011101*101*A01*201*101*A010011101*101*A011011101*101*D011101*101*D011101*101*D011101*101*C0*0101*10*51*22*2101*L01004*K0101*L0101*M02*u0/b0?232/b1?260/s2?288&287/s0?316&315&314&313/s1?344&343&342&341&340/#replay=nmGTi8PB&rrdll1r0l1urr*0ulldd2r1drr2ul0ll2lu*1ld*0rullurururrr1rrr2rr0urruurr2r0r2r0r2r0ru*0lurr2ululur0rr2rurrr0urru*0lurr1u0uru*3l1*4lu*4r0u*3r1rur2u1uu2l1l0r1lld0ur1rr0uu1ulldrdr2u1ur2*1rurr0ulu*1rdddrr1*0ulu*1r*0drr">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&20&28?*s01*F0111*101*F0101*101*A0*2101*101*A011011101*101*A01*201*101*A010011101*101*A011011101*101*D011101*101*D011101*101*D011101*101*C0*0101*10*51*22*2101*L01004*K0101*L0101*M02*u0/b0?232/b1?260/s2?288&287/s0?316&315&314&313/s1?344&343&342&341&340/">Transport</a></td>
-                        <td><a class="tableLink" href="http://nohatcoder.dk/snakebird.htm#Alb_rnwk4mQvImxf_EsEmElEic-E25E0iNuCV4MnE-oswHlCcgWuF_oH0gWetFdcwAkqE8EgpcoVRsizGqQmiqL8EEwec4mY_66dD1jD2EC07wkgME41YkD_OFwdAlOf-qXvhV8bnhkI3EkGo-LkFG-bzG0MlMOviElIEupO458oWpAU0qEsMMR4wUOyuEBC1gzlR2I_5Mt5A0HSulgH1ooWx_Es4loHcN43EHuNdK_qchlGP1JfNM3Ms5Mkoywc0im4VuSkyM14">edderiofer, nohatcoder, & Gooby</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                </table>
-            </div>
-            <div class="tableContainer hiddenItem">
-                <table>
-                    <div class="tableTitle">Avis Anguis Puzzles</div>
-                    <thead>
-                        <th></th>
-                        <th style="width:10px">Solution</th>
-                        <th>Level</th>
-                        <th>Creator</th>
-                        <th>Note</th>
-                    </thead>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&27&49?*z0*z0*z0*z0*C0*32*b02*31*Z05002*21*d04001*S0*71*101*R015*61*1011*Q010*61*201*S0*51*3011*Y011*401*R01*201*501*R01*201*501*R0101*001*4011*C0*2100*410110111*401*F0*0100*71*801*H011222*61*801*R0*01*90111*Q0111*h011*h011*h011*z0*t0/b0?800&801/b1?657&660&709&758&807/b2?415&414&317&268/s2?809&810&761&712&663/s1?793&792/s0?751&752/f1?270/f0?368/#replay=nmGTi8PB&urrd*3l1*6r0uru*1rurru1u0r2llulluu*0lddruuru0uullluld*1lul2uldddllu*0lu*0rdrr1l2ul1ll2luuu1l2rrru*2ld1ur2r1r2ruruuuruuur1*3r2u*0r1ululur2rr1rr2ru1u*0rdrrr2u*0rddrrr0d*2r">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&27&49?*z0*z0*z0*z0*C0*32*b02*31*Z05002*21*d04001*S0*71*101*R015*61*1011*Q010*61*201*S0*51*3011*Y011*401*R01*201*501*R01*201*501*R0101*001*4011*C0*2100*410110111*401*F0*0100*71*801*H011222*61*801*R0*01*90111*Q0111*h011*h011*h011*z0*t0/b0?800&801/b1?657&660&709&758&807/b2?415&414&317&268/s2?809&810&761&712&663/s1?793&792/s0?751&752/f1?270/f0?368/">Demo</a></td>
-                        <td><a class="tableLink" href="">Terzalo</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&14&12?11*30*11*401110004*10111*6011*6011*6011*001*1011*6011*50111*50111*6011*6011*50111*5011/b0?52&63&62&74&86&98&110&122&134&135&136&137&138&139&140&128&117&92&91&68&67&54/s2?76&64&65&66/f0?101/s1?124&123/#replay=nmGTi8PB&2drruullu1rurrururr2ldluu*0rururruuru1ulll2uu*2luu1luluul">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&14&12?11*30*11*401110004*10111*6011*6011*6011*001*1011*6011*50111*50111*6011*6011*50111*5011/b0?52&63&62&74&86&98&110&122&134&135&136&137&138&139&140&128&117&92&91&68&67&54/s2?76&64&65&66/f0?101/s1?124&123/">Level A</a></td>
-                        <td><a class="tableLink" href="">Connorses</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&14&13?*D04*4011*7011*50*11*40*41*10*61*00111*60111*001100*11*40*11*50*01*0011100*6100*61000111/f0?30/s1?133&132&145&146/s0?136&137/#replay=nmGTi8PB&1r0l1uuruurrruullulluu*0rdd*0ldddru0u1u0rrr1rrruu0u1u0l1rrullull0ll1ull0luu1uuu">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&14&13?*D04*4011*7011*50*11*40*41*10*61*00111*60111*001100*11*40*11*50*01*0011100*6100*61000111/f0?30/s1?133&132&145&146/s0?136&137/">Level B</a></td>
-                        <td><a class="tableLink" href="">Connorses</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&10&5?*a04414400100/f0?7/s2?26/s1?31&32/s0?38&37&36/#replay=nmGTi8PB&1ur2r1r2r0ul1ul2l0uu1u2uld1ld0ld">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&10&5?*a04414400100/f0?7/s2?26/s1?31&32/s0?38&37&36/">Level 1</a></td>
-                        <td><a class="tableLink" href="">CHz</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&8&7?*9041110111*A01110*D1/s0?9&8&7/s1?11&12/f1?33/f0?29/#replay=nmGTi8PB&1lu0rddllldrru*0rdll1lu0l1ru0uu1rrr0urrr">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&8&7?*9041110111*A01110*D1/s0?9&8&7/s1?11&12/f1?33/f0?29/">Level 2</a></td>
-                        <td><a class="tableLink" href="">CHz</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&12&14?*l01*901*901*9010011*50*11*B01*101*104*010*910*51/s1?47&46&45&44/b0?102&74&58&59&60&61&62/b1?132&118&104&90&76&75&131&129&128&114&100&86&72&73/s0?89&103&117&116/s2?94&95/#replay=nmGTi8PB&llddru1u*0lddrrulluruu*3r2ururu1rddr2l1uul2lu*4ldrr0rullu2dr0uruuulluu*5rulul1urruuulu*5lddrrd2u1dluuruul2llur1ur2u1u2l1l0ldl2u0l2r0uruu*2ldd2u0ruu2*0ru0rulluruu*2rddluuu1uurddrrur2*1r1*2r0rd*1r">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&12&14?*l01*901*901*9010011*50*11*B01*101*104*010*910*51/s1?47&46&45&44/b0?102&74&58&59&60&61&62/b1?132&118&104&90&76&75&131&129&128&114&100&86&72&73/s0?89&103&117&116/s2?94&95/">Level 3</a></td>
-                        <td><a class="tableLink" href="">CHz</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                </table>
-            </div>
-            <div class="tableContainer hiddenItem">
-                <table>
-                    <div class="tableTitle">Gameboy Puzzles</div>
-                    <thead>
-                        <th></th>
-                        <th style="width:10px">Solution</th>
-                        <th>Level</th>
-                        <th>Creator</th>
-                        <th>Note</th>
-                    </thead>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&16&20?*e0*010*01*70*010*01*504*l01*E02*Y0*21*A0*21*g0*61*90*11*B0*11*40/f0?68/f1?94/f2?222/s1?226&225&224/s2?248&247&246&245/#replay=nmGTi8PB&1*1r2urrruuu*0ruuulullddd*6lu*5r1ulluluu2u1r2uuuru1rurul2ururuuu1*7l2u*2ldddrrr*0uruurur*0u*5l1d2lllddd">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&16&20?*e0*010*01*70*010*01*504*l01*E02*Y0*21*A0*21*g0*61*90*11*B0*11*40/f0?68/f1?94/f2?222/s1?226&225&224/s2?248&247&246&245/">Level 1</a></td>
-                        <td><a class="tableLink" href="https://fb1.itch.io/snakebirdgb">freeball1</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&20?*z0*B0*11*0011*00*61*0011*00*11*5011*E011*E011*E011*204*7011*E011*P0*11*0011*00*61*0011*00*11*5011*E011*E011*50/f0?128/f1?131/f2?246/f3?253/s0?22&42&62/s5?76&77&57&37/#replay=nmGTi8PB&5*1ld*0lul*0u0*2r5r0u*0l5ullurrd*5ru*5l0llu*0rur5*0lu0rd*0rd*5ruuu5*Aruuu">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&20?*z0*B0*11*0011*00*61*0011*00*11*5011*E011*E011*E011*204*7011*E011*P0*11*0011*00*61*0011*00*11*5011*E011*E011*50/f0?128/f1?131/f2?246/f3?253/s0?22&42&62/s5?76&77&57&37/">Level 2</a></td>
-                        <td><a class="tableLink" href="https://fb1.itch.io/snakebirdgb">freeball1</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&19&20?*z0*Y02002002002*N0*C1*00*C1*00*01*C0*0104*A0*01*C0*01*C0*01*C0*010202020202020202*01*C0*01*C0*01*C0*01*C0/b0?83&63&62&82/s0?21&22&23&24/s3?41&42/#replay=nmGTi8PB&3drrru0ldrruluruuurrrdd*2ruuld*1luulllddr3rrru0rruurrrdd*3ruuld*2luullldd3rrru0rrruu*4r3*1r0rrulu3rrrd*7lulld0l">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&19&20?*z0*Y02002002002*N0*C1*00*C1*00*01*C0*0104*A0*01*C0*01*C0*01*C0*010202020202020202*01*C0*01*C0*01*C0*01*C0/b0?83&63&62&82/s0?21&22&23&24/s3?41&42/">Level 3</a></td>
-                        <td><a class="tableLink" href="https://fb1.itch.io/snakebirdgb">freeball1</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&16&21?*z0*G01*404*V022*G02*E0*01*J0*51*301000*51*m0*01*C0*01*T0/s2?178&179&180&181&182/s3?118&139&160/f0?151/f1?264/#replay=nmGTi8PB&2lldlddd*0rullull3*2ldldrru*1rdllu*0luur2llluuullluurr3urrulld*1l2*0ulllurrr*0dlddrr3dluururruuururr*0u2*0rurr*0u">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&16&21?*z0*G01*404*V022*G02*E0*01*J0*51*301000*51*m0*01*C0*01*T0/s2?178&179&180&181&182/s3?118&139&160/f0?151/f1?264/">Level 4</a></td>
-                        <td><a class="tableLink" href="https://fb1.itch.io/snakebirdgb">freeball1</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&20?*u011101*00102*401410001*1020100*0101110*01*5011*10*51001011*801*1011*D0111*501101000*0101*301*10*11*00100011*40111*10*01001*1011*001*301001001101*B0111*801*101110011000*1100*K1/s1?43&42&41/s2?23&22&21/b0?24&44&45&25/f0?123/#replay=nmGTi8PB&2u*1r1*3rddrrruu*0rull2drrrdrruurr1lurururuu*4lulluu*3rddlddrurruurulll2rdrrdlllullddlu*2ruuruu*1l1luullluu*1l2ldd*2l1u2uu*1lddrdr1l2uu1luulurrr2rrulldluluurru1urullulluuurrrddllulurruluuul2*0rurr1lu*0ruuluur2ullulu1ulll2urrruruu*3rururuu*4lulllulldd*0luu1luuu">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&20?*u011101*00102*401410001*1020100*0101110*01*5011*10*51001011*801*1011*D0111*501101000*0101*301*10*11*00100011*40111*10*01001*1011*001*301001001101*B0111*801*101110011000*1100*K1/s1?43&42&41/s2?23&22&21/b0?24&44&45&25/f0?123/">Level 5</a></td>
-                        <td><a class="tableLink" href="https://fb1.itch.io/snakebirdgb">freeball1</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&20?*b0*D1000*D1*z0*z0*w04*z0*K0/s2?123&103/s0?135&115/f0?155/f1?175/f2?143/f3?163/f4?185/f5?187/f6?190/f7?193/#replay=nmGTi8PB&2d*8rull0lll2*0l0lll2lll0*0l2lll0llur2urrr0rrr2rrr0rrr2ru*0ld0u*1l2luurr0urrr2rruurrr0dluruu*1r2uluul0ulllurrddruuluull2d">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&20?*b0*D1000*D1*z0*z0*w04*z0*K0/s2?123&103/s0?135&115/f0?155/f1?175/f2?143/f3?163/f4?185/f5?187/f6?190/f7?193/">Level 6</a></td>
-                        <td><a class="tableLink" href="https://fb1.itch.io/snakebirdgb">freeball1</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&20?00*C1*201*001104001*9011*s011101*8010011*001*9011001*60100021120001*401110*010111*R01*101*901*F01*c0111*h0/f0?27/s3?147&167&166&165/s1?152&172&173/b0?90&89&69&70/f1?272/f2?239/#replay=nmGTi8PB&1ulur3llurrdd*1ruuurruuuru*4l*0ulldddrruuulu*4r*0dlldddlldddrrr1drrull3ulll1llldrr3l1rurrruuulluurruuurrdddrrru*0lurrrd*0luuulluurruuurullluuu3luuur*0urruuurullluuu">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&20?00*C1*201*001104001*9011*s011101*8010011*001*9011001*60100021120001*401110*010111*R01*101*901*F01*c0111*h0/f0?27/s3?147&167&166&165/s1?152&172&173/b0?90&89&69&70/f1?272/f2?239/">Level 7</a></td>
-                        <td><a class="tableLink" href="https://fb1.itch.io/snakebirdgb">freeball1</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&20?*z0*004*N0202*j01*2011*60111*D01110*01*80111*3011*O0111*X0111*X0111*80*91*00/s1?304&324/s0?305&325/f0?291/f1?247/f2?171/f3?179/f4?98/#replay=nmGTi8PB&rru*0ruru*1l1rrr0uuuluru*2rdll1u*0ru0u1*0l0*0lu1u0u1*0r0*0ru1u0u1u*4ruluuulur*0u*3lddr*0dluu0u1uu0rulluluuu1ruluu*0luu*0ruuurulluluuu">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&20?*z0*004*N0202*j01*2011*60111*D01110*01*80111*3011*O0111*X0111*X0111*80*91*00/s1?304&324/s0?305&325/f0?291/f1?247/f2?171/f3?179/f4?98/">Level 8</a></td>
-                        <td><a class="tableLink" href="https://fb1.itch.io/snakebirdgb">freeball1</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&20?*S011*E011*z00*21*4011*00*21*4011*H011*E011*a01*30202202000*0104*102*002000*01*10*61*60*61*Q0*61*10/s2?61&81&101/s0?63&83&103/f0?128/f1?132/f2?17/f3?332/#replay=nmGTi8PB&*2r2*1ru*2r0u*3rddllluu2rrulldrrrur0rurruu2u0r2rrruuululuuu0uu2ul*0dllddrddd*7luuurruurrddrrruurrddrruuruuu0luu*0l2urululu*3ldddrrruu*0l0*2lul2lulldddruu0u*0l2u*0ld">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&20?*S011*E011*z00*21*4011*00*21*4011*H011*E011*a01*30202202000*0104*102*002000*01*10*61*60*61*Q0*61*10/s2?61&81&101/s0?63&83&103/f0?128/f1?132/f2?17/f3?332/">Level 9</a></td>
-                        <td><a class="tableLink" href="https://fb1.itch.io/snakebirdgb">freeball1</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                    <tr>
-                        <td class="numberColumn"></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&21?*m01*c0*11*1011*50*110200011*B0*01*402*11000*0100222*00*11*O011*B01120111*202*301100111*202*3011*504*5011*B0*21*B0*21*B01*00111*901*00111/f0?58/f1?129/s1?285&286&287/s0?264&265&266&267&268/f2?183/#replay=nmGTi8PB&urrr1urrruu0*0u*1luuu*1rur*2dl1rul0l*1u1u*1lur0rrrullluu*5l1ull0lulu*0rurr1urrdllurrru*0r0*1r*2dlllururr1*0rdddllld*0l0rru*5l">&#10003;</a></td>
-                        <td><a class="tableLink" href="https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html#level=HyRr4JK1&18&21?*m01*c0*11*1011*50*110200011*B0*01*402*11000*0100222*00*11*O011*B01120111*202*301100111*202*3011*504*5011*B0*21*B0*21*B01*00111*901*00111/f0?58/f1?129/s1?285&286&287/s0?264&265&266&267&268/f2?183/">Level 10</a></td>
-                        <td><a class="tableLink" href="https://fb1.itch.io/snakebirdgb">freeball1</a></td>
-                        <td class="noteColumn"></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <!--</div>-->
-    </body>
-    <script>
-            document.passwordField.passInput.focus();
-        </script>
-    <script type="text/javascript">
-        /*document.getElementsByName('passwordField')[0].onkeydown = function(e){
-           if(e.keyCode == 13){
-             // submit
-           }
-        };*/
-        /*$(document).ready(function() {
-            $('#passForm input').keydown(function(e) {
-                if (e.keyCode == 13) {
-                    $('#passForm').submit();
-                }
-            });
-        });*/
-        /*document.getElementById("body").addEventListener("click", function() {
-            var body = document.getElementById("body");
-            body.style.filter = "blur(0)";
-            body.style.pointerEvents = "auto";
-            body.style.cursor = "pointer";
-        });*/
-        
-        document.getElementById("showButton").addEventListener("click", function() {    //Gooby  
-            document.getElementById("passWindow").style.visibility = "visible";
-            var body = document.getElementById("body");
-            body.style.filter = "blur(8px)";
-            body.style.pointerEvents = "none";
-            body.style.cursor = "default";
-            //document.getElementById("backgroundBox").style.visibility = "visible";
+function unreachable() { return new Error("unreachable"); }
+if (typeof VERSION !== "undefined") {
+  document.getElementById("versionSpan").innerHTML =
+    '<a href="https://github.com/thejoshwolfe/snakefall/blob/' + VERSION.sha1 + '/README.md">' + VERSION.tag + '</a>';
+}
+/*$(document).ready(function() {
+    var fruits1 = getObjectsOfType(FRUIT);
+    $(fruits1[0]).jqFloat({
+            width: 10,
+            height: 10,
+            speed: 100
         });
-        
-        function validatePass(){
-            if(document.getElementById('passInput').value == "password1"){
-                document.getElementById("passWindow").style.visibility = "visible";
-                var body = document.getElementById("body");
-                body.style.filter = "blur(0)";
-                body.style.pointerEvents = "auto";
-                body.style.cursor = "pointer";
-                var x = document.getElementsByClassName("hiddenItem");
-                for (var i = 0; i < x.length; i++) {
-                    x[i].style.filter = "blur(0)";
-                    x[i].style.pointerEvents = "auto";
-                    x[i].style.cursor = "pointer";
-                }
-                var y = document.getElementsByClassName("disabled");
-                for (var i = 0; i < y.length; i++) {
-                    y[i].style.pointerEvents = "auto";
-                    y[i].style.cursor = "pointer";
-                }
-                document.getElementById("passWindow").style.visibility = "hidden";
-                return true;
+});*/
+
+var img3 = document.createElement('img'); //Gooby
+//img3.src = '/Snakefall/Snakebird Images/Cherry2.png';
+
+var canvas = document.getElementById("canvas");
+
+var SPACE = "0".charCodeAt(0);
+var WALL = "1".charCodeAt(0);
+var SPIKE = "2".charCodeAt(0);
+var FRUIT_v0 = "3".charCodeAt(0); //legacy
+var EXIT = "4".charCodeAt(0);
+var PORTAL = "5".charCodeAt(0);
+var PLATFORM = "P".charCodeAt(0);
+var WOODPLATFORM = "p".charCodeAt(0);
+var ONEWAYWALLU = "u".charCodeAt(0);
+var ONEWAYWALLD = "d".charCodeAt(0);
+var ONEWAYWALLL = "l".charCodeAt(0);
+var ONEWAYWALLR = "r".charCodeAt(0);
+var CLOUD = "C".charCodeAt(0);
+var BUBBLE = "b".charCodeAt(0);
+var CLOSEDLIFT = "c".charCodeAt(0);
+var OPENLIFT = "o".charCodeAt(0);
+var LAVA = "v".charCodeAt(0);
+var WATER = "w".charCodeAt(0);
+var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, WOODPLATFORM, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, CLOSEDLIFT, OPENLIFT, CLOUD, BUBBLE, LAVA, WATER];
+
+// object types
+var SNAKE = "s";
+var BLOCK = "b";
+var FRUIT = "f";
+
+var headRowMove;
+var headColMove;
+
+var tileSize = 34;
+var level;
+var unmoveStuff = {undoStack:[], redoStack:[], spanId:"movesSpan", undoButtonId:"unmoveButton", redoButtonId:"removeButton"};
+var uneditStuff = {undoStack:[], redoStack:[], spanId:"editsSpan", undoButtonId:"uneditButton", redoButtonId:"reeditButton"};
+var paradoxes = [];
+function loadLevel(newLevel) {
+  level = newLevel;
+  currentSerializedLevel = compressSerialization(stringifyLevel(newLevel));
+
+  activateAnySnakePlease();
+  unmoveStuff.undoStack = [];
+  unmoveStuff.redoStack = [];
+  undoStuffChanged(unmoveStuff);
+  uneditStuff.undoStack = [];
+  uneditStuff.redoStack = [];
+  undoStuffChanged(uneditStuff);
+  blockSupportRenderCache = {};
+  render();
+}
+
+
+var magicNumber_v0 = "3tFRIoTU";
+var magicNumber    = "HyRr4JK1";
+var exampleLevel = magicNumber_v0 + "&" +
+  "17&31" +
+  "?" +
+    "0000000000000000000000000000000" +
+    "0000000000000000000000000000000" +
+    "0000000000000000000000000000000" +
+    "0000000000000000000000000000000" +
+    "0000000000000000000000000000000" +
+    "0000000000000000000000000000000" +
+    "0000000000000000000040000000000" +
+    "0000000000000110000000000000000" +
+    "0000000000000111100000000000000" +
+    "0000000000000011000000000000000" +
+    "0000000000000010000010000000000" +
+    "0000000000000010100011000000000" +
+    "0000001111111000110000000110000" +
+    "0000011111111111111111111110000" +
+    "0000011111111101111111111100000" +
+    "0000001111111100111111111100000" +
+    "0000001111111000111111111100000" +
+  "/" +
+  "s0 ?351&350&349/" +
+  "f0 ?328/" +
+  "f1 ?366/";
+
+var testLevel_v0 = "3tFRIoTU&5&5?0005*00300024005*001000/b0?7&6&15&23/s3?18/s0?1&0&5/s1?2/s4?10/s2?17/b2?9/b3?14/b4?19/b1?4&20/b5?24/";
+var testLevel_v0_converted = "HyRr4JK1&5&5?0005*4024005*001000/b0?7&6&15&23/s3?18/s0?1&0&5/s1?2/s4?10/s2?17/b2?9/b3?14/b4?19/b1?4&20/b5?24/f0?8/";
+
+function parseLevel(string) {
+  // magic number
+  var cursor = 0;
+  skipWhitespace();
+  var versionTag = string.substr(cursor, magicNumber.length);
+  switch (versionTag) {
+    case magicNumber_v0:
+    case magicNumber: break;
+    default: throw new Error("not a snakefall level");
+  }
+  cursor += magicNumber.length;
+  consumeKeyword("&");
+
+  var level = {
+    height: -1,
+    width: -1,
+    map: [],
+    objects: [],
+  };
+
+  // height, width
+  level.height = readInt();
+  consumeKeyword("&");
+  level.width = readInt();
+
+  // map
+  var mapData = readRun();
+  mapData = decompressSerialization(mapData);
+  if (level.height * level.width !== mapData.length) throw parserError("height, width, and map.length do not jive");
+  var upconvertedObjects = [];
+  var fruitCount = 0;
+  var tileCounter = 0;
+  for (var i = 0; i < mapData.length; i++) {
+    var tileCode = mapData[i].charCodeAt(0);
+    if (tileCode === FRUIT_v0 && versionTag === magicNumber_v0) {
+      // fruit used to be a tile code. now it's an object.
+      upconvertedObjects.push({
+        type: FRUIT,
+        id: fruitCount++,
+        dead: false, // unused
+        locations: [i],
+      });
+      tileCode = SPACE;
+    }
+    if(tileCode === PLATFORM || tileCode === WOODPLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
+    if (validTileCodes.indexOf(tileCode) === -1) throw parserError("invalid tilecode: " + JSON.stringify(mapData[i]));
+    level.map.push(tileCode);
+  }
+
+  // objects
+  skipWhitespace();
+  while (cursor < string.length) {
+    var object = {
+      type: "?",
+      id: -1,
+      dead: false,
+      locations: [],
+    };
+
+    // type
+    object.type = string[cursor];
+    var locationsLimit;
+    if      (object.type === SNAKE) locationsLimit = -1;
+    else if (object.type === BLOCK) locationsLimit = -1;
+    else if (object.type === FRUIT) locationsLimit = 1;
+    else throw parserError("expected object type code");
+    cursor += 1;
+
+    // id
+    object.id = readInt();
+
+    // locations
+    var locationsData = readRun();
+    var locationStrings = locationsData.split("&");
+    if (locationStrings.length === 0) throw parserError("locations must be non-empty");
+    if (locationsLimit !== -1 && locationStrings.length > locationsLimit) throw parserError("too many locations");
+
+    locationStrings.forEach(function(locationString) {
+      var location = parseInt(locationString);
+      if (!(0 <= location && location < level.map.length)) throw parserError("location out of bounds: " + JSON.stringify(locationString));
+      object.locations.push(location);
+    });
+
+    level.objects.push(object);
+    skipWhitespace();
+  }
+    
+    if(tileCounter>0) document.getElementById("levelType").innerHTML = "EXPERIMENTAL LEVEL<br><span style='font-size:8pt'>contains experimental elements</span>";
+    else document.getElementById("levelType").innerHTML = "STANDARD LEVEL<br><span style='font-size:8pt'>does not contain experimental elements</span>";
+    
+  for (var i = 0; i < upconvertedObjects.length; i++) {
+    level.objects.push(upconvertedObjects[i]);
+  }
+
+  return level;
+
+  function skipWhitespace() {
+    while (" \n\t\r".indexOf(string[cursor]) !== -1) {
+      cursor += 1;
+    }
+  }
+  function consumeKeyword(keyword) {
+    skipWhitespace();
+    if (string.indexOf(keyword, cursor) !== cursor) throw parserError("expected " + JSON.stringify(keyword));
+    cursor += 1;
+  }
+  function readInt() {
+    skipWhitespace();
+    for (var i = cursor; i < string.length; i++) {
+      if ("0123456789".indexOf(string[i]) === -1) break;
+    }
+    var substring = string.substring(cursor, i);
+    if (substring.length === 0) throw parserError("expected int");
+    cursor = i;
+    return parseInt(substring, 10);
+  }
+  function readRun() {
+    consumeKeyword("?");
+    var endIndex = string.indexOf("/", cursor);
+    var substring = string.substring(cursor, endIndex);
+    cursor = endIndex + 1;
+    return substring;
+  }
+  function parserError(message) {
+    return new Error("parse error at position " + cursor + ": " + message);
+  }
+}
+
+function serializeTileCode(tileCode) {
+  return String.fromCharCode(tileCode);
+}
+
+function stringifyLevel(level) {
+  var output = magicNumber + "&";
+  output += level.height + "&" + level.width + "\n";
+
+  output += "?\n";
+  for (var r = 0; r < level.height; r++) {
+    output += "  " + level.map.slice(r * level.width, (r + 1) * level.width).map(serializeTileCode).join("") + "\n";
+  }
+  output += "/\n";
+
+  output += serializeObjects(level.objects);
+
+  // sanity check
+  var shouldBeTheSame = parseLevel(output);
+  if (!deepEquals(level, shouldBeTheSame)) throw asdf; // serialization/deserialization is broken
+
+  return output;
+}
+function serializeObjects(objects) {
+  var output = "";
+  for (var i = 0; i < objects.length; i++) {
+    var object = objects[i];
+    output += object.type + object.id + " ";
+    output += "?" + object.locations.join("&") + "/\n";
+  }
+  return output;
+}
+function serializeObjectState(object) {
+  if (object == null) return [0,[]];
+  return [object.dead, copyArray(object.locations)];
+}
+
+var base66 = "----0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+function compressSerialization(string) {
+  string = string.replace(/\s+/g, "");
+  // run-length encode several 0's in a row, etc.
+  // 2000000000000003 -> 2*A03 ("A" is 14 in base66 defined above)
+  var result = "";
+  var runStart = 0;
+  for (var i = 1; i < string.length + 1; i++) {
+    var runLength = i - runStart;
+    if (string[i] === string[runStart] && runLength < base66.length - 1) continue;
+    // end of run
+    if (runLength >= 4) {
+      // compress
+      result += "*" + base66[runLength] + string[runStart];
+    } else {
+      // literal
+      result += string.substring(runStart, i);
+    }
+    runStart = i;
+  }
+  return result;
+}
+function decompressSerialization(string) {
+  string = string.replace(/\s+/g, "");
+  var result = "";
+  for (var i = 0; i < string.length; i++) {
+    if (string[i] === "*") {
+      i += 1;
+      var runLength = base66.indexOf(string[i]);
+      i += 1;
+      var char = string[i];
+      for (var j = 0; j < runLength; j++) {
+        result += char;
+      }
+    } else {
+      result += string[i];
+    }
+  }
+  return result;
+}
+
+var replayMagicNumber = "nmGTi8PB";
+function stringifyReplay() {
+  var output = replayMagicNumber + "&";
+  // only specify the snake id in an input if it's different from the previous.
+  // the first snake index is 0 to optimize for the single-snake case.
+  var currentSnakeId = 0;
+  for (var i = 0; i < unmoveStuff.undoStack.length; i++) {
+    var firstChange = unmoveStuff.undoStack[i][0];
+    if (firstChange[0] !== "i") throw unreachable();
+    var snakeId = firstChange[1];
+    var dr = firstChange[2];
+    var dc = firstChange[3];
+    var directionCode;
+    if      (dr ===-1 && dc === 0) directionCode = "u";
+    else if (dr === 0 && dc ===-1) directionCode = "l";
+    else if (dr === 1 && dc === 0) directionCode = "d";
+    else if (dr === 0 && dc === 1) directionCode = "r";
+    else throw unreachable();
+    if (snakeId !== currentSnakeId) {
+      output += snakeId; // int to string
+      currentSnakeId = snakeId;
+    }
+    output += directionCode;
+  }
+  return output;
+}
+function parseAndLoadReplay(string) {
+  string = decompressSerialization(string);
+  var expectedPrefix = replayMagicNumber + "&";
+  if (string.substring(0, expectedPrefix.length) !== expectedPrefix) throw new Error("unrecognized replay string");
+  var cursor = expectedPrefix.length;
+
+  // the starting snakeid is 0, which may not exist, but we only validate it when doing a move.
+  activeSnakeId = 0;
+  while (cursor < string.length) {
+    var snakeIdStr = "";
+    var c = string.charAt(cursor);
+    cursor += 1;
+    while ('0' <= c && c <= '9') {
+      snakeIdStr += c;
+      if (cursor >= string.length) throw new Error("replay string has unexpected end of input");
+      c = string.charAt(cursor);
+      cursor += 1;
+    }
+    if (snakeIdStr.length > 0) {
+      activeSnakeId = parseInt(snakeIdStr);
+      // don't just validate when switching snakes, but on every move.
+    }
+
+    // doing a move.
+    if (!getSnakes().some(function(snake) {
+      return snake.id === activeSnakeId;
+    })) {
+      throw new Error("invalid snake id: " + activeSnakeId);
+    }
+    switch (c) {
+      case 'l': move( 0, -1); break;
+      case 'u': move(-1,  0); break;
+      case 'r': move( 0,  1); break;
+      case 'd': move( 1,  0); break;
+      default: throw new Error("replay string has invalid direction: " + c);
+    }
+  }
+
+  // now that the replay was executed successfully, undo it all so that it's available in the redo buffer.
+  reset(unmoveStuff);
+  document.getElementById("removeButton").classList.add("click-me");
+}
+
+var currentSerializedLevel;
+function saveLevel() {
+  if (isDead()) return alert("Can't save while you're dead!");
+  var serializedLevel = compressSerialization(stringifyLevel(level));
+  currentSerializedLevel = serializedLevel;
+  var hash = "#level=" + serializedLevel;
+  expectHash = hash;
+  location.hash = hash;
+
+  // This marks a starting point for solving the level.
+  unmoveStuff.undoStack = [];
+  unmoveStuff.redoStack = [];
+  editorHasBeenTouched = false;
+  undoStuffChanged(unmoveStuff);
+}
+
+function saveReplay() {
+  if (dirtyState === EDITOR_DIRTY) return alert("Can't save a replay with unsaved editor changes.");
+  // preserve the level in the url bar.
+  var hash = "#level=" + currentSerializedLevel;
+  if (dirtyState === REPLAY_DIRTY) {
+    // there is a replay to save
+    hash += "#replay=" + compressSerialization(stringifyReplay());
+  }
+  expectHash = hash;
+  location.hash = hash;
+}
+
+function deepEquals(a, b) {
+  if (a == null) return b == null;
+  if (typeof a === "string" || typeof a === "number" || typeof a === "boolean") return a === b;
+  if (Array.isArray(a)) {
+    if (!Array.isArray(b)) return false;
+    if (a.length !== b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (!deepEquals(a[i], b[i])) return false;
+    }
+    return true;
+  }
+  // must be objects
+  var aKeys = Object.keys(a);
+  var bKeys = Object.keys(b);
+  if (aKeys.length !== bKeys.length) return false;
+  aKeys.sort();
+  bKeys.sort();
+  if (!deepEquals(aKeys, bKeys)) return false;
+  for (var i = 0; i < aKeys.length; i++) {
+    if (!deepEquals(a[aKeys[i]], b[bKeys[i]])) return false;
+  }
+  return true;
+}
+
+function getLocation(level, r, c) {
+  if (!isInBounds(level, r, c)) throw unreachable();
+  return r * level.width + c;
+}
+function getRowcol(level, location) {
+  if (location < 0 || location >= level.width * level.height) throw unreachable();
+  var r = Math.floor(location / level.width);
+  var c = location % level.width;
+  return {r:r, c:c};
+}
+function isInBounds(level, r, c) {
+  if (c < 0 || c >= level.width) return false;;
+  if (r < 0 || r >= level.height) return false;;
+  return true;
+}
+function offsetLocation(location, dr, dc) {
+  var rowcol = getRowcol(level, location);
+  return getLocation(level, rowcol.r + dr, rowcol.c + dc);
+}
+
+var SHIFT = 1;
+var CTRL = 2;
+var ALT = 4;
+document.addEventListener("keydown", function(event) {
+  var modifierMask = (
+    (event.shiftKey ? SHIFT : 0) |
+    (event.ctrlKey ? CTRL : 0) |
+    (event.altKey ? ALT : 0)
+  );
+  switch (event.keyCode) {
+    case 37: // left
+      if (modifierMask === 0) { move(0, -1); break; }
+      return;
+    case 38: // up
+      if (modifierMask === 0) { move(-1, 0); break; }
+      return;
+    case 39: // right
+      if (modifierMask === 0) { move(0, 1); break; }
+      return;
+    case 40: // down
+      if (modifierMask === 0) { move(1, 0); break; }
+      return;
+    case 8:  // backspace
+      if (modifierMask === 0)     { undo(unmoveStuff); break; }
+      if (modifierMask === SHIFT) { redo(unmoveStuff); break; }
+      return;
+    case "Q".charCodeAt(0):
+      if (modifierMask === 0)     { undo(unmoveStuff); break; }
+      if (modifierMask === SHIFT) { redo(unmoveStuff); break; }
+      return;
+    case "Z".charCodeAt(0):
+      if (modifierMask === 0)     { undo(unmoveStuff); break; }
+      if (modifierMask === SHIFT) { redo(unmoveStuff); break; }
+      if (persistentState.showEditor && modifierMask === CTRL)        { undo(uneditStuff); break; }
+      if (persistentState.showEditor && modifierMask === CTRL|SHIFT)  { redo(uneditStuff); break; }
+      return;
+    case "Y".charCodeAt(0):
+      if (modifierMask === 0)     { redo(unmoveStuff); break; }
+      if (persistentState.showEditor && modifierMask === CTRL)  { redo(uneditStuff); break; }
+      return;
+    case "R".charCodeAt(0):
+      if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("resize"); break; }
+      if (modifierMask === 0)     { reset(unmoveStuff);  break; }
+      if (modifierMask === SHIFT) { unreset(unmoveStuff); break; }
+      if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLR); break; }
+      return;
+    case 220: // backslash
+      if (modifierMask === 0) { toggleShowEditor(); break; }
+      return;
+    case "A".charCodeAt(0):
+      if (!persistentState.showEditor && modifierMask === 0)    { move(0, -1); break; }
+      if ( persistentState.showEditor && modifierMask === 0)    { setPaintBrushTileCode(PORTAL); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("select"); break; }
+      if ( persistentState.showEditor && modifierMask === CTRL) { selectAll(); break; }
+      return;
+    case "E".charCodeAt(0):
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPACE); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(EXIT); break; }
+      return;
+    case 46: // delete
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPACE); break; }
+      return;
+    case "W".charCodeAt(0):
+      if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(WALL); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(WOODPLATFORM); break; }
+      if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(WATER); break; }
+      return;
+    case "S".charCodeAt(0):
+      if (!persistentState.showEditor && modifierMask === 0)     { move(1, 0); break; }
+      if ( persistentState.showEditor && modifierMask === 0)     { setPaintBrushTileCode(SPIKE); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(SNAKE); break; }
+      if ( persistentState.showEditor && modifierMask === CTRL)  { saveLevel(); break; }
+      if (!persistentState.showEditor && modifierMask === CTRL)  { saveReplay(); break; }
+      if (modifierMask === (CTRL|SHIFT))                         { saveReplay(); break; }
+      return;
+    case "X".charCodeAt(0):
+      if ( persistentState.showEditor && modifierMask === CTRL) { cutSelection(); break; }
+      return;
+    case "F".charCodeAt(0):
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
+      return;
+    case "D".charCodeAt(0):
+      if (!persistentState.showEditor && modifierMask === 0) { move(0, 1); break; }
+      if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLD); break; }
+      return;
+    case "B".charCodeAt(0):
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(BLOCK); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(BUBBLE); break; }
+      return;
+    case "P".charCodeAt(0):
+      if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
+      return;
+    case "U".charCodeAt(0):
+      if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
+      if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLU); break; }
+      return;
+    case "L".charCodeAt(0):
+      if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOSEDLIFT); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(OPENLIFT); break; }
+      if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLL); break; }
+      return;
+    case "G".charCodeAt(0):
+      if (modifierMask === 0) { toggleGrid(); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { toggleGravity(); break; }
+      return;
+    case "C".charCodeAt(0):
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOUD); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { toggleCollision(); break; }
+      if ( persistentState.showEditor && modifierMask === CTRL)  { copySelection();   break; }
+      return;
+    case "V".charCodeAt(0):
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(LAVA); break; }
+      if ( persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("paste"); break; }
+    case "T".charCodeAt(0):
+      toggleTheme(); break;
+      return;
+    case 32: // spacebar
+    case 9:  // tab
+      if (modifierMask === 0)     { switchSnakes( 1); break; }
+      if (modifierMask === SHIFT) { switchSnakes(-1); break; }
+      return;
+    case "1".charCodeAt(0):
+    case "2".charCodeAt(0):
+    case "3".charCodeAt(0):
+    case "4".charCodeAt(0):
+      var index = event.keyCode - "1".charCodeAt(0);
+      var delta;
+      if (modifierMask === 0) {
+        delta = 1;
+      } else if (modifierMask === SHIFT) {
+        delta = -1;
+      } else return;
+      if (isAlive()) {
+        (function() {
+          var snakes = findSnakesOfColor(index);
+          if (snakes.length === 0) return;
+          for (var i = 0; i < snakes.length; i++) {
+            if (snakes[i].id === activeSnakeId) {
+              activeSnakeId = snakes[(i + delta + snakes.length) % snakes.length].id;
+              return;
             }
-            else alert("Incorrect Password");
+          }
+          activeSnakeId = snakes[0].id;
+        })();
+      }
+      break;
+    case 27: // escape
+      if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(null); break; }
+      return;
+    default: return;
+  }
+  event.preventDefault();
+  render();
+});
+
+document.getElementById("switchSnakesButton").addEventListener("click", function() {
+  switchSnakes(1);
+  render();
+});
+function switchSnakes(delta) {
+  if (!isAlive()) return;
+  var snakes = getSnakes();
+  snakes.sort(compareId);
+  for (var i = 0; i < snakes.length; i++) {
+    if (snakes[i].id === activeSnakeId) {
+      activeSnakeId = snakes[(i + delta + snakes.length) % snakes.length].id;
+      return;
+    }
+  }
+  activeSnakeId = snakes[0].id;
+}
+document.getElementById("showGridButton").addEventListener("click", function() {
+  toggleGrid();
+});
+document.getElementById("saveProgressButton").addEventListener("click", function() {
+  saveReplay();
+});
+document.getElementById("restartButton").addEventListener("click", function() {
+  reset(unmoveStuff);
+  render();
+});
+document.getElementById("unmoveButton").addEventListener("click", function() {
+  undo(unmoveStuff);
+  render();
+});
+document.getElementById("removeButton").addEventListener("click", function() {
+  redo(unmoveStuff);
+  render();
+});
+
+document.getElementById("showHideEditor").addEventListener("click", function() {
+  toggleShowEditor();
+});
+function toggleShowEditor() {
+  persistentState.showEditor = !persistentState.showEditor;
+  savePersistentState();
+  showEditorChanged();
+}
+function toggleGrid() {
+  persistentState.showGrid = !persistentState.showGrid;
+  savePersistentState();
+  render();
+}
+
+["serializationTextarea", "shareLinkTextbox"].forEach(function(id) {
+  document.getElementById(id).addEventListener("keydown", function(event) {
+    // let things work normally
+    event.stopPropagation();
+  });
+});
+document.getElementById("submitSerializationButton").addEventListener("click", function() {
+  var string = document.getElementById("serializationTextarea").value;
+  try {
+    var newLevel = parseLevel(string);
+  } catch (e) {
+    alert(e);
+    return;
+  }
+  loadLevel(newLevel);
+});
+document.getElementById("shareLinkTextbox").addEventListener("focus", function() {
+  setTimeout(function() {
+    document.getElementById("shareLinkTextbox").select();
+  }, 0);
+});
+
+var paintBrushTileCode = null;
+var paintBrushSnakeColorIndex = 0;
+var paintBrushBlockId = 0;
+var paintBrushObject = null;
+var selectionStart = null;
+var selectionEnd = null;
+var resizeDragAnchorRowcol = null;
+var clipboardData = null;
+var clipboardOffsetRowcol = null;
+var paintButtonIdAndTileCodes = [
+  ["resizeButton", "resize"],
+  ["selectButton", "select"],
+  ["pasteButton", "paste"],
+  ["paintSpaceButton", SPACE],
+  ["paintWallButton",  WALL],
+  ["paintSpikeButton", SPIKE],
+  ["paintExitButton", EXIT],
+  ["paintFruitButton", FRUIT],
+  ["paintPortalButton", PORTAL],
+  ["paintPlatformButton", PLATFORM],
+  ["paintWoodPlatformButton", WOODPLATFORM],
+  ["paintOneWayWallUButton", ONEWAYWALLU],
+  ["paintOneWayWallDButton", ONEWAYWALLD],
+  ["paintOneWayWallLButton", ONEWAYWALLL],
+  ["paintOneWayWallRButton", ONEWAYWALLR],
+  ["paintClosedLiftButton", CLOSEDLIFT],
+  ["paintOpenLiftButton", OPENLIFT],
+  ["paintCloudButton", CLOUD],
+  ["paintBubbleButton", BUBBLE],
+  ["paintLavaButton", LAVA],
+  ["paintWaterButton", WATER],
+  ["paintSnakeButton", SNAKE],
+  ["paintBlockButton", BLOCK],
+];
+paintButtonIdAndTileCodes.forEach(function(pair) {
+  var id = pair[0];
+  var tileCode = pair[1];
+  document.getElementById(id).addEventListener("click", function() {
+    setPaintBrushTileCode(tileCode);
+  });
+});
+document.getElementById("uneditButton").addEventListener("click", function() {
+  undo(uneditStuff);
+  render();
+});
+document.getElementById("reeditButton").addEventListener("click", function() {
+  redo(uneditStuff);
+  render();
+});
+document.getElementById("saveLevelButton").addEventListener("click", function() {
+  saveLevel();
+});
+document.getElementById("copyButton").addEventListener("click", function() {
+  copySelection();
+});
+document.getElementById("cutButton").addEventListener("click", function() {
+  cutSelection();
+});
+document.getElementById("cheatGravityButton").addEventListener("click", function() {
+  toggleGravity();
+});
+document.getElementById("cheatCollisionButton").addEventListener("click", function() {
+  toggleCollision();
+});
+document.getElementById("themeButton").addEventListener("click", function() {
+  toggleTheme();
+});
+function toggleTheme() {
+    if(themeCounter<themes.length-1) themeCounter++;
+    else themeCounter = 0;
+    //blockSupportRenderCache = null;   //get working
+    render();
+    document.getElementById("themeButton").innerHTML = "Theme: <b>" + themes[themeCounter][0] + "</b>";
+}
+function toggleGravity() {
+  isGravityEnabled = !isGravityEnabled;
+  isCollisionEnabled = true;
+  refreshCheatButtonText();
+}
+function toggleCollision() {
+  isCollisionEnabled = !isCollisionEnabled;
+  isGravityEnabled = false;
+  refreshCheatButtonText();
+}
+function refreshCheatButtonText() {
+  document.getElementById("cheatGravityButton").textContent = isGravityEnabled ? "Gravity: ON" : "Gravity: OFF";
+  document.getElementById("cheatGravityButton").style.background = isGravityEnabled ? "" : "#f88";
+
+  document.getElementById("cheatCollisionButton").textContent = isCollisionEnabled ? "Collision: ON" : "Collision: OFF";
+  document.getElementById("cheatCollisionButton").style.background = isCollisionEnabled ? "" : "#f88";
+}
+
+// be careful with location vs rowcol, because this variable is used when resizing
+var lastDraggingRowcol = null;
+var hoverLocation = null;
+var draggingChangeLog = null;
+canvas.addEventListener("mousedown", function(event) {
+  if (event.altKey) return;
+  if (event.button !== 0) return;
+  event.preventDefault();
+  var location = getLocationFromEvent(event);
+  if (persistentState.showEditor && paintBrushTileCode != null) {
+    // editor tool
+    lastDraggingRowcol = getRowcol(level, location);
+    if (paintBrushTileCode === "select") selectionStart = location;
+    if (paintBrushTileCode === "resize") resizeDragAnchorRowcol = lastDraggingRowcol;
+    draggingChangeLog = [];
+    paintAtLocation(location, draggingChangeLog);
+  } else {
+    // playtime
+    var object = findObjectAtLocation(location);
+    if (object == null) return;
+    if (object.type !== SNAKE) return;
+    // active snake
+    activeSnakeId = object.id;
+    render();
+  }
+});
+canvas.addEventListener("dblclick", function(event) {
+  if (event.altKey) return;
+  if (event.button !== 0) return;
+  event.preventDefault();
+  if (persistentState.showEditor && paintBrushTileCode === "select") {
+    // double click with select tool
+    var location = getLocationFromEvent(event);
+    var object = findObjectAtLocation(location);
+    if (object == null) return;
+    stopDragging();
+    if (object.type === SNAKE) {
+      // edit snakes of this color
+      paintBrushTileCode = SNAKE;
+      paintBrushSnakeColorIndex = object.id % snakeColors.length;
+    } else if (object.type === BLOCK) {
+      // edit this particular block
+      paintBrushTileCode = BLOCK;
+      paintBrushBlockId = object.id;
+    } else if (object.type === FRUIT) {
+      // edit fruits, i guess
+      paintBrushTileCode = FRUIT;
+    } else throw unreachable();
+    paintBrushTileCodeChanged();
+  }
+});
+document.addEventListener("mouseup", function(event) {
+  stopDragging();
+});
+function stopDragging() {
+  if (lastDraggingRowcol != null) {
+    // release the draggin'
+    lastDraggingRowcol = null;
+    paintBrushObject = null;
+    resizeDragAnchorRowcol = null;
+    pushUndo(uneditStuff, draggingChangeLog);
+    draggingChangeLog = null;
+  }
+}
+canvas.addEventListener("mousemove", function(event) {
+  if (!persistentState.showEditor) return;
+  var location = getLocationFromEvent(event);
+  var mouseRowcol = getRowcol(level, location);
+  if (lastDraggingRowcol != null) {
+    // Dragging Force - Through the Fruit and Flames
+    var lastDraggingLocation = getLocation(level, lastDraggingRowcol.r, lastDraggingRowcol.c);
+    // we need to get rowcols for everything before we start dragging, because dragging might resize the world.
+    var path = getNaiveOrthogonalPath(lastDraggingLocation, location).map(function(location) {
+      return getRowcol(level, location);
+    });
+    path.forEach(function(rowcol) {
+      // convert to location at the last minute in case each of these steps is changing the coordinate system.
+      paintAtLocation(getLocation(level, rowcol.r, rowcol.c), draggingChangeLog);
+    });
+    lastDraggingRowcol = mouseRowcol;
+    hoverLocation = null;
+  } else {
+    // hovering
+    if (hoverLocation !== location) {
+      hoverLocation = location;
+      render();
+    }
+  }
+});
+canvas.addEventListener("mouseout", function() {
+  if (hoverLocation !== location) {
+    // turn off the hover when the mouse leaves
+    hoverLocation = null;
+    render();
+  }
+});
+function getLocationFromEvent(event) {
+  var r = Math.floor(eventToMouseY(event, canvas) / tileSize);
+  var c = Math.floor(eventToMouseX(event, canvas) / tileSize);
+  // since the canvas is centered, the bounding client rect can be half-pixel aligned,
+  // resulting in slightly out-of-bounds mouse events.
+  r = clamp(r, 0, level.height);
+  c = clamp(c, 0, level.width);
+  return getLocation(level, r, c);
+}
+function eventToMouseX(event, canvas) { return event.clientX - canvas.getBoundingClientRect().left; }
+function eventToMouseY(event, canvas) { return event.clientY - canvas.getBoundingClientRect().top; }
+
+function selectAll() {
+  selectionStart = 0;
+  selectionEnd = level.map.length - 1;
+  setPaintBrushTileCode("select");
+}
+
+function setPaintBrushTileCode(tileCode) {
+  if (tileCode === "paste") {
+    // make sure we have something to paste
+    if (clipboardData == null) return;
+  }
+  if (paintBrushTileCode === "select" && tileCode !== "select" && selectionStart != null && selectionEnd != null) {
+    // usually this means to fill in the selection
+    if (tileCode == null) {
+      // cancel selection
+      selectionStart = null;
+      selectionEnd = null;
+      return;
+    }
+      // fill in the selection
+      fillSelection(tileCode);
+      selectionStart = null;
+      selectionEnd = null;
+      return;
+  }
+  if (tileCode === SNAKE) {
+    if (paintBrushTileCode === SNAKE) {
+      // next snake color
+      paintBrushSnakeColorIndex = (paintBrushSnakeColorIndex + 1) % snakeColors.length;
+    }
+  } else if (tileCode === BLOCK) {
+    var blocks = getBlocks();
+    if (paintBrushTileCode === BLOCK && blocks.length > 0) {
+      // cycle through block ids
+      blocks.sort(compareId);
+      if (paintBrushBlockId != null) {
+        (function() {
+          for (var i = 0; i < blocks.length; i++) {
+            if (blocks[i].id === paintBrushBlockId) {
+              i += 1;
+              if (i < blocks.length) {
+                // next block id
+                paintBrushBlockId = blocks[i].id;
+              } else {
+                // new block id
+                paintBrushBlockId = null;
+              }
+              return;
+            }
+          }
+          throw unreachable()
+        })();
+      } else {
+        // first one
+        paintBrushBlockId = blocks[0].id;
+      }
+    } else {
+      // new block id
+      paintBrushBlockId = null;
+    }
+  } else if (tileCode == null) {
+    // escape
+    if (paintBrushTileCode === BLOCK && paintBrushBlockId != null) {
+      // stop editing this block, but keep the block brush selected
+      tileCode = BLOCK;
+      paintBrushBlockId = null;
+    }
+  }
+  paintBrushTileCode = tileCode;
+  paintBrushTileCodeChanged();
+}
+function paintBrushTileCodeChanged() {
+  paintButtonIdAndTileCodes.forEach(function(pair) {
+    var id = pair[0];
+    var tileCode = pair[1];
+    var backgroundStyle = "";
+    var textColor = "";
+    if (tileCode === paintBrushTileCode) {
+      if (tileCode === SNAKE) {
+        // show the color of the active snake in the color of the button
+        backgroundStyle = snakeColors[paintBrushSnakeColorIndex];
+      } else {
+        backgroundStyle = "linear-gradient(#4b91ff, #055ce4)";
+        textColor = "white";
+      }
+    }
+    document.getElementById(id).style.background = backgroundStyle;
+    document.getElementById(id).style.color = textColor;
+  });
+
+  var isSelectionMode = paintBrushTileCode === "select";
+  ["cutButton", "copyButton"].forEach(function (id) {
+    document.getElementById(id).disabled = !isSelectionMode;
+  });
+  document.getElementById("pasteButton").disabled = clipboardData == null;
+
+  render();
+}
+
+function cutSelection() {
+  copySelection();
+  fillSelection(SPACE);
+  render();
+}
+function copySelection() {
+  var selectedLocations = getSelectedLocations();
+  if (selectedLocations.length === 0) return;
+  var selectedObjects = [];
+  selectedLocations.forEach(function(location) {
+    var object = findObjectAtLocation(location);
+    if (object != null) addIfNotPresent(selectedObjects, object);
+  });
+  setClipboardData({
+    level: JSON.parse(JSON.stringify(level)),
+    selectedLocations: selectedLocations,
+    selectedObjects: JSON.parse(JSON.stringify(selectedObjects)),
+  });
+}
+function setClipboardData(data) {
+  // find the center
+  var minR = Infinity;
+  var maxR = -Infinity;
+  var minC = Infinity;
+  var maxC = -Infinity;
+  data.selectedLocations.forEach(function(location) {
+    var rowcol = getRowcol(data.level, location);
+    if (rowcol.r < minR) minR = rowcol.r;
+    if (rowcol.r > maxR) maxR = rowcol.r;
+    if (rowcol.c < minC) minC = rowcol.c;
+    if (rowcol.c > maxC) maxC = rowcol.c;
+  });
+  var offsetR = Math.floor((minR + maxR) / 2);
+  var offsetC = Math.floor((minC + maxC) / 2);
+
+  clipboardData = data;
+  clipboardOffsetRowcol = {r:offsetR, c:offsetC};
+  paintBrushTileCodeChanged();
+}
+function fillSelection(tileCode) {
+  var changeLog = [];
+  var locations = getSelectedLocations();
+  locations.forEach(function(location) {
+    if (level.map[location] !== tileCode) {
+      changeLog.push(["m", location, level.map[location], tileCode]);
+      level.map[location] = tileCode;
+    }
+    removeAnyObjectAtLocation(location, changeLog);
+  });
+  pushUndo(uneditStuff, changeLog);
+}
+function getSelectedLocations() {
+  if (selectionStart == null || selectionEnd == null) return [];
+  var rowcol1 = getRowcol(level, selectionStart);
+  var rowcol2 = getRowcol(level, selectionEnd);
+  var r1 = rowcol1.r;
+  var c1 = rowcol1.c;
+  var r2 = rowcol2.r;
+  var c2 = rowcol2.c;
+  if (r2 < r1) {
+    var tmp = r1;
+    r1 = r2;
+    r2 = tmp;
+  }
+  if (c2 < c1) {
+    var tmp = c1;
+    c1 = c2;
+    c2 = tmp;
+  }
+  var objects = [];
+  var locations = [];
+  for (var r = r1; r <= r2; r++) {
+    for (var c = c1; c <= c2; c++) {
+      var location = getLocation(level, r, c);
+      locations.push(location);
+      var object = findObjectAtLocation(location);
+      if (object != null) addIfNotPresent(objects, object);
+    }
+  }
+  // select the rest of any partially-selected objects
+  objects.forEach(function(object) {
+    object.locations.forEach(function(location) {
+      addIfNotPresent(locations, location);
+    });
+  });
+  return locations;
+}
+
+function setHeight(newHeight, changeLog) {
+  if (newHeight < level.height) {
+    // crop
+    for (var r = newHeight; r < level.height; r++) {
+      for (var c = 0; c < level.width; c++) {
+        var location = getLocation(level, r, c);
+        removeAnyObjectAtLocation(location, changeLog);
+        // also delete non-space tiles
+        paintTileAtLocation(location, SPACE, changeLog);
+      }
+    }
+    level.map.splice(newHeight * level.width);
+  } else {
+    // expand
+    for (var r = level.height; r < newHeight; r++) {
+      for (var c = 0; c < level.width; c++) {
+        level.map.push(SPACE);
+      }
+    }
+  }
+  changeLog.push(["h", level.height, newHeight]);
+  level.height = newHeight;
+}
+function setWidth(newWidth, changeLog) {
+  if (newWidth < level.width) {
+    // crop
+    for (var r = level.height - 1; r >= 0; r--) {
+      for (var c = level.width - 1; c >= newWidth; c--) {
+        var location = getLocation(level, r, c);
+        removeAnyObjectAtLocation(location, changeLog);
+        paintTileAtLocation(location, SPACE, changeLog);
+        level.map.splice(location, 1);
+      }
+    }
+  } else {
+    // expand
+    for (var r = level.height - 1; r >= 0; r--) {
+      var insertionPoint = level.width * (r + 1);
+      for (var c = level.width; c < newWidth; c++) {
+        // boy is this inefficient. ... YOLO!
+        level.map.splice(insertionPoint, 0, SPACE);
+      }
+    }
+  }
+
+  var transformLocation = makeScaleCoordinatesFunction(level.width, newWidth);
+  level.objects.forEach(function(object) {
+    object.locations = object.locations.map(transformLocation);
+  });
+
+  changeLog.push(["w", level.width, newWidth]);
+  level.width = newWidth;
+}
+
+function newSnake(color, location) {
+  var snakes = findSnakesOfColor(color);
+  snakes.sort(compareId);
+  for (var i = 0; i < snakes.length; i++) {
+    if (snakes[i].id !== i * snakeColors.length + color) break;
+  }
+  return {
+    type: SNAKE,
+    id: i * snakeColors.length + color,
+    dead: false,
+    locations: [location],
+  };
+}
+function newBlock(location) {
+  var blocks = getBlocks();
+  blocks.sort(compareId);
+  for (var i = 0; i < blocks.length; i++) {
+    if (blocks[i].id !== i) break;
+  }
+  return {
+    type: BLOCK,
+    id: i,
+    dead: false, // unused
+    locations: [location],
+  };
+}
+function newFruit(location) {
+  var fruits = getObjectsOfType(FRUIT);
+  fruits.sort(compareId);
+  for (var i = 0; i < fruits.length; i++) {
+    if (fruits[i].id !== i) break;
+  }
+  return {
+    type: FRUIT,
+    id: i,
+    dead: false, // unused
+    locations: [location],
+  };
+}
+function paintAtLocation(location, changeLog) {
+  if (typeof paintBrushTileCode === "number") {
+    removeAnyObjectAtLocation(location, changeLog);
+    paintTileAtLocation(location, paintBrushTileCode, changeLog);
+  } else if (paintBrushTileCode === "resize") {
+    var toRowcol = getRowcol(level, location);
+    var dr = toRowcol.r - resizeDragAnchorRowcol.r;
+    var dc = toRowcol.c - resizeDragAnchorRowcol.c;
+    resizeDragAnchorRowcol = toRowcol;
+    if (dr !== 0) setHeight(level.height + dr, changeLog);
+    if (dc !== 0) setWidth(level.width + dc, changeLog);
+  } else if (paintBrushTileCode === "select") {
+    selectionEnd = location;
+  } else if (paintBrushTileCode === "paste") {
+    var hoverRowcol = getRowcol(level, location);
+    var pastedData = previewPaste(hoverRowcol.r, hoverRowcol.c);
+    pastedData.selectedLocations.forEach(function(location) {
+      var tileCode = pastedData.level.map[location];
+      removeAnyObjectAtLocation(location, changeLog);
+      paintTileAtLocation(location, tileCode, changeLog);
+    });
+    pastedData.selectedObjects.forEach(function(object) {
+      // refresh the ids so there are no collisions.
+      if (object.type === SNAKE) {
+        object.id = newSnake(object.id % snakeColors.length).id;
+      } else if (object.type === BLOCK) {
+        object.id = newBlock().id;
+      } else if (object.type === FRUIT) {
+        object.id = newFruit().id;
+      } else throw unreachable();
+      level.objects.push(object);
+      changeLog.push([object.type, object.id, [0,[]], serializeObjectState(object)]);
+    });
+  } else if (paintBrushTileCode === SNAKE) {
+    var oldSnakeSerialization = serializeObjectState(paintBrushObject);
+    if (paintBrushObject != null) {
+      // keep dragging
+      if (paintBrushObject.locations[0] === location) return; // we just did that
+      // watch out for self-intersection
+      var selfIntersectionIndex = paintBrushObject.locations.indexOf(location);
+      if (selfIntersectionIndex !== -1) {
+        // truncate from here back
+        paintBrushObject.locations.splice(selfIntersectionIndex);
+      }
+    }
+
+    // make sure there's space behind us
+    paintTileAtLocation(location, SPACE, changeLog);
+    removeAnyObjectAtLocation(location, changeLog);
+    if (paintBrushObject == null) {
+      var thereWereNoSnakes = countSnakes() === 0;
+      paintBrushObject = newSnake(paintBrushSnakeColorIndex, location);
+      level.objects.push(paintBrushObject);
+      if (thereWereNoSnakes) activateAnySnakePlease();
+    } else {
+      // extend le snake
+      paintBrushObject.locations.unshift(location);
+    }
+    changeLog.push([paintBrushObject.type, paintBrushObject.id, oldSnakeSerialization, serializeObjectState(paintBrushObject)]);
+  } else if (paintBrushTileCode === BLOCK) {
+    var objectHere = findObjectAtLocation(location);
+    if (paintBrushBlockId == null && objectHere != null && objectHere.type === BLOCK) {
+      // just start editing this block
+      paintBrushBlockId = objectHere.id;
+    } else {
+      // make a change
+      // make sure there's space behind us
+      paintTileAtLocation(location, SPACE, changeLog);
+      var thisBlock = null;
+      if (paintBrushBlockId != null) {
+        thisBlock = findBlockById(paintBrushBlockId);
+      }
+      var oldBlockSerialization = serializeObjectState(thisBlock);
+      if (thisBlock == null) {
+        // create new block
+        removeAnyObjectAtLocation(location, changeLog);
+        thisBlock = newBlock(location);
+        level.objects.push(thisBlock);
+        paintBrushBlockId = thisBlock.id;
+      } else {
+        var existingIndex = thisBlock.locations.indexOf(location);
+        if (existingIndex !== -1) {
+          // reclicking part of this object means to delete just part of it.
+          if (thisBlock.locations.length === 1) {
+            // goodbye
+            removeObject(thisBlock, changeLog);
+            paintBrushBlockId = null;
+          } else {
+            thisBlock.locations.splice(existingIndex, 1);
+          }
+        } else {
+          // add a tile to the block
+          removeAnyObjectAtLocation(location, changeLog);
+          thisBlock.locations.push(location);
         }
-    </script>
-</html>
+      }
+      changeLog.push([thisBlock.type, thisBlock.id, oldBlockSerialization, serializeObjectState(thisBlock)]);
+      delete blockSupportRenderCache[thisBlock.id];
+    }
+  } else if (paintBrushTileCode === FRUIT) {
+    paintTileAtLocation(location, SPACE, changeLog);
+    removeAnyObjectAtLocation(location, changeLog);
+    var object = newFruit(location)
+    level.objects.push(object);
+    changeLog.push([object.type, object.id, serializeObjectState(null), serializeObjectState(object)]);
+  } else throw unreachable();
+  render();
+}
+
+function paintTileAtLocation(location, tileCode, changeLog) {
+  if (level.map[location] === tileCode) return;
+  changeLog.push(["m", location, level.map[location], tileCode]);
+  level.map[location] = tileCode;
+}
+
+function pushUndo(undoStuff, changeLog) {
+  // changeLog = [
+  //   ["i", 0, -1, 0, animationQueue, freshlyRemovedAnimatedObjects],
+  //                                                 // player input for snake 0, dr:-1, dc:0. has no effect on state.
+  //                                                 //   "i" is always the first change in normal player movement.
+  //                                                 //   if a changeLog does not start with "i", then it is an editor action.
+  //                                                 //   animationQueue and freshlyRemovedAnimatedObjects
+  //                                                 //   are used for animating re-move.
+  //   ["m", 21, 0, 1],                              // map at location 23 changed from 0 to 1
+  //   ["s", 0, [false, [1,2]], [false, [2,3]]],     // snake id 0 moved from alive at [1, 2] to alive at [2, 3]
+  //   ["s", 1, [false, [11,12]], [true, [12,13]]],  // snake id 1 moved from alive at [11, 12] to dead at [12, 13]
+  //   ["b", 1, [false, [20,30]], [false, []]],      // block id 1 was deleted from location [20, 30]
+  //   ["f", 0, [false, [40]], [false, []]],         // fruit id 0 was deleted from location [40]
+  //   ["h", 25, 10],                                // height changed from 25 to 10. all cropped tiles are guaranteed to be SPACE.
+  //   ["w", 8, 10],                                 // width changed from 8 to 10. a change in the coordinate system.
+  //   ["m", 23, 2, 0],                              // map at location 23 changed from 2 to 0 in the new coordinate system.
+  //   10,                                           // the last change is always a declaration of the final width of the map.
+  // ];
+  reduceChangeLog(changeLog);
+  if (changeLog.length === 0) return;
+  changeLog.push(level.width);
+  undoStuff.undoStack.push(changeLog);
+  undoStuff.redoStack = [];
+  paradoxes = [];
+
+  if (undoStuff === uneditStuff) editorHasBeenTouched = true;
+
+  undoStuffChanged(undoStuff);
+}
+function reduceChangeLog(changeLog) {
+  for (var i = 0; i < changeLog.length - 1; i++) {
+    var change = changeLog[i];
+    if (change[0] === "i") {
+      continue; // don't reduce player input
+    } else if (change[0] === "h") {
+      for (var j = i + 1; j < changeLog.length; j++) {
+        var otherChange = changeLog[j];
+        if (otherChange[0] === "h") {
+          // combine
+          change[2] = otherChange[2];
+          changeLog.splice(j, 1);
+          j--;
+          continue;
+        } else if (otherChange[0] === "w") {
+          continue; // no interaction between height and width
+        } else break; // no more reduction possible
+      }
+      if (change[1] === change[2]) {
+        // no change
+        changeLog.splice(i, 1);
+        i--;
+      }
+    } else if (change[0] === "w") {
+      for (var j = i + 1; j < changeLog.length; j++) {
+        var otherChange = changeLog[j];
+        if (otherChange[0] === "w") {
+          // combine
+          change[2] = otherChange[2];
+          changeLog.splice(j, 1);
+          j--;
+          continue;
+        } else if (otherChange[0] === "h") {
+          continue; // no interaction between height and width
+        } else break; // no more reduction possible
+      }
+      if (change[1] === change[2]) {
+        // no change
+        changeLog.splice(i, 1);
+        i--;
+      }
+    } else if (change[0] === "m") {
+      for (var j = i + 1; j < changeLog.length; j++) {
+        var otherChange = changeLog[j];
+        if (otherChange[0] === "m" && otherChange[1] === change[1]) {
+          // combine
+          change[3] = otherChange[3];
+          changeLog.splice(j, 1);
+          j--;
+        } else if (otherChange[0] === "w" || otherChange[0] === "h") {
+          break; // can't reduce accros resizes
+        }
+      }
+      if (change[2] === change[3]) {
+        // no change
+        changeLog.splice(i, 1);
+        i--;
+      }
+    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT) {
+      for (var j = i + 1; j < changeLog.length; j++) {
+        var otherChange = changeLog[j];
+        if (otherChange[0] === change[0] && otherChange[1] === change[1]) {
+          // combine
+          change[3] = otherChange[3];
+          changeLog.splice(j, 1);
+          j--;
+        } else if (otherChange[0] === "w" || otherChange[0] === "h") {
+          break; // can't reduce accros resizes
+        }
+      }
+      if (deepEquals(change[2], change[3])) {
+        // no change
+        changeLog.splice(i, 1);
+        i--;
+      }
+    } else throw unreachable();
+  }
+}
+function undo(undoStuff) {
+  if (undoStuff.undoStack.length === 0) return; // already at the beginning
+  animationQueue = [];
+  animationQueueCursor = 0;
+  paradoxes = [];
+  undoOneFrame(undoStuff);
+  undoStuffChanged(undoStuff);
+}
+function reset(undoStuff) {
+  animationQueue = [];
+  animationQueueCursor = 0;
+  paradoxes = [];
+  while (undoStuff.undoStack.length > 0) {
+    undoOneFrame(undoStuff);
+  }
+  undoStuffChanged(undoStuff);
+}
+function undoOneFrame(undoStuff) {
+  var doThis = undoStuff.undoStack.pop();
+  var redoChangeLog = [];
+  undoChanges(doThis, redoChangeLog);
+  if (redoChangeLog.length > 0) {
+    redoChangeLog.push(level.width);
+    undoStuff.redoStack.push(redoChangeLog);
+  }
+
+  if (undoStuff === uneditStuff) editorHasBeenTouched = true;
+}
+function redo(undoStuff) {
+  if (undoStuff.redoStack.length === 0) return; // already at the beginning
+  animationQueue = [];
+  animationQueueCursor = 0;
+  paradoxes = [];
+  redoOneFrame(undoStuff);
+  undoStuffChanged(undoStuff);
+}
+function unreset(undoStuff) {
+  animationQueue = [];
+  animationQueueCursor = 0;
+  paradoxes = [];
+  while (undoStuff.redoStack.length > 0) {
+    redoOneFrame(undoStuff);
+  }
+  undoStuffChanged(undoStuff);
+
+  // don't animate the last frame
+  animationQueue = [];
+  animationQueueCursor = 0;
+  freshlyRemovedAnimatedObjects = [];
+}
+function redoOneFrame(undoStuff) {
+  var doThis = undoStuff.redoStack.pop();
+  var undoChangeLog = [];
+  undoChanges(doThis, undoChangeLog);
+  if (undoChangeLog.length > 0) {
+    undoChangeLog.push(level.width);
+    undoStuff.undoStack.push(undoChangeLog);
+  }
+
+  if (undoStuff === uneditStuff) editorHasBeenTouched = true;
+}
+function undoChanges(changes, changeLog) {
+  var widthContext = changes.pop();
+  var transformLocation = widthContext === level.width ? identityFunction : makeScaleCoordinatesFunction(widthContext, level.width);
+  for (var i = changes.length - 1; i >= 0; i--) {
+    var paradoxDescription = undoChange(changes[i]);
+    if (paradoxDescription != null) paradoxes.push(paradoxDescription);
+  }
+
+  var lastChange = changes[changes.length - 1];
+  if (lastChange[0] === "i") {
+    // replay animation
+    animationQueue = lastChange[4];
+    animationQueueCursor = 0;
+    freshlyRemovedAnimatedObjects = lastChange[5];
+    animationStart = new Date().getTime();
+  }
+
+  function undoChange(change) {
+    // note: everything here is going backwards: to -> from
+    if (change[0] === "i") {
+      // no state change, but preserve the intention.
+      changeLog.push(change);
+      return null;
+    } else if (change[0] === "h") {
+      // change height
+      var fromHeight = change[1];
+      var   toHeight = change[2];
+      if (level.height !== toHeight) return "Impossible";
+      setHeight(fromHeight, changeLog);
+    } else if (change[0] === "w") {
+      // change width
+      var fromWidth = change[1];
+      var   toWidth = change[2];
+      if (level.width !== toWidth) return "Impossible";
+      setWidth(fromWidth, changeLog);
+    } else if (change[0] === "m") {
+      // change map tile
+      var location = transformLocation(change[1]);
+      var fromTileCode = change[2];
+      var   toTileCode = change[3];
+      if (location >= level.map.length) return "Can't turn " + describe(toTileCode) + " into " + describe(fromTileCode) + " out of bounds";
+      if (level.map[location] !== toTileCode) return "Can't turn " + describe(toTileCode) + " into " + describe(fromTileCode) + " because there's " + describe(level.map[location]) + " there now";
+      paintTileAtLocation(location, fromTileCode, changeLog);
+    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT) {
+      // change object
+      var type = change[0];
+      var id = change[1];
+      var fromDead = change[2][0];
+      var   toDead = change[3][0];
+      var fromLocations = change[2][1].map(transformLocation);
+      var   toLocations = change[3][1].map(transformLocation);
+      if (fromLocations.filter(function(location) { return location >= level.map.length; }).length > 0) {
+        return "Can't move " + describe(type, id) + " out of bounds";
+      }
+      var object = findObjectOfTypeAndId(type, id);
+      if (toLocations.length !== 0) {
+        // should exist at this location
+        if (object == null) return "Can't move " + describe(type, id) + " because it doesn't exit";
+        if (!deepEquals(object.locations, toLocations)) return "Can't move " + describe(object) + " because it's in the wrong place";
+        if (object.dead !== toDead) return "Can't move " + describe(object) + " because it's alive/dead state doesn't match";
+        // doit
+        if (fromLocations.length !== 0) {
+          var oldState = serializeObjectState(object);
+          object.locations = fromLocations;
+          object.dead = fromDead;
+          changeLog.push([object.type, object.id, oldState, serializeObjectState(object)]);
+        } else {
+          removeObject(object, changeLog);
+        }
+      } else {
+        // shouldn't exist
+        if (object != null) return "Can't create " + describe(type, id) + " because it already exists";
+        // doit
+        object = {
+          type: type,
+          id: id,
+          dead: fromDead,
+          locations: fromLocations,
+        };
+        level.objects.push(object);
+        changeLog.push([object.type, object.id, [0,[]], serializeObjectState(object)]);
+      }
+    } else throw unreachable();
+  }
+}
+function describe(arg1, arg2) {
+  // describe(0) -> "Space"
+  // describe(SNAKE, 0) -> "Snake 0 (Red)"
+  // describe(object) -> "Snake 0 (Red)"
+  // describe(BLOCK, 1) -> "Block 1"
+  // describe(FRUIT) -> "Fruit"
+  if (typeof arg1 === "number") {
+    switch (arg1) {
+      case SPACE: return "Space";
+      case WALL:  return "a Wall";
+      case SPIKE: return "Spikes";
+      case EXIT:  return "an Exit";
+      case PORTAL:  return "a Portal";
+      case PLATFORM:  return "a Platform";
+      case WOODPLATFORM: return "a Wooden Platform";
+      case ONEWAYWALLU: return "a One Way Wall (facing U)";
+      case ONEWAYWALLD: return "a One Way Wall (facing D)";
+      case ONEWAYWALLL: return "a One Way Wall (facing L)";
+      case ONEWAYWALLR: return "a One Way Wall (facing R)";
+      case CLOSEDLIFT: return "a Closed Lift";
+      case OPENLIFT: return "an Open Lift";
+      case CLOUD: return "a Cloud";
+      case BUBBLE: return "a Bubble";
+      case LAVA: return "Lava";
+      case WATER: return "Water";
+      default: throw unreachable();
+    }
+  }
+  if (arg1 === SNAKE) {
+    var color = (function() {
+      switch (snakeColors[arg2 % snakeColors.length]) {
+        case "#fd0c0b": return " (Red)";
+        case "#18d11f": return " (Green)";
+        case "#004cff": return " (Blue)";
+        case "#fdc122": return " (Yellow)";
+        default: throw unreachable();
+      }
+    })();
+    return "Snake " + arg2 + color;
+  }
+  if (arg1 === BLOCK) {
+    return "Block " + arg2;
+  }
+  if (arg1 === FRUIT) {
+    return "Fruit";
+  }
+  if (typeof arg1 === "object") return describe(arg1.type, arg1.id);
+  throw unreachable();
+}
+
+function undoStuffChanged(undoStuff) {
+  var movesText = undoStuff.undoStack.length + "+" + undoStuff.redoStack.length;
+  document.getElementById(undoStuff.spanId).textContent = movesText;
+  document.getElementById(undoStuff.undoButtonId).disabled = undoStuff.undoStack.length === 0;
+  document.getElementById(undoStuff.redoButtonId).disabled = undoStuff.redoStack.length === 0;
+
+  // render paradox display
+  var uniqueParadoxes = [];
+  var paradoxCounts = [];
+  paradoxes.forEach(function(paradoxDescription) {
+    var index = uniqueParadoxes.indexOf(paradoxDescription);
+    if (index !== -1) {
+      paradoxCounts[index] += 1;
+    } else {
+      uniqueParadoxes.push(paradoxDescription);
+      paradoxCounts.push(1);
+    }
+  });
+  var paradoxDivContent = "";
+  uniqueParadoxes.forEach(function(paradox, i) {
+    if (i > 0) paradoxDivContent += "<br>\n";
+    if (paradoxCounts[i] > 1) paradoxDivContent += "(" + paradoxCounts[i] + "x) ";
+    paradoxDivContent += "Time Travel Paradox! " + uniqueParadoxes[i];
+  });
+  document.getElementById("paradoxDiv").innerHTML = paradoxDivContent;
+
+  updateDirtyState();
+
+  if (unmoveStuff.redoStack.length === 0) {
+    document.getElementById("removeButton").classList.remove("click-me");
+  }
+}
+
+var CLEAN_NO_TIMELINES = 0;
+var CLEAN_WITH_REDO = 1;
+var REPLAY_DIRTY = 2;
+var EDITOR_DIRTY = 3;
+var dirtyState = CLEAN_NO_TIMELINES;
+var editorHasBeenTouched = false;
+function updateDirtyState() {
+  if (haveCheatcodesBeenUsed() || editorHasBeenTouched) {
+    dirtyState = EDITOR_DIRTY;
+  } else if (unmoveStuff.undoStack.length > 0) {
+    dirtyState = REPLAY_DIRTY;
+  } else if (unmoveStuff.redoStack.length > 0) {
+    dirtyState = CLEAN_WITH_REDO;
+  } else {
+    dirtyState = CLEAN_NO_TIMELINES;
+  }
+
+  var saveLevelButton = document.getElementById("saveLevelButton");
+  // the save button clears your timelines
+  saveLevelButton.disabled = dirtyState === CLEAN_NO_TIMELINES;
+  if (dirtyState >= EDITOR_DIRTY) {
+    // you should save
+    saveLevelButton.classList.add("click-me");
+  } else {
+    saveLevelButton.classList.remove("click-me");
+  }
+
+  var saveProgressButton = document.getElementById("saveProgressButton");
+  // you can't save a replay if your level is dirty
+  if (dirtyState === CLEAN_WITH_REDO) {
+    saveProgressButton.textContent = "Forget Progress";
+  } else {
+    saveProgressButton.textContent = "Save Progress";
+  }
+  saveProgressButton.disabled = dirtyState >= EDITOR_DIRTY || dirtyState === CLEAN_NO_TIMELINES;
+}
+function haveCheatcodesBeenUsed() {
+  return !unmoveStuff.undoStack.every(function(changeLog) {
+    // normal movement always starts with "i".
+    return changeLog[0][0] === "i";
+  });
+}
+
+var persistentState = {
+  showEditor: false,
+  showGrid: false,
+};
+function savePersistentState() {
+  localStorage.snakefall = JSON.stringify(persistentState);
+}
+function loadPersistentState() {
+  try {
+    persistentState = JSON.parse(localStorage.snakefall);
+  } catch (e) {
+  }
+  persistentState.showEditor = !!persistentState.showEditor;
+  persistentState.showGrid = !!persistentState.showGrid;
+  showEditorChanged();
+}
+var isGravityEnabled = true;
+function isGravity() {
+  return isGravityEnabled || !persistentState.showEditor;
+}
+var isCollisionEnabled = true;
+function isCollision() {
+  return isCollisionEnabled || !persistentState.showEditor;
+}
+function isAnyCheatcodeEnabled() {
+  return persistentState.showEditor && (
+    !isGravityEnabled || !isCollisionEnabled
+  );
+}
+var themeName = "Spring";   //Gooby
+var background, surface, material, snakeColors, blockColors, spikeColors, fruitColors, textStyle, experimentalColors;
+var curlyOutline = false;
+
+var bg1 = "rgba(145, 198, 254 * rgba(133, 192, 255";
+var bg2 = "rgba(254, 198, 145 * rgba(255, 192, 133";
+var bg3 = "rgba(145, 254, 198 * rgba(117, 255, 192";
+var bg4 = "rgba(7, 7, 83 * rgba(0, 0, 70";
+
+var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];
+var snakeColors2 = ["#f00", "#0f0", "#00f", "#ff0"];
+var snakeColors3 = ["#BA145C", "#E91624", "#F75802", "#FEFE28"];
+
+var fruitColors1 = ["#ff0066","#ff36a6","#ff6b1f","#ff9900","#ff2600"];
+var fruitColors2 = ["black","black","black","black","black"];
+
+var spikeColors1 = ["#999", "#444", "#555", "#777"];    //spike, support, box, bolt
+var spikeColors2 = ["gray", "black", "white", "black"];
+var spikeColors3 = ["#333", "#333", "#333", "#777"];
+
+var blockColors1 = [
+    ["#de5a6d","#fa65dd","#c367e3","#9c62fa","#625ff0"],
+    ["#853641","#963c84","#753d88","#5d3a96","#3a3990"]
+];
+var blockColors2 = [
+    ["#999"],
+    ["#999"]
+];
+var blockColors3 = [
+    ["#de7913","#7d46a0","#39868b","#41ccc2","#ded800"],
+    ["#8d4d0c","#532f6a","#2c686d","#207973","#999400"]
+];
+var blockColors4 = [
+    ["#150612", "#a52e8b", "#990077", "#d917af", "#4d003c"],
+    ["#8d4d0c","#532f6a","#2c686d","#207973","#999400"]
+];
+
+var fontSize = tileSize*5;
+var textStyle1 = ["" + fontSize + "px Impact", "#fdc122", "#fd0c0b"];    //font, Win, Lose
+var textStyle2 = ["" + fontSize + "px Impact", "#5702c6", "#ff0098"];
+var textStyle3 = ["" + fontSize + "px Impact", "#BA145C", "#F75802"];
+var textStyle4 = ["" + fontSize + "px Impact", "#ff0", "#f00"];
+
+var experimentalColors1 = ["white", "#ffccff"];
+var experimentalColors2 = ["white", "#FEFE28"];
+
+var themeCounter = 0;
+
+var themes = [  //name, background, material, surface, curlyOutline, blockColors, spikeColors, fruitColors, stemColor, textStyle, experimentalColors
+  //["sky",],
+  ["Spring", bg1, "#976537", "#95ff45", true, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
+  ["Winter", bg1, "#30455B", "white", true,  snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
+  ["Classic", "#8888ff", "#844204", "#282", false,  snakeColors2, blockColors1, spikeColors3, fruitColors1, "green", textStyle4, experimentalColors1],
+  ["Summer", bg2, "#734d26", "#009933", true,  snakeColors3, blockColors3, spikeColors1, fruitColors1, "green", textStyle3, experimentalColors2],
+  ["Dream", bg3, "#00aaff", "#ffb3ec", true,  snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2, experimentalColors2],
+  ["Midnight Rainbow", bg4, "black", "rainbow", false,  snakeColors1, blockColors2, spikeColors2, "white", "white", textStyle1, experimentalColors1]
+];
+
+
+function showEditorChanged() {
+  document.getElementById("showHideEditor").textContent = (persistentState.showEditor ? "Hide" : "Show") + " Editor";
+  ["editorDiv", "editorPane"].forEach(function(id) {
+    document.getElementById(id).style.display = persistentState.showEditor ? "block" : "none";
+  });
+  document.getElementById("wasdSpan").textContent = persistentState.showEditor ? "" : "/WASD";
+
+  render();
+}
+
+function move(dr, dc) {
+  if (!isAlive()) return;
+  animationQueue = [];
+  animationQueueCursor = 0;
+  freshlyRemovedAnimatedObjects = [];
+  animationStart = new Date().getTime();
+  var activeSnake = findActiveSnake();
+  var headRowcol = getRowcol(level, activeSnake.locations[0]);
+  var newRowcol = {r:headRowcol.r + dr, c:headRowcol.c + dc};
+  if (!isInBounds(level, newRowcol.r, newRowcol.c)) return;
+  var newLocation = getLocation(level, newRowcol.r, newRowcol.c);
+  var changeLog = [];
+
+  // The changeLog for a player movement starts with the input
+  // when playing normally.
+  if (!isAnyCheatcodeEnabled()) {
+    changeLog.push(["i", activeSnake.id, dr, dc, animationQueue, freshlyRemovedAnimatedObjects]);
+  }
+
+  var ate = false;
+  var pushedObjects = [];
+    
+  //track ClosedLifts that had objects on them
+  var occupiedClosedLift = getOccupiedClosedLiftLocations();
+
+  if (isCollision()) {
+    var newTile = level.map[newLocation];
+    if (newTile === BUBBLE || newTile === CLOUD)
+      paintTileAtLocation(newLocation, SPACE, changeLog);
+    else if (!isTileCodeAir(activeSnake, null, newTile, dr, dc)) return; // can't go through that tile
+    var otherObject = findObjectAtLocation(newLocation);
+    if (otherObject != null) {
+      if (otherObject === activeSnake) return; // can't push yourself
+      if (otherObject.type === FRUIT) {
+        // eat
+        removeObject(otherObject, changeLog);
+        ate = true;
+      } else if (isTileCodeAir(activeSnake, null, newTile, dr, dc)) {
+          otherObject = findObjectAtLocation(newLocation);
+          if (otherObject != null) {
+            if (otherObject === activeSnake) return; // can't push yourself
+            // push objects
+            if (!checkMovement(activeSnake, otherObject, dr, dc, pushedObjects)) return false;
+          }
+        } else return; // can't go through that tile
+    }
+  }
+
+  // slither forward
+  var activeSnakeOldState = serializeObjectState(activeSnake);
+  var size1 = activeSnake.locations.length === 1;
+  var slitherAnimations = [
+    70,
+    [
+      // size-1 snakes really do more of a move than a slither
+      size1 ? MOVE_SNAKE : SLITHER_HEAD,
+      activeSnake.id,
+      dr,
+      dc,
+    ]
+  ];
+  activeSnake.locations.unshift(newLocation);
+  if (!ate) {
+    for(var i = 1; i<activeSnake.locations.length; i++) {
+        // drag your tail forward
+        var oldRowcol = getRowcol(level, activeSnake.locations[i+1]);
+        newRowcol = getRowcol(level, activeSnake.locations[i]);
+        if (!size1) {
+          slitherAnimations.push([
+            SLITHER_TAIL,
+            activeSnake.id,
+            newRowcol.r - oldRowcol.r,
+            newRowcol.c - oldRowcol.c,
+          ]);
+        }
+    }
+    activeSnake.locations.pop();
+  }
+  changeLog.push([activeSnake.type, activeSnake.id, activeSnakeOldState, serializeObjectState(activeSnake)]);
+
+  // did you just push your face into a portal?
+  var portalLocations = getActivePortalLocations();
+  var portalActivationLocations = [];
+  if (portalLocations.indexOf(newLocation) !== -1) {
+    portalActivationLocations.push(newLocation);
+  }
+  // push everything, too
+  moveObjects(pushedObjects, dr, dc, portalLocations, portalActivationLocations, changeLog, slitherAnimations);
+  animationQueue.push(slitherAnimations);
+    
+  occupiedClosedLift = combineOldAndNewLiftOccupations(occupiedClosedLift);
+
+  // gravity loop
+  var stateToAnimationIndex = {};
+  if (isGravity()) for (var fallHeight = 1;; fallHeight++) {
+    var serializedState = serializeObjects(level.objects);
+    var infiniteLoopStartIndex = stateToAnimationIndex[serializedState];
+    if (infiniteLoopStartIndex != null) {
+      // infinite loop
+      animationQueue.push([0, [INFINITE_LOOP, animationQueue.length - infiniteLoopStartIndex]]);
+      break;
+    } else {
+      stateToAnimationIndex[serializedState] = animationQueue.length;
+    }
+    // do portals separate from falling logic
+    if (portalActivationLocations.length === 1) {
+      var portalAnimations = [500];
+      if (activatePortal(portalLocations, portalActivationLocations[0], portalAnimations, changeLog)) {
+        animationQueue.push(portalAnimations);
+      }
+      portalActivationLocations = [];
+    }
+    // now do falling logic
+    var didAnything = false;
+    var fallingAnimations = [
+      70 / Math.sqrt(fallHeight),
+    ];
+    var exitAnimationQueue = [];
+
+    // check for exit
+    if (!isUneatenFruit()) { //Gooby
+      var snakes = getSnakes();
+      for (var i = 0; i < snakes.length; i++) {
+        var snake = snakes[i];
+        if (level.map[snake.locations[0]] === EXIT) {
+          // (one of) you made it!
+          removeAnimatedObject(snake, changeLog);
+          exitAnimationQueue.push([
+            200,
+            [EXIT_SNAKE, snake.id, 0, 0],
+          ]);
+          didAnything = true;
+        }
+      }
+    }
+    
+    occupiedClosedLift = combineOldAndNewLiftOccupations(occupiedClosedLift);
+
+    // fall
+    var dyingObjects = [];
+    var fallingObjects = level.objects.filter(function(object) {
+      if (object.type === FRUIT) return; // can't fall
+      var theseDyingObjects = [];
+      if (!checkMovement(null, object, 1, 0, [], theseDyingObjects)) return false;
+      // this object can fall. maybe more will fall with it too. we'll check those separately.
+      theseDyingObjects.forEach(function(object) {
+        addIfNotPresent(dyingObjects, object);
+      });
+      return true;
+    });
+    if (dyingObjects.length > 0) {
+      var anySnakesDied = false;
+      dyingObjects.forEach(function(object) {
+        if (object.type === SNAKE) {
+          // look what you've done
+          var oldState = serializeObjectState(object);
+          object.dead = true;
+          changeLog.push([object.type, object.id, oldState, serializeObjectState(object)]);
+          anySnakesDied = true;
+        } else if (object.type === BLOCK) {
+          // a box fell off the world
+          removeAnimatedObject(object, changeLog);
+          removeFromArray(fallingObjects, object);
+          exitAnimationQueue.push([
+            200,
+            [
+              DIE_BLOCK,
+              object.id,
+              0, 0
+            ],
+          ]);
+          didAnything = true;
+        } else throw unreachable();
+      });
+      if (anySnakesDied) break;
+    }
+    if (fallingObjects.length > 0) {
+      moveObjects(fallingObjects, 1, 0, portalLocations, portalActivationLocations, changeLog, fallingAnimations);
+      didAnything = true;
+    }
+      
+    occupiedClosedLift = openLift(occupiedClosedLift, changeLog);
+
+    if (!didAnything) break;
+    Array.prototype.push.apply(animationQueue, exitAnimationQueue);
+    if (fallingAnimations.length > 1) animationQueue.push(fallingAnimations);
+  }
+
+  pushUndo(unmoveStuff, changeLog);
+  render();
+}
+
+function combineOldAndNewLiftOccupations(oldOccupiedClosedLift)
+{
+  var newOccupiedClosedLift = getOccupiedClosedLiftLocations();
+  var newlyOccupiedClosedLift = getSetSubtract(newOccupiedClosedLift, oldOccupiedClosedLift);
+  return oldOccupiedClosedLift.concat(newlyOccupiedClosedLift);
+}
+
+function openLift(oldOccupiedClosedLift, changeLog)
+{
+  var newOccupiedClosedLift = getOccupiedClosedLiftLocations();
+  var nowUnoccupiedClosedLift = getSetSubtract(oldOccupiedClosedLift, newOccupiedClosedLift);
+  for (var i = 0; i < nowUnoccupiedClosedLift.length; i++) {
+    paintTileAtLocation(nowUnoccupiedClosedLift[i], OPENLIFT, changeLog);
+  }
+  return newOccupiedClosedLift;
+}
+
+function getSetSubtract(array1, array2) {
+  if (array1.length === 0) return [];
+  return array1.filter(function(x) { return array2.indexOf(x) == -1; });
+}
+
+function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects) {
+  // pusher can be null (for gravity)
+  pushedObjects.push(pushedObject);
+  // find forward locations
+  var forwardLocations = [];
+  for (var i = 0; i < pushedObjects.length; i++) {
+    pushedObject = pushedObjects[i];
+    for (var j = 0; j < pushedObject.locations.length; j++) {
+      var rowcol = getRowcol(level, pushedObject.locations[j]);
+      var forwardRowcol = {r:rowcol.r + dr, c:rowcol.c + dc};
+      if (!isInBounds(level, forwardRowcol.r, forwardRowcol.c)) {
+        if (dyingObjects == null) {
+          // can't push things out of bounds
+          return false;
+        } else {
+          // this thing is going to fall out of bounds
+          addIfNotPresent(dyingObjects, pushedObject);
+          addIfNotPresent(pushedObjects, pushedObject);
+          continue;
+        }
+      }
+      var forwardLocation = getLocation(level, forwardRowcol.r, forwardRowcol.c);
+      if (dr === 1 && level.map[forwardLocation] === PLATFORM) {
+        // this platform holds us, unless we're going through it
+        var neighborLocations;
+        if (pushedObject.type === SNAKE) {
+          neighborLocations = [];
+          if (j > 0) neighborLocations.push(pushedObject.locations[j - 1]);
+          if (j < pushedObject.locations.length - 1) neighborLocations.push(pushedObject.locations[j + 1]);
+        } else if (pushedObject.type === BLOCK) {
+          neighborLocations = pushedObject.locations;
+        } else throw asdf;
+        if (neighborLocations.indexOf(forwardLocation) === -1) return false; // flat surface
+        // we slip right past it
+      }
+      var yetAnotherObject = findObjectAtLocation(forwardLocation);
+      if (yetAnotherObject != null) {
+        if (yetAnotherObject.type === FRUIT) {
+          // not pushable
+          return false;
+        }
+        if (yetAnotherObject === pusher) {
+          // indirect pushing ourselves.
+          // special check for when we're indirectly pushing the tip of our own tail.
+          if (forwardLocation === pusher.locations[pusher.locations.length -1]) {
+            // for some reason this is ok. ------------ THIS IS THE TAIL GLITCH
+            continue;
+          }
+          return false;
+        }
+        addIfNotPresent(pushedObjects, yetAnotherObject);
+        if(level.map[forwardLocation] === WOODPLATFORM) addIfNotPresent(forwardLocations, forwardLocation);   //this made wooden platform work          
+      } else
+          addIfNotPresent(forwardLocations, forwardLocation);             
+    }
+  }
+  // check forward locations
+   for (var i = 0; i < forwardLocations.length; i++) {          //changed this section trying to fix wooden platform, saw no effect but left new code
+    var forwardLocation = forwardLocations[i];
+    // many of these locations can be inside objects,
+    // but that means the tile must be air,
+    // and we already know pushing that object.
+    var tileCode = level.map[forwardLocation];
+    var object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
+    if (!isTileCodeAir(pusher, object, tileCode, dr, dc)) {
+      if (dyingObjects != null) {
+        if (tileCode === SPIKE) {
+          // uh... which object was this again?
+          if (object.type === SNAKE) {
+            // ouch!
+            addIfNotPresent(dyingObjects, object);
+            continue;
+          }
+        
+        }
+        else if (tileCode === LAVA) {
+            if (object.type === SNAKE || object.type === BLOCK) {
+                addIfNotPresent(dyingObjects, object);
+                continue;
+          }
+        }
+        else if (tileCode === WATER) {
+            if (object.type === BLOCK) {
+                addIfNotPresent(dyingObjects, object);
+                continue;
+            }
+        }
+      // can't push into something solid
+      return false;
+      }
+    }
+  }
+  // the push is go
+  return true;
+}
+
+function activateAnySnakePlease() {
+  var snakes = getSnakes();
+  if (snakes.length === 0) return; // nope.avi
+  activeSnakeId = snakes[0].id;
+}
+
+function moveObjects(objects, dr, dc, portalLocations, portalActivationLocations, changeLog, animations) {
+  objects.forEach(function(object) {
+    var oldState = serializeObjectState(object);
+    var oldPortals = getSetIntersection(portalLocations, object.locations);
+    for (var i = 0; i < object.locations.length; i++) {
+      object.locations[i] = offsetLocation(object.locations[i], dr, dc);
+      if (level.map[object.locations[i]] == BUBBLE || level.map[object.locations[i]] == CLOUD)
+        paintTileAtLocation(object.locations[i], SPACE, changeLog);
+    }
+    changeLog.push([object.type, object.id, oldState, serializeObjectState(object)]);
+    animations.push([
+      "m" + object.type, // MOVE_SNAKE | MOVE_BLOCK
+      object.id,
+      dr,
+      dc,
+    ]);
+
+    var newPortals = getSetIntersection(portalLocations, object.locations);
+    var activatingPortals = newPortals.filter(function(portalLocation) {
+      return oldPortals.indexOf(portalLocation) === -1;
+    });
+    if (activatingPortals.length === 1) {
+      // exactly one new portal we're touching. activate it
+      portalActivationLocations.push(activatingPortals[0]);
+    }
+  });
+}
+
+function activatePortal(portalLocations, portalLocation, animations, changeLog) {
+  var otherPortalLocation = portalLocations[1 - portalLocations.indexOf(portalLocation)];
+  var portalRowcol = getRowcol(level, portalLocation);
+  var otherPortalRowcol = getRowcol(level, otherPortalLocation);
+  var delta = {r:otherPortalRowcol.r - portalRowcol.r, c:otherPortalRowcol.c - portalRowcol.c};
+
+  var object = findObjectAtLocation(portalLocation);
+  var newLocations = [];
+  for (var i = 0; i < object.locations.length; i++) {
+    var rowcol = getRowcol(level, object.locations[i]);
+    var r = rowcol.r + delta.r;
+    var c = rowcol.c + delta.c;
+    if (!isInBounds(level, r, c)) return false; // out of bounds
+    newLocations.push(getLocation(level, r, c));
+  }
+
+  for (var i = 0; i < newLocations.length; i++) {
+    var location = newLocations[i];
+    if (!isTileCodeAir(object, null, level.map[location], 0, 0)) return false; // blocked by tile
+    var otherObject = findObjectAtLocation(location);
+    if (otherObject != null && otherObject !== object) return; // blocked by object
+  }
+
+  // zappo presto!
+  var oldState = serializeObjectState(object);
+  object.locations = newLocations;
+  for (var i = 0; i < newLocations.length; i++) {
+    var location = newLocations[i];
+    if (level.map[location] == BUBBLE || level.map[location] == CLOUD)                        //changed this despite bubble working perfectly without it
+      paintTileAtLocation(location, SPACE, changeLog);
+  }
+  changeLog.push([object.type, object.id, oldState, serializeObjectState(object)]);
+}
+
+function isTileCodeAir(pusher, pushedObject, tileCode, dr, dc) {
+  switch (tileCode)
+  {
+    case SPACE: case EXIT: case PORTAL: case CLOSEDLIFT: return true;
+    case WOODPLATFORM: case BUBBLE: return pusher != null;
+    case PLATFORM: return dr != 1;
+    case ONEWAYWALLU: return dr != 1;
+    case ONEWAYWALLD: return dr != -1;
+    case ONEWAYWALLL: return dc != 1;
+    case ONEWAYWALLR: return dc != -1;
+    default: return false;
+  }
+}
+
+function addIfNotPresent(array, element) {
+  if (array.indexOf(element) !== -1) return;
+  array.push(element);
+}
+function removeAnyObjectAtLocation(location, changeLog) {
+  var object = findObjectAtLocation(location);
+  if (object != null) removeObject(object, changeLog);
+}
+function removeAnimatedObject(object, changeLog) {
+  removeObject(object, changeLog);
+  freshlyRemovedAnimatedObjects.push(object);
+}
+function removeObject(object, changeLog) {
+  removeFromArray(level.objects, object);
+  changeLog.push([object.type, object.id, [object.dead, copyArray(object.locations)], [0,[]]]);
+  if (object.type === SNAKE && object.id === activeSnakeId) {
+    activateAnySnakePlease();
+  }
+  if (object.type === BLOCK && paintBrushTileCode === BLOCK && paintBrushBlockId === object.id) {
+    // no longer editing an object that doesn't exit
+    paintBrushBlockId = null;
+  }
+  if (object.type === BLOCK) {
+    delete blockSupportRenderCache[object.id];
+  }
+}
+function removeFromArray(array, element) {
+  var index = array.indexOf(element);
+  if (index === -1) throw unreachable();
+  array.splice(index, 1);
+}
+function findActiveSnake() {
+  var snakes = getSnakes();
+  for (var i = 0; i < snakes.length; i++) {
+    if (snakes[i].id === activeSnakeId) return snakes[i];
+  }
+  throw unreachable();
+}
+function findBlockById(id) {
+  return findObjectOfTypeAndId(BLOCK, id);
+}
+function findSnakesOfColor(color) {
+  return level.objects.filter(function(object) {
+    if (object.type !== SNAKE) return false;
+    return object.id % snakeColors.length === color;
+  });
+}
+function findObjectOfTypeAndId(type, id) {
+  for (var i = 0; i < level.objects.length; i++) {
+    var object = level.objects[i];
+    if (object.type === type && object.id === id) return object;
+  }
+  return null;
+}
+function findObjectAtLocation(location) {
+  for (var i = 0; i < level.objects.length; i++) {
+    var object = level.objects[i];
+    if (object.locations.indexOf(location) !== -1)
+      return object;
+  }
+  return null;
+}
+function isUneatenFruit() {
+  return getObjectsOfType(FRUIT).length > 0;
+}
+function getActivePortalLocations() {
+  var portalLocations = getPortalLocations();
+  if (portalLocations.length !== 2) return []; // nice try
+  return portalLocations;
+}
+function getPortalLocations() {
+  var result = [];
+  for (var i = 0; i < level.map.length; i++) {
+    if (level.map[i] === PORTAL) result.push(i);
+  }
+  return result;
+}
+function countSnakes() {
+  return getSnakes().length;
+}
+function getSnakes() {
+  return getObjectsOfType(SNAKE);
+}
+function getBlocks() {
+  return getObjectsOfType(BLOCK);
+}
+function getOccupiedClosedLiftLocations()
+{
+  var result = [];
+  for (var i = 0; i < level.map.length; i++) {
+    if (level.map[i] === CLOSEDLIFT) {
+      if (findObjectAtLocation(i))
+          result.push(i);
+    }
+  }
+  return result;
+}
+function getObjectsOfType(type) {
+  return level.objects.filter(function(object) {
+    return object.type == type;
+  });
+}
+function isDead() {
+  if (animationQueue.length > 0 && animationQueue[animationQueue.length - 1][1][0] === INFINITE_LOOP) return true;
+  return getSnakes().filter(function(snake) {
+    return !!snake.dead;
+  }).length > 0;
+}
+function isAlive() {
+  return countSnakes() > 0 && !isDead();
+}
+
+var activeSnakeId = null;
+
+var SLITHER_HEAD = "sh";
+var SLITHER_TAIL = "st";
+var MOVE_SNAKE = "ms";
+var MOVE_BLOCK = "mb";
+var TELEPORT_SNAKE = "ts";
+var TELEPORT_BLOCK = "tb";
+var EXIT_SNAKE = "es";
+var DIE_SNAKE = "ds";
+var DIE_BLOCK = "db";
+var INFINITE_LOOP = "il";
+var animationQueue = [
+  // // sequence of disjoint animation groups.
+  // // each group completes before the next begins.
+  // [
+  //   70, // duration of this animation group
+  //   // multiple things to animate simultaneously
+  //   [
+  //     SLITHER_HEAD | SLITHER_TAIL | MOVE_SNAKE | MOVE_BLOCK | TELEPORT_SNAKE | TELEPORT_BLOCK,
+  //     objectId,
+  //     dr,
+  //     dc,
+  //   ],
+  //   [
+  //     INFINITE_LOOP,
+  //     loopSizeNotIncludingThis,
+  //   ],
+  // ],
+];
+var animationQueueCursor = 0;
+var animationStart = null; // new Date().getTime()
+var animationProgress; // 0.0 <= x < 1.0
+var freshlyRemovedAnimatedObjects = [];
+
+// render the support beams for blocks into a temporary buffer, and remember it.
+// this is due to stencil buffers causing slowdown on some platforms. see #25.
+var blockSupportRenderCache = {
+  // id: canvas,
+  // "0": document.createElement("canvas"),
+};
+
+function render() {
+  if (level == null) return;
+  if (animationQueueCursor < animationQueue.length) {
+    var animationDuration = animationQueue[animationQueueCursor][0];
+    animationProgress = (new Date().getTime() - animationStart) / animationDuration;
+    if (animationProgress >= 1.0) {
+      // animation group complete
+      animationProgress -= 1.0;
+      animationQueueCursor++;
+      if (animationQueueCursor < animationQueue.length && animationQueue[animationQueueCursor][1][0] === INFINITE_LOOP) {
+        var infiniteLoopSize = animationQueue[animationQueueCursor][1][1];
+        animationQueueCursor -= infiniteLoopSize;
+      }
+      animationStart = new Date().getTime();
+    }
+  }
+  if (animationQueueCursor === animationQueue.length) animationProgress = 1.0;
+  canvas.width = tileSize * level.width;
+  canvas.height = tileSize * level.height;
+  var context = canvas.getContext("2d"); //Gooby
+    
+  themeName = themes[themeCounter][0];
+    if(themeName!="sky"){
+        background = themes[themeCounter][1];
+        material = themes[themeCounter][2];
+        surface = themes[themeCounter][3];
+        curlyOutline = themes[themeCounter][4];
+        snakeColors = themes[themeCounter][5];
+        blockColors = themes[themeCounter][6];
+        spikeColors = themes[themeCounter][7];
+        fruitColors = themes[themeCounter][8];
+        textStyle = themes[themeCounter][10];
+        experimentalColors = themes[themeCounter][11];
+        
+        if(background.substr(0,1) == "#") {
+            context.fillStyle = background;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        else{
+            for(var i = 0; i<level.width; i++){   //checkerboard background
+                for(var j = 0; j<level.height; j++){
+                    var bgColor1= background.substr(0, background.indexOf('*')); 
+                    var bgColor2= background.substr(background.indexOf('*')+2, background.length); 
+                    var shade = (j+1)*.03+.5;
+                    if((i+j) % 2 == 0) context.fillStyle = bgColor1 + ", " + shade + ")";
+                    else context.fillStyle = bgColor2 + ", " + shade + ")";
+                    context.fillRect(i*tileSize, j*tileSize, tileSize, tileSize);
+                    //context.fillText(i+" "+j,i*tileSize, j*tileSize);
+                  }      
+            }
+        }
+    }
+    else{
+      var img=document.createElement('img');
+      //img.src='/Snakefall/Snakebird Images/sky2.jpeg';    
+      //context.drawImage(img,0,0,canvas.width, canvas.height)
+      //context.fillRect(0, 0, canvas.width, canvas.height);
+    }
+  if (persistentState.showGrid && !persistentState.showEditor) {
+    drawGrid();
+  }
+
+  var activePortalLocations = getActivePortalLocations();
+
+  // normal render
+  renderLevel();
+
+  if (persistentState.showGrid && persistentState.showEditor) {
+    drawGrid();
+  }
+  // active snake halo - Gooby
+  /*if (countSnakes() !== 0 && isAlive()) {
+    var activeSnake = findActiveSnake();
+    var activeSnakeRowcol = getRowcol(level, activeSnake.locations[0]);
+    drawCircle(activeSnakeRowcol.r, activeSnakeRowcol.c, 2, "rgba(256,256,256,0.3)");
+  }*/
+
+  if (persistentState.showEditor) {
+    if (paintBrushTileCode === BLOCK) {
+      if (paintBrushBlockId != null) {
+        // fade everything else away
+        context.fillStyle = "rgba(0, 0, 0, 0.8)";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        // and render just this object in focus
+        var activeBlock = findBlockById(paintBrushBlockId);
+        renderLevel([activeBlock]);
+      }
+    } else if (paintBrushTileCode === "select") {
+      getSelectedLocations().forEach(function(location) {
+        var rowcol = getRowcol(level, location);
+        drawRect(rowcol.r, rowcol.c, "rgba(128, 128, 128, 0.3)");
+      });
+    }
+  }
+
+  // serialize
+  if (!isDead()) {
+    var serialization = stringifyLevel(level);
+    document.getElementById("serializationTextarea").value = serialization;
+    var link = location.href.substring(0, location.href.length - location.hash.length);
+    link += "#level=" + compressSerialization(serialization);
+    document.getElementById("shareLinkTextbox").value = link;
+  }
+
+  // throw this in there somewhere
+  document.getElementById("showGridButton").textContent = (persistentState.showGrid ? "Hide" : "Show") + " Grid";
+
+  if (animationProgress < 1.0) requestAnimationFrame(render);
+  return; // this is the end of the function proper
+
+  function renderLevel(onlyTheseObjects) {
+    var objects = level.objects;
+    if (onlyTheseObjects != null) {
+      objects = onlyTheseObjects;
+    } else {
+      objects = level.objects.concat(freshlyRemovedAnimatedObjects.filter(function(object) {
+        // the object needs to have a future removal animation, or else, it's gone already.
+        return hasFutureRemoveAnimation(object);
+      }));
+    }
+    // begin by rendering the background connections for blocks
+     objects.forEach(function(object) {
+       if (object.type !== BLOCK) return;
+       var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
+       var minR = Infinity;
+       var maxR = -Infinity;
+       var minC = Infinity;
+       var maxC = -Infinity;
+       object.locations.forEach(function(location) {
+         var rowcol = getRowcol(level, location);
+         if (rowcol.r < minR) minR = rowcol.r;
+         if (rowcol.r > maxR) maxR = rowcol.r;
+         if (rowcol.c < minC) minC = rowcol.c;
+         if (rowcol.c > maxC) maxC = rowcol.c;
+       });
+       var image = blockSupportRenderCache[object.id];
+       if (image == null) {
+         // render the support beams to a buffer
+         blockSupportRenderCache[object.id] = image = document.createElement("canvas");
+         image.width  = (maxC - minC + 1) * tileSize;
+         image.height = (maxR - minR + 1) * tileSize;
+         var bufferContext = image.getContext("2d");
+         // Make a stencil that excludes the insides of blocks.
+         // Then when we render the support beams, we won't see the supports inside the block itself.
+         bufferContext.beginPath();
+         // Draw a path around the whole screen in the opposite direction as the rectangle paths below.
+         // This means that the below rectangles will be removing area from the greater rectangle.
+         bufferContext.rect(image.width, 0, -image.width, image.height);
+         for (var i = 0; i < object.locations.length; i++) {
+           var rowcol = getRowcol(level, object.locations[i]);
+           var r = rowcol.r - minR;
+           var c = rowcol.c - minC;
+           bufferContext.rect(c * tileSize, r * tileSize, tileSize, tileSize);
+         }
+         bufferContext.clip();
+         for (var i = 0; i < object.locations.length - 1; i++) {
+           var rowcol1 = getRowcol(level, object.locations[i]);
+           rowcol1.r -= minR;
+           rowcol1.c -= minC;
+           var rowcol2 = getRowcol(level, object.locations[i + 1]);
+           rowcol2.r -= minR;
+           rowcol2.c -= minC;
+           var cornerRowcol = {r:rowcol1.r, c:rowcol2.c};
+         drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, blockColors[1][object.id % blockColors[1].length]);
+         drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, blockColors[1][object.id % blockColors[1].length]);
+         }
+       }
+       var r = minR + animationDisplacementRowcol.r;
+       var c = minC + animationDisplacementRowcol.c;
+       context.drawImage(image, c * tileSize, r * tileSize);    
+       });
+
+    // terrain
+    if (onlyTheseObjects == null) {
+      for (var r = 0; r < level.height; r++) {
+        for (var c = 0; c < level.width; c++) {
+          var location = getLocation(level, r, c);
+          var tileCode = level.map[location];
+          drawTile(tileCode, r, c, level, location, true);   //draws all but walls and liquids
+        }
+      }
+    }
+      
+    for(var i = 0; i<objects.length; i++){  
+        var object = objects[i];
+        if(object.type === SNAKE || object.type === BLOCK) drawObject(object);  //draws snakes and blocks
+    }
+      
+    if (onlyTheseObjects == null) {
+      for (var r = 0; r < level.height; r++) {
+        for (var c = 0; c < level.width; c++) {
+          location = getLocation(level, r, c);
+          tileCode = level.map[location];
+          if(tileCode === WALL) drawTile(tileCode, r, c, level, location, false);    //draws only walls
+        }
+      }
+    }
+      
+    if (onlyTheseObjects == null) {
+      for (var r = 0; r < level.height; r++) {
+        for (var c = 0; c < level.width; c++) {
+          location = getLocation(level, r, c);
+          tileCode = level.map[location];
+          if(tileCode === CLOUD) drawTile(tileCode, r, c, level, location, false);    //draws only clouds
+        }
+      }
+    }
+      
+    for(var i = 0; i<objects.length; i++){  
+        var object = objects[i];
+        if(object.type === FRUIT) drawObject(object);  //draws fruit
+    }
+      
+    // banners
+    if (countSnakes() === 0) {
+      context.fillStyle = textStyle[1];
+      context.font = textStyle[0];
+      context.shadowOffsetX = 5;
+      context.shadowOffsetY = 5;
+      context.shadowColor = "rgba(0,0,0,0.5)";
+      context.shadowBlur = 4;
+      var textString = "WIN";
+      var textWidth = context.measureText(textString).width;
+      context.fillText(textString, (canvas.width/2) - (textWidth/2), canvas.height/2);
+    }
+    if (isDead()) {
+      context.fillStyle = textStyle[2];
+      context.font = textStyle[0];
+      context.shadowOffsetX = 5;
+      context.shadowOffsetY = 5;
+      context.shadowColor = "rgba(0,0,0,0.5)";
+      context.shadowBlur = 4;
+      textString = "LOSE";
+      textWidth = context.measureText(textString).width;
+      context.fillText(textString, (canvas.width/2) - (textWidth/2), canvas.height/2);
+    }
+
+    // editor hover
+    if (persistentState.showEditor && paintBrushTileCode != null && hoverLocation != null && hoverLocation < level.map.length) {
+
+      var savedContext = context;
+      var buffer = document.createElement("canvas");
+      buffer.width = canvas.width;
+      buffer.height = canvas.height;
+      context = buffer.getContext("2d");
+
+      var hoverRowcol = getRowcol(level, hoverLocation);
+      var objectHere = findObjectAtLocation(hoverLocation);
+      if (typeof paintBrushTileCode === "number") {
+        if (level.map[hoverLocation] !== paintBrushTileCode) {
+          drawTile(paintBrushTileCode, hoverRowcol.r, hoverRowcol.c, level, hoverLocation);
+            if (paintBrushTileCode === PLATFORM) {
+            // make it bolder
+            hoverAlpha = 0.4;
+          }
+        }
+      } else if (paintBrushTileCode === SNAKE) {
+        if (!(objectHere != null && objectHere.type === SNAKE && objectHere.id === paintBrushSnakeColorIndex)) {
+          drawObject(newSnake(paintBrushSnakeColorIndex, hoverLocation));
+        }
+      } else if (paintBrushTileCode === BLOCK) {
+        if (!(objectHere != null && objectHere.type === BLOCK && objectHere.id === paintBrushBlockId)) {
+          drawObject(newBlock(hoverLocation));
+        }
+      } else if (paintBrushTileCode === FRUIT) {
+        if (!(objectHere != null && objectHere.type === FRUIT)) {
+          drawObject(newFruit(hoverLocation));
+        }
+      } else if (paintBrushTileCode === "resize") {
+        void 0; // do nothing
+      } else if (paintBrushTileCode === "select") {
+        void 0; // do nothing
+      } else if (paintBrushTileCode === "paste") {
+        // show what will be pasted if you click
+        var pastedData = previewPaste(hoverRowcol.r, hoverRowcol.c);
+        pastedData.selectedLocations.forEach(function(location) {
+          var tileCode = pastedData.level.map[location];
+          var rowcol = getRowcol(level, location);
+          drawTile(tileCode, rowcol.r, rowcol.c, pastedData.level, location);
+        });
+        pastedData.selectedObjects.forEach(drawObject);
+      } else throw unreachable();
+
+      context = savedContext;
+      context.save();
+      context.globalAlpha = 0.2;
+      context.drawImage(buffer, 0, 0);
+      context.restore();
+    }      
+  }
+    
+  function drawTile(tileCode, r, c, level, location, isCurve) {
+    switch (tileCode) {
+      case SPACE:
+        break;
+      case WALL:
+        if(isCurve && curlyOutline) drawCurves(r, c, getAdjacentTiles());
+        else drawWall(r, c, getAdjacentTiles());
+        break;
+      case SPIKE:
+        drawSpikes(r, c, getAdjacentTiles(), level);
+        break;
+      case EXIT:
+        //drawExit(r, c);
+        var radiusFactor = isUneatenFruit() ? 0.7 : 1.2;
+        drawQuarterPie(r, c, radiusFactor, snakeColors[0], 0);
+        drawQuarterPie(r, c, radiusFactor, snakeColors[1], 1);
+        drawQuarterPie(r, c, radiusFactor, snakeColors[2], 2);
+        drawQuarterPie(r, c, radiusFactor, snakeColors[3], 3);
+        break;
+      case PORTAL:
+        var grd = context.createRadialGradient(c*tileSize+tileSize/2, r*tileSize+tileSize/2, tileSize/12, c*tileSize+tileSize/2, r*tileSize+tileSize/2, tileSize/2);
+        grd.addColorStop(0, "red");
+        grd.addColorStop(0.17, "orange");
+        grd.addColorStop(0.33, "yellow");
+        grd.addColorStop(0.5, "green");
+        grd.addColorStop(0.666, "blue");
+        grd.addColorStop(1, "violet")
+        if (activePortalLocations.indexOf(location) !== -1) drawCircle(r, c, 1, grd);
+        else drawCircle(r, c, 1, "#111");
+        break;
+      case PLATFORM:
+        drawPlatform(r, c, getAdjacentTiles());
+        break;
+      case WOODPLATFORM:
+        drawOneWayWall("#D38345", r, c, -1, 0);
+        break;
+      case ONEWAYWALLU:
+        drawOneWayWall("#111", r, c, -1, 0);
+        break;
+      case ONEWAYWALLD:
+        drawOneWayWall("#111", r, c, 1, 0);
+        break;
+      case ONEWAYWALLL:
+        drawOneWayWall("#111", r, c, 0, -1);
+        break;
+      case ONEWAYWALLR:
+        drawOneWayWall("#111", r, c, 0, 1);
+        break;
+      case CLOSEDLIFT:
+        drawLift(r, c, false);
+        break;
+      case OPENLIFT:
+        drawLift(r, c, true);
+        break;
+      case CLOUD:
+        drawCloud(context, c*tileSize, r*tileSize);
+        break;        
+      case BUBBLE:
+        drawBubble(r, c);
+        break;
+      case LAVA:
+        drawLiquid(r, c, LAVA, getAdjacentTiles());
+        break;
+      case WATER:
+        drawLiquid(r, c, WATER, getAdjacentTiles());
+        break;
+      default: throw unreachable();
+    }
+    function getAdjacentTiles() {
+      return [
+        [getTile(r - 1, c - 1),
+         getTile(r - 1, c + 0),
+         getTile(r - 1, c + 1)],
+        [getTile(r + 0, c - 1),
+         null,
+         getTile(r + 0, c + 1)],
+        [getTile(r + 1, c - 1),
+         getTile(r + 1, c + 0),
+         getTile(r + 1, c + 1)],
+      ];
+    }
+    function getTile(r, c) {
+      if (!isInBounds(level, r, c)) return null;
+      return level.map[getLocation(level, r, c)];
+    }
+  }
+    
+function getTintedColor(color, v) {
+    if (color.length >6) { color= color.substring(1,color.length)}
+    var rgb = parseInt(color, 16); 
+    var r = Math.abs(((rgb >> 16) & 0xFF)+v); if (r>255) r=r-(r-255);
+    var g = Math.abs(((rgb >> 8) & 0xFF)+v); if (g>255) g=g-(g-255);
+    var b = Math.abs((rgb & 0xFF)+v); if (b>255) b=b-(b-255);
+    r = Number(r < 0 || isNaN(r)) ? 0 : ((r > 255) ? 255 : r).toString(16); 
+    if (r.length == 1) r = '0' + r;
+    g = Number(g < 0 || isNaN(g)) ? 0 : ((g > 255) ? 255 : g).toString(16); 
+    if (g.length == 1) g = '0' + g;
+    b = Number(b < 0 || isNaN(b)) ? 0 : ((b > 255) ? 255 : b).toString(16); 
+    if (b.length == 1) b = '0' + b;
+    return "#" + r + g + b;
+} 
+    
+  function drawObject(object) {
+    switch (object.type) {
+      case SNAKE:
+        var falling = false;
+        var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
+        if (animationDisplacementRowcol.r != 0) falling = true;
+        var lastRowcol = null
+        var nextRowcol = null
+        var color = snakeColors[object.id % snakeColors.length];
+        var colorIndex = object.id % snakeColors.length;
+        var altColor = getTintedColor(color, 50);
+        if(themeName==="Classic") altColor = color;
+        var headRowcol;
+        var orientation = 10;
+        for (var i = 0; i < object.locations.length; i++) {
+          var animation;
+          var rowcol;
+          if (i === 0 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {  // animate head slithering forward
+            rowcol = getRowcol(level, object.locations[i]);
+            rowcol.r += animation[2] * (animationProgress - 1);
+            rowcol.c += animation[3] * (animationProgress - 1);
+          } else if (i === object.locations.length) {
+            // animated tail?
+            if ((animation = findAnimation([SLITHER_TAIL], object.id)) != null) {
+              // animate tail slithering to catch up
+              rowcol = getRowcol(level, object.locations[i-1]);
+              rowcol.r += animation[2] * (animationProgress - 1);
+              rowcol.c += animation[3] * (animationProgress - 1);
+            } else {
+              // no animated tail needed
+              break;
+            }
+          } else rowcol = getRowcol(level, object.locations[i]);
+              
+          lastRowcol = getRowcol(level, object.locations[i-1]); //closer to head
+          nextRowcol = getRowcol(level, object.locations[i+1]); //closer to tail
+          var rc = rowcol;
+          var lrc = lastRowcol;
+          var nrc = nextRowcol;
+            
+          if (object.dead) {    //if snake dies after moving left or right, head is positioned down
+              rowcol.r += .5;
+              lastRowcol.r += .5;
+              nextRowcol.r += .5;
+              falling = true;
+          }
+          rowcol.r += animationDisplacementRowcol.r;
+          rowcol.c += animationDisplacementRowcol.c;
+          lastRowcol.r += animationDisplacementRowcol.r;
+          lastRowcol.c += animationDisplacementRowcol.c;
+          nextRowcol.r += animationDisplacementRowcol.r;
+          nextRowcol.c += animationDisplacementRowcol.c;
+                
+          var cx = rowcol.c * tileSize;
+          var cy = rowcol.r * tileSize;
+            
+          if (i === 0) {
+            context.fillStyle = color;
+            headRowcol = rowcol;
+              
+            //determines orientation of face
+            if(!falling) nextRowcol = getRowcol(level, object.locations[1]);            
+            if (nextRowcol.r < rowcol.r) {  //last move down
+                roundRect(context, cx, cy, tileSize, tileSize, {bl:10,br:10}, true, false);  //draw head
+                if(colorIndex === 0) orientation = 2;
+                else if(colorIndex === 1) orientation = 6;
+                else if(colorIndex === 2) orientation = 3;
+                else if(colorIndex === 3) orientation = 5;
+            }
+            else if (nextRowcol.r > rowcol.r) {  //last move up
+                roundRect(context, cx, cy, tileSize, tileSize, {tl:10,tr:10}, true, false);  //draw head
+                if(colorIndex === 0) orientation = 0;
+                else if(colorIndex === 1) orientation = 4;
+                else if(colorIndex === 2) orientation = 1;
+                else if(colorIndex === 3) orientation = 7;
+            }
+            else if (nextRowcol.c < rowcol.c) {  //last move right
+                roundRect(context, cx, cy, tileSize, tileSize, {tr:10,br:10}, true, false);  //draw head
+                if(colorIndex === 0) orientation = 1;
+                else if(colorIndex === 1) orientation = 5;
+                else if(colorIndex === 2) orientation = 2;
+                else if(colorIndex === 3) orientation = 4;
+            }
+            else if (nextRowcol.c > rowcol.c) {  //last move left
+                roundRect(context, cx, cy, tileSize, tileSize, {tl:10,bl:10}, true, false);  //draw head
+                if(colorIndex === 0) orientation = 3;
+                else if(colorIndex === 1) orientation = 7;
+                else if(colorIndex === 2) orientation = 0;
+                else if(colorIndex === 3) orientation = 6;
+            }
+            else {
+                roundRect(context, cx, cy, tileSize, tileSize, 10, true, false);  //draw head
+                orientation = 10;
+            }  
+          } else {
+                if(i % 2 == 0) context.fillStyle = color;
+                else context.fillStyle = altColor;
+              
+                if (i === object.locations.length-1) {
+                    if(lastRowcol.r > rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10,tr:10}, true, false);}
+                    else if(lastRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {bl:10,br:10}, true, false);}
+                    else if(lastRowcol.c < rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tr:10,br:10}, true, false);}
+                    else if(lastRowcol.c > rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10,bl:10}, true, false);}
+                }
+                else if (i != object.locations.length-1 && i != object.locations.length) {
+                    if (lastRowcol.r > rowcol.r && nextRowcol.c < rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tr:10}, true, false);}
+                    else if (lastRowcol.r > rowcol.r && nextRowcol.c > rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10}, true, false);}
+                    else if (lastRowcol.r < rowcol.r && nextRowcol.c < rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {br:10}, true, false);}
+                    else if (lastRowcol.r < rowcol.r && nextRowcol.c > rowcol.c) {roundRect(context, cx, cy, tileSize, tileSize, {bl:10}, true, false);}
+
+                    else if (lastRowcol.c > rowcol.c && nextRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {bl:10}, true, false);}
+                    else if (lastRowcol.c > rowcol.c && nextRowcol.r > rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {tl:10}, true, false);}
+                    else if (lastRowcol.c < rowcol.c && nextRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {br:10}, true, false);}
+                    else if (lastRowcol.c < rowcol.c && nextRowcol.r > rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, {tr:10}, true, false);}
+
+                    else if (lastRowcol.c < rowcol.c && nextRowcol.c > rowcol.c || lastRowcol.c > rowcol.c && nextRowcol.c < rowcol.c || lastRowcol.r < rowcol.r && nextRowcol.r > rowcol.r || lastRowcol.r > rowcol.r && nextRowcol.r < rowcol.r) {roundRect(context, cx, cy, tileSize, tileSize, 0, true, false);}
+                }
+                else roundRect(context, cx, cy, tileSize, tileSize, 10, true, false);
+          }
+        }
+        drawFace(object.id, headRowcol.c, headRowcol.r, orientation);
+        break;
+      case BLOCK:
+        drawBlock(object);
+        break;
+      case FRUIT:
+        rowcol = getRowcol(level, object.locations[0]);
+        var c = rowcol.c;
+        var r = rowcol.r;
+        var startC = c*tileSize+tileSize/2;
+        var startR = r*tileSize+tileSize*.2;
+        var resize = tileSize * 1.7;
+        context.fillStyle = fruitColors[object.id % fruitColors.length];
+        if(themeName != "Classic"){
+            if(surface == "rainbow") {
+                context.fillStyle = "black";
+                context.lineWidth = tileSize/8;
+                context.strokeStyle = "white";
+                resize = tileSize * 1.4;
+            }
+            //context.fillStyle = "#ff6b45";
+            context.beginPath();
+            context.moveTo(startC, startR);
+            context.bezierCurveTo(startC-resize*.1, startR-resize*.05, startC-resize*.25, startR-resize*.1, startC-resize*.3, startR+resize*.05);
+            context.bezierCurveTo(startC-resize*.35, startR+resize*.15, startC-resize*.3, startR+resize*.6, startC, startR+resize*.5);
+            context.bezierCurveTo(startC+resize*.3, startR+resize*.6, startC+resize*.35, startR+resize*.15, startC+resize*.3, startR+resize*.05);
+            context.bezierCurveTo(startC+resize*.25, startR-resize*.05, startC+resize*.1, startR-resize*.1, startC, startR);
+            context.closePath();
+            context.fill();
+            if(surface == "rainbow") context.stroke();
+
+            context.beginPath();
+            context.moveTo(startC,startR);
+            context.bezierCurveTo(startC-resize*.1, startR-resize*.05, startC, startR-resize*.1, startC-resize*.1, startR-resize*.15);
+            context.bezierCurveTo(startC, startR-resize*.1, startC+resize*.05, startR-resize*.1, startC, startR);
+            context.fillStyle = themes[themeCounter][9];
+            context.fill();
+        }
+        else drawCircle(rowcol.r, rowcol.c, 1, "#f0f");
+        break;
+      default: throw unreachable();
+    }
+  }  
+    
+function drawPlatform(r, c, adjacentTiles) {
+    newPlatform(r, c, isPlatform);
+    
+    function isPlatform(dc, dr) {
+        var tileCode = adjacentTiles[1 + dr][1 + dc];
+        return tileCode == null || tileCode === PLATFORM;
+    }
+    
+    /*context.lineTo(c*tileSize, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*.1429, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*.1429, r*tileSize+tileSize*.1429);
+    context.lineTo(c*tileSize+tileSize*.2857, r*tileSize+tileSize*.1429);
+    context.lineTo(c*tileSize+tileSize*.2857, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*.4286, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*.4286, r*tileSize+tileSize*.1429);
+    context.lineTo(c*tileSize+tileSize*.5714, r*tileSize+tileSize*.1429);
+    context.lineTo(c*tileSize+tileSize*.5714, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*.7143, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*.7143, r*tileSize+tileSize*.1429);
+    context.lineTo(c*tileSize+tileSize*.8571, r*tileSize+tileSize*.1429);
+    context.lineTo(c*tileSize+tileSize*.8571, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.2857);
+    context.lineTo(c*tileSize+tileSize*1, r*tileSize);
+    context.lineTo(c*tileSize, r*tileSize);
+    context.closePath();
+    context.rect(c*tileSize, r*tileSize+tileSize*.2857, tileSize, tileSize*.1429);*/
+    
+    /*context.lineTo(c*tileSize, r*tileSize+tileSize*.2);
+    context.bezierCurveTo(c*tileSize+tileSize*.25, r*tileSize+tileSize*.2, c*tileSize+tileSize*.25, r*tileSize+tileSize*.3, c*tileSize+tileSize*.5, r*tileSize+tileSize*.3);
+    context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.75, r*tileSize+tileSize*.2, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
+    context.lineTo((c+1)*tileSize, r*tileSize);
+    context.lineTo(c*tileSize, r*tileSize);*/
+    
+    /*context.arc((c + 5/6) * tileSize, (r + 1/6) * tileSize, tileSize/6, 0, Math.PI);
+    context.arc((c + 3/6) * tileSize, (r + 1/6) * tileSize, tileSize/6, 0, Math.PI);
+    context.arc((c + 1/6) * tileSize, (r + 1/6) * tileSize, tileSize/6, 0, Math.PI);
+    context.lineTo(c*tileSize, r*tileSize);
+    context.lineTo(c*tileSize+tileSize, r*tileSize);*/
+    
+    //context.closePath();
+    //context.fillStyle = "#000066";
+    //ontext.fill();
+    //context.stroke();
+}
+    
+function newPlatform(r, c, isOccupied){
+    
+    var x1 = .05;
+    var x2 = .05;
+    if(isOccupied(-1,0)) x1 = 0;
+    if(isOccupied(1,0)) x2 = 0;        
+    
+    var platformColors = ["#ffcccc", "#ffe0cc", "#ffffcc", "#e6ffe6", "#e6e6ff"];    
+    for(var i = 0; i<5; i++){
+        var j = i-1;
+        if(j<0) j = 0;
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*(i*x1), r*tileSize+tileSize*(.05 + (.1 * i) - (j * .02)));
+        context.strokeStyle = platformColors[i];
+        context.lineWidth = tileSize*(.1-(i*.02));
+        context.lineTo(c*tileSize+tileSize*(1-(i*x2)), r*tileSize+tileSize*(.05 + (.1 * i) - (j * .02)));
+        context.stroke();
+    }
+}
+    
+    function drawOneWayWall(fillStyle, r, c, dr, dc) {    
+    context.lineWidth = 2;
+    context.strokeStyle = "#333";
+    context.beginPath();
+    
+    if (dr == -1) {
+      context.moveTo(c * tileSize, r * tileSize + tileSize/2);
+      context.lineTo(c * tileSize + tileSize/4, r * tileSize + tileSize/4);
+      context.stroke();
+      context.moveTo(c * tileSize + 3*tileSize/4, r * tileSize + tileSize/4);
+      context.lineTo(c * tileSize + tileSize, r * tileSize + tileSize/2);
+    }
+    else if (dr == 1) {
+      context.moveTo(c * tileSize, r * tileSize + tileSize/2);
+      context.lineTo(c * tileSize + tileSize/4, r * tileSize + 3*tileSize/4);
+      context.stroke();
+      context.moveTo(c * tileSize + 3*tileSize/4, r * tileSize + 3*tileSize/4);
+      context.lineTo(c * tileSize + tileSize, r * tileSize + tileSize/2);
+    }
+    else if (dc == -1) {
+      context.moveTo(c * tileSize + tileSize/2, r * tileSize);
+      context.lineTo(c * tileSize + tileSize/4, r * tileSize + tileSize/4);
+      context.stroke();
+      context.moveTo(c * tileSize + tileSize/4, r * tileSize + 3*tileSize/4);
+      context.lineTo(c * tileSize + tileSize/2, r * tileSize + tileSize);
+    }
+    else if (dc == 1) {
+      context.moveTo(c * tileSize + tileSize/2, r * tileSize);
+      context.lineTo(c * tileSize + 3*tileSize/4, r * tileSize + tileSize/4);
+      context.stroke();
+      context.moveTo(c * tileSize + 3*tileSize/4, r * tileSize + 3*tileSize/4);
+      context.lineTo(c * tileSize + tileSize/2, r * tileSize + tileSize);
+    }
+    
+    context.stroke();
+    context.lineWidth = 0;
+        
+    context.fillStyle = fillStyle;
+    if (dr == -1) roundRect(context, c * tileSize - tileSize/15, r * tileSize - tileSize/15, tileSize + 2*tileSize/15, tileSize/4 + 2*tileSize/15, 2, true, false);
+    else if (dr == 1) roundRect(context, c * tileSize - tileSize/15, (r + 1) * tileSize - tileSize/15 - tileSize/4, tileSize + 2*tileSize/15, tileSize/4 + 2*tileSize/15, 2, true, false);
+    else if (dc == -1) roundRect(context, c * tileSize - tileSize/15, r * tileSize - tileSize/15, tileSize/4 + 2*tileSize/15, tileSize + 2*tileSize/15, 2, true, false);
+    else if (dc == 1) roundRect(context, (c + 1) * tileSize - tileSize/15 - tileSize/4, r * tileSize - tileSize/15, tileSize/4 + 2*tileSize/15, tileSize + 2*tileSize/15, 2, true, false);
+  }
+  
+  function drawBubble(r, c) { 
+      bubbleX = c*tileSize;
+      var grd = context.createRadialGradient(bubbleX, r*tileSize, 0, bubbleX, r*tileSize, tileSize);
+      grd.addColorStop(0, "rgba(255,255,255,.9)");
+      grd.addColorStop(1, "rgba(255,255,255,.2)");
+      context.fillStyle = grd;
+      context.lineWidth = .5;
+      context.strokeStyle = "rgba(200,200,200,.2)";
+      
+      context.beginPath();
+      context.arc(c*tileSize+tileSize*.5, r*tileSize+tileSize*.5, tileSize/2, 0, 2*Math.PI);
+      context.fill();
+      context.stroke();
+  }
+    
+function drawLiquid(r, c, type, adjacentTiles) {   
+    newLiquid(r, c, type, isSameLiquid);
+    
+    function isSameLiquid(dc, dr) {
+        var tileCode = adjacentTiles[1 + dr][1 + dc];
+        return tileCode == null || tileCode === type;
+    }
+}
+    
+function newLiquid(r, c, type, isOccupied){
+    var tubColor;
+    if(type == LAVA) {
+        context.fillStyle = "#ffbf00";
+        context.strokeStyle = "red";
+        tubColor = "black";
+    }
+    else {
+        context.fillStyle = "#1a8cff";
+        context.strokeStyle = "#80ffe5";
+        tubColor = "white";
+    }
+    roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 0, true, false);
+    
+    context.lineWidth = 3;    
+    context.beginPath();
+    context.moveTo(c*tileSize, r*tileSize+tileSize*.2);
+    context.bezierCurveTo(c*tileSize+tileSize/6, r*tileSize+tileSize*.1, c*tileSize+tileSize/3, r*tileSize+tileSize*.1, c*tileSize+tileSize/2, r*tileSize+tileSize*.2);
+    context.bezierCurveTo(c*tileSize+tileSize*2/3, r*tileSize+tileSize*.3, c*tileSize+tileSize*5/6, r*tileSize+tileSize*.3, c*tileSize+tileSize, r*tileSize+tileSize*.2);
+    context.moveTo(c*tileSize, r*tileSize+tileSize*.4);
+    context.bezierCurveTo(c*tileSize+tileSize/6, r*tileSize+tileSize*.3, c*tileSize+tileSize/3, r*tileSize+tileSize*.3, c*tileSize+tileSize/2, r*tileSize+tileSize*.4);
+    context.bezierCurveTo(c*tileSize+tileSize*2/3, r*tileSize+tileSize*.5, c*tileSize+tileSize*5/6, r*tileSize+tileSize*.5, c*tileSize+tileSize, r*tileSize+tileSize*.4);
+    context.moveTo(c*tileSize, r*tileSize+tileSize*.6);
+    context.bezierCurveTo(c*tileSize+tileSize/6, r*tileSize+tileSize*.5, c*tileSize+tileSize/3, r*tileSize+tileSize*.5, c*tileSize+tileSize/2, r*tileSize+tileSize*.6);
+    context.bezierCurveTo(c*tileSize+tileSize*2/3, r*tileSize+tileSize*.7, c*tileSize+tileSize*5/6, r*tileSize+tileSize*.7, c*tileSize+tileSize, r*tileSize+tileSize*.6);
+    context.moveTo(c*tileSize, r*tileSize+tileSize*.8);
+    context.bezierCurveTo(c*tileSize+tileSize/6, r*tileSize+tileSize*.7, c*tileSize+tileSize/3, r*tileSize+tileSize*.7, c*tileSize+tileSize/2, r*tileSize+tileSize*.8);
+    context.bezierCurveTo(c*tileSize+tileSize*2/3, r*tileSize+tileSize*.9, c*tileSize+tileSize*5/6, r*tileSize+tileSize*.9, c*tileSize+tileSize, r*tileSize+tileSize*.8);
+    context.stroke();
+    
+    context.fillStyle = tubColor;
+    if(!isOccupied(-1,0)) {
+        if(isOccupied(-1,-1)) roundRect(context, c*tileSize-tileSize*.1, r*tileSize-tileSize*.2, tileSize*.2, tileSize*1.2, 0, true, false);
+        else roundRect(context, c*tileSize-tileSize*.1, r*tileSize, tileSize*.2, tileSize, 0, true, false);
+    }
+    if(!isOccupied(1,0)) roundRect(context, c*tileSize+tileSize*.9, r*tileSize, tileSize*.2, tileSize, 0, true, false);
+    if(!isOccupied(0,1)) {
+        if(isOccupied(-1,1) && !isOccupied(1,1)) roundRect(context, c*tileSize-tileSize*.1, r*tileSize+tileSize*.8, tileSize*1.1, tileSize*.2, 0, true, false);
+        else if(!isOccupied(-1,1) && isOccupied(1,1)) roundRect(context, c*tileSize, r*tileSize+tileSize*.8, tileSize*1.3, tileSize*.2, 0, true, false);
+        else if(isOccupied(-1,1) && isOccupied(1,1)) roundRect(context, c*tileSize-tileSize*.1, r*tileSize+tileSize*.8, tileSize*1.1, tileSize*.2, 0, true, false);
+        else roundRect(context, c*tileSize, r*tileSize+tileSize*.8, tileSize, tileSize*.2, 0, true, false);
+    }
+}
+
+  function drawLift(r, c, isFixed) {
+        context.lineWidth = .5;
+        context.strokeStyle = "#777";
+        var strokeBool = false;
+        if(!isFixed) {
+            context.fillStyle = "#e68a00";
+            roundRect(context, c*tileSize+tileSize*.05, r*tileSize+tileSize, tileSize*.9, tileSize*.2, 2, true, strokeBool);
+            context.fillStyle = "#cc0000";
+            roundRect(context, c*tileSize+tileSize*.3, r*tileSize+tileSize*.8, tileSize*.4, tileSize*.2, {tl:2, tr:2}, true, strokeBool);
+        }
+        else if(isFixed) {
+            context.fillStyle = "#e68a00";
+            roundRect(context, c*tileSize+tileSize*.05, r*tileSize+tileSize*.8, tileSize*.9, tileSize*.2, 2, true, strokeBool);
+            roundRect(context, c*tileSize+tileSize*.05, r*tileSize, tileSize*.9, tileSize*.2, 2, true, strokeBool);
+            
+            context.fillStyle = "#333";
+            
+            context.beginPath();
+            context.moveTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.8);
+            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.5);
+            context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.45);
+            context.bezierCurveTo(c*tileSize+tileSize*.16,r*tileSize+tileSize*.45,c*tileSize+tileSize*.16,r*tileSize+tileSize*.55,c*tileSize+tileSize*.2,r*tileSize+tileSize*.55);
+            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.8);
+            context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.8);
+            context.closePath();
+            context.fill();
+            
+            context.beginPath();
+            context.moveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.8);
+            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.5);
+            context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.45);
+            context.bezierCurveTo(c*tileSize+tileSize*.84,r*tileSize+tileSize*.45,c*tileSize+tileSize*.84,r*tileSize+tileSize*.55,c*tileSize+tileSize*.8,r*tileSize+tileSize*.55);
+            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.8);
+            context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.8);
+            context.closePath();
+            context.fill();
+            
+            /*context.beginPath();
+            context.moveTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.9);
+            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.5);
+            context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.1);
+            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.1);
+            context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.5);
+            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.9);
+            context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.9);
+            context.closePath();
+            context.fill();
+            
+            context.beginPath();
+            context.moveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.9);
+            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.5);
+            context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.1);
+            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.1);
+            context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.5);
+            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.9);
+            context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.9);
+            context.closePath();
+            context.fill();*/
+        }
+      
+        /*var grd = context.createLinearGradient(c*tileSize, r*tileSize, (c+1)*tileSize, (r+1)*tileSize);
+        grd.addColorStop(0, "rgba(255,255,255,.6)");
+        grd.addColorStop(.1, "rgba(255,255,255,.7)");
+        grd.addColorStop(.2, "rgba(255,255,255,.5)");
+        grd.addColorStop(.3, "rgba(255,255,255,.6)");
+        grd.addColorStop(.4, "rgba(255,255,255,.8)");
+        grd.addColorStop(.5, "rgba(255,255,255,.7)");
+        grd.addColorStop(.6, "rgba(255,255,255,.5)");
+        grd.addColorStop(.7, "rgba(255,255,255,.6)");
+        grd.addColorStop(.8, "rgba(255,255,255,.7)");
+        grd.addColorStop(.9, "rgba(255,255,255,.8)");
+        grd.addColorStop(1, "rgba(255,255,255,.7)");
+
+        context.fillStyle = grd;
+        roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 5, true, false);
+      
+    if(!isFixed){
+        var bgColor;
+        if((c+r) % 2 == 0) bgColor = background.substr(0, background.indexOf('*'));
+        else bgColor = background.substr(background.indexOf('*')+2, background.length);
+        var r1, r2, b1, b2, g1, g2;
+        r1 = bgColor.substr(5, bgColor.indexOf(",")-5);
+        g1 = bgColor.substr(bgColor.indexOf(",")+1, bgColor.indexOf(",")-4);
+        b1 = bgColor.substr(bgColor.indexOf(",", bgColor.indexOf(",")+1)+1, bgColor.indexOf(",")-4);
+        var shade = (r+1)*.03+.5;
+        if(shade>1)
+            shade = 1;
+        r2 = 255 + (r1-255) * shade - 20;
+        g2 = 255 + (g1-255) * shade - 20;
+        b2 = 255 + (b1-255) * shade - 20;
+        context.strokeStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
+        //context.fillStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*.5, r*tileSize);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.2);
+        context.lineTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.15);
+        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.2);
+        context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.4);
+        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.35);
+        context.stroke();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.4);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.5);
+        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.5);
+        context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.5);
+        context.stroke();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.7);
+        context.lineTo(c*tileSize+tileSize*.45, r*tileSize+tileSize*.8);
+        context.lineTo(c*tileSize+tileSize*.55, r*tileSize+tileSize*.9);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*1);
+        context.stroke();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.5);
+        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.7);
+        context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.8);
+        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.8);
+        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*1);
+        context.stroke();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.2);
+        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.35);
+        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.5);
+        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.8);
+        context.stroke();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.35);
+        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.1);
+        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.2);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize);
+        context.stroke();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.35);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.3);
+        context.lineTo(c*tileSize+tileSize*.55, r*tileSize+tileSize*.45);
+        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.6);
+        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.7);
+        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.8);
+        context.lineTo(c*tileSize+tileSize*.15, r*tileSize+tileSize*.7);
+        context.lineTo(c*tileSize+tileSize*.02, r*tileSize+tileSize*.98);
+        context.stroke();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.35);
+        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.25);
+        context.lineTo(c*tileSize+tileSize*.45, r*tileSize+tileSize*.2);
+        context.stroke();
+    }*/
+  }
+
+  function drawWall(r, c, adjacentTiles) {  //GOOBY
+    //drawRect(r, c, "#976537");    
+    drawTileNew(r, c, isWall, 0.2, material);
+    drawTileOutlines(r, c, isWall, 0.2, curlyOutline);
+    context.save();
+    if(curlyOutline) drawBushes(r, c, isWall);
+    context.restore();
+    context.fillStyle = "#895C33"; // dirt edge
+    //drawTileOutlines(r, c, isWall, 0.2, false);
+
+    function isWall(dc, dr) {
+      var tileCode = adjacentTiles[1 + dr][1 + dc];
+      return tileCode == null || tileCode === WALL;
+    }
+  }
+    
+    function drawTileNew(r, c, isOccupied, outlineThickness, fillStyle){
+        context.fillStyle = fillStyle;
+        if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {bl:10,br:10}, true, false);
+        else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tl:10,bl:10}, true, false);
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tl:10,tr:10}, true, false);
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tr:10,br:10}, true, false);
+        else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {bl:10}, true, false);
+        else if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {br:10}, true, false);
+        else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tl:10}, true, false);
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, {tr:10}, true, false);
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 10, true, false);
+        else roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 0, true, false);
+        
+        /*var randomSpot = Math.floor(Math.random() * 5);   //random spots on dirt
+        var randomColor = Math.floor(Math.random() * 5);
+        context.beginPath();
+        switch(randomSpot){
+            case 0:
+                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 5, 0, 2*Math.PI);
+            case 1:
+                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 4, 0, 2*Math.PI);
+            case 2:
+                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 3, 0, 2*Math.PI);
+            case 3:
+                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 2, 0, 2*Math.PI);
+            case 4:
+                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 1, 0, 2*Math.PI);
+        }
+        context.stroke();*/
+    }
+    
+    function drawCurves(r, c, adjacentTiles){
+        drawCurves2(r, c, isWall, material);
+        
+        function isWall(dc, dr) {
+          var tileCode = adjacentTiles[1 + dr][1 + dc];
+          return tileCode == null || tileCode === WALL;
+        }
+    }
+    
+    function drawCurves2(r, c, isOccupied, material){
+        context.fillStyle = material;
+        if(isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(1, 1) && curlyOutline) {
+            context.fillRect((c+1)*tileSize, (r+1)*tileSize, tileSize/6, tileSize/6);
+            //context.globalCompositeOperation = "destination-out";
+            context.beginPath();
+            context.arc((c+1)*tileSize+tileSize/6, (r+1)*tileSize+tileSize/6, tileSize/6, 0, 2*Math.PI);
+            context.closePath();
+            
+            var bgColor;
+            if((c+r) % 2 == 0) bgColor = background.substr(0, background.indexOf('*'));
+            else bgColor = background.substr(background.indexOf('*')+2, background.length);
+            var r1, r2, b1, b2, g1, g2;
+            r1 = bgColor.substr(5, bgColor.indexOf(",")-5);
+            g1 = bgColor.substr(bgColor.indexOf(",")+1, bgColor.indexOf(",")-4);
+            b1 = bgColor.substr(bgColor.indexOf(",", bgColor.indexOf(",")+1)+1, bgColor.indexOf(",")-4);
+            var shade = (r+1)*.03+.5;
+            if(shade>1)
+                shade = 1;
+            r2 = 255 + (r1-255) * shade;
+            g2 = 255 + (g1-255) * shade;
+            b2 = 255 + (b1-255) * shade;
+            context.fillStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
+            context.fill();
+            context.globalCompositeOperation = "source-over";            
+        }
+        if(isOccupied(-1, 0) && isOccupied(0, 1) && !isOccupied(-1, 1) && curlyOutline) {
+            context.fillRect(c*tileSize-tileSize/6, (r+1)*tileSize, tileSize/6, tileSize/6);
+            //context.globalCompositeOperation = "destination-out";
+            context.beginPath();
+            context.arc(c*tileSize-tileSize/6, (r+1)*tileSize+tileSize/6, tileSize/6, 0, 2*Math.PI);
+            context.closePath();
+            
+            var bgColor;
+            if((c+r) % 2 == 0) bgColor = background.substr(0, background.indexOf('*'));
+            else bgColor = background.substr(background.indexOf('*')+2, background.length);
+            var r1, r2, b1, b2, g1, g2;
+            r1 = bgColor.substr(5, bgColor.indexOf(",")-5);
+            g1 = bgColor.substr(bgColor.indexOf(",")+1, bgColor.indexOf(",")-4);
+            b1 = bgColor.substr(bgColor.indexOf(",", bgColor.indexOf(",")+1)+1, bgColor.indexOf(",")-4);
+            var shade = (r+1)*.03+.5;
+            if(shade>1)
+                shade = 1;
+            r2 = 255 + (r1-255) * shade;
+            g2 = 255 + (g1-255) * shade;
+            b2 = 255 + (b1-255) * shade;
+            context.fillStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
+            context.fill();
+            context.globalCompositeOperation = "source-over";
+        }
+    }
+    
+  function drawTileOutlines(r, c, isOccupied, outlineThickness, curlyOutline) { //Gooby
+    if(surface != "rainbow") {
+        context.fillStyle = surface;
+    }
+    else{
+        context.fillStyle = "white";
+        var mod = (r+c) % 17;
+        switch(mod){
+            case 0: context.fillStyle = "#ff004c"; break;
+            case 1: context.fillStyle = "#e30000"; break;
+            case 2: context.fillStyle = "#ff4c00"; break;
+            case 3: context.fillStyle = "#ff9900"; break;
+            case 4: context.fillStyle = "#ffe500"; break;
+            case 5: context.fillStyle = "#cbff00"; break;
+            case 6: context.fillStyle = "#7fff00"; break;
+            case 7: context.fillStyle = "#00ff19"; break;
+            case 8: context.fillStyle = "#00ff66"; break;
+            case 9: context.fillStyle = "#00ffb2"; break;
+            case 10: context.fillStyle = "#00ffff"; break;
+            case 11: context.fillStyle = "#00b2ff"; break;
+            case 12: context.fillStyle = "#3200ff"; break;
+            case 13: context.fillStyle = "#5702c6"; break;
+            case 14: context.fillStyle = "#cc00ff"; break;
+            case 15: context.fillStyle = "#ff00e5"; break;
+            case 16: context.fillStyle = "#ff0098"; break;
+        }
+    }
+    var complement = 1 - outlineThickness;
+    var outlinePixels = outlineThickness * tileSize;
+    var complementPixels = (1 - 2 * outlineThickness) * tileSize;
+    
+    if (curlyOutline && !isOccupied(0, -1)){  
+        if(!isOccupied(-1, 0) && isOccupied(1, 0)){
+            context.beginPath();
+            context.moveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.05, r*tileSize+tileSize*.3, c*tileSize+tileSize*.3, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.4, c*tileSize+tileSize*.6, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.9, r*tileSize+tileSize*.4, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize+tileSize, r*tileSize);
+            context.lineTo(c*tileSize+tileSize*.2, r*tileSize);
+            context.bezierCurveTo(c*tileSize-tileSize*.2, r*tileSize-tileSize*.05, c*tileSize-tileSize*.15, r*tileSize+tileSize*.5, c*tileSize+tileSize*.1, r*tileSize+tileSize*.25);
+            context.closePath();
+        }
+        else if(isOccupied(-1, 0) && !isOccupied(1, 0)){
+            context.beginPath();
+            context.moveTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.95, r*tileSize+tileSize*.3, c*tileSize+tileSize*.7, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.65, r*tileSize+tileSize*.4, c*tileSize+tileSize*.4, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.3, c*tileSize+tileSize*.1, r*tileSize+tileSize*.4, c*tileSize, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize, r*tileSize);
+            context.lineTo(c*tileSize+tileSize*.8, r*tileSize);
+            context.bezierCurveTo((c+1)*tileSize+tileSize*.2, r*tileSize-tileSize*.05, (c+1)*tileSize+tileSize*.15, r*tileSize+tileSize*.5, (c+1)*tileSize-tileSize*.1, r*tileSize+tileSize*.25);
+            context.closePath();
+        }
+        else if(!isOccupied(-1, 0) && !isOccupied(1, 0)){
+            context.beginPath();
+            context.moveTo(c*tileSize+tileSize*.9, r*tileSize-tileSize*0);
+            context.lineTo(c*tileSize+tileSize*.2, r*tileSize);
+            context.bezierCurveTo(c*tileSize-tileSize*.2, r*tileSize-tileSize*.05, c*tileSize-tileSize*.15, r*tileSize+tileSize*.5, c*tileSize+tileSize*.1, r*tileSize+tileSize*.25);
+            context.bezierCurveTo(c*tileSize+tileSize*.05, r*tileSize+tileSize*.3, c*tileSize+tileSize*.3, r*tileSize+tileSize*.4, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.4, c*tileSize+tileSize*.6, r*tileSize+tileSize*.4, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.8, r*tileSize+tileSize*.4, c*tileSize+tileSize*.9, r*tileSize+tileSize*.2);
+            context.bezierCurveTo((c+1)*tileSize-tileSize*.1, r*tileSize+tileSize*.4, (c+1)*tileSize+tileSize*.3, r*tileSize+tileSize*.3, (c+1)*tileSize, r*tileSize+tileSize*.02);
+            context.closePath();
+        }
+        else{
+            context.beginPath();
+            context.moveTo(c*tileSize, r*tileSize);
+            context.lineTo(c*tileSize, r*tileSize+tileSize*.15);
+            context.bezierCurveTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.4, c*tileSize+tileSize*.3, r*tileSize+tileSize*.3, c*tileSize+tileSize*.33, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.3, c*tileSize+tileSize*.6, r*tileSize+tileSize*.3, c*tileSize+tileSize*.67, r*tileSize+tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.4, c*tileSize+tileSize*.9, r*tileSize+tileSize*.3, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
+            context.lineTo(c*tileSize+tileSize, r*tileSize);
+            context.closePath();
+        }
+            context.fill();
+    }
+      else if(!curlyOutline && !isOccupied(0, -1)){ context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels);
+          
+      }
+        if (!curlyOutline && !isOccupied(-1, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
+        if (!curlyOutline && !isOccupied( 1, -1)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
+        if (!curlyOutline && !isOccupied(-1,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
+        if (!curlyOutline && !isOccupied( 1,  1)) context.fillRect((c+complement) * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
+        if (!curlyOutline && !isOccupied( 0,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, tileSize, outlinePixels);
+        if (!curlyOutline && !isOccupied(-1,  0)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, tileSize);
+        if (!curlyOutline && !isOccupied( 1,  0)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, tileSize);
+  }
+
+    function drawBushes(r, c, isOccupied){
+        if(!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(1, -1)){
+            /*context.shadowColor = "#666";
+            context.shadowOffsetX = -.5;
+            context.shadowOffsetY = -.5;
+            context.shadowBlur = 1;*/
+            
+            context.beginPath();
+            context.moveTo((c+1)*tileSize, r*tileSize);
+            context.lineTo((c+1)*tileSize, r*tileSize-tileSize*.4);
+            context.bezierCurveTo((c+1)*tileSize-tileSize*.1,r*tileSize-tileSize*.4,(c+1)*tileSize-tileSize*.2,r*tileSize-tileSize*.4,(c+1)*tileSize-tileSize*.2, r*tileSize-tileSize*.2);
+            context.bezierCurveTo((c+1)*tileSize-tileSize*.3,r*tileSize-tileSize*.2,(c+1)*tileSize-tileSize*.4,r*tileSize-tileSize*.1,(c+1)*tileSize-tileSize*.3, r*tileSize);
+            context.lineTo((c+1)*tileSize, r*tileSize);
+            context.closePath();
+            context.fill();
+            
+            context.beginPath();
+            context.moveTo((c+1)*tileSize, r*tileSize-tileSize*.4);
+            context.bezierCurveTo((c+1)*tileSize-tileSize*.1,r*tileSize-tileSize*.4,(c+1)*tileSize-tileSize*.2,r*tileSize-tileSize*.4,(c+1)*tileSize-tileSize*.2, r*tileSize-tileSize*.2);
+            context.bezierCurveTo((c+1)*tileSize-tileSize*.3,r*tileSize-tileSize*.2,(c+1)*tileSize-tileSize*.4,r*tileSize-tileSize*.1,(c+1)*tileSize-tileSize*.3, r*tileSize);
+        }
+        
+        if(!isOccupied(0, -1) && isOccupied(-1, 0) && isOccupied(-1, -1)){
+            /*context.shadowColor = "#666";
+            context.shadowOffsetX = .5;
+            context.shadowOffsetY = -.5;
+            context.shadowBlur = 1;*/
+            
+            context.beginPath();
+            context.moveTo(c*tileSize, r*tileSize);
+            context.lineTo(c*tileSize, r*tileSize-tileSize*.4);
+            context.bezierCurveTo(c*tileSize+tileSize*.1,r*tileSize-tileSize*.4,c*tileSize+tileSize*.2,r*tileSize-tileSize*.4,c*tileSize+tileSize*.2, r*tileSize-tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.3,r*tileSize-tileSize*.2,c*tileSize+tileSize*.4,r*tileSize-tileSize*.1,c*tileSize+tileSize*.3, r*tileSize);
+            context.lineTo(c*tileSize, r*tileSize);
+            context.closePath();
+            context.fill();
+            
+            context.restore();
+            
+            context.beginPath();
+            context.moveTo(c*tileSize, r*tileSize-tileSize*.4);
+            context.bezierCurveTo(c*tileSize+tileSize*.1,r*tileSize-tileSize*.4,c*tileSize+tileSize*.2,r*tileSize-tileSize*.4,c*tileSize+tileSize*.2, r*tileSize-tileSize*.2);
+            context.bezierCurveTo(c*tileSize+tileSize*.3,r*tileSize-tileSize*.2,c*tileSize+tileSize*.4,r*tileSize-tileSize*.1,c*tileSize+tileSize*.3, r*tileSize);
+            /*context.strokeStyle = "#7dff1a";
+            context.stroke();*/        
+        }
+    }
+    
+  function drawSpikes(r, c, adjacentTiles) {
+    var x = c * tileSize;
+    var y = r * tileSize;
+    context.fillStyle = spikeColors[0];
+      
+    context.beginPath();
+    context.moveTo(x + tileSize * 0.25, y + tileSize * 0.3); //top spikes
+    context.lineTo(x + tileSize * 0.35, y + tileSize * 0.0);
+    context.lineTo(x + tileSize * 0.45, y + tileSize * 0.3);
+    context.lineTo(x + tileSize * 0.55, y + tileSize * 0.3);
+    context.lineTo(x + tileSize * 0.65, y + tileSize * 0.0);
+    context.lineTo(x + tileSize * 0.75, y + tileSize * 0.3);
+      
+    context.moveTo(x + tileSize * 0.7, y + tileSize * 0.25); //right spikes
+    context.lineTo(x + tileSize * 1.0, y + tileSize * 0.35);
+    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.45);
+    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.55);
+    context.lineTo(x + tileSize * 1.0, y + tileSize * 0.65);
+    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.75);
+      
+    context.moveTo(x + tileSize * 0.75, y + tileSize * 0.7); //bottom spikes
+    context.lineTo(x + tileSize * 0.65, y + tileSize * 1.0);
+    context.lineTo(x + tileSize * 0.55, y + tileSize * 0.7);
+    context.lineTo(x + tileSize * 0.45, y + tileSize * 0.7);
+    context.lineTo(x + tileSize * 0.35, y + tileSize * 1.0);
+    context.lineTo(x + tileSize * 0.25, y + tileSize * 0.7);
+      
+    context.moveTo(x + tileSize * 0.3, y + tileSize * 0.75); //left spikes
+    context.lineTo(x + tileSize * 0.0, y + tileSize * 0.65);
+    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.55);
+    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.45);
+    context.lineTo(x + tileSize * 0.0, y + tileSize * 0.35);
+    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.25);
+    context.closePath();
+      
+    /*context.lineTo(x + tileSize * 1.0, y + tileSize * 0.4);      
+    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.5);
+    context.lineTo(x + tileSize * 1.0, y + tileSize * 0.6);
+    context.lineTo(x + tileSize * 0.7, y + tileSize * 0.7);
+    context.lineTo(x + tileSize * 0.6, y + tileSize * 1.0);
+    context.lineTo(x + tileSize * 0.5, y + tileSize * 0.7);
+    context.lineTo(x + tileSize * 0.4, y + tileSize * 1.0);
+    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.7);
+    context.lineTo(x + tileSize * 0.0, y + tileSize * 0.6);
+    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.5);
+    context.lineTo(x + tileSize * 0.0, y + tileSize * 0.4);
+    context.lineTo(x + tileSize * 0.3, y + tileSize * 0.3);*/
+    context.fill();
+    drawSpikeSupports(r, c, isSpike, isWall);
+      
+    function isSpike(dc, dr) {
+        var tileCode = adjacentTiles[1 + dr][1 + dc];
+        return tileCode == null || tileCode === SPIKE;
+    }
+    function isWall(dc, dr) {
+        var tileCode = adjacentTiles[1 + dr][1 + dc];
+        return tileCode == null || tileCode === WALL;
+    }
+  }
+    
+    function drawSpikeSupports(r, c, isOccupied, canConnect){
+        var boltBool = false;
+        var occupiedCount = 0;
+        if(canConnect(0, 1)){
+            context.fillStyle = spikeColors[1];
+            context.fillRect(c*tileSize+(tileSize*.3), r*tileSize+(tileSize*.8), tileSize*.4, tileSize*.4);
+            boltBool = true;
+        }
+        if(canConnect(0, -1) && !canConnect(0, 1)){
+            if(!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(1, -1)){}
+            else{
+                context.fillStyle = spikeColors[1];
+                context.fillRect(c*tileSize+(tileSize*.3), r*tileSize, tileSize*.4, tileSize*.4);
+                boltBool = true;
+            }
+        }
+        if(canConnect(-1, 0) && !canConnect(0, 1)){
+            if(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(-1, 1)){}
+            else{
+                context.fillStyle = spikeColors[1];
+                context.fillRect(c*tileSize, r*tileSize+(tileSize*.3), tileSize*.4, tileSize*.4);
+                boltBool = true;
+            }
+        }
+        if(canConnect(1, 0) && !canConnect(0, 1)){
+            if(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(1, -1) && canConnect(1, 1)){}
+            else{
+                context.fillStyle = spikeColors[1];
+                context.fillRect(c*tileSize+(tileSize*.8), r*tileSize+(tileSize*.3), tileSize*.4, tileSize*.4);
+                boltBool = true;
+            }
+        }
+        
+        context.fillStyle = spikeColors[2];
+        if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)){                                             //TOUCHING ONE
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize*.8, {bl:4,br:4}, true, false);
+            boltBool = true;
+        }
+        else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)){
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize, tileSize*.6, {tl:4,bl:4}, true, false);
+            boltBool = true;
+        }
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)){
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.8, {tl:4,tr:4}, true, false);
+            boltBool = true;
+        }
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)){
+            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {tr:4,br:4}, true, false);
+            boltBool = true;
+        }
+        else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)){                                         //TOUCHING TWO (CORNERS)
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize*.8, {bl:4}, true, false);
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {bl:4}, true, false);
+            if(!canConnect(1, -1)) boltBool = true;
+        }
+        else if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)){
+            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {br:4}, true, false);
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize*.8, {br:4}, true, false);        
+            if(!canConnect(-1, -1)) boltBool = true;
+        }
+        else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)){
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {tl:4}, true, false);
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.8, {tl:4}, true, false);
+            if(!canConnect(1, 1)) boltBool = true;
+      }
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)){
+            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, {tr:4}, true, false);
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.8, {tr:4}, true, false);
+            if(!canConnect(-1, 1)) boltBool = true;
+       }
+        else if (isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)){                                         //TOUCHING TWO (OPPOSITES)
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize, 0, true, false);
+        }
+        else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)){
+            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize, tileSize*.6, 0, true, false);
+        }
+        else if (isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)){                                         //TOUCHING THREE
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize, 0, true, false);
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, 0, true, false);
+             boltBool = true;
+       }
+        else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)){                                         
+            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize, tileSize*.6, 0, true, false);
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize*.8, 0, true, false);
+             boltBool = true;
+       }
+        else if (isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)){                                         
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize, 0, true, false);
+            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize*.8, tileSize*.6, 0, true, false);
+            boltBool = true;
+        }
+        else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)){                                         
+            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize, tileSize*.6, 0, true, false);
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.8, 0, true, false);
+             boltBool = true;
+       }
+        else if (isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)){                                              //TOUCHING FOUR                                 
+            roundRect(context, c*tileSize, r*tileSize+(tileSize*.2), tileSize, tileSize*.6, 0, true, false);
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize, tileSize*.6, tileSize, 0, true, false);
+            //boltBool = true;
+        }
+        else{
+            roundRect(context, c*tileSize+(tileSize*.2), r*tileSize+(tileSize*.2), tileSize*.6, tileSize*.6, 0, true, false);
+            boltBool = true;
+        }
+        
+        if (boltBool) drawBolt(r, c);
+    }
+    
+    function drawBolt(r, c){
+        context.strokeStyle = spikeColors[3];
+        context.beginPath();
+        context.arc(c*tileSize+(tileSize*.55), r*tileSize+(tileSize*.45), 4, -.7*Math.PI, .2*Math.PI);
+        context.lineTo(c*tileSize+(tileSize*.45),r*tileSize+(tileSize*.35));
+        context.closePath();
+        context.fillStyle = spikeColors[3];
+        context.fill();
+        context.stroke();
+        
+        context.beginPath();
+        context.moveTo(c*tileSize+(tileSize*.43),r*tileSize+(tileSize*.47));
+        context.arc(c*tileSize+(tileSize*.48), r*tileSize+(tileSize*.52), 4, .2*Math.PI, -.75*Math.PI);
+        //context.lineTo(c*tileSize+(tileSize*.4),r*tileSize+(tileSize*.6));
+        context.closePath();
+        context.fillStyle = spikeColors[3];
+        context.fill();
+        context.stroke();
+    }
+        
+  function drawConnector(context, r1, c1, r2, c2, color) {
+    // either r1 and r2 or c1 and c2 must be equal
+    if (r1 > r2 || c1 > c2) {
+      var rTmp = r1;
+      var cTmp = c1;
+      r1 = r2;
+      c1 = c2;
+      r2 = rTmp;
+      c2 = cTmp;
+    }
+    var xLo = (c1 + 0.3) * tileSize;
+    var yLo = (r1 + 0.3) * tileSize;
+    var xHi = (c2 + 0.45) * tileSize;
+    var yHi = (r2 + 0.45) * tileSize;
+    context.fillStyle = color;
+    context.fillRect(xLo+.15*tileSize, yLo+.15*tileSize, xHi - xLo, yHi - yLo);
+  }
+  function drawBlock(block) {
+    var animationDisplacementRowcol = findAnimationDisplacementRowcol(block.type, block.id);
+    var rowcols = block.locations.map(function(location) {
+      return getRowcol(level, location);
+    });
+    rowcols.forEach(function(rowcol) {
+      var r = rowcol.r + animationDisplacementRowcol.r;
+      var c = rowcol.c + animationDisplacementRowcol.c;
+      context.fillStyle = blockColors[0][block.id % blockColors[0].length];
+      var outlineThickness = .2;
+        
+      var complement = 1 - outlineThickness;
+      var outlinePixels = outlineThickness * tileSize;
+      if (!isAlsoThisBlock(-1, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
+      if (!isAlsoThisBlock( 1, -1)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, outlinePixels);
+      if (!isAlsoThisBlock(-1,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
+      if (!isAlsoThisBlock( 1,  1)) context.fillRect((c+complement) * tileSize, (r+complement) * tileSize, outlinePixels, outlinePixels);
+      if (!isAlsoThisBlock( 0, -1)) context.fillRect((c)            * tileSize, (r)            * tileSize, tileSize, outlinePixels);
+      if (!isAlsoThisBlock( 0,  1)) context.fillRect((c)            * tileSize, (r+complement) * tileSize, tileSize, outlinePixels);
+      if (!isAlsoThisBlock(-1,  0)) context.fillRect((c)            * tileSize, (r)            * tileSize, outlinePixels, tileSize);
+      if (!isAlsoThisBlock( 1,  0)) context.fillRect((c+complement) * tileSize, (r)            * tileSize, outlinePixels, tileSize);
+        
+      function isAlsoThisBlock(dc, dr) {
+        for (var i = 0; i < rowcols.length; i++) {
+          var otherRowcol = rowcols[i];
+          if (rowcol.r + dr === otherRowcol.r && rowcol.c + dc === otherRowcol.c) return true;
+        }
+        return false;
+      }
+    });
+  }
+  function drawQuarterPie(r, c, radiusFactor, fillStyle, quadrant) {
+    var cx = (c + 0.5) * tileSize;
+    var cy = (r + 0.5) * tileSize;
+    context.fillStyle = fillStyle;
+    context.beginPath();
+    context.moveTo(cx, cy);
+    context.arc(cx, cy, radiusFactor * tileSize/2, quadrant * Math.PI/2, (quadrant + 1) * Math.PI/2);
+    context.fill();
+  }
+  function drawDiamond(r, c, fillStyle) {
+    var x = c * tileSize;
+    var y = r * tileSize;
+    context.fillStyle = fillStyle;
+    roundRect(context, x, y, tileSize, tileSize, 10, true, false);
+  }
+  function drawCircle(r, c, radiusFactor, fillStyle) {
+    context.fillStyle = fillStyle;
+    context.beginPath();
+    context.arc((c + 0.5) * tileSize, (r + 0.5) * tileSize, tileSize/2 * radiusFactor, 0, 2*Math.PI);
+    context.fill();
+  }
+  function drawRect(r, c, fillStyle) {
+    context.fillStyle = fillStyle;
+    context.fillRect(c * tileSize, r * tileSize, tileSize, tileSize);
+  }
+    
+    function drawCloud(c, x, y){
+        c.fillStyle = experimentalColors[0];
+        /*c.beginPath();
+        c.rect(x, y, tileSize, tileSize);
+        c.fill();
+        c.closePath();*/
+        
+        c.beginPath();
+        c.moveTo(x+tileSize*0, y+tileSize*0);
+        
+        c.bezierCurveTo(x+tileSize*0, y-tileSize*.15, x+tileSize*.33, y-tileSize*.15, x+tileSize*.33, y+tileSize*0);
+        c.bezierCurveTo(x+tileSize*.33, y-tileSize*.15, x+tileSize*.67, y-tileSize*.15, x+tileSize*.67, y+tileSize*0);
+        c.bezierCurveTo(x+tileSize*.67, y-tileSize*.15, x+tileSize*1, y-tileSize*.15, x+tileSize*1, y+tileSize*0);
+        
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*0, x+tileSize*1.15, y+tileSize*.33, x+tileSize*1, y+tileSize*.33);
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*.33, x+tileSize*1.15, y+tileSize*.67, x+tileSize*1, y+tileSize*.67);
+        c.bezierCurveTo(x+tileSize*1.15, y+tileSize*.67, x+tileSize*1.15, y+tileSize*1, x+tileSize*1, y+tileSize*1);
+        
+        c.bezierCurveTo(x+tileSize*1, y+tileSize*1.15, x+tileSize*.67, y+tileSize*1.15, x+tileSize*.67, y+tileSize*1);
+        c.bezierCurveTo(x+tileSize*.67, y+tileSize*1.15, x+tileSize*.33, y+tileSize*1.15, x+tileSize*.33, y+tileSize*1);
+        c.bezierCurveTo(x+tileSize*.33, y+tileSize*1.15, x+tileSize*0, y+tileSize*1.15, x+tileSize*0, y+tileSize*1);
+        
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*1, x-tileSize*.15, y+tileSize*.67, x+tileSize*0, y+tileSize*.67);
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*.67, x-tileSize*.15, y+tileSize*.33, x+tileSize*0, y+tileSize*.33);
+        c.bezierCurveTo(x-tileSize*.15, y+tileSize*.33, x-tileSize*.15, y+tileSize*0, x+tileSize*0, y+tileSize*0);
+        
+        c.closePath();
+        c.fill();
+        //c.stroke();
+    }
+
+function drawFace(snake, headCol, headRow, orientation){
+    var x = headCol * tileSize;
+    var y = headRow * tileSize;
+    
+    var scaleFactor = 1.5;
+    var scale1;
+    var scale2;
+    var eye1 = tileSize*.8;
+    var eye2 = tileSize*.4;
+
+    var eyeSize = tileSize/5;
+    var eyeRotation = 2;
+    var z1, z2, z3, z4, z5, z6, z7, z8;
+    var a1, a2, a3, a4, a5, a6, a7, a8;
+    var beakRotation = 1.5;
+    var arcDirection = false;
+    
+    switch(orientation){
+        case 0:    //red up and blue left
+            z1 = eye2; 
+            z2 = tileSize-eye1; 
+            z3 = eye2; 
+            z4 = tileSize-eye2; 
+            z5 = eye2; 
+            z6 = tileSize-eye1;  
+            z7 = eye2; 
+            z8 = tileSize-eye2 
+            eyeRotation = 1.5; 
+            scale1 = scaleFactor; 
+            scale2 = 1;
+
+            a1 = tileSize*.7;
+            a2 = tileSize-tileSize*.7;
+            a3 = tileSize*.7;
+            a4 = -tileSize*.3;
+            a5 = tileSize*.7;
+            a6 = tileSize*.3;
+            a7 = tileSize/6;
+            a8 = 0;
+            beakRotation = 1;
+            arcDirection = false;
+            break;
+        case 1:    //red right and blue up
+            z1 = eye1; 
+            z2 = eye2; 
+            z3 = eye2; 
+            z4 = eye2; 
+            z5 = eye1; 
+            z6 = eye2; 
+            z7 = eye2; 
+            z8 = eye2; 
+            eyeRotation = 2; 
+            scale1 = 1; 
+            scale2 = scaleFactor;
+
+            a1 = tileSize*.7;
+            a2 = tileSize*.7;
+            a3 = tileSize*1.3;
+            a4 = tileSize*.7;
+            a5 = tileSize*.7;
+            a6 = tileSize*.7;
+            a7 = 0;
+            a8 = tileSize/6;
+            beakRotation = 1.5;
+            arcDirection = false;
+            break;
+        case 2:    //red down and blue right
+            z1 = tileSize-eye2; 
+            z2 = eye1; 
+            z3 = tileSize-eye2; 
+            z4 = eye2; 
+            z5 = tileSize-eye2; 
+            z6 = eye1; 
+            z7 = tileSize-eye2; 
+            z8 = eye2; 
+            eyeRotation = 2.5; 
+            scale1 = scaleFactor; 
+            scale2 = 1;
+
+            a1 = tileSize-tileSize*.7;
+            a2 = tileSize*.7;
+            a3 = tileSize-tileSize*.7;
+            a4 = tileSize*1.3;
+            a5 = tileSize-tileSize*.7;
+            a6 = tileSize*.7;
+            a7 = tileSize/6;
+            a8 = 0;
+            beakRotation = 1;
+            arcDirection = true;
+            break;
+        case 3:    //red left and blue down
+            z1 = tileSize-eye1; 
+            z2 = tileSize-eye2; 
+            z3 = tileSize-eye2; 
+            z4 = tileSize-eye2; 
+            z5 = tileSize-eye1; 
+            z6 = tileSize-eye2; 
+            z7 = tileSize-eye2; 
+            z8 = tileSize-eye2; 
+            eyeRotation = 3; 
+            scale1 = 1; 
+            scale2 = scaleFactor;
+
+            a1 = tileSize-tileSize*.7;
+            a2 = tileSize-tileSize*.7;
+            a3 = tileSize-tileSize*1.3;
+            a4 = tileSize-tileSize*.7;
+            a5 = tileSize-tileSize*.7;
+            a6 = tileSize-tileSize*.7;
+            a7 = 0;
+            a8 = tileSize/6;
+            beakRotation = 1.5;
+            arcDirection = true;
+            break;
+        case 4:    //green up and yellow right
+            z1 = tileSize-eye2; 
+            z2 = tileSize-eye1; 
+            z3 = tileSize-eye2; 
+            z4 = tileSize-eye2; 
+            z5 = tileSize-eye2; 
+            z6 = tileSize-eye1;  
+            z7 = tileSize-eye2; 
+            z8 = tileSize-eye2 
+            eyeRotation = 2.5; 
+            scale1 = scaleFactor; 
+            scale2 = 1;
+
+            a1 = tileSize-tileSize*.7;
+            a2 = tileSize-tileSize*.7;
+            a3 = tileSize-tileSize*.7;
+            a4 = -tileSize*.3;
+            a5 = tileSize-tileSize*.7;
+            a6 = tileSize*.3;
+            a7 = tileSize/6;
+            a8 = 0;
+            beakRotation = 1;
+            arcDirection = false;
+            break;
+        case 5:    //green right and yellow down
+            z1 = eye1; 
+            z2 = tileSize-eye2; 
+            z3 = eye2; 
+            z4 = tileSize-eye2; 
+            z5 = eye1; 
+            z6 = tileSize-eye2; 
+            z7 = eye2; 
+            z8 = tileSize-eye2; 
+            eyeRotation = 3; 
+            scale1 = 1; 
+            scale2 = scaleFactor;
+
+            a1 = tileSize*.7;
+            a2 = tileSize-tileSize*.7;
+            a3 = tileSize*1.3;
+            a4 = tileSize-tileSize*.7;
+            a5 = tileSize*.7;
+            a6 = tileSize-tileSize*.7;
+            a7 = 0;
+            a8 = tileSize/6;
+            beakRotation = 1.5;
+            arcDirection = false;
+            break;
+        case 6:    //green down and yellow left
+            z1 = eye2; 
+            z2 = eye1; 
+            z3 = eye2; 
+            z4 = eye2; 
+            z5 = eye2; 
+            z6 = eye1; 
+            z7 = eye2; 
+            z8 = eye2; 
+            eyeRotation = 1.5; 
+            scale1 = scaleFactor; 
+            scale2 = 1;
+
+            a1 = tileSize*.7;
+            a2 = tileSize*.7;
+            a3 = tileSize*.7;
+            a4 = tileSize*1.3;
+            a5 = tileSize*.7;
+            a6 = tileSize*.7;
+            a7 = tileSize/6;
+            a8 = 0;
+            beakRotation = 1;
+            arcDirection = true;
+            break;
+        case 7:    //green left and yellow up
+            z1 = tileSize-eye1; 
+            z2 = eye2; 
+            z3 = tileSize-eye2; 
+            z4 = eye2; 
+            z5 = tileSize-eye1; 
+            z6 = eye2; 
+            z7 = tileSize-eye2; 
+            z8 = eye2; 
+            eyeRotation = 2; 
+            scale1 = 1; 
+            scale2 = scaleFactor;
+
+            a1 = tileSize-tileSize*.7;
+            a2 = tileSize*.7;
+            a3 = tileSize-tileSize*1.3;
+            a4 = tileSize*.7;
+            a5 = tileSize-tileSize*.7;
+            a6 = tileSize*.7;
+            a7 = 0;
+            a8 = tileSize/6;
+            beakRotation = 1.5;
+            arcDirection = true;
+            break;
+        case 10:    //single unit snake
+            z1 = eye1; 
+            z2 = eye2; 
+            z3 = eye2; 
+            z4 = eye2; 
+            z5 = eye1; 
+            z6 = eye2; 
+            z7 = eye2; 
+            z8 = eye2; 
+            eyeRotation = 2; 
+            scale1 = 1; 
+            scale2 = scaleFactor;
+
+            a1 = tileSize*.7;
+            a2 = tileSize*.7;
+            a3 = tileSize*1.3;
+            a4 = tileSize*.7;
+            a5 = tileSize*.7;
+            a6 = tileSize*.7;
+            a7 = 0;
+            a8 = tileSize/6;
+            beakRotation = 1.5;
+            arcDirection = false;
+            break;
+    }
+    
+    if (snake === activeSnakeId) {     //draw eyes for active snake only    
+        context.fillStyle = "white";
+        context.save();
+        context.scale(scale1,scale2);
+        context.beginPath();
+        context.arc((x+z1)/scale1, (y+z2)/scale2, eyeSize, (eyeRotation-1)*Math.PI, eyeRotation*Math.PI, true);
+        context.closePath();
+        context.restore();
+        context.fill();
+
+        context.fillStyle = "white";
+        context.save();
+        context.scale(scale1,scale2);
+        context.beginPath();
+        context.arc((x+z3)/scale1, (y+z4)/scale2, eyeSize, (eyeRotation-1)*Math.PI, eyeRotation*Math.PI, true);
+        context.closePath();
+        context.restore();
+        context.fill();
+
+        context.fillStyle = "black";
+        context.save();
+        context.scale(scale1,scale2);
+        context.beginPath();
+        context.arc((x+z5)/scale1, (y+z6)/scale2, eyeSize/2, (eyeRotation-1)*Math.PI, eyeRotation*Math.PI, true);
+        context.closePath();
+        context.restore();
+        context.fill();
+
+        context.fillStyle = "black";
+        context.save();
+        context.scale(scale1,scale2);
+        context.beginPath();
+        context.arc((x+z7)/scale1, (y+z8)/scale2, eyeSize/2, (eyeRotation-1)*Math.PI, eyeRotation*Math.PI, true);
+        context.closePath();
+        context.restore();
+        context.fill();
+    }
+    
+    //beak
+    context.fillStyle = "#F9921C";
+    context.beginPath();
+    context.arc(x+a1, y+a2, tileSize/6, (beakRotation-1)*Math.PI, beakRotation*Math.PI, arcDirection);
+    context.lineTo(x+a3, y+a4);
+    context.lineTo(x+a5+a7, y+a6+a8);
+    context.closePath();
+    context.fill();
+}
+    
+    function roundRect(ctx, x, y, width, height, radius, fill, stroke) { //Gooby
+      if (typeof stroke === 'undefined') {
+        stroke = true;
+      }
+      if (typeof radius === 'undefined') {
+        radius = 5;
+      }
+      if (typeof radius === 'number') {
+        radius = {tl: radius, tr: radius, br: radius, bl: radius};
+      } else {
+        var defaultRadius = {tl: 0, tr: 0, br: 0, bl: 0};
+        for (var side in defaultRadius) {
+          radius[side] = radius[side] || defaultRadius[side];
+        }
+      }
+      ctx.beginPath();
+      ctx.moveTo(x + radius.tl, y);
+      ctx.lineTo(x + width - radius.tr, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr);
+      ctx.lineTo(x + width, y + height - radius.br);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height);
+      ctx.lineTo(x + radius.bl, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl);
+      ctx.lineTo(x, y + radius.tl);
+      ctx.quadraticCurveTo(x, y, x + radius.tl, y);
+      ctx.closePath();
+      if (fill) {
+        ctx.fill();
+      }
+      if (stroke) {
+        ctx.stroke();
+      }
+    }
+    
+function shadeColor(color, percent) {
+
+    var R = parseInt(color.substring(1,3),16);
+    var G = parseInt(color.substring(3,5),16);
+    var B = parseInt(color.substring(5,7),16);
+
+    R = parseInt(R * (100 + percent) / 100);
+    G = parseInt(G * (100 + percent) / 100);
+    B = parseInt(B * (100 + percent) / 100);
+
+    R = (R<255)?R:255;  
+    G = (G<255)?G:255;  
+    B = (B<255)?B:255;  
+
+    var RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
+    var GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
+    var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
+
+    return "#"+RR+GG+BB;
+}
+
+    
+    function drawR(r,c,fillStyle){ //Gooby
+        context.fillStyle = fillStyle;
+        var cornerRadius = 20;
+        context.lineJoin = "round";
+        context.lineWidth = 1;
+        context.strokeRect(c*tileSize, r*tileSize, tileSize, tileSize);
+        //context.fillRect(c*tileSize, r*tileSize, tileSize, tileSize);
+    }
+
+  function drawGrid() {
+    var buffer = document.createElement("canvas");
+    buffer.width = canvas.width;
+    buffer.height = canvas.height;
+    var localContext = buffer.getContext("2d");
+
+    localContext.strokeStyle = "#fff";
+    localContext.beginPath();
+    for (var r = 0; r < level.height; r++) {
+      localContext.moveTo(0, tileSize*r);
+      localContext.lineTo(tileSize*level.width, tileSize*r);
+    }
+    for (var c = 0; c < level.width; c++) {
+      localContext.moveTo(tileSize*c, 0);
+      localContext.lineTo(tileSize*c, tileSize*level.height);
+    }
+    localContext.stroke();
+
+    context.save();
+    context.globalAlpha = 0.4;
+    context.drawImage(buffer, 0, 0);
+    context.restore();
+  }
+}
+
+function findAnimation(animationTypes, objectId) {
+  if (animationQueueCursor === animationQueue.length) return null;
+  var currentAnimation = animationQueue[animationQueueCursor];
+  for (var i = 1; i < currentAnimation.length; i++) {
+    var animation = currentAnimation[i];
+    if (animationTypes.indexOf(animation[0]) !== -1 && animation[1] === objectId) return animation;
+  }
+}
+function findAnimationDisplacementRowcol(objectType, objectId) {
+  var dr = 0;
+  var dc = 0;
+  var animationTypes = [
+    "m" + objectType, // MOVE_SNAKE | MOVE_BLOCK
+    "t" + objectType, // TELEPORT_SNAKE | TELEPORT_BLOCK
+  ];
+  // skip the current one
+  for (var i = animationQueueCursor + 1; i < animationQueue.length; i++) {
+    var animations = animationQueue[i];
+    for (var j = 1; j < animations.length; j++) {
+      var animation = animations[j];
+      if (animationTypes.indexOf(animation[0]) !== -1 &&
+          animation[1] === objectId) {
+        dr += animation[2];
+        dc += animation[3];
+      }
+    }
+  }
+  var movementAnimation = findAnimation(animationTypes, objectId);
+  if (movementAnimation != null) {
+    dr += movementAnimation[2] * (1 - animationProgress);
+    dc += movementAnimation[3] * (1 - animationProgress);
+  }
+  return {r: -dr, c: -dc};
+}
+function hasFutureRemoveAnimation(object) {
+  var animationTypes = [
+    EXIT_SNAKE,
+    DIE_BLOCK,
+  ];
+  for (var i = animationQueueCursor; i < animationQueue.length; i++) {
+    var animations = animationQueue[i];
+    for (var j = 1; j < animations.length; j++) {
+      var animation = animations[j];
+      if (animationTypes.indexOf(animation[0]) !== -1 &&
+          animation[1] === object.id) {
+        return true;
+      }
+    }
+  }
+}
+
+function previewPaste(hoverR, hoverC) {
+  var offsetR = hoverR - clipboardOffsetRowcol.r;
+  var offsetC = hoverC - clipboardOffsetRowcol.c;
+
+  var newLevel = JSON.parse(JSON.stringify(level));
+  var selectedLocations = [];
+  var selectedObjects = [];
+  clipboardData.selectedLocations.forEach(function(location) {
+    var tileCode = clipboardData.level.map[location];
+    var rowcol = getRowcol(clipboardData.level, location);
+    var r = rowcol.r + offsetR;
+    var c = rowcol.c + offsetC;
+    if (!isInBounds(newLevel, r, c)) return;
+    var newLocation = getLocation(newLevel, r, c);
+    newLevel.map[newLocation] = tileCode;
+    selectedLocations.push(newLocation);
+  });
+  clipboardData.selectedObjects.forEach(function(object) {
+    var newLocations = [];
+    for (var i = 0; i < object.locations.length; i++) {
+      var rowcol = getRowcol(clipboardData.level, object.locations[i]);
+      rowcol.r += offsetR;
+      rowcol.c += offsetC;
+      if (!isInBounds(newLevel, rowcol.r, rowcol.c)) {
+        // this location is oob
+        if (object.type === SNAKE) {
+          // snakes must be completely in bounds
+          return;
+        }
+        // just skip it
+        continue;
+      }
+      var newLocation = getLocation(newLevel, rowcol.r, rowcol.c);
+      newLocations.push(newLocation);
+    }
+    if (newLocations.length === 0) return; // can't have a non-present object
+    var newObject = JSON.parse(JSON.stringify(object));
+    newObject.locations = newLocations;
+    selectedObjects.push(newObject);
+  });
+  return {
+    level: newLevel,
+    selectedLocations: selectedLocations,
+    selectedObjects: selectedObjects,
+  };
+}
+
+function getNaiveOrthogonalPath(a, b) {
+  // does not include a, but does include b.
+  var rowcolA = getRowcol(level, a);
+  var rowcolB = getRowcol(level, b);
+  var path = [];
+  if (rowcolA.r < rowcolB.r) {
+    for (var r = rowcolA.r; r < rowcolB.r; r++) {
+      path.push(getLocation(level, r + 1, rowcolA.c));
+    }
+  } else {
+    for (var r = rowcolA.r; r > rowcolB.r; r--) {
+      path.push(getLocation(level, r - 1, rowcolA.c));
+    }
+  }
+  if (rowcolA.c < rowcolB.c) {
+    for (var c = rowcolA.c; c < rowcolB.c; c++) {
+      path.push(getLocation(level, rowcolB.r, c + 1));
+    }
+  } else {
+    for (var c = rowcolA.c; c > rowcolB.c; c--) {
+      path.push(getLocation(level, rowcolB.r, c - 1));
+    }
+  }
+  return path;
+}
+function identityFunction(x) {
+  return x;
+}
+function compareId(a, b) {
+  return operatorCompare(a.id, b.id);
+}
+function operatorCompare(a, b) {
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+function clamp(value, min, max) {
+  if (value < min) return min;
+  if (value > max) return max;
+  return value;
+}
+function copyArray(array) {
+  return array.map(identityFunction);
+}
+function getSetIntersection(array1, array2) {
+  if (array1.length * array2.length === 0) return [];
+  return array1.filter(function(x) { return array2.indexOf(x) !== -1; });
+}
+function makeScaleCoordinatesFunction(width1, width2) {
+  return function(location) {
+    return location + (width2 - width1) * Math.floor(location / width1);
+  };
+}
+
+var expectHash;
+window.addEventListener("hashchange", function() {
+  if (location.hash === expectHash) {
+    // We're in the middle of saveLevel() or saveReplay().
+    // Don't react to that event.
+    expectHash = null;
+    return;
+  }
+  // The user typed into the url bar or used Back/Forward browser buttons, etc.
+  loadFromLocationHash();
+});
+function loadFromLocationHash() {
+  var hashSegments = location.hash.split("#");
+  hashSegments.shift(); // first element is always ""
+  if (!(1 <= hashSegments.length && hashSegments.length <= 2)) return false;
+  var hashPairs = hashSegments.map(function(segment) {
+    var equalsIndex = segment.indexOf("=");
+    if (equalsIndex === -1) return ["", segment]; // bad
+    return [segment.substring(0, equalsIndex), segment.substring(equalsIndex + 1)];
+  });
+
+  if (hashPairs[0][0] !== "level") return false;
+  try {
+    var level = parseLevel(hashPairs[0][1]);
+  } catch (e) {
+    alert(e);
+    return false;
+  }
+  loadLevel(level);
+  if (hashPairs.length > 1) {
+    try {
+      if (hashPairs[1][0] !== "replay") throw new Error("unexpected hash pair: " + hashPairs[1][0]);
+      parseAndLoadReplay(hashPairs[1][1]);
+    } catch (e) {
+      alert(e);
+      return false;
+    }
+  }
+  return true;
+}
+
+// run test suite
+var testTime = new Date().getTime();
+if (compressSerialization(stringifyLevel(parseLevel(testLevel_v0))) !== testLevel_v0_converted) throw new Error("v0 level conversion is broken");
+// ask the debug console for this variable if you're concerned with how much time this wastes.
+testTime = new Date().getTime() - testTime;
+
+loadPersistentState();
+if (!loadFromLocationHash()) {
+  loadLevel(parseLevel(exampleLevel));
+}
