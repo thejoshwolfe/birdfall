@@ -2980,6 +2980,7 @@ function drawLiquid(r, c, type, adjacentTiles) {
 }
     
 function newLiquid(r, c, type, isOccupied){
+    context.save();
     var tubColor;
     if(type == LAVA) {
         context.fillStyle = "#ffbf00";
@@ -3021,6 +3022,7 @@ function newLiquid(r, c, type, isOccupied){
         else if(isOccupied(-1,1) && isOccupied(1,1)) roundRect(context, c*tileSize-tileSize*.1, r*tileSize+tileSize*.8, tileSize*1.1, tileSize*.2, 0, true, false);
         else roundRect(context, c*tileSize, r*tileSize+tileSize*.8, tileSize, tileSize*.2, 0, true, false);
     }
+    context.restore();
 }
 
   function drawLift(r, c, isFixed) {
