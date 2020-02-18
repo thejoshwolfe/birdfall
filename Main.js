@@ -1787,7 +1787,7 @@ function move(dr, dc) {
             // push objects
             if (!checkMovement(activeSnake, otherObject, dr, dc, pushedObjects)) return false;
           }
-        } else return; // can't go through that tile
+      } else return; // can't go through that tile
     }
   }
 
@@ -2044,9 +2044,9 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                 continue;
             }
         }
-      // can't push into something solid
-      return false;
       }
+        // can't push into something solid
+      return false;
     }
   }
   // the push is go
