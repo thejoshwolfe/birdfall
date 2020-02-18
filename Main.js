@@ -3021,7 +3021,7 @@ function drawLiquid(r, c, type, adjacentTiles) {
 function newLiquid(r, c, type, isOccupied){
     var tubColor;
     if(type == LAVA) {
-        context.fillStyle = "yellow";
+        context.fillStyle = "#ffbf00";
         context.strokeStyle = "red";
         tubColor = "black";
     }
