@@ -1162,8 +1162,9 @@ function redo(undoStuff) {
   undoStuffChanged(undoStuff);
 }
 function redoAll(undoStuff) {
+  //blockSupportRenderCache = [];   //didn't work
   cs = true;
-  if (undoStuff.redoStack.length === 0) return; // already at the beginning
+  if (undoStuff.redoStack.length === 0) render(); // already at the beginning
   animationQueue = [];
   animationQueueCursor = 0;
   paradoxes = [];
@@ -2305,7 +2306,7 @@ function render() {
       context.shadowOffsetY = 5;
       context.shadowColor = "rgba(0,0,0,0.5)";
       context.shadowBlur = 4;
-      var textString = "X";
+      var textString = "\u2716";
       var textWidth = context.measureText(textString).width;
       context.fillText(textString, (canvas.width/2) - (textWidth/2), canvas.height/2);
     }
