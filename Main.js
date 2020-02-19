@@ -527,6 +527,7 @@ document.addEventListener("keydown", function(event) {
       return;
     case "F".charCodeAt(0):
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(POISON_FRUIT); break; }
       return;
     case "D".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0) { move(0, 1); break; }
@@ -539,7 +540,6 @@ document.addEventListener("keydown", function(event) {
     case "P".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
-      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(POISON_FRUIT); break; }
       return;
     case "U".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
@@ -2922,7 +2922,8 @@ function getTintedColor(color, v) {
         var startR = r*tileSize+tileSize*.2;
         var resize = tileSize * 1.7;
         var color = fruitColors[object.id % fruitColors.length];
-        if (is_poison) { color = "#556815"; } //placeholder effect
+        var stemColor = themes[themeCounter][9]
+        if (is_poison) { color = "#556815"; stemColor = "black";} //placeholder effect
         context.fillStyle = color;
         if(themeName != "Classic"){
             if(surface == "rainbow") {
@@ -2946,7 +2947,7 @@ function getTintedColor(color, v) {
             context.moveTo(startC,startR);
             context.bezierCurveTo(startC-resize*.1, startR-resize*.05, startC, startR-resize*.1, startC-resize*.1, startR-resize*.15);
             context.bezierCurveTo(startC, startR-resize*.1, startC+resize*.05, startR-resize*.1, startC, startR);
-            context.fillStyle = themes[themeCounter][9];
+            context.fillStyle = stemColor;
             context.fill();
         }
         else drawCircle(rowcol.r, rowcol.c, 1, "#f0f");
