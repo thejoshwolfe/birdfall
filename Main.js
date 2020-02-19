@@ -41,6 +41,7 @@ var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, WOODPLATFORM, 
 var SNAKE = "s";
 var BLOCK = "b";
 var FRUIT = "f";
+var POISON_FRUIT = "p";
 
 var headRowMove;
 var headColMove;
@@ -163,7 +164,7 @@ function parseLevel(string) {
     var locationsLimit;
     if      (object.type === SNAKE) locationsLimit = -1;
     else if (object.type === BLOCK) locationsLimit = -1;
-    else if (object.type === FRUIT) locationsLimit = 1;
+    else if (object.type === FRUIT || object.type === POISON_FRUIT) locationsLimit = 1;
     else throw parserError("expected object type code");
     cursor += 1;
 
@@ -538,6 +539,7 @@ document.addEventListener("keydown", function(event) {
     case "P".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
       if ( persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
+      if ( persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(POISON_FRUIT); break; }
       return;
     case "U".charCodeAt(0):
       if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
@@ -695,6 +697,7 @@ var paintButtonIdAndTileCodes = [
   ["paintSpikeButton", SPIKE],
   ["paintExitButton", EXIT],
   ["paintFruitButton", FRUIT],
+  ["paintPoisonFruitButton", POISON_FRUIT],
   ["paintPortalButton", PORTAL],
   ["paintPlatformButton", PLATFORM],
   ["paintWoodPlatformButton", WOODPLATFORM],
@@ -816,7 +819,11 @@ canvas.addEventListener("dblclick", function(event) {
     } else if (object.type === FRUIT) {
       // edit fruits, i guess
       paintBrushTileCode = FRUIT;
-    } else throw unreachable();
+    } else if (object.type === POISON_FRUIT) {
+      // edit poison fruits, i guess
+      paintBrushTileCode = POISON_FRUIT;
+    }
+    else throw unreachable();
     paintBrushTileCodeChanged();
   }
 });
@@ -1157,6 +1164,19 @@ function newFruit(location) {
     locations: [location],
   };
 }
+function newPoisonFruit(location) {
+  var fruits = getObjectsOfType(POISON_FRUIT);
+  fruits.sort(compareId);
+  for (var i = 0; i < fruits.length; i++) {
+    if (fruits[i].id !== i) break;
+  }
+  return {
+    type: POISON_FRUIT,
+    id: i,
+    dead: false, // unused
+    locations: [location],
+  };
+}
 function paintAtLocation(location, changeLog) {
   if (typeof paintBrushTileCode === "number") {
     removeAnyObjectAtLocation(location, changeLog);
@@ -1186,6 +1206,8 @@ function paintAtLocation(location, changeLog) {
         object.id = newBlock().id;
       } else if (object.type === FRUIT) {
         object.id = newFruit().id;
+      } else if (object.type === POISON_FRUIT) {
+        object.id = newPoisonFruit().id;
       } else throw unreachable();
       level.objects.push(object);
       changeLog.push([object.type, object.id, [0,[]], serializeObjectState(object)]);
@@ -1256,10 +1278,10 @@ function paintAtLocation(location, changeLog) {
       changeLog.push([thisBlock.type, thisBlock.id, oldBlockSerialization, serializeObjectState(thisBlock)]);
       delete blockSupportRenderCache[thisBlock.id];
     }
-  } else if (paintBrushTileCode === FRUIT) {
+  } else if (paintBrushTileCode === FRUIT || paintBrushTileCode === POISON_FRUIT) {
     paintTileAtLocation(location, SPACE, changeLog);
     removeAnyObjectAtLocation(location, changeLog);
-    var object = newFruit(location)
+    var object = paintBrushTileCode == FRUIT ? newFruit(location) : newPoisonFruit(location);
     level.objects.push(object);
     changeLog.push([object.type, object.id, serializeObjectState(null), serializeObjectState(object)]);
   } else throw unreachable();
@@ -1359,7 +1381,7 @@ function reduceChangeLog(changeLog) {
         changeLog.splice(i, 1);
         i--;
       }
-    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT) {
+    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === POISON_FRUIT) {
       for (var j = i + 1; j < changeLog.length; j++) {
         var otherChange = changeLog[j];
         if (otherChange[0] === change[0] && otherChange[1] === change[1]) {
@@ -1507,7 +1529,7 @@ function undoChanges(changes, changeLog) {
       if (location >= level.map.length) return "Can't turn " + describe(toTileCode) + " into " + describe(fromTileCode) + " out of bounds";
       if (level.map[location] !== toTileCode) return "Can't turn " + describe(toTileCode) + " into " + describe(fromTileCode) + " because there's " + describe(level.map[location]) + " there now";
       paintTileAtLocation(location, fromTileCode, changeLog);
-    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT) {
+    } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === POISON_FRUIT) {
       // change object
       var type = change[0];
       var id = change[1];
@@ -1594,6 +1616,9 @@ function describe(arg1, arg2) {
   }
   if (arg1 === FRUIT) {
     return "Fruit";
+  }
+  if (arg1 === POISON_FRUIT) {
+    return "Poison Fruit";
   }
   if (typeof arg1 === "object") return describe(arg1.type, arg1.id);
   throw unreachable();
@@ -1793,6 +1818,7 @@ function move(dr, dc) {
   }
 
   var ate = false;
+  var ate_poison = false;
   var pushedObjects = [];
     
   //track ClosedLifts that had objects on them
@@ -1810,6 +1836,10 @@ function move(dr, dc) {
         // eat
         removeObject(otherObject, changeLog);
         ate = true;
+      } else if (otherObject.type === POISON_FRUIT) {
+        // eat poison
+        removeObject(otherObject, changeLog);
+        ate_poison = true;
       } else if (isTileCodeAir(activeSnake, null, newTile, dr, dc)) {
           otherObject = findObjectAtLocation(newLocation);
           if (otherObject != null) {
@@ -1835,7 +1865,21 @@ function move(dr, dc) {
     ]
   ];
   activeSnake.locations.unshift(newLocation);
-  if (!ate) {
+  
+  // drag your tail forward based on what was/wasn't eaten
+  var times = 1;
+  if (ate) { times--; }
+  if (ate_poison) { times++; }
+  //if we're going to shrink out of existence, prevent it
+  var snake_length = activeSnake.locations.length-1;
+  if (times > snake_length)
+  {
+      times = snake_length;
+      activeSnake.dead = true;
+      //make the snake appear to vanish into non-existence
+      activeSnake.locations[0] = {r:-99, c:-99};
+  }
+  for (var t = 0; t < times; ++t) {
     for(var i = 1; i<activeSnake.locations.length; i++) {
         // drag your tail forward
         var oldRowcol = getRowcol(level, activeSnake.locations[i+1]);
@@ -1914,7 +1958,7 @@ function move(dr, dc) {
     // fall
     var dyingObjects = [];
     var fallingObjects = level.objects.filter(function(object) {
-      if (object.type === FRUIT) return; // can't fall
+      if (object.type === FRUIT || object.type === POISON_FRUIT) return; // can't fall
       var theseDyingObjects = [];
       if (!checkMovement(null, object, 1, 0, [], theseDyingObjects)) return false;
       // this object can fall. maybe more will fall with it too. we'll check those separately.
@@ -2024,7 +2068,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
       }
       var yetAnotherObject = findObjectAtLocation(forwardLocation);
       if (yetAnotherObject != null) {
-        if (yetAnotherObject.type === FRUIT) {
+        if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === POISON_FRUIT) {
           // not pushable
           return false;
         }
@@ -2228,7 +2272,7 @@ function findObjectAtLocation(location) {
   return null;
 }
 function isUneatenFruit() {
-  return getObjectsOfType(FRUIT).length > 0;
+  return getObjectsOfType(FRUIT).length > 0 || getObjectsOfType(POISON_FRUIT).length > 0;
 }
 function getActivePortalLocations() {
   var portalLocations = getPortalLocations();
@@ -2530,7 +2574,7 @@ function render() {
 
         for(var i = 0; i<objects.length; i++){  
             var object = objects[i];
-            if(object.type === FRUIT) drawObject(object);  //draws fruit
+            if(object.type === FRUIT || object.type === POISON_FRUIT) drawObject(object);  //draws fruit
         }
       }
       
@@ -2613,6 +2657,10 @@ function render() {
       } else if (paintBrushTileCode === FRUIT) {
         if (!(objectHere != null && objectHere.type === FRUIT)) {
           drawObject(newFruit(hoverLocation));
+        }
+      } else if (paintBrushTileCode === POISON_FRUIT) {
+        if (!(objectHere != null && objectHere.type === POISON_FRUIT)) {
+          drawObject(newPoisonFruit(hoverLocation));
         }
       } else if (paintBrushTileCode === "resize") {
         void 0; // do nothing
@@ -2865,13 +2913,17 @@ function getTintedColor(color, v) {
         drawBlock(object);
         break;
       case FRUIT:
+      case POISON_FRUIT:
+        var is_poison = object.type == POISON_FRUIT;
         rowcol = getRowcol(level, object.locations[0]);
         var c = rowcol.c;
         var r = rowcol.r;
         var startC = c*tileSize+tileSize/2;
         var startR = r*tileSize+tileSize*.2;
         var resize = tileSize * 1.7;
-        context.fillStyle = fruitColors[object.id % fruitColors.length];
+        var color = fruitColors[object.id % fruitColors.length];
+        if (is_poison) { color = "#556815"; } //placeholder effect
+        context.fillStyle = color;
         if(themeName != "Classic"){
             if(surface == "rainbow") {
                 context.fillStyle = "black";
