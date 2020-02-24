@@ -1741,6 +1741,7 @@ var bg4 = "rgba(7, 7, 83 * rgba(0, 0, 70";
 var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];    //must be full length to satisfy tint function
 var snakeColors2 = ["#ff0000", "#00ff00", "#0000ff", "#ffff00"];
 var snakeColors3 = ["#BA145C", "#E91624", "#F75802", "#FEFE28"];
+var snakeColors4 = ["#ffffff", "#ffffff", "#ffffff", "#ffffff"];
 
 var fruitColors1 = ["#ff0066", "#ff36a6", "#ff6b1f", "#ff9900", "#ff2600"];
 var fruitColors2 = ["black", "black", "black", "black", "black"];
@@ -1750,7 +1751,7 @@ var spikeColors2 = ["gray", "black", "white", "black"];
 var spikeColors3 = ["#333", "#333", "#333", "#777"];
 
 var blockColors1 = ["#de5a6d", "#fa65dd", "#c367e3", "#9c62fa", "#625ff0"];    //must be full length to satisfy tint function
-var blockColors2 = ["#999999"];
+var blockColors2 = ["#ffffff"];
 var blockColors3 = ["#de7913", "#7d46a0", "#39868b", "#41ccc2", "#ded800"];
 var blockColors4 = ["#150612", "#a52e8b", "#990077", "#d917af", "#4d003c"];
 
@@ -1772,7 +1773,7 @@ var themes = [  //name, background, material, surface, curlyOutline, blockColors
     ["Classic", "#8888ff", "#844204", "#282", false, snakeColors2, blockColors1, spikeColors3, fruitColors1, "green", textStyle4, experimentalColors1],
     ["Summer", bg2, "#734d26", "#009933", true, snakeColors3, blockColors3, spikeColors1, fruitColors1, "green", textStyle3, experimentalColors2],
     ["Dream", bg3, "#00aaff", "#ffb3ec", true, snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2, experimentalColors2],
-    ["Midnight Rainbow", bg4, "black", "rainbow", false, snakeColors1, blockColors2, spikeColors2, "white", "white", textStyle1, experimentalColors1]
+    ["Midnight Rainbow", bg4, "black", "rainbow", false, snakeColors4, blockColors2, spikeColors2, "white", "white", textStyle1, experimentalColors1]
 ];
 
 
@@ -1814,8 +1815,9 @@ function move(dr, dc) {
 
     if (isCollision()) {
         var newTile = level.map[newLocation];
-        if (newTile === BUBBLE || newTile === CLOUD)
+        if (newTile === BUBBLE || newTile === CLOUD) {
             paintTileAtLocation(newLocation, SPACE, changeLog);
+        }
         else if (!isTileCodeAir(activeSnake, null, newTile, dr, dc)) return; // can't go through that tile
         var otherObject = findObjectAtLocation(newLocation);
         if (otherObject != null) {
@@ -1897,20 +1899,10 @@ function move(dr, dc) {
     occupiedClosedLift = combineOldAndNewLiftOccupations(occupiedClosedLift);
 
     // gravity loop
-    var stateToAnimationIndex = {};
     if (isGravity()) for (var fallHeight = 1; ; fallHeight++) {
-        var serializedState = serializeObjects(level.objects);
-        var infiniteLoopStartIndex = stateToAnimationIndex[serializedState];
-        if (infiniteLoopStartIndex != null) {
-            // infinite loop
-            animationQueue.push([0, [INFINITE_LOOP, animationQueue.length - infiniteLoopStartIndex]]);
-            break;
-        } else {
-            stateToAnimationIndex[serializedState] = animationQueue.length;
-        }
         // do portals separate from falling logic
         if (portalActivationLocations.length === 1) {
-            var portalAnimations = [500];
+            var portalAnimations = [300];
             if (activatePortal(portalLocations, portalActivationLocations[0], portalAnimations, changeLog)) {
                 animationQueue.push(portalAnimations);
             }
@@ -2166,18 +2158,20 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
         var location = newLocations[i];
         if (!isTileCodeAir(object, null, level.map[location], 0, 0)) return false; // blocked by tile
         var otherObject = findObjectAtLocation(location);
-        if (otherObject != null && otherObject !== object) return; // blocked by object
+        if (otherObject != null && otherObject !== object) return false; // blocked by object
     }
 
     // zappo presto!
     var oldState = serializeObjectState(object);
     object.locations = newLocations;
-    for (var i = 0; i < newLocations.length; i++) {
-        var location = newLocations[i];
-        if (level.map[location] == BUBBLE || level.map[location] == CLOUD)                        //changed this despite bubble working perfectly without it
-            paintTileAtLocation(location, SPACE, changeLog);
-    }
     changeLog.push([object.type, object.id, oldState, serializeObjectState(object)]);
+    animations.push([
+        "t" + object.type, // TELEPORT_SNAKE | TELEPORT_BLOCK
+        object.id,
+        delta.r,
+        delta.c,
+    ]);
+    return true;
 }
 
 function isTileCodeAir(pusher, pushedObject, tileCode, dr, dc) {
@@ -2689,11 +2683,21 @@ function render() {
                 drawQuarterPie(r, c, radiusFactor, snakeColors[3], 3);
                 break;
             case PORTAL:
-                var grd = context.createRadialGradient(c * tileSize + tileSize / 2, r * tileSize + tileSize / 2, tileSize / 12, c * tileSize + tileSize / 2, r * tileSize + tileSize / 2, tileSize / 2);
-                grd.addColorStop(.5, "black");
-                grd.addColorStop(1, "rgba(255, 255, 255, .1)");
-                if (activePortalLocations.indexOf(location) !== -1) drawCircle(r, c, 1, grd);
-                else drawCircle(r, c, 1, "#111");
+                context.save();
+                if (activePortalLocations.indexOf(location) !== -1) {
+                    context.fillStyle = "black";
+                    context.strokeStyle = "white";
+                    context.shadowColor = "white";
+                    context.shadowBlur = 5;
+                    context.lineWidth = 3;
+                    context.beginPath();
+                    context.arc(c * tileSize + tileSize / 2, r * tileSize + tileSize / 1.8, tileSize / 2, 0, 2 * Math.PI);
+                    context.closePath();
+                    context.fill();
+                    context.stroke();
+                }
+                else drawCircle(r, c, 1, "#999");
+                context.restore();
                 break;
             case PLATFORM:
                 drawPlatform(r, c, getAdjacentTiles());
@@ -3067,14 +3071,15 @@ function render() {
     function drawBubble(r, c) {
         bubbleX = c * tileSize;
         var grd = context.createRadialGradient(bubbleX, r * tileSize, 0, bubbleX, r * tileSize, tileSize);
-        grd.addColorStop(0, "rgba(255,255,255,.9)");
-        grd.addColorStop(1, "rgba(255,255,255,.2)");
+        grd.addColorStop(0, "rgba(255,255,255,1)");
+        grd.addColorStop(.4, "rgba(220,255,255,.5)");
+        grd.addColorStop(1, "rgba(0,100,255,.1)");
         context.fillStyle = grd;
-        context.lineWidth = .5;
-        context.strokeStyle = "rgba(200,200,200,.2)";
+        context.lineWidth = 1;
+        context.strokeStyle = "rgba(255,255,255,.05)";
 
         context.beginPath();
-        context.arc(c * tileSize + tileSize * .5, r * tileSize + tileSize * .5, tileSize / 2, 0, 2 * Math.PI);
+        context.arc(c * tileSize + tileSize * .5, r * tileSize + tileSize * .5, tileSize / 1.5, 0, 2 * Math.PI);
         context.fill();
         context.stroke();
     }
@@ -3748,12 +3753,13 @@ function render() {
             r2 = rTmp;
             c2 = cTmp;
         }
-        var xLo = (c1 + 0.3) * tileSize;
-        var yLo = (r1 + 0.3) * tileSize;
-        var xHi = (c2 + 0.45) * tileSize;
-        var yHi = (r2 + 0.45) * tileSize;
+        var connectorSize = .38;
+        var xLo = (c1 + connectorSize) * tileSize;
+        var yLo = (r1 + connectorSize) * tileSize;
+        var xHi = (c2 + 1 - connectorSize) * tileSize;
+        var yHi = (r2 + 1 - connectorSize) * tileSize;
         context.fillStyle = color;
-        context.fillRect(xLo + .15 * tileSize, yLo + .15 * tileSize, xHi - xLo, yHi - yLo);
+        context.fillRect(xLo, yLo, xHi - xLo, yHi - yLo);
     }
     function drawBlock(block) {
         var animationDisplacementRowcol = findAnimationDisplacementRowcol(block.type, block.id);
@@ -3764,7 +3770,7 @@ function render() {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
             context.fillStyle = blockColors[block.id % blockColors.length];
-            var outlineThickness = .2;
+            var outlineThickness = .4;
 
             var complement = 1 - outlineThickness;
             var outlinePixels = outlineThickness * tileSize;
