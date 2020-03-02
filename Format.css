@@ -2,11 +2,12 @@ body{
     font-family: Futura;
     padding-bottom: 50px;
     background-image: linear-gradient(to bottom right, #fdc122 , #dc6a3f, #d55945, #dc6a3f, #fdc122);
-    counter-reset: rowNumber -1;
+    counter-reset: rowNumber 0;
 }
 
 table{
     width: 100%;
+    border-collapse: collapse;
 }
 
 th{
@@ -17,11 +18,8 @@ tr{
     height: 30px;
 }
 
-table tr{
-    counter-increment: rowNumber;
-}
-
 table tr td:first-child::before {
+    counter-increment: rowNumber;
     content: counter(rowNumber);
     color: rgba(0,0,0,.3);
     cursor: default;
@@ -44,7 +42,7 @@ table tr td:nth-child(2){
 }
 
 table tr td:nth-child(3){
-    width: 35%;
+    width: 30%;
 }
 
 table tr td:nth-child(4){
@@ -55,20 +53,75 @@ table tr td:nth-child(5){
     width: 40%;
 }
 
+table tr td:nth-child(6){
+    width: 5%;
+}
+
 td{
-    border-radius: 10px;
-    border: 2px solid transparent;
-    padding: 5px;
+    /* border-radius: 10px;
+    border: 2px solid transparent; */
+    padding: 6px;
 }
 
-td:hover:not(:first-child):not(:last-child){
-    border: 2px solid black;
-    border-radius: 10px;
-    background-color: rgba(0,0,0,.1);
+
+
+/* 
+td:hover {
+    border: 2px solid red;
+}
+td:hover:first-child {
+    border-left: 3px solid red;
+}
+td:hover:nth-child(3n) {
+    border-right: 4px solid red;
+}
+tr:last-child td:hover {
+    border-bottom: 4px solid red;
+}
+td:hover::before,
+.row:hover::before,
+.ff-fix:hover::before { 
+    background-color: #ffa;
+    content: '\00a0';  
+    height: 100%;
+    left: -5000px;
+    position: absolute;  
+    top: 0;
+    width: 10000px;   
+    z-index: -1;   
+}
+td:hover::after,
+.col:hover::after,
+.ff-fix:hover::after { 
+    background-color: #ffa;
+    content: '\00a0';  
+    height: 10000px;    
+    left: 0;
+    position: absolute;  
+    top: -5000px;
+    width: 100%;
+    z-index: -1;        
+} */
+
+
+
+
+
+tr:hover{
+    background-color: rgba(0,0,0,.05);
 }
 
-td.noteColumn:hover{
+table tr td:hover:not(:first-child):not(:nth-child(5)){
+    /* border: 2px solid black;
+    border-radius: 10px;
+    background-color: rgba(0,0,0,.1); */
+    color: blue;
 }
+
+/* tr td.noteColumn{
+    font-size: 10pt !important;
+    vertical-align: middle;
+} */
 
 a{
     color: black;
@@ -122,7 +175,7 @@ td a{
 }
 
 .tableContainer{
-    width: 50%;
+    width: 56%;
     margin: 0 auto;
     border-spacing: 0;
     border: 10px solid black;
@@ -132,9 +185,6 @@ td a{
     margin-bottom: 50px;
 }
 
-.numberColumn{
-}
-
 .hiddenItem{
     filter: blur(8px);
     pointer-events: none;
@@ -142,9 +192,9 @@ td a{
 }
 
 #showButtonContainer{
-    width: 50%;
-    margin-left: 25%;
-    margin-right: 25%;
+    width: 56%;
+    margin-left: 22%;
+    margin-right: 22%;
     position: relative;
     padding-bottom: 1px;
 }
