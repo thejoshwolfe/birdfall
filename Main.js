@@ -24,18 +24,18 @@ var FRUIT_v0 = "3".charCodeAt(0); //legacy
 var EXIT = "4".charCodeAt(0);
 var PORTAL = "5".charCodeAt(0);
 var PLATFORM = "P".charCodeAt(0);
-var WOODPLATFORM = "p".charCodeAt(0);
+var TRELLIS = "p".charCodeAt(0);
 var ONEWAYWALLU = "u".charCodeAt(0);
 var ONEWAYWALLD = "d".charCodeAt(0);
-var ONEWAYWALLL = "l".charCodeAt(0);
-var ONEWAYWALLR = "r".charCodeAt(0);
-var CLOUD = "C".charCodeAt(0);
-var BUBBLE = "b".charCodeAt(0);
+var TURNSTILEL = "l".charCodeAt(0);
+var TURNSTILER = "r".charCodeAt(0);
 var CLOSEDLIFT = "c".charCodeAt(0);
 var OPENLIFT = "o".charCodeAt(0);
+var CLOUD = "C".charCodeAt(0);
+var BUBBLE = "b".charCodeAt(0);
 var LAVA = "v".charCodeAt(0);
 var WATER = "w".charCodeAt(0);
-var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, WOODPLATFORM, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, CLOSEDLIFT, OPENLIFT, CLOUD, BUBBLE, LAVA, WATER];
+var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, TRELLIS, ONEWAYWALLU, ONEWAYWALLD, TURNSTILEL, TURNSTILER, CLOSEDLIFT, OPENLIFT, CLOUD, BUBBLE, LAVA, WATER];
 
 // object types
 var SNAKE = "s";
@@ -144,7 +144,7 @@ function parseLevel(string) {
             });
             tileCode = SPACE;
         }
-        if (tileCode === PLATFORM || tileCode === WOODPLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
+        if (tileCode === PLATFORM || tileCode === TRELLIS || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === TURNSTILEL || tileCode === TURNSTILER || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
         if (validTileCodes.indexOf(tileCode) === -1) throw parserError("invalid tilecode: " + JSON.stringify(mapData[i]));
         level.map.push(tileCode);
     }
@@ -490,7 +490,6 @@ document.addEventListener("keydown", function (event) {
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("resize"); break; }
             if (modifierMask === 0) { reset(unmoveStuff); break; }
             if (modifierMask === SHIFT) { unreset(unmoveStuff); break; }
-            if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLR); break; }
             return;
         case 220: // backslash
             if (modifierMask === 0) { toggleShowEditor(); break; }
@@ -511,8 +510,7 @@ document.addEventListener("keydown", function (event) {
         case "W".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(WALL); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(WOODPLATFORM); break; }
-            if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(WATER); break; }
+            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(WATER); break; }
             return;
         case "S".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { move(1, 0); break; }
@@ -524,6 +522,8 @@ document.addEventListener("keydown", function (event) {
             return;
         case "X".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === CTRL) { cutSelection(); break; }
+            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOSEDLIFT); break; }
+            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(OPENLIFT); break; }
             return;
         case "F".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
@@ -531,7 +531,6 @@ document.addEventListener("keydown", function (event) {
             return;
         case "D".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { move(0, 1); break; }
-            if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLD); break; }
             return;
         case "B".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(BLOCK); break; }
@@ -540,16 +539,15 @@ document.addEventListener("keydown", function (event) {
         case "P".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
+            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TRELLIS); break; }
             return;
         case "U".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
-            if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLU); break; }
             return;
         case "L".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOSEDLIFT); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(OPENLIFT); break; }
-            if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLL); break; }
+            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(LAVA); break; }
+            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(WATER); break; }
             return;
         case "G".charCodeAt(0):
             if (modifierMask === 0) { toggleGrid(); break; }
@@ -561,13 +559,17 @@ document.addEventListener("keydown", function (event) {
             if (persistentState.showEditor && modifierMask === CTRL) { copySelection(); break; }
             return;
         case "V".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(LAVA); break; }
             if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("paste"); break; }
         case "T".charCodeAt(0):
-            toggleTheme(); break;
-            return;
+            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(TURNSTILEL); break; }
+            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TURNSTILER); break; }
+        case "O".charCodeAt(0):
+            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(ONEWAYWALLU); break; }
+            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(ONEWAYWALLD); break; }
+        case 13: //return
+            if (persistentState.showEditor && modifierMask === 0) { toggleTheme(); break; }
         case 32: // spacebar
-        case 9:  // tab
+        case 9: // tab
             if (modifierMask === 0) { switchSnakes(1); break; }
             if (modifierMask === SHIFT) { switchSnakes(-1); break; }
             return;
@@ -700,11 +702,11 @@ var paintButtonIdAndTileCodes = [
     ["paintPoisonFruitButton", POISON_FRUIT],
     ["paintPortalButton", PORTAL],
     ["paintPlatformButton", PLATFORM],
-    ["paintWoodPlatformButton", WOODPLATFORM],
-    ["paintOneWayWallUButton", ONEWAYWALLU],
+    ["paintTrellisButton", TRELLIS],
+    //["paintOneWayWallUButton", ONEWAYWALLU],
     ["paintOneWayWallDButton", ONEWAYWALLD],
-    ["paintOneWayWallLButton", ONEWAYWALLL],
-    ["paintOneWayWallRButton", ONEWAYWALLR],
+    ["paintTurnstileLButton", TURNSTILEL],
+    ["paintTurnstileRButton", TURNSTILER],
     ["paintClosedLiftButton", CLOSEDLIFT],
     ["paintOpenLiftButton", OPENLIFT],
     ["paintCloudButton", CLOUD],
@@ -1585,11 +1587,11 @@ function describe(arg1, arg2) {
             case EXIT: return "an Exit";
             case PORTAL: return "a Portal";
             case PLATFORM: return "a Platform";
-            case WOODPLATFORM: return "a Wooden Platform";
+            case TRELLIS: return "a Trellis";
             case ONEWAYWALLU: return "a One Way Wall (facing U)";
             case ONEWAYWALLD: return "a One Way Wall (facing D)";
-            case ONEWAYWALLL: return "a One Way Wall (facing L)";
-            case ONEWAYWALLR: return "a One Way Wall (facing R)";
+            case TURNSTILEL: return "a One Way Wall (facing L)";
+            case TURNSTILER: return "a One Way Wall (facing R)";
             case CLOSEDLIFT: return "a Closed Lift";
             case OPENLIFT: return "an Open Lift";
             case CLOUD: return "a Cloud";
@@ -1733,31 +1735,32 @@ var themeName = "Spring";
 var background, surface, material, snakeColors, blockColors, spikeColors, fruitColors, textStyle, experimentalColors;
 var curlyOutline = false;
 
-var bg1 = "rgba(145, 198, 254 * rgba(133, 192, 255";
-var bg2 = "rgba(254, 198, 145 * rgba(255, 192, 133";
-var bg3 = "rgba(145, 254, 198 * rgba(117, 255, 192";
-var bg4 = "rgba(7, 7, 83 * rgba(0, 0, 70";
+var bg1 = ["rgba(145, 198, 254", "rgba(133, 192, 255"];
+var bg2 = ["rgba(254, 198, 145", "rgba(255, 192, 133"];
+var bg3 = ["rgba(145, 254, 198", "rgba(117, 255, 192"];
+var bg4 = ["rgba(7, 7, 83", "rgba(0, 0, 70"];
 
 var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];    //must be full length to satisfy tint function
 var snakeColors2 = ["#ff0000", "#00ff00", "#0000ff", "#ffff00"];
 var snakeColors3 = ["#BA145C", "#E91624", "#F75802", "#FEFE28"];
-var snakeColors4 = ["#ffffff", "#ffffff", "#ffffff", "#ffffff"];
+var snakeColors4 = ["#000000", "#000000", "#000000", "#000000"];
 
 var fruitColors1 = ["#ff0066", "#ff36a6", "#ff6b1f", "#ff9900", "#ff2600"];
 var fruitColors2 = ["black", "black", "black", "black", "black"];
 
-var spikeColors1 = ["#999", "#444", "#555", "#777"];    //spike, support, box, bolt
-var spikeColors2 = ["gray", "black", "white", "black"];
+var spikeColors1 = ["#999", "#444", "#555", "#777"];    //spokes, supports, box, bolt
+var spikeColors2 = ["#333", "#333", "#111", "#333"];
 var spikeColors3 = ["#333", "#333", "#333", "#777"];
 
-var blockColors1 = ["#de5a6d", "#fa65dd", "#c367e3", "#9c62fa", "#625ff0"];    //must be full length to satisfy tint function
-var blockColors2 = ["#ffffff"];
-var blockColors3 = ["#de7913", "#7d46a0", "#39868b", "#41ccc2", "#ded800"];
-var blockColors4 = ["#150612", "#a52e8b", "#990077", "#d917af", "#4d003c"];
+var blockColors1 = ["#de5a6d", "#fa65dd", "#c367e3", "#9c62fa", "#625ff0"];    //must be 6-digit hex colors to satisfy tint function
+var blockColors2 = ["#ffffff", "#999999", "#555555", "#000000"];
+var blockColors3 = ["#de7913", "#7d46a0", "#39868b", "#41ccc2", "#ccc500"];
+var blockColors4 = ["#660050", "#990033", "#b32400", "#e6b800 ", "#008000"];
+var blockColors5 = ["#ffccff", "#ffc2b3", "#ffffcc", "#ccffe6", "#ccffff"];
 
 var fontSize = tileSize * 5;
 var textStyle1 = ["" + fontSize + "px Impact", "#fdc122", "#fd0c0b"];    //font, Win, Lose
-var textStyle2 = ["" + fontSize + "px Impact", "#5702c6", "#ff0098"];
+var textStyle2 = ["" + fontSize + "px Impact", "#400080", "#ff6600"];
 var textStyle3 = ["" + fontSize + "px Impact", "#BA145C", "#F75802"];
 var textStyle4 = ["" + fontSize + "px Impact", "#ff0", "#f00"];
 
@@ -1773,7 +1776,7 @@ var themes = [  //name, background, material, surface, curlyOutline, blockColors
     ["Classic", "#8888ff", "#844204", "#282", false, snakeColors2, blockColors1, spikeColors3, fruitColors1, "green", textStyle4, experimentalColors1],
     ["Summer", bg2, "#734d26", "#009933", true, snakeColors3, blockColors3, spikeColors1, fruitColors1, "green", textStyle3, experimentalColors2],
     ["Dream", bg3, "#00aaff", "#ffb3ec", true, snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2, experimentalColors2],
-    ["Midnight Rainbow", bg4, "black", "rainbow", false, snakeColors4, blockColors2, spikeColors2, "white", "white", textStyle1, experimentalColors1]
+    ["Midnight Rainbow", bg4, "black", "rainbow", false, snakeColors1, blockColors5, spikeColors2, "white", "white", textStyle1, experimentalColors1]
 ];
 
 
@@ -2059,13 +2062,13 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     return false;
                 }
                 addIfNotPresent(pushedObjects, yetAnotherObject);
-                if (level.map[forwardLocation] === WOODPLATFORM) addIfNotPresent(forwardLocations, forwardLocation);   //this made wooden platform work          
+                if (level.map[forwardLocation] === TRELLIS) addIfNotPresent(forwardLocations, forwardLocation);
             } else
                 addIfNotPresent(forwardLocations, forwardLocation);
         }
     }
     // check forward locations
-    for (var i = 0; i < forwardLocations.length; i++) {          //changed this section trying to fix wooden platform, saw no effect but left new code
+    for (var i = 0; i < forwardLocations.length; i++) {
         var forwardLocation = forwardLocations[i];
         // many of these locations can be inside objects,
         // but that means the tile must be air,
@@ -2177,12 +2180,12 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
 function isTileCodeAir(pusher, pushedObject, tileCode, dr, dc) {
     switch (tileCode) {
         case SPACE: case EXIT: case PORTAL: case CLOSEDLIFT: return true;
-        case WOODPLATFORM: case BUBBLE: return pusher != null;
+        case TRELLIS: case BUBBLE: return pusher != null;
         case PLATFORM: return dr != 1;
         case ONEWAYWALLU: return dr != 1;
         case ONEWAYWALLD: return dr != -1;
-        case ONEWAYWALLL: return dc != 1;
-        case ONEWAYWALLR: return dc != -1;
+        case TURNSTILEL: return dc != 1;
+        case TURNSTILER: return dc != -1;
         default: return false;
     }
 }
@@ -2374,20 +2377,19 @@ function render() {
         textStyle = themes[themeCounter][10];
         experimentalColors = themes[themeCounter][11];
 
-        if (background.substr(0, 1) == "#") {
+        if (!Array.isArray(background)) {
             context.fillStyle = background;
             context.fillRect(0, 0, canvas.width, canvas.height);
         }
         else {
             for (var i = 0; i < level.width; i++) {   //checkerboard background
                 for (var j = 0; j < level.height; j++) {
-                    var bgColor1 = background.substr(0, background.indexOf('*'));
-                    var bgColor2 = background.substr(background.indexOf('*') + 2, background.length);
+                    var bgColor1 = background[0];
+                    var bgColor2 = background[1];
                     var shade = (j + 1) * .03 + .5;
                     if ((i + j) % 2 == 0) context.fillStyle = bgColor1 + ", " + shade + ")";
                     else context.fillStyle = bgColor2 + ", " + shade + ")";
                     context.fillRect(i * tileSize, j * tileSize, tileSize, tileSize);
-                    //context.fillText(i+" "+j,i*tileSize, j*tileSize);
                 }
             }
         }
@@ -2521,7 +2523,7 @@ function render() {
                     for (var c = 0; c < level.width; c++) {
                         var location = getLocation(level, r, c);
                         var tileCode = level.map[location];
-                        drawTile(tileCode, r, c, level, location, true);   //draws all but walls and liquids
+                        drawTile(tileCode, r, c, level, location, true);
                     }
                 }
             }
@@ -2529,6 +2531,16 @@ function render() {
             for (var i = 0; i < objects.length; i++) {
                 var object = objects[i];
                 if (object.type === SNAKE || object.type === BLOCK) drawObject(object);  //draws snakes and blocks
+            }
+
+            if (onlyTheseObjects == null) {
+                for (var r = 0; r < level.height; r++) {
+                    for (var c = 0; c < level.width; c++) {
+                        location = getLocation(level, r, c);
+                        tileCode = level.map[location];
+                        if (tileCode === WATER || tileCode === LAVA) drawTile(tileCode, r, c, level, location, false);    //draws only walls
+                    }
+                }
             }
 
             if (onlyTheseObjects == null) {
@@ -2546,7 +2558,7 @@ function render() {
                     for (var c = 0; c < level.width; c++) {
                         location = getLocation(level, r, c);
                         tileCode = level.map[location];
-                        if (tileCode === CLOUD || tileCode === LAVA || tileCode === WATER) drawTile(tileCode, r, c, level, location, false);    //draws only clouds
+                        if (tileCode === TURNSTILER || tileCode === TURNSTILEL || tileCode === CLOUD || tileCode === BUBBLE) drawTile(tileCode, r, c, level, location, false);
                     }
                 }
             }
@@ -2601,7 +2613,7 @@ function render() {
             context.shadowOffsetY = 5;
             context.shadowColor = "rgba(0,0,0,0.5)";
             context.shadowBlur = 4;
-            var textString = "X";
+            var textString = "\u2716";
             var textWidth = context.measureText(textString).width;
             context.fillText(textString, (canvas.width / 2) - (textWidth / 2), canvas.height / 2);
         }
@@ -2620,10 +2632,6 @@ function render() {
             if (typeof paintBrushTileCode === "number") {
                 if (level.map[hoverLocation] !== paintBrushTileCode) {
                     drawTile(paintBrushTileCode, hoverRowcol.r, hoverRowcol.c, level, hoverLocation);
-                    if (paintBrushTileCode === PLATFORM) {
-                        // make it bolder
-                        hoverAlpha = 0.4;
-                    }
                 }
             } else if (paintBrushTileCode === SNAKE) {
                 if (!(objectHere != null && objectHere.type === SNAKE && objectHere.id === paintBrushSnakeColorIndex)) {
@@ -2691,7 +2699,7 @@ function render() {
                     context.shadowBlur = 5;
                     context.lineWidth = 3;
                     context.beginPath();
-                    context.arc(c * tileSize + tileSize / 2, r * tileSize + tileSize / 1.8, tileSize / 2, 0, 2 * Math.PI);
+                    context.arc(c * tileSize + tileSize / 2, r * tileSize + tileSize / 2, tileSize / 1.7, 0, 2 * Math.PI);
                     context.closePath();
                     context.fill();
                     context.stroke();
@@ -2702,20 +2710,20 @@ function render() {
             case PLATFORM:
                 drawPlatform(r, c, getAdjacentTiles());
                 break;
-            case WOODPLATFORM:
-                drawOneWayWall("#D38345", r, c, -1, 0);
+            case TRELLIS:
+                drawTrellis(r, c);
                 break;
             case ONEWAYWALLU:
-                drawOneWayWall("#111", r, c, -1, 0);
+                drawOneWayWall(r, c, -1);
                 break;
             case ONEWAYWALLD:
-                drawOneWayWall("#111", r, c, 1, 0);
+                drawOneWayWall(r, c, 1);
                 break;
-            case ONEWAYWALLL:
-                drawOneWayWall("#111", r, c, 0, -1);
+            case TURNSTILEL:
+                drawTurnstile(r, c, -1);
                 break;
-            case ONEWAYWALLR:
-                drawOneWayWall("#111", r, c, 0, 1);
+            case TURNSTILER:
+                drawTurnstile(r, c, 1);
                 break;
             case CLOSEDLIFT:
                 drawLift(r, c, false);
@@ -2800,7 +2808,7 @@ function render() {
                 var color = snakeColors[object.id % snakeColors.length];
                 var colorIndex = object.id % snakeColors.length;
                 var altColor = tint(color, 1.2);
-                if (themeName === "Classic") altColor = color;
+                if (snakeColors === snakeColors2) altColor = color;
                 var headRowcol;
                 var orientation = 10;
                 for (var i = 0; i < object.locations.length; i++) {
@@ -2926,11 +2934,12 @@ function render() {
                 var color = fruitColors[object.id % fruitColors.length];
                 var stemColor = themes[themeCounter][9]
                 if (themeName === "Classic") color = "#f0f";
-                if (is_poison) { color = "#556815"; stemColor = "black"; }
+                if (is_poison) { color = "#666600"; stemColor = "black"; }
                 context.fillStyle = color;
                 if (themeName != "Classic") {
                     if (surface == "rainbow") {
-                        context.fillStyle = "black";
+                        stemColor = "white";
+                        if (!is_poison) context.fillStyle = "black";
                         context.lineWidth = tileSize / 8;
                         context.strokeStyle = "white";
                         resize = tileSize * 1.4;
@@ -2966,42 +2975,6 @@ function render() {
             var tileCode = adjacentTiles[1 + dr][1 + dc];
             return tileCode == null || tileCode === PLATFORM;
         }
-
-        /*context.lineTo(c*tileSize, r*tileSize+tileSize*.2857);
-        context.lineTo(c*tileSize+tileSize*.1429, r*tileSize+tileSize*.2857);
-        context.lineTo(c*tileSize+tileSize*.1429, r*tileSize+tileSize*.1429);
-        context.lineTo(c*tileSize+tileSize*.2857, r*tileSize+tileSize*.1429);
-        context.lineTo(c*tileSize+tileSize*.2857, r*tileSize+tileSize*.2857);
-        context.lineTo(c*tileSize+tileSize*.4286, r*tileSize+tileSize*.2857);
-        context.lineTo(c*tileSize+tileSize*.4286, r*tileSize+tileSize*.1429);
-        context.lineTo(c*tileSize+tileSize*.5714, r*tileSize+tileSize*.1429);
-        context.lineTo(c*tileSize+tileSize*.5714, r*tileSize+tileSize*.2857);
-        context.lineTo(c*tileSize+tileSize*.7143, r*tileSize+tileSize*.2857);
-        context.lineTo(c*tileSize+tileSize*.7143, r*tileSize+tileSize*.1429);
-        context.lineTo(c*tileSize+tileSize*.8571, r*tileSize+tileSize*.1429);
-        context.lineTo(c*tileSize+tileSize*.8571, r*tileSize+tileSize*.2857);
-        context.lineTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.2857);
-        context.lineTo(c*tileSize+tileSize*1, r*tileSize);
-        context.lineTo(c*tileSize, r*tileSize);
-        context.closePath();
-        context.rect(c*tileSize, r*tileSize+tileSize*.2857, tileSize, tileSize*.1429);*/
-
-        /*context.lineTo(c*tileSize, r*tileSize+tileSize*.2);
-        context.bezierCurveTo(c*tileSize+tileSize*.25, r*tileSize+tileSize*.2, c*tileSize+tileSize*.25, r*tileSize+tileSize*.3, c*tileSize+tileSize*.5, r*tileSize+tileSize*.3);
-        context.bezierCurveTo(c*tileSize+tileSize*.75, r*tileSize+tileSize*.3, c*tileSize+tileSize*.75, r*tileSize+tileSize*.2, c*tileSize+tileSize*1, r*tileSize+tileSize*.2);
-        context.lineTo((c+1)*tileSize, r*tileSize);
-        context.lineTo(c*tileSize, r*tileSize);*/
-
-        /*context.arc((c + 5/6) * tileSize, (r + 1/6) * tileSize, tileSize/6, 0, Math.PI);
-        context.arc((c + 3/6) * tileSize, (r + 1/6) * tileSize, tileSize/6, 0, Math.PI);
-        context.arc((c + 1/6) * tileSize, (r + 1/6) * tileSize, tileSize/6, 0, Math.PI);
-        context.lineTo(c*tileSize, r*tileSize);
-        context.lineTo(c*tileSize+tileSize, r*tileSize);*/
-
-        //context.closePath();
-        //context.fillStyle = "#000066";
-        //ontext.fill();
-        //context.stroke();
     }
 
     function newPlatform(r, c, isOccupied) {
@@ -3024,11 +2997,78 @@ function render() {
         }
     }
 
-    function drawOneWayWall(fillStyle, r, c, dr, dc) {
+    function drawTrellis(r, c) {
+        context.fillStyle = "white";
+        roundRect(context, (c - .05) * tileSize, r * tileSize, tileSize, tileSize * .1, 0, true, false);
+        roundRect(context, (c - .05) * tileSize, r * tileSize, tileSize * .1, tileSize, 0, true, false);
+        roundRect(context, (c + .95) * tileSize, r * tileSize, tileSize * .1, tileSize, 0, true, false);
+        roundRect(context, (c - .05) * tileSize, (r - .2) * tileSize, tileSize * .1, tileSize * .2, 0, true, false);
+        roundRect(context, (c + .95) * tileSize, (r - .2) * tileSize, tileSize * .1, tileSize * .2, 0, true, false);
+    }
+
+    function drawTurnstile(r, c, dc) {
+        if (dc == -1) {
+            var x1 = c * tileSize;
+            var x2 = (c + 1) * tileSize;
+            var y1 = r * tileSize;
+            var y2 = (r + 1) * tileSize;
+            var start = c * tileSize;
+            var light1 = (c + .1) * tileSize;
+            var light2 = (c + .4) * tileSize;
+            var lineStart = (c + .25) * tileSize;
+            var lineEnd = (c + .65) * tileSize;
+        }
+        else if (dc == 1) {
+            var x2 = c * tileSize;
+            var x1 = (c + 1) * tileSize;
+            var y1 = r * tileSize;
+            var y2 = (r + 1) * tileSize;
+            var start = (c + .5) * tileSize;
+            var light1 = (c + .9) * tileSize;
+            var light2 = (c + .6) * tileSize;
+            var lineStart = (c + .75) * tileSize;
+            var lineEnd = (c + .35) * tileSize;
+        }
+
+        var grd = context.createLinearGradient(x1, y1, x2, y2);
+        grd.addColorStop(0, "#d9d9d9");
+        grd.addColorStop(1 / 3, "#ffffff");
+        grd.addColorStop(1, "#d9d9d9");
+        context.fillStyle = grd;
+        context.strokeStyle = "white";
+
+        roundRect(context, start, r * tileSize, tileSize * .5, tileSize, 2, true, false);
+
+        //lights
+        context.lineWidth = 3;
+        context.beginPath();
+        context.fillStyle = "red";
+        context.arc(light1, (r + .11) * tileSize, tileSize / 15, 0, 2 * Math.PI);
+        context.fill();
+        context.beginPath();
+        context.fillStyle = "green";
+        context.arc(light2, (r + .11) * tileSize, tileSize / 14, 0, 2 * Math.PI);
+        context.fill();
+
+        //spokes
+        context.strokeStyle = context.fillStyle = "#555";
+        context.lineWidth = 1.5;
+        for (var i = .3; i < 1; i += .15) {
+            context.beginPath();
+            context.moveTo(lineStart, (r + i) * tileSize);
+            context.lineTo(lineEnd, (r + i) * tileSize);
+            context.closePath();
+            context.stroke();
+            context.arc(light1, (r + i) * tileSize, tileSize / 24, 0, 2 * Math.PI)
+            context.fill();
+        }
+    }
+
+    function drawOneWayWall(r, c, dr) {
         context.lineWidth = 2;
         context.strokeStyle = "#333";
+        context.fillStyle = "orange";
         context.beginPath();
-
         if (dr == -1) {
             context.moveTo(c * tileSize, r * tileSize + tileSize / 2);
             context.lineTo(c * tileSize + tileSize / 4, r * tileSize + tileSize / 4);
@@ -3043,43 +3083,148 @@ function render() {
             context.moveTo(c * tileSize + 3 * tileSize / 4, r * tileSize + 3 * tileSize / 4);
             context.lineTo(c * tileSize + tileSize, r * tileSize + tileSize / 2);
         }
-        else if (dc == -1) {
-            context.moveTo(c * tileSize + tileSize / 2, r * tileSize);
-            context.lineTo(c * tileSize + tileSize / 4, r * tileSize + tileSize / 4);
-            context.stroke();
-            context.moveTo(c * tileSize + tileSize / 4, r * tileSize + 3 * tileSize / 4);
-            context.lineTo(c * tileSize + tileSize / 2, r * tileSize + tileSize);
-        }
-        else if (dc == 1) {
-            context.moveTo(c * tileSize + tileSize / 2, r * tileSize);
-            context.lineTo(c * tileSize + 3 * tileSize / 4, r * tileSize + tileSize / 4);
-            context.stroke();
-            context.moveTo(c * tileSize + 3 * tileSize / 4, r * tileSize + 3 * tileSize / 4);
-            context.lineTo(c * tileSize + tileSize / 2, r * tileSize + tileSize);
-        }
-
         context.stroke();
         context.lineWidth = 0;
 
-        context.fillStyle = fillStyle;
         if (dr == -1) roundRect(context, c * tileSize - tileSize / 15, r * tileSize - tileSize / 15, tileSize + 2 * tileSize / 15, tileSize / 4 + 2 * tileSize / 15, 2, true, false);
         else if (dr == 1) roundRect(context, c * tileSize - tileSize / 15, (r + 1) * tileSize - tileSize / 15 - tileSize / 4, tileSize + 2 * tileSize / 15, tileSize / 4 + 2 * tileSize / 15, 2, true, false);
-        else if (dc == -1) roundRect(context, c * tileSize - tileSize / 15, r * tileSize - tileSize / 15, tileSize / 4 + 2 * tileSize / 15, tileSize + 2 * tileSize / 15, 2, true, false);
-        else if (dc == 1) roundRect(context, (c + 1) * tileSize - tileSize / 15 - tileSize / 4, r * tileSize - tileSize / 15, tileSize / 4 + 2 * tileSize / 15, tileSize + 2 * tileSize / 15, 2, true, false);
     }
+
+    /* var grd = context.createLinearGradient(c * tileSize, r * tileSize, (c + 1) * tileSize, (r + 1) * tileSize);
+    grd.addColorStop(0, "rgba(255,255,255,.4)");
+    grd.addColorStop(.1, "rgba(255,255,255,.5)");
+    grd.addColorStop(.2, "rgba(255,255,255,.3)");
+    grd.addColorStop(.3, "rgba(255,255,255,.4)");
+    grd.addColorStop(.4, "rgba(255,255,255,.6)");
+    grd.addColorStop(.5, "rgba(255,255,255,.5)");
+    grd.addColorStop(.6, "rgba(255,255,255,.3)");
+    grd.addColorStop(.7, "rgba(255,255,255,.4)");
+    grd.addColorStop(.8, "rgba(255,255,255,.5)");
+    grd.addColorStop(.9, "rgba(255,255,255,.6)");
+    grd.addColorStop(1, "rgba(255,255,255,.5)");
+ 
+    context.fillStyle = grd;
+    roundRect(context, c * tileSize, r * tileSize, tileSize, tileSize, 2, true, false);
+    context.save();
+    var color1 = color2 = color3 = color4 = "transparent";
+ 
+    var preventColor = "rgba(255,0,0,.5)";
+ 
+ 
+    context.fillStyle = "black";
+    if (type === 0) {
+        color1 = "black";
+    }
+    else if (type === 1) {
+        // color1 = "red";
+        context.beginPath();
+        context.moveTo((c + .4) * tileSize, (r + .2) * tileSize);
+        context.lineTo((c + .4) * tileSize, (r + .55) * tileSize);
+        context.lineTo((c + .3) * tileSize, (r + .55) * tileSize);
+        context.lineTo((c + .5) * tileSize, (r + .8) * tileSize);
+        context.lineTo((c + .7) * tileSize, (r + .55) * tileSize);
+        context.lineTo((c + .6) * tileSize, (r + .55) * tileSize);
+        context.lineTo((c + .6) * tileSize, (r + .2) * tileSize);
+        context.lineTo((c + .4) * tileSize, (r + .2) * tileSize);
+        context.closePath();
+        context.fill();
+    }
+    else if (type === 2) {
+        // color3 = "red";
+        context.beginPath();
+        context.moveTo((c + .6) * tileSize, (r + .8) * tileSize);
+        context.lineTo((c + .6) * tileSize, (r + .45) * tileSize);
+        context.lineTo((c + .7) * tileSize, (r + .45) * tileSize);
+        context.lineTo((c + .5) * tileSize, (r + .2) * tileSize);
+        context.lineTo((c + .3) * tileSize, (r + .45) * tileSize);
+        context.lineTo((c + .4) * tileSize, (r + .45) * tileSize);
+        context.lineTo((c + .4) * tileSize, (r + .8) * tileSize);
+        context.lineTo((c + .6) * tileSize, (r + .8) * tileSize);
+        context.closePath();
+        context.fill();
+    }
+    else if (type === 3) {
+        // color4 = "red";
+        context.beginPath();
+        context.moveTo((c + .2) * tileSize, (r + .6) * tileSize);
+        context.lineTo((c + .55) * tileSize, (r + .6) * tileSize);
+        context.lineTo((c + .55) * tileSize, (r + .7) * tileSize);
+        context.lineTo((c + .8) * tileSize, (r + .5) * tileSize);
+        context.lineTo((c + .55) * tileSize, (r + .3) * tileSize);
+        context.lineTo((c + .55) * tileSize, (r + .4) * tileSize);
+        context.lineTo((c + .2) * tileSize, (r + .4) * tileSize);
+        context.lineTo((c + .2) * tileSize, (r + .6) * tileSize);
+        context.closePath();
+        context.fill();
+    }
+    else if (type === 4) {
+        // color2 = "red";
+        context.beginPath();
+        context.moveTo((c + .8) * tileSize, (r + .6) * tileSize);
+        context.lineTo((c + .45) * tileSize, (r + .6) * tileSize);
+        context.lineTo((c + .45) * tileSize, (r + .7) * tileSize);
+        context.lineTo((c + .2) * tileSize, (r + .5) * tileSize);
+        context.lineTo((c + .45) * tileSize, (r + .3) * tileSize);
+        context.lineTo((c + .45) * tileSize, (r + .4) * tileSize);
+        context.lineTo((c + .8) * tileSize, (r + .4) * tileSize);
+        context.lineTo((c + .8) * tileSize, (r + .6) * tileSize);
+        context.closePath();
+        context.fill();
+    }
+ 
+    context.strokeStyle = "red";
+    context.lineWidth = 2;
+    context.beginPath();
+    context.arc((c + .5) * tileSize, (r + .5) * tileSize, tileSize / 3, 0, 2 * Math.PI);
+    context.closePath();
+    context.stroke();
+ 
+    context.beginPath();
+    context.moveTo((c + .3) * tileSize, (r + .3) * tileSize);
+    context.lineTo((c + .7) * tileSize, (r + .7) * tileSize);
+    context.closePath();
+    context.stroke();
+ 
+    context.shadowBlur = 3;
+    context.lineWidth = 3;
+    context.strokeStyle = color1;
+    context.beginPath();
+    context.moveTo(c * tileSize, r * tileSize);
+    context.lineTo((c + 1) * tileSize, r * tileSize);
+    context.closePath();
+    context.stroke();
+    context.strokeStyle = color2;
+    context.beginPath();
+    context.moveTo((c + 1) * tileSize, r * tileSize);
+    context.lineTo((c + 1) * tileSize, (r + 1) * tileSize);
+    context.closePath();
+    context.stroke();
+    context.strokeStyle = color3;
+    context.beginPath();
+    context.moveTo((c + 1) * tileSize, (r + 1) * tileSize);
+    context.lineTo(c * tileSize, (r + 1) * tileSize);
+    context.closePath();
+    context.stroke();
+    context.strokeStyle = color4;
+    context.beginPath();
+    context.moveTo(c * tileSize, (r + 1) * tileSize);
+    context.lineTo(c * tileSize, r * tileSize);
+    context.closePath();
+    context.stroke();
+    context.restore(); */
 
     function drawBubble(r, c) {
         bubbleX = c * tileSize;
         var grd = context.createRadialGradient(bubbleX, r * tileSize, 0, bubbleX, r * tileSize, tileSize);
         grd.addColorStop(0, "rgba(255,255,255,1)");
-        grd.addColorStop(.4, "rgba(220,255,255,.5)");
-        grd.addColorStop(1, "rgba(0,100,255,.1)");
+        grd.addColorStop(.5, "rgba(220,255,255,.2)");
+        grd.addColorStop(1, "rgba(0,100,255,.05)");
         context.fillStyle = grd;
         context.lineWidth = 1;
         context.strokeStyle = "rgba(255,255,255,.05)";
 
         context.beginPath();
-        context.arc(c * tileSize + tileSize * .5, r * tileSize + tileSize * .5, tileSize / 1.5, 0, 2 * Math.PI);
+        context.arc(c * tileSize + tileSize * .5, r * tileSize + tileSize * .5, tileSize / 1.8, 0, 2 * Math.PI);
         context.fill();
         context.stroke();
     }
@@ -3096,65 +3241,79 @@ function render() {
     function newLiquid(r, c, type, isOccupied) {
         context.save();
         var tubColor;
+        var color1;
+        var color2;
+        var color3;
         if (type == LAVA) {
-            context.fillStyle = "#ffbf00";
-            context.strokeStyle = "red";
+            color1 = "red";
+            color2 = "#e69900";
+            color3 = "#111";
+            context.strokeStyle = color1;
+            context.shadowColor = color1;
             tubColor = "black";
         }
         else {
-            context.fillStyle = "#1a8cff";
-            context.strokeStyle = "#80ffe5";
+            color1 = "#80ffe5";
+            color2 = "#1a8cff";
+            color3 = "white";
+            context.strokeStyle = color1;
+            context.shadowColor = "white";
             tubColor = "white";
         }
-        roundRect(context, c * tileSize, r * tileSize, tileSize, tileSize, 0, true, false);
 
-        context.lineWidth = 3;
-        context.beginPath();
-        context.moveTo(c * tileSize, r * tileSize + tileSize * .2);
-        context.bezierCurveTo(c * tileSize + tileSize / 6, r * tileSize + tileSize * .1, c * tileSize + tileSize / 3, r * tileSize + tileSize * .1, c * tileSize + tileSize / 2, r * tileSize + tileSize * .2);
-        context.bezierCurveTo(c * tileSize + tileSize * 2 / 3, r * tileSize + tileSize * .3, c * tileSize + tileSize * 5 / 6, r * tileSize + tileSize * .3, c * tileSize + tileSize, r * tileSize + tileSize * .2);
-        context.moveTo(c * tileSize, r * tileSize + tileSize * .4);
-        context.bezierCurveTo(c * tileSize + tileSize / 6, r * tileSize + tileSize * .3, c * tileSize + tileSize / 3, r * tileSize + tileSize * .3, c * tileSize + tileSize / 2, r * tileSize + tileSize * .4);
-        context.bezierCurveTo(c * tileSize + tileSize * 2 / 3, r * tileSize + tileSize * .5, c * tileSize + tileSize * 5 / 6, r * tileSize + tileSize * .5, c * tileSize + tileSize, r * tileSize + tileSize * .4);
-        context.moveTo(c * tileSize, r * tileSize + tileSize * .6);
-        context.bezierCurveTo(c * tileSize + tileSize / 6, r * tileSize + tileSize * .5, c * tileSize + tileSize / 3, r * tileSize + tileSize * .5, c * tileSize + tileSize / 2, r * tileSize + tileSize * .6);
-        context.bezierCurveTo(c * tileSize + tileSize * 2 / 3, r * tileSize + tileSize * .7, c * tileSize + tileSize * 5 / 6, r * tileSize + tileSize * .7, c * tileSize + tileSize, r * tileSize + tileSize * .6);
-        context.moveTo(c * tileSize, r * tileSize + tileSize * .8);
-        context.bezierCurveTo(c * tileSize + tileSize / 6, r * tileSize + tileSize * .7, c * tileSize + tileSize / 3, r * tileSize + tileSize * .7, c * tileSize + tileSize / 2, r * tileSize + tileSize * .8);
-        context.bezierCurveTo(c * tileSize + tileSize * 2 / 3, r * tileSize + tileSize * .9, c * tileSize + tileSize * 5 / 6, r * tileSize + tileSize * .9, c * tileSize + tileSize, r * tileSize + tileSize * .8);
-        context.stroke();
+        context.shadowBlur = 10;
+        context.lineWidth = 3.5;
+        for (var i = -.1; i <= 1; i += .1) {
+            context.beginPath();
+            context.moveTo(c * tileSize, (r + i + .1) * tileSize);
+            context.bezierCurveTo((c + 1 / 6) * tileSize, (r + i) * tileSize, (c + 1 / 3) * tileSize, (r + i) * tileSize, (c + 1 / 2) * tileSize, (r + i + .1) * tileSize);
+            context.bezierCurveTo((c + 2 / 3) * tileSize, (r + i + .2) * tileSize, (c + 5 / 6) * tileSize, (r + i + .2) * tileSize, (c + 1) * tileSize, (r + i + .1) * tileSize);
+            context.stroke();
+            context.shadowBlur = 0;
+            context.shadowColor = "transparent";
+            var mod = Math.round((i + .1) * 10) % 3;
+            switch (mod) {
+                case 0: context.strokeStyle = color2; break;
+                case 1: context.strokeStyle = color3; break;
+                case 2: context.strokeStyle = color1; break;
+            }
+        }
 
         context.fillStyle = tubColor;
         if (!isOccupied(-1, 0)) {
-            if (isOccupied(-1, -1)) roundRect(context, c * tileSize - tileSize * .1, r * tileSize - tileSize * .2, tileSize * .2, tileSize * 1.2, 0, true, false);
-            else roundRect(context, c * tileSize - tileSize * .1, r * tileSize, tileSize * .2, tileSize, 0, true, false);
+            if (isOccupied(-1, -1)) roundRect(context, c * tileSize - tileSize * .1, (r + .1) * tileSize, tileSize * .2, tileSize * 1.2, 0, true, false);
+            else roundRect(context, c * tileSize - tileSize * .1, (r - .1) * tileSize, tileSize * .2, tileSize * 1.4, 0, true, false);
         }
-        if (!isOccupied(1, 0)) roundRect(context, c * tileSize + tileSize * .9, r * tileSize, tileSize * .2, tileSize, 0, true, false);
+        if (!isOccupied(1, 0)) {
+            if (isOccupied(1, -1)) roundRect(context, c * tileSize + tileSize * .9, (r + .1) * tileSize, tileSize * .2, tileSize * 1.2, 0, true, false);
+            else roundRect(context, c * tileSize + tileSize * .9, (r - .1) * tileSize, tileSize * .2, tileSize * 1.4, 0, true, false);
+        }
         if (!isOccupied(0, 1)) {
-            if (isOccupied(-1, 1) && !isOccupied(1, 1)) roundRect(context, c * tileSize - tileSize * .1, r * tileSize + tileSize * .8, tileSize * 1.1, tileSize * .2, 0, true, false);
-            else if (!isOccupied(-1, 1) && isOccupied(1, 1)) roundRect(context, c * tileSize, r * tileSize + tileSize * .8, tileSize * 1.3, tileSize * .2, 0, true, false);
-            else if (isOccupied(-1, 1) && isOccupied(1, 1)) roundRect(context, c * tileSize - tileSize * .1, r * tileSize + tileSize * .8, tileSize * 1.1, tileSize * .2, 0, true, false);
-            else roundRect(context, c * tileSize, r * tileSize + tileSize * .8, tileSize, tileSize * .2, 0, true, false);
+            if (isOccupied(-1, 1) && !isOccupied(1, 1)) roundRect(context, c * tileSize - tileSize * .1, (r + 1.05) * tileSize, tileSize * 1.1, tileSize * .25, 0, true, false);
+            else if (!isOccupied(-1, 1) && isOccupied(1, 1)) roundRect(context, c * tileSize, (r + 1.05) * tileSize, tileSize * 1.3, tileSize * .25, 0, true, false);
+            else if (isOccupied(-1, 1) && isOccupied(1, 1)) roundRect(context, c * tileSize - tileSize * .1, (r + 1.05) * tileSize, tileSize * 1.1, tileSize * .25, 0, true, false);
+            else roundRect(context, c * tileSize, (r + 1.05) * tileSize, tileSize * 1.1, tileSize * .25, 0, true, false);
         }
         context.restore();
     }
 
-    function drawLift(r, c, isFixed) {
+    function drawLift(r, c, isOpen) {
         context.lineWidth = .5;
         context.strokeStyle = "#777";
         var strokeBool = false;
-        if (!isFixed) {
+        if (!isOpen) {
             context.fillStyle = "#e68a00";
             roundRect(context, c * tileSize + tileSize * .05, r * tileSize + tileSize, tileSize * .9, tileSize * .2, 2, true, strokeBool);
             context.fillStyle = "#cc0000";
             roundRect(context, c * tileSize + tileSize * .3, r * tileSize + tileSize * .8, tileSize * .4, tileSize * .2, { tl: 2, tr: 2 }, true, strokeBool);
         }
-        else if (isFixed) {
+        else if (isOpen) {
             context.fillStyle = "#e68a00";
             roundRect(context, c * tileSize + tileSize * .05, r * tileSize + tileSize * .8, tileSize * .9, tileSize * .2, 2, true, strokeBool);
             roundRect(context, c * tileSize + tileSize * .05, r * tileSize, tileSize * .9, tileSize * .2, 2, true, strokeBool);
 
-            context.fillStyle = "#333";
+            if (themeName != "Midnight Rainbow") context.fillStyle = "#333";
+            else context.fillStyle = "gainsboro";
 
             context.beginPath();
             context.moveTo(c * tileSize + tileSize * .9, r * tileSize + tileSize * .8);
@@ -3179,135 +3338,7 @@ function render() {
             context.lineTo(c * tileSize + tileSize * .1, r * tileSize + tileSize * .8);
             context.closePath();
             context.fill();
-
-            /*context.beginPath();
-            context.moveTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.9);
-            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.5);
-            context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.1);
-            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.1);
-            context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.5);
-            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.9);
-            context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.9);
-            context.closePath();
-            context.fill();
-            
-            context.beginPath();
-            context.moveTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.9);
-            context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.5);
-            context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.1);
-            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.1);
-            context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.5);
-            context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.9);
-            context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.9);
-            context.closePath();
-            context.fill();*/
         }
-
-        /*var grd = context.createLinearGradient(c*tileSize, r*tileSize, (c+1)*tileSize, (r+1)*tileSize);
-        grd.addColorStop(0, "rgba(255,255,255,.6)");
-        grd.addColorStop(.1, "rgba(255,255,255,.7)");
-        grd.addColorStop(.2, "rgba(255,255,255,.5)");
-        grd.addColorStop(.3, "rgba(255,255,255,.6)");
-        grd.addColorStop(.4, "rgba(255,255,255,.8)");
-        grd.addColorStop(.5, "rgba(255,255,255,.7)");
-        grd.addColorStop(.6, "rgba(255,255,255,.5)");
-        grd.addColorStop(.7, "rgba(255,255,255,.6)");
-        grd.addColorStop(.8, "rgba(255,255,255,.7)");
-        grd.addColorStop(.9, "rgba(255,255,255,.8)");
-        grd.addColorStop(1, "rgba(255,255,255,.7)");
-
-        context.fillStyle = grd;
-        roundRect(context, c*tileSize, r*tileSize, tileSize, tileSize, 5, true, false);
-      
-    if(!isFixed){
-        var bgColor;
-        if((c+r) % 2 == 0) bgColor = background.substr(0, background.indexOf('*'));
-        else bgColor = background.substr(background.indexOf('*')+2, background.length);
-        var r1, r2, b1, b2, g1, g2;
-        r1 = bgColor.substr(5, bgColor.indexOf(",")-5);
-        g1 = bgColor.substr(bgColor.indexOf(",")+1, bgColor.indexOf(",")-4);
-        b1 = bgColor.substr(bgColor.indexOf(",", bgColor.indexOf(",")+1)+1, bgColor.indexOf(",")-4);
-        var shade = (r+1)*.03+.5;
-        if(shade>1)
-            shade = 1;
-        r2 = 255 + (r1-255) * shade - 20;
-        g2 = 255 + (g1-255) * shade - 20;
-        b2 = 255 + (b1-255) * shade - 20;
-        context.strokeStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
-        //context.fillStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
-        
-        context.beginPath();
-        context.moveTo(c*tileSize+tileSize*.5, r*tileSize);
-        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.2);
-        context.lineTo(c*tileSize+tileSize*.35, r*tileSize+tileSize*.15);
-        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.3);
-        context.lineTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.2);
-        context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.4);
-        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.35);
-        context.stroke();
-        
-        context.beginPath();
-        context.moveTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.3);
-        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.4);
-        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.5);
-        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.6);
-        context.lineTo(c*tileSize+tileSize*.2, r*tileSize+tileSize*.5);
-        context.lineTo(c*tileSize+tileSize*.1, r*tileSize+tileSize*.6);
-        context.lineTo(c*tileSize+tileSize*0, r*tileSize+tileSize*.5);
-        context.stroke();
-        
-        context.beginPath();
-        context.moveTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.6);
-        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.6);
-        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.7);
-        context.lineTo(c*tileSize+tileSize*.45, r*tileSize+tileSize*.8);
-        context.lineTo(c*tileSize+tileSize*.55, r*tileSize+tileSize*.9);
-        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*1);
-        context.stroke();
-        
-        context.beginPath();
-        context.moveTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.6);
-        context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.5);
-        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.7);
-        context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.8);
-        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.8);
-        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*1);
-        context.stroke();
-        
-        context.beginPath();
-        context.moveTo(c*tileSize+tileSize*1, r*tileSize+tileSize*.3);
-        context.lineTo(c*tileSize+tileSize*.9, r*tileSize+tileSize*.2);
-        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.3);
-        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.35);
-        context.lineTo(c*tileSize+tileSize*.8, r*tileSize+tileSize*.5);
-        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.6);
-        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.8);
-        context.stroke();
-        
-        context.beginPath();
-        context.moveTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.35);
-        context.lineTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.1);
-        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.2);
-        context.lineTo(c*tileSize+tileSize*.5, r*tileSize);
-        context.stroke();
-        
-        context.beginPath();
-        context.moveTo(c*tileSize+tileSize*.7, r*tileSize+tileSize*.35);
-        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.3);
-        context.lineTo(c*tileSize+tileSize*.55, r*tileSize+tileSize*.45);
-        context.lineTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.6);
-        context.lineTo(c*tileSize+tileSize*.6, r*tileSize+tileSize*.7);
-        context.lineTo(c*tileSize+tileSize*.3, r*tileSize+tileSize*.8);
-        context.lineTo(c*tileSize+tileSize*.15, r*tileSize+tileSize*.7);
-        context.lineTo(c*tileSize+tileSize*.02, r*tileSize+tileSize*.98);
-        context.stroke();
-        
-        context.beginPath();
-        context.moveTo(c*tileSize+tileSize*.5, r*tileSize+tileSize*.35);
-        context.lineTo(c*tileSize+tileSize*.4, r*tileSize+tileSize*.25);
-        context.lineTo(c*tileSize+tileSize*.45, r*tileSize+tileSize*.2);
-        context.stroke();
-    }*/
     }
 
     function drawWall(r, c, adjacentTiles) {
@@ -3374,8 +3405,8 @@ function render() {
             context.closePath();
 
             var bgColor;
-            if ((c + r) % 2 == 0) bgColor = background.substr(0, background.indexOf('*'));
-            else bgColor = background.substr(background.indexOf('*') + 2, background.length);
+            if ((c + r) % 2 == 0) bgColor = background[0];
+            else bgColor = background[1];
             var r1, r2, b1, b2, g1, g2;
             r1 = bgColor.substr(5, bgColor.indexOf(",") - 5);
             g1 = bgColor.substr(bgColor.indexOf(",") + 1, bgColor.indexOf(",") - 4);
@@ -3398,8 +3429,8 @@ function render() {
             context.closePath();
 
             var bgColor;
-            if ((c + r) % 2 == 0) bgColor = background.substr(0, background.indexOf('*'));
-            else bgColor = background.substr(background.indexOf('*') + 2, background.length);
+            if ((c + r) % 2 == 0) bgColor = background[0];
+            else bgColor = background[1];
             var r1, r2, b1, b2, g1, g2;
             r1 = bgColor.substr(5, bgColor.indexOf(",") - 5);
             g1 = bgColor.substr(bgColor.indexOf(",") + 1, bgColor.indexOf(",") - 4);
