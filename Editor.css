@@ -9,8 +9,13 @@ button.click-me {
     font-weight: bold;
 }
 
+table{
+    border-collapse: collapse;   
+}
+
 td{
     text-align: center;
+    line-height: 16px;
 }
 
 tr{
@@ -26,7 +31,6 @@ button{
     background-image: linear-gradient(white, #e6e6e6);
     border: none;
     border-radius: 3px;
-    margin: 2px;
     box-shadow: .5px .5px 1px black;
 }
 
@@ -38,6 +42,15 @@ button:focus{
 button:active{
     box-shadow: .5px .5px 1px black inset;
     color: black;
+}
+
+#returnButton{
+    text-decoration: none;
+    color: #006666;
+}
+
+.editorButton{
+    margin: -1px; /* buttons have built in margins when HTML tags aren't on same line */
 }
 
 #levelTable{
@@ -56,26 +69,20 @@ button:active{
     font-size: 10pt;   
 }
 
-#saveLevelButton{
-}
-
 .standard{
     background-color: lightsteelblue;   
+}
+
+.controlsHeader{
+    line-height: 20px;
 }
 
 .experimental{
     background-color: lightblue;   
 }
 
-table{
-    border-collapse: collapse;   
-}
-
 .spacer{
     height: 10px;
-}
-
-.controls{
 }
 
 #controls{
@@ -98,7 +105,7 @@ table{
 
 #levelType{
     font-family: Arial;
-    font-size: 10pt;
+    font-size: 12pt;
 }
 
 canvas{
