@@ -1,95 +1,159 @@
 <html>
-  <head>
-      <title>Snakefall Redesign</title>
-      <link rel="stylesheet" href="Editor.css"/>
-      <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee" src="//local.adguard.org?ts=1579613273701&amp;type=content-script&amp;dmn=wolfesoftware.com&amp;css=1&amp;js=1&amp;gcss=1&amp;rel=1&amp;rji=1&amp;stealth=1&amp;uag="></script>
-      <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee" src="//local.adguard.org?ts=1579613273701&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Assistant&amp;type=user-script"></script>
-      <script src="jquery.min.js"></script>
-  </head>
-    
-  <body>
-    <table id="levelTable"><tr>
-      <td><canvas id="canvas" width=750 height=600></canvas></td>
-      <td id="editorPane" style="display:none;">
-        <table id="controls">
-          <tr><td><a id="returnButton" href="https://jmdiamond3.github.io/Snakefall-Redesign/">&#x2190; Snakefall Redesign</a></td></tr>
-          <tr class="spacer"><td></td></tr>
-          <tr><td><button id="saveLevelButton" title="Ctrl+S - saves the current state to the URL bar of your browser; clears unmove/re-move history">Save Level</button></td></tr>
-          <tr><td><button id="uneditButton" title="Ctrl+Z" disabled>Unedit &lt;&lt;</button><button id="reeditButton" title="Ctrl+Shift+Z, Ctrl+Y" disabled>&gt;&gt; Reëdit</button>
-          <tr><td id="editText">Edits: <span id="editsSpan">0+0</span></td></tr>
-          
-          <tr class="spacer"><td></td></tr>
-          <tr><td class="buttonHeader">Controls</td></tr>
-              <tr id="controlsRow"><td><button id="resizeButton" title="Shift+R">Resize</button><div id="selectHolder"><button id="selectButton" title="Shift+A - double click to edit objects">Select</button><div><button id="cutButton" title="Ctrl+X" disabled>X</button><button id="copyButton" title="Ctrl+C" disabled>C</button><button id="pasteButton" title="Ctrl+V" disabled>V</button></div></div><button id="paintSpaceButton" title="E">Erase</button></td></tr>
-          <tr class="spacer"><td></td></tr>
-              
-          <tr><td class="buttonHeader">Physics</td></tr>
-          <tr><td><button id="cheatGravityButton" title="Shift+G">Gravity: ON</button><button id="cheatCollisionButton" title="Shift+C">Collision: ON</button></td></tr>
-          <tr class="spacer"><td></td></tr>
-          
-          <tr class="spacer standard"><td></td></tr>
-          <tr class="standard header"><td>Standard Elements</td></tr>
-          <tr class="standard"><td class="buttonHeader">Stationaries</td></tr>
-          <tr class="standard"><td><button id="paintWallButton" title="W">Wall</button><button id="paintSpikeButton" title="S">Spike</button><button id="paintExitButton" title="Shift+E">Exit</button><button id="paintPortalButton" title="A">Portal</button></td></tr>
-            
-          <tr class="spacer standard"><td></td></tr>
-          <tr class="standard"><td class="buttonHeader">Moveables</td></tr>
-          <tr class="standard"><td><button id="paintSnakeButton" title="Shift+S">Snake</button><button id="paintFruitButton" title="F">Fruit</button><button id="paintBlockButton" title="B">Block</button></td></tr>
-          <tr class="spacer standard"><td></td></tr>
-            
-          <tr class="spacer experimental"><td></td></tr>
-          <tr class="experimental header"><td>Experimental Elements</td></tr>
-          <tr class="experimental"><td class="buttonHeader">Removeables</td></tr>
-          <tr class="experimental"><td><button id="paintCloudButton" title="C&#013;&#013;Unaffected by pushed objects">Cloud</button><button id="paintBubbleButton" title="Shift+B&#013;&#013;Popped by pushed objects">Bubble</button></td></tr>
-          <tr class="experimental"><td><button id="paintPoisonFruitButton" title="Shift+P&#013;&#013;Shrinks snake by one segment">Poison Fruit</button></td></tr>
-          
-          <tr class="spacer experimental"><td></td></tr>
-          <tr class="experimental"><td class="buttonHeader">Scissor Lifts</td></tr>
-          <tr class="experimental"><td><button id="paintClosedLiftButton" title="L">Closed</button><button id="paintOpenLiftButton" title="Shift+L">Open</button></td></tr>
-            
-          <tr class="spacer experimental"><td></td></tr>
-          <tr class="experimental"><td class="buttonHeader">Platforms</td></tr>
-          <tr class="experimental"><td><button id="paintPlatformButton" title="P">Rainbow</button><button id="paintWoodPlatformButton" title="Shift+W">Wooden</button></td></tr>
-          <tr class="experimental"><td><button id="paintOneWayWallUButton" title="Ctrl+U">Up</button><button id="paintOneWayWallDButton" title="Ctrl+D">Down</button><button id="paintOneWayWallLButton" title="Ctrl+L">Left</button><button id="paintOneWayWallRButton" title="Ctrl+R">Right</button></td></tr>
-              
-          <tr class="spacer experimental"><td></td></tr>
-          <tr class="experimental"><td class="buttonHeader">Liquids</td></tr>
-          <tr class="experimental"><td><button id="paintLavaButton" title="V&#013;&#013;Disintegrates blocks and snakes">Lava</button><button id="paintWaterButton" title="Ctrl+W&#013;&#013;Swallows blocks but buoys snakes">Water</button></td></tr>
-          <tr class="spacer experimental"><td></td></tr>
-        </table>
-      </td>
-    </tr></table>
+
+<head>
+    <title>Snakefall Redesign</title>
+    <link rel="stylesheet" href="Editor.css" />
+    <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee"
+        src="//local.adguard.org?ts=1579613273701&amp;type=content-script&amp;dmn=wolfesoftware.com&amp;css=1&amp;js=1&amp;gcss=1&amp;rel=1&amp;rji=1&amp;stealth=1&amp;uag="></script>
+    <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee"
+        src="//local.adguard.org?ts=1579613273701&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Assistant&amp;type=user-script"></script>
+    <script src="jquery.min.js"></script>
+</head>
+
+<body>
+    <table id="levelTable">
+        <tr>
+            <td><canvas id="canvas" width=750 height=600></canvas></td>
+            <td id="editorPane" style="display:none;">
+                <table id="controls">
+                    <tr class="spacer"><td></td></tr>
+                    <tr><td><a id="returnButton" href="https://jmdiamond3.github.io/Snakefall-Redesign/">&#x2190;Snakefall Redesign</a></td></tr>
+                    <tr class="spacer"><td></td></tr>
+                    <tr><td><button id="saveLevelButton" title="Ctrl+S - saves the current state to the URL bar of your browser; clears unmove/re-move history">Save Level</button></td></tr>
+                    <tr><td>
+                        <button class="editorButton" id="uneditButton" title="Ctrl+Z" disabled>Unedit &lt;&lt;</button>
+                        <button class="editorButton" id="reeditButton" title="Ctrl+Shift+Z, Ctrl+Y" disabled>&gt;&gt; Re-edit</button>
+                    </td></tr>
+                    <tr><td class="controlsHeader" id="editText">Edits: <span id="editsSpan">0+0</span></td></tr>
+
+                    <tr class="spacer"><td></td></tr>
+                    <tr><td class="buttonHeader controlsHeader">Controls</td></tr>
+                    <tr id="controlsRow"><td>
+                        <button class="editorButton" id="resizeButton" title="Shift+R">Resize</button>
+                        <div id="selectHolder">
+                            <button class="editorButton" id="selectButton" title="Shift+A - double click to edit objects">Select</button>
+                            <div style="margin-top:5px">
+                                <button class="editorButton" id="cutButton" title="Ctrl+X" disabled>X</button>
+                                <button class="editorButton" id="copyButton" title="Ctrl+C" disabled>C</button>
+                                <button class="editorButton" id="pasteButton" title="Ctrl+V" disabled>V</button>
+                            </div>
+                        </div>
+                            <button class="editorButton" id="paintSpaceButton" title="E">Erase</button>
+                    </td></tr>
+                    <tr class="spacer"><td></td></tr>
+
+                    <tr><td class="buttonHeader controlsHeader">Physics</td></tr>
+                    <tr><td>
+                        <button class="editorButton" id="cheatGravityButton" title="Shift+G">Gravity: ON</button>
+                        <button class="editorButton" id="cheatCollisionButton" title="Shift+C">Collision: ON</button>
+                    </td></tr>
+                    <tr class="spacer"><td></td></tr>
+
+                    <tr class="spacer standard"><td></td></tr>
+                    <tr class="standard header"><td>Standard Elements</td></tr>
+                    <tr class="standard header" style="font-family: cursive;"><td>---------------------------</td></tr>
+
+                    <tr class="standard"><td class="buttonHeader">Static</td></tr>
+                    <tr class="standard"><td>
+                            <button class="editorButton" id="paintWallButton" title="W">Wall</button>
+                            <button class="editorButton" id="paintSpikeButton" title="S">Spike</button>
+                            <button class="editorButton" id="paintExitButton" title="Shift+E">Exit</button>
+                            <button class="editorButton" id="paintPortalButton" title="A">Portal</button>
+                    </td></tr>
+
+                    <tr class="spacer standard"><td></td></tr>
+                    <tr class="standard"><td class="buttonHeader">Kinetic</td></tr>
+                    <tr class="standard"><td>
+                        <button class="editorButton" id="paintSnakeButton" title="Shift+S">Snake</button>
+                        <button class="editorButton" id="paintFruitButton" title="F">Fruit</button>
+                        <button class="editorButton" id="paintBlockButton" title="B">Block</button>
+                    </td></tr>
+                    <tr class="spacer standard"><td></td></tr>
+
+                    <tr class="spacer experimental"><td></td></tr>
+                    <tr class="experimental header"><td>Experimental Elements</td></tr>
+                    <tr class="experimental header" style="font-family: cursive;"><td>---------------------------</td></tr>
+
+                    <tr class="experimental"><td class="buttonHeader">Kinetic</td></tr>
+                    <tr class="experimental"><td>
+                        <button class="editorButton" id="paintPoisonFruitButton" title="Shift+P&#013;&#013;Shrinks snake by one segment">Poison</button>
+                        <button class="editorButton" id="paintCloudButton" title="C&#013;&#013;Unaffected by pushed objects">Cloud</button>
+                        <button class="editorButton" id="paintBubbleButton" title="Shift+B&#013;&#013;Popped by pushed objects">Bubble</button>
+                    </td></tr>
+
+                    <tr class="spacer experimental"><td></td></tr>
+                    <tr class="experimental"><td class="buttonHeader">Platforms</td></tr>
+                    <tr class="experimental"><td>
+                        <button class="editorButton" id="paintPlatformButton" title="P">Rainbow</button>
+                        <button class="editorButton" id="paintTrellisButton" title="Shift+P">Trellis</button>
+                        <button class="editorButton" id="paintOneWayWallDButton" title="Shift+O">Down</button>
+                    </td></tr>
+                    <!--<tr class="experimental"><td>
+                        <button id="paintOneWayWallUButton" title="O">Up</button>
+                    </td></tr>-->
+
+                    <tr class="spacer experimental"><td></td></tr>
+                    <tr class="experimental"><td class="buttonHeader">Scissor Lifts</td></tr>
+                    <tr class="experimental"><td>
+                        <button class="editorButton" id="paintClosedLiftButton" title="X">Closed</button>
+                        <button class="editorButton" id="paintOpenLiftButton" title="Shift+X">Open</button>
+                    </td></tr>
+
+                    <tr class="spacer experimental"><td></td></tr>
+                    <tr class="experimental"><td class="buttonHeader">Turnstiles</td></tr>
+                    <tr class="experimental"><td>
+                        <button class="editorButton" id="paintTurnstileLButton" title="T">Left</button>
+                        <button class="editorButton" id="paintTurnstileRButton" title="Shift+T">Right</button>
+                    </td></tr>
+
+                    <tr class="spacer experimental"><td></td></tr>
+                    <tr class="experimental"><td class="buttonHeader">Liquids</td></tr>
+                    <tr class="experimental"><td>
+                        <button class="editorButton" id="paintLavaButton" title="L&#013;&#013;Disintegrates blocks and snakes">Lava</button>
+                        <button class="editorButton" id="paintWaterButton" title="Shift+L, Shift+W&#013;&#013;Swallows blocks but buoys snakes">Water</button>
+                    </td></tr>
+                    <tr class="spacer experimental"><td></td></tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 
     <div style="text-align:center;font-size:10pt;font-family: Arial">
-      <div id="paradoxDiv" style="background:#f88;"></div>
-      <div id="levelType" style="font-family:Arial;font-size: 12pt;color:blue; margin: 10px 0 10px 0;">STANDARD LEVEL<br><span style="font-size:6pt;">does not contain experimental elements</span></div>
-      Controls (hover for hotkeys):
-      <br>
-      Arrows<span id="wasdSpan">/WASD</span> to move
-      <button id="switchSnakesButton" title="(Shift+)Spacebar, (Shift+)Tab, 1 - Red, 2 - Green, 3 - Blue, 4 - Yellow">Switch Snakes</button>
-      <button id="showGridButton" title="G">Show Grid</button>
-      <button id="themeButton" title="T">Theme: <b>Spring</b></button>
-      <br>
-      <button id="unmoveButton" title="Backspace, Z, Q" disabled>Unmove &lt;&lt;</button>
-      Moves: <span id="movesSpan">0+0</span>
-      <button id="removeButton" title="Y, Shift+Backspace, Shift+Z, Shift+Q" disabled>&gt;&gt; Re-move</button>
-      <button id="restartButton" title="R - Unmove all the way. Shift+R - Re-move all the way">Restart</button>
-      <button id="saveProgressButton" title="Ctrl+Shift+S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift+R to restore state.">Save Progress</button>
-      <button id="checkSolutionButton" title="Saves a Solution Verification URL to your clipboard.">Copy SV to Clipboard</button>
+        <div id="paradoxDiv" style="background:#f88;"></div>
+        <div id="levelType" style="font-family:Arial;font-size: 12pt;color:blue; margin: 10px 0 10px 0;">STANDARD
+            LEVEL<br><span style="font-size:6pt;">contains only original Snakebird elements</span></div>
+        Controls (hover for hotkeys):<br>
+        Arrows<span id="wasdSpan">/WASD</span> to move
+        <button id="switchSnakesButton"
+            title="(Shift+)Spacebar, (Shift+)Tab, 1 - Red, 2 - Green, 3 - Blue, 4 - Yellow">Switch Snakes</button>
+        <button id="showGridButton" title="G">Show Grid</button>
+        <button id="themeButton" title="Return">Theme: <b>Spring</b></button>
+        <br>
+        <button id="unmoveButton" title="Backspace, Z, Q" disabled>Unmove &lt;&lt;</button>
+        Moves: <span id="movesSpan">0+0</span>
+        <button id="removeButton" title="Y, Shift+Backspace, Shift+Z, Shift+Q" disabled>&gt;&gt; Re-move</button>
+        <button id="restartButton" title="R - Unmove all the way. Shift+R - Re-move all the way">Restart</button>
+        <button id="saveProgressButton"
+            title="Ctrl+Shift+S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift+R to restore state.">Save
+            Progress</button><br>
+        <button id="checkSolutionButton" title="Saves a Solution Verification URL to your clipboard.">Copy SV to
+            Clipboard</button>
     </div>
 
     <button id="showHideEditor" title="\">Show Editor Stuff</button>
     <div id="editorDiv" style="display:none;">
-      <textarea id="serializationTextarea" rows=30 cols=80></textarea>
-      <div>
-        <button id="submitSerializationButton">Submit</button>
-        Share link: <input id="shareLinkTextbox">
-      </div>
+        <textarea id="serializationTextarea" rows=30 cols=80></textarea>
+        <div>
+            <button id="submitSerializationButton">Submit</button>
+            Share link: <input id="shareLinkTextbox">
+        </div>
     </div>
 
-    <div style="margin-top:1em;"><a href="https://github.com/thejoshwolfe/snakefall">Original Snakefall Github Page</a></div>
+    <div style="margin-top:1em;"><a href="https://github.com/thejoshwolfe/snakefall">Original Snakefall Github Page</a>
+    </div>
     <div>This game is a clone of <a href="http://snakebird.noumenongames.com/">Snakebird</a> by Noumenon Games.</div>
     <script src="version.js"></script>
     <script src="Main.js"></script>
-  </body>
+</body>
+
 </html>
