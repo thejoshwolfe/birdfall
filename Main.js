@@ -560,6 +560,8 @@ document.addEventListener("keydown", function (event) {
             return;
         case "V".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("paste"); break; }
+        case "H".charCodeAt(0):
+            if (modifierMask === 0) { toggleHotkeys(); break; }
         case "T".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(TURNSTILEL); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TURNSTILER); break; }
@@ -623,8 +625,27 @@ function switchSnakes(delta) {
     }
     activeSnakeId = snakes[0].id;
 }
+document.getElementById("arrowUp").addEventListener("click", function () {
+    move(-1, 0);
+    return;
+});
+document.getElementById("arrowDown").addEventListener("click", function () {
+    move(1, 0);
+    return;
+});
+document.getElementById("arrowLeft").addEventListener("click", function () {
+    move(0, -1);
+    return;
+});
+document.getElementById("arrowRight").addEventListener("click", function () {
+    move(0, 1);
+    return;
+});
 document.getElementById("showGridButton").addEventListener("click", function () {
-    toggleGrid();
+    toggleHotkeys();
+});
+document.getElementById("hideHotkeyButton").addEventListener("click", function () {
+
 });
 document.getElementById("saveProgressButton").addEventListener("click", function () {
     saveReplay();
@@ -656,6 +677,21 @@ function toggleShowEditor() {
 function toggleGrid() {
     persistentState.showGrid = !persistentState.showGrid;
     savePersistentState();
+    render();
+}
+function toggleHotkeys() {
+    persistentState.hideHotkeys = !persistentState.hideHotkeys;
+    savePersistentState();
+    var hotkeys = document.getElementsByClassName("hotkey");
+    var spacers = document.getElementsByClassName("hotkeySpacer");
+    for (var i = 0; i < hotkeys.length; i++) {
+        if (persistentState.hideHotkeys) hotkeys[i].style.display = "block";
+        else hotkeys[i].style.display = "none";
+    }
+    for (var i = 0; i < spacers.length; i++) {
+        if (persistentState.hideHotkeys) spacers[i].style.display = "none";
+        else spacers[i].style.display = "block";
+    }
     render();
 }
 
@@ -1705,6 +1741,7 @@ function haveCheatcodesBeenUsed() {
 var persistentState = {
     showEditor: false,
     showGrid: false,
+    hideHotkeys: false,
 };
 function savePersistentState() {
     localStorage.snakefall = JSON.stringify(persistentState);
@@ -1716,6 +1753,7 @@ function loadPersistentState() {
     }
     persistentState.showEditor = !!persistentState.showEditor;
     persistentState.showGrid = !!persistentState.showGrid;
+    persistentState.hideHotkeys = !!persistentState.hideHotkeys;
     showEditorChanged();
 }
 var isGravityEnabled = true;
@@ -2136,6 +2174,7 @@ function moveObjects(objects, dr, dc, portalLocations, portalActivationLocations
         });
         if (activatingPortals.length === 1) {
             // exactly one new portal we're touching. activate it
+            //drawObject(newSnake("white", object.locations));
             portalActivationLocations.push(activatingPortals[0]);
         }
     });
@@ -2449,6 +2488,7 @@ function render() {
 
     // throw this in there somewhere
     document.getElementById("showGridButton").textContent = (persistentState.showGrid ? "Hide" : "Show") + " Grid";
+    document.getElementById("hideHotkeyButton").textContent = (persistentState.hideHotkeys ? "Hide" : "Show") + " Hotkeys";
 
     if (animationProgress < 1.0) requestAnimationFrame(render);
     return; // this is the end of the function proper
@@ -2558,7 +2598,7 @@ function render() {
                     for (var c = 0; c < level.width; c++) {
                         location = getLocation(level, r, c);
                         tileCode = level.map[location];
-                        if (tileCode === TURNSTILER || tileCode === TURNSTILEL || tileCode === CLOUD || tileCode === BUBBLE) drawTile(tileCode, r, c, level, location, false);
+                        if (tileCode === TURNSTILER || tileCode === TURNSTILEL || tileCode === CLOUD || tileCode === BUBBLE || tileCode === TRELLIS) drawTile(tileCode, r, c, level, location, false);
                     }
                 }
             }
