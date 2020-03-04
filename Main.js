@@ -496,7 +496,6 @@ document.addEventListener("keydown", function (event) {
             return;
         case "A".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { move(0, -1); break; }
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PORTAL); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("select"); break; }
             if (persistentState.showEditor && modifierMask === CTRL) { selectAll(); break; }
             return;
@@ -538,8 +537,7 @@ document.addEventListener("keydown", function (event) {
             return;
         case "P".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TRELLIS); break; }
+            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PORTAL); break; }
             return;
         case "U".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
@@ -567,7 +565,10 @@ document.addEventListener("keydown", function (event) {
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TURNSTILER); break; }
         case "O".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(ONEWAYWALLU); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(ONEWAYWALLD); break; }
+        case "M".charCodeAt(0):
+            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
+            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TRELLIS); break; }
+            if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLD); break; }
         case 13: //return
             if (persistentState.showEditor && modifierMask === 0) { toggleTheme(); break; }
         case 32: // spacebar
@@ -1842,7 +1843,7 @@ function showEditorChanged() {
     ["editorDiv", "editorPane"].forEach(function (id) {
         document.getElementById(id).style.display = persistentState.showEditor ? "block" : "none";
     });
-    document.getElementById("wasdSpan").textContent = persistentState.showEditor ? "" : "/WASD";
+    document.getElementById("wasdSpan").textContent = persistentState.showEditor ? "" : " or WASD";
 
     render();
 }
