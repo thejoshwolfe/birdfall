@@ -134,7 +134,7 @@ canvas{
 }
 
 #switchSnakesButton{
-    height: 30px;
+    min-height: 30px;
     margin-right: 10px;
 }
 
@@ -144,8 +144,8 @@ canvas{
 }
 
 .arrow{
-    height: 30px;
-    width: 30px;
+    min-height: 30px;
+    min-width: 30px;
     font-size: 14pt;
     font-family: Futura;
 }
@@ -165,3 +165,7 @@ canvas{
     margin-left: 5px;
 }
 
+.bigButton{
+    font-size: 20pt;
+    padding: 10px;
+}
