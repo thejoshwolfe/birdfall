@@ -82,7 +82,7 @@
                     </td></tr>
                     <tr class="spacer experimental hotkeySpacer"><td></td></tr>
 
-                    <tr class="experimental"><td class="buttonHeader">Platforms</td></tr>
+                    <tr class="experimental" style="margin-bottom: 10px;"><td class="buttonHeader">Platforms</td></tr>
                     <tr class="experimental"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintPlatformButton" title="P">Rainbow</button><br><span class="hotkey">P</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintTrellisButton" title="Shift+P">Trellis</button><br><span class="hotkey">Shift&nbsp;&nbsp;P</span></div>
@@ -125,25 +125,26 @@
         Controls (hover for hotkeys):<br>
         Arrows<span id="wasdSpan">/WASD</span> to move<br>
         <div id="controlButtons">
-            <div style="display: table-cell; vertical-align: middle;"><button id="switchSnakesButton" title="(Shift+)Spacebar, (Shift+)Tab, 1 - Red, 2 - Green, 3 - Blue, 4 - Yellow">Switch Snake</button></div>
+            <div style="display: table-cell; vertical-align: middle;"><button id="switchSnakesButton" class="bottomButton" title="(Shift+)Spacebar, (Shift+)Tab, 1 - Red, 2 - Green, 3 - Blue, 4 - Yellow">Switch Snake</button></div>
             <div id="arrowsHolder">
-                <button id="arrowLeft" class="arrow">&#8592;</button>
+                <button id="arrowLeft" class="arrow bottomButton">&#8592;</button>
                 <div id="verticalArrowsHolder">
-                    <button id="arrowUp" class="arrow" style="margin-bottom: 5px; display: block;">&#8593;</button>
-                    <button id="arrowDown" class="arrow" style="display: block;">&#8595;</button>
+                    <button id="arrowUp" class="arrow bottomButton" style="margin-bottom: 5px; display: block;">&#8593;</button>
+                    <button id="arrowDown" class="arrow bottomButton" style="display: block;">&#8595;</button>
                 </div>
-                <button id="arrowRight" class="arrow">&#8594;</button>
+                <button id="arrowRight" class="arrow bottomButton">&#8594;</button>
             </div>
         </div>
-        <button id="restartButton" title="R - Unmove all the way. Shift+R - Re-move all the way">Restart</button>
-        <button id="unmoveButton" title="Backspace, Z, Q" disabled>Unmove &lt;&lt;</button>
-        Moves: <span id="movesSpan">0+0</span>
-        <button id="removeButton" title="Y, Shift+Backspace, Shift+Z, Shift+Q" disabled>&gt;&gt; Re-move</button>
-        <button id="saveProgressButton" title="Ctrl+Shift+S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift+R to restore state.">Save Progress</button><br>
-        <button id="showGridButton" title="G">Show Grid</button>
-        <button id="hideHotkeyButton" title="H">Hide Hotkeys</button>
-        <button id="themeButton" title="Return">Theme: <b>Spring</b></button>
-        <button id="checkSolutionButton" title="Saves a Solution Verification URL to your clipboard.">Copy Verification Link</button>
+        <button id="restartButton" class="bottomButton" title="R - Unmove all the way. Shift+R - Re-move all the way">Restart</button>
+        <button id="unmoveButton" class="bottomButton" title="Backspace, Z, Q" disabled>Unmove &lt;&lt;</button>
+        <span class="bottomButton">Moves: </span><span id="movesSpan" class="bottomButton">0+0</span>
+        <button id="removeButton" class="bottomButton" title="Y, Shift+Backspace, Shift+Z, Shift+Q" disabled>&gt;&gt; Re-move</button>
+        <button id="saveProgressButton" class="bottomButton" title="Ctrl+Shift+S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift+R to restore state.">Save Progress</button><br>
+        <button id="bigButtonButton" class="bottomButton" title="Shift+G">Giant Buttons</button>
+        <button id="showGridButton" class="bottomButton" title="G">Show Grid</button>
+        <button id="hideHotkeyButton" class="bottomButton" title="H">Hide Hotkeys</button>
+        <button id="themeButton" class="bottomButton" title="Return">Theme: <b>Spring</b></button>
+        <button id="checkSolutionButton" class="bottomButton" title="Saves a Solution Verification URL to your clipboard.">Copy Verification Link</button>
     </div>
 
     <button id="showHideEditor" title="\">Show Editor Stuff</button>
