@@ -2120,7 +2120,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     return false;
                 }
                 addIfNotPresent(pushedObjects, yetAnotherObject);
-                if (level.map[forwardLocation] === TRELLIS) addIfNotPresent(forwardLocations, forwardLocation);
+                if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) addIfNotPresent(forwardLocations, forwardLocation);
             } else
                 addIfNotPresent(forwardLocations, forwardLocation);
         }
@@ -2142,7 +2142,6 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                         addIfNotPresent(dyingObjects, object);
                         continue;
                     }
-
                 }
                 else if (tileCode === LAVA) {
                     if (object.type === SNAKE || object.type === BLOCK) {
@@ -2471,13 +2470,6 @@ function render() {
     if (persistentState.showGrid && persistentState.showEditor) {
         drawGrid();
     }
-
-    // active snake halo
-    /*if (countSnakes() !== 0 && isAlive()) {
-      var activeSnake = findActiveSnake();
-      var activeSnakeRowcol = getRowcol(level, activeSnake.locations[0]);
-      drawCircle(activeSnakeRowcol.r, activeSnakeRowcol.c, 2, "rgba(256,256,256,0.3)");
-    }*/
 
     if (persistentState.showEditor) {
         if (paintBrushTileCode === BLOCK) {
