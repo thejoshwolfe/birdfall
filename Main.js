@@ -2509,7 +2509,7 @@ function render() {
     // throw this in there somewhere
     document.getElementById("showGridButton").textContent = (persistentState.showGrid ? "Hide" : "Show") + " Grid";
     document.getElementById("hideHotkeyButton").textContent = (persistentState.hideHotkeys ? "Hide" : "Show") + " Hotkeys";
-    document.getElementById("bigButtonButton").textContent = (persistentState.bigButton ? "Regular" : "Giant") + " Buttons";
+    document.getElementById("bigButtonButton").textContent = (persistentState.bigButton ? "Regular" : "Large") + " Buttons";
 
     if (animationProgress < 1.0) requestAnimationFrame(render);
     return; // this is the end of the function proper
