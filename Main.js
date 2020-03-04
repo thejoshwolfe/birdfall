@@ -565,10 +565,10 @@ document.addEventListener("keydown", function (event) {
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TURNSTILER); break; }
         case "O".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(ONEWAYWALLU); break; }
+            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(ONEWAYWALLD); break; }
         case "M".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TRELLIS); break; }
-            if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode(ONEWAYWALLD); break; }
         case 13: //return
             if (persistentState.showEditor && modifierMask === 0) { toggleTheme(); break; }
         case 32: // spacebar
@@ -757,7 +757,7 @@ var paintButtonIdAndTileCodes = [
     ["paintPortalButton", PORTAL],
     ["paintPlatformButton", PLATFORM],
     ["paintTrellisButton", TRELLIS],
-    //["paintOneWayWallUButton", ONEWAYWALLU],
+    ["paintOneWayWallUButton", ONEWAYWALLU],
     ["paintOneWayWallDButton", ONEWAYWALLD],
     ["paintTurnstileLButton", TURNSTILEL],
     ["paintTurnstileRButton", TURNSTILER],
