@@ -85,6 +85,10 @@ button:active{
     height: 10px;
 }
 
+.hotkeySpacer{
+    display: none;
+}
+
 #controls{
     background-color: aliceblue;
     width: 200px;
@@ -111,3 +115,53 @@ button:active{
 canvas{
     border: 2px solid black;   
 }
+
+.hotkey{
+    font-size: 6pt; 
+    color: gray;
+    font-family: Arial;
+}
+
+.buttonDiv{
+    display: inline-block;
+}
+
+#controlButtons{
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: table;
+}
+
+#switchSnakesButton{
+    height: 30px;
+    margin-right: 10px;
+}
+
+#arrowsHolder{
+    display: flex;
+    align-items: center;
+}
+
+.arrow{
+    height: 30px;
+    width: 30px;
+    font-size: 14pt;
+    font-family: Futura;
+}
+
+#arrowLeft{
+    float: left;
+    margin-right: 5px;
+}
+
+#verticalArrowsHolder{
+    float: left;
+    width: fit-content;
+}
+
+#arrowRight{
+    float: left;
+    margin-left: 5px;
+}
+
