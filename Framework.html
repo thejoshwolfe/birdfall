@@ -55,20 +55,20 @@
 
                     <tr class="standard"><td class="buttonHeader">Static</td></tr>
                     <tr class="standard"><td>
-                            <button class="editorButton" id="paintWallButton" title="W">Wall</button>
-                            <button class="editorButton" id="paintSpikeButton" title="S">Spike</button>
-                            <button class="editorButton" id="paintExitButton" title="Shift+E">Exit</button>
-                            <button class="editorButton" id="paintPortalButton" title="A">Portal</button>
+                            <div class="buttonDiv"><button class="editorButton" id="paintWallButton" title="W">Wall</button><br><span class="hotkey">W</span></div>
+                            <div class="buttonDiv"><button class="editorButton" id="paintSpikeButton" title="S">Spike</button><br><span class="hotkey">S</span></div>
+                            <div class="buttonDiv"><button class="editorButton" id="paintExitButton" title="Shift+E">Exit</button><br><span class="hotkey">Shift&nbsp;&nbsp;E</span></div>
+                            <div class="buttonDiv"><button class="editorButton" id="paintPortalButton" title="A">Portal</button><br><span class="hotkey">A</span></div>
                     </td></tr>
+                    <tr class="spacer standard hotkeySpacer"><td></td></tr>
 
-                    <tr class="spacer standard"><td></td></tr>
                     <tr class="standard"><td class="buttonHeader">Kinetic</td></tr>
                     <tr class="standard"><td>
-                        <button class="editorButton" id="paintSnakeButton" title="Shift+S">Snake</button>
-                        <button class="editorButton" id="paintFruitButton" title="F">Fruit</button>
-                        <button class="editorButton" id="paintBlockButton" title="B">Block</button>
+                        <div class="buttonDiv"><button class="editorButton" id="paintSnakeButton" title="Shift+S">Snake</button><br><span class="hotkey">Shift&nbsp;&nbsp;S</span></div>
+                        <div class="buttonDiv"><button class="editorButton" id="paintFruitButton" title="F">Fruit</button><br><span class="hotkey">F</span></div>
+                        <div class="buttonDiv"><button class="editorButton" id="paintBlockButton" title="B">Block</button><br><span class="hotkey">B</span></div>
                     </td></tr>
-                    <tr class="spacer standard"><td></td></tr>
+                    <tr class="spacer standard hotkeySpacer"><td></td></tr>
 
                     <tr class="spacer experimental"><td></td></tr>
                     <tr class="experimental header"><td>Experimental Elements</td></tr>
@@ -76,43 +76,43 @@
 
                     <tr class="experimental"><td class="buttonHeader">Kinetic</td></tr>
                     <tr class="experimental"><td>
-                        <button class="editorButton" id="paintPoisonFruitButton" title="Shift+P&#013;&#013;Shrinks snake by one segment">Poison</button>
-                        <button class="editorButton" id="paintCloudButton" title="C&#013;&#013;Unaffected by pushed objects">Cloud</button>
-                        <button class="editorButton" id="paintBubbleButton" title="Shift+B&#013;&#013;Popped by pushed objects">Bubble</button>
+                        <div class="buttonDiv"><button class="editorButton" id="paintPoisonFruitButton" title="Shift+F&#013;&#013;Shrinks snake by one segment">Poison</button><br><span class="hotkey">Shift&nbsp;&nbsp;F</span></div>
+                        <div class="buttonDiv"><button class="editorButton" id="paintCloudButton" title="C&#013;&#013;Unaffected by pushed objects">Cloud</button><br><span class="hotkey">C</span></div>
+                        <div class="buttonDiv"><button class="editorButton" id="paintBubbleButton" title="Shift+B&#013;&#013;Popped by pushed objects">Bubble</button><br><span class="hotkey">Shift&nbsp;&nbsp;B</span></div>
                     </td></tr>
+                    <tr class="spacer experimental hotkeySpacer"><td></td></tr>
 
-                    <tr class="spacer experimental"><td></td></tr>
                     <tr class="experimental"><td class="buttonHeader">Platforms</td></tr>
                     <tr class="experimental"><td>
-                        <button class="editorButton" id="paintPlatformButton" title="P">Rainbow</button>
-                        <button class="editorButton" id="paintTrellisButton" title="Shift+P">Trellis</button>
-                        <button class="editorButton" id="paintOneWayWallDButton" title="Shift+O">Down</button>
+                        <div class="buttonDiv"><button class="editorButton" id="paintPlatformButton" title="P">Rainbow</button><br><span class="hotkey">P</span></div>
+                        <div class="buttonDiv"><button class="editorButton" id="paintTrellisButton" title="Shift+P">Trellis</button><br><span class="hotkey">Shift&nbsp;&nbsp;P</span></div>
+                        <div class="buttonDiv"><button class="editorButton" id="paintOneWayWallDButton" title="Shift+O">Down</button><br><span class="hotkey">Shift&nbsp;&nbsp;O</span></div>
                     </td></tr>
+                    <tr class="spacer experimental hotkeySpacer"><td></td></tr>
                     <!--<tr class="experimental"><td>
                         <button id="paintOneWayWallUButton" title="O">Up</button>
                     </td></tr>-->
 
-                    <tr class="spacer experimental"><td></td></tr>
                     <tr class="experimental"><td class="buttonHeader">Scissor Lifts</td></tr>
                     <tr class="experimental"><td>
-                        <button class="editorButton" id="paintClosedLiftButton" title="X">Closed</button>
-                        <button class="editorButton" id="paintOpenLiftButton" title="Shift+X">Open</button>
+                        <div class="buttonDiv"><button class="editorButton" id="paintClosedLiftButton" title="X">Closed</button><br><span class="hotkey">X</span></div>
+                        <div class="buttonDiv"><button class="editorButton" id="paintOpenLiftButton" title="Shift+X">Open</button><br><span class="hotkey">Shift&nbsp;&nbsp;X</span></div>
                     </td></tr>
+                    <tr class="spacer experimental hotkeySpacer"><td></td></tr>
 
-                    <tr class="spacer experimental"><td></td></tr>
                     <tr class="experimental"><td class="buttonHeader">Turnstiles</td></tr>
                     <tr class="experimental"><td>
-                        <button class="editorButton" id="paintTurnstileLButton" title="T">Left</button>
-                        <button class="editorButton" id="paintTurnstileRButton" title="Shift+T">Right</button>
+                        <div class="buttonDiv"><button class="editorButton" id="paintTurnstileLButton" title="T">Left</button><br><span class="hotkey">T</span></div>
+                        <div class="buttonDiv"><button class="editorButton" id="paintTurnstileRButton" title="Shift+T">Right</button><br><span class="hotkey">Shift&nbsp;&nbsp;T</span></div>
                     </td></tr>
+                    <tr class="spacer experimental hotkeySpacer"><td></td></tr>
 
-                    <tr class="spacer experimental"><td></td></tr>
                     <tr class="experimental"><td class="buttonHeader">Liquids</td></tr>
                     <tr class="experimental"><td>
-                        <button class="editorButton" id="paintLavaButton" title="L&#013;&#013;Disintegrates blocks and snakes">Lava</button>
-                        <button class="editorButton" id="paintWaterButton" title="Shift+L, Shift+W&#013;&#013;Swallows blocks but buoys snakes">Water</button>
+                        <div class="buttonDiv"><button class="editorButton" id="paintLavaButton" title="L&#013;&#013;Disintegrates blocks and snakes">Lava</button><br><span class="hotkey">L</span></div>
+                        <div class="buttonDiv"><button class="editorButton" id="paintWaterButton" title="Shift+L, Shift+W&#013;&#013;Swallows blocks but buoys snakes">Water</button><br><span class="hotkey">Shift&nbsp;&nbsp;L</span></div>
                     </td></tr>
-                    <tr class="spacer experimental"><td></td></tr>
+                    <tr class="spacer experimental hotkeySpacer"><td></td></tr>
                 </table>
             </td>
         </tr>
@@ -123,21 +123,27 @@
         <div id="levelType" style="font-family:Arial;font-size: 12pt;color:blue; margin: 10px 0 10px 0;">STANDARD
             LEVEL<br><span style="font-size:6pt;">contains only original Snakebird elements</span></div>
         Controls (hover for hotkeys):<br>
-        Arrows<span id="wasdSpan">/WASD</span> to move
-        <button id="switchSnakesButton"
-            title="(Shift+)Spacebar, (Shift+)Tab, 1 - Red, 2 - Green, 3 - Blue, 4 - Yellow">Switch Snakes</button>
-        <button id="showGridButton" title="G">Show Grid</button>
-        <button id="themeButton" title="Return">Theme: <b>Spring</b></button>
-        <br>
+        Arrows<span id="wasdSpan">/WASD</span> to move<br>
+        <div id="controlButtons">
+            <div style="display: table-cell; vertical-align: middle;"><button id="switchSnakesButton" title="(Shift+)Spacebar, (Shift+)Tab, 1 - Red, 2 - Green, 3 - Blue, 4 - Yellow">Switch Snake</button></div>
+            <div id="arrowsHolder">
+                <button id="arrowLeft" class="arrow">&#8592;</button>
+                <div id="verticalArrowsHolder">
+                    <button id="arrowUp" class="arrow" style="margin-bottom: 5px; display: block;">&#8593;</button>
+                    <button id="arrowDown" class="arrow" style="display: block;">&#8595;</button>
+                </div>
+                <button id="arrowRight" class="arrow">&#8594;</button>
+            </div>
+        </div>
+        <button id="restartButton" title="R - Unmove all the way. Shift+R - Re-move all the way">Restart</button>
         <button id="unmoveButton" title="Backspace, Z, Q" disabled>Unmove &lt;&lt;</button>
         Moves: <span id="movesSpan">0+0</span>
         <button id="removeButton" title="Y, Shift+Backspace, Shift+Z, Shift+Q" disabled>&gt;&gt; Re-move</button>
-        <button id="restartButton" title="R - Unmove all the way. Shift+R - Re-move all the way">Restart</button>
-        <button id="saveProgressButton"
-            title="Ctrl+Shift+S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift+R to restore state.">Save
-            Progress</button><br>
-        <button id="checkSolutionButton" title="Saves a Solution Verification URL to your clipboard.">Copy SV to
-            Clipboard</button>
+        <button id="saveProgressButton" title="Ctrl+Shift+S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift+R to restore state.">Save Progress</button><br>
+        <button id="showGridButton" title="G">Show Grid</button>
+        <button id="hideHotkeyButton" title="H">Hide Hotkeys</button>
+        <button id="themeButton" title="Return">Theme: <b>Spring</b></button>
+        <button id="checkSolutionButton" title="Saves a Solution Verification URL to your clipboard.">Copy Verification Link</button>
     </div>
 
     <button id="showHideEditor" title="\">Show Editor Stuff</button>
