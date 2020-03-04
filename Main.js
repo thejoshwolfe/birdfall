@@ -641,6 +641,9 @@ document.getElementById("arrowRight").addEventListener("click", function () {
     move(0, 1);
     return;
 });
+document.getElementById("bigButtonButton").addEventListener("click", function () {
+    toggleButtonSize();
+});
 document.getElementById("showGridButton").addEventListener("click", function () {
     toggleGrid();
 });
@@ -673,6 +676,20 @@ function toggleShowEditor() {
     persistentState.showEditor = !persistentState.showEditor;
     savePersistentState();
     showEditorChanged();
+}
+function toggleButtonSize() {
+    persistentState.bigButton = !persistentState.bigButton;
+    savePersistentState();
+    var buttons = document.getElementsByClassName("bottomButton");
+    if (persistentState.bigButton) {
+        for (var i = 0; i < buttons.length; i++)
+            buttons[i].classList.add("bigButton");
+    }
+    else {
+        for (var i = 0; i < buttons.length; i++)
+            buttons[i].classList.remove("bigButton");
+    }
+    render();
 }
 function toggleGrid() {
     persistentState.showGrid = !persistentState.showGrid;
@@ -1740,6 +1757,7 @@ function haveCheatcodesBeenUsed() {
 
 var persistentState = {
     showEditor: false,
+    bigButton: false,
     showGrid: false,
     hideHotkeys: true,
 };
@@ -1752,6 +1770,7 @@ function loadPersistentState() {
     } catch (e) {
     }
     persistentState.showEditor = !!persistentState.showEditor;
+    persistentState.bigButton = !!persistentState.bigButton;
     persistentState.showGrid = !!persistentState.showGrid;
     persistentState.hideHotkeys = !!persistentState.hideHotkeys;
     showEditorChanged();
@@ -2489,6 +2508,7 @@ function render() {
     // throw this in there somewhere
     document.getElementById("showGridButton").textContent = (persistentState.showGrid ? "Hide" : "Show") + " Grid";
     document.getElementById("hideHotkeyButton").textContent = (persistentState.hideHotkeys ? "Hide" : "Show") + " Hotkeys";
+    document.getElementById("bigButtonButton").textContent = (persistentState.bigButton ? "Regular" : "Giant") + " Buttons";
 
     if (animationProgress < 1.0) requestAnimationFrame(render);
     return; // this is the end of the function proper
