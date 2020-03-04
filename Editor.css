@@ -110,6 +110,8 @@ button:active{
 #levelType{
     font-family: Arial;
     font-size: 12pt;
+    color:slateblue; 
+    margin: 0 0 10px 0;
 }
 
 canvas{
@@ -168,4 +170,27 @@ canvas{
 .bigButton{
     font-size: 20pt;
     padding: 10px;
+}
+
+#bottomBlock{
+    text-align: center;
+    vertical-align: top;
+}
+
+#separator{
+    background-color: black;
+    height: 150px;
+    width: 1px;
+    margin: 0 5px 0 5px;
+    display: inline-block;
+}
+
+.optionsHeader{
+    margin-top: 10px;
+    font-family: Futura;
+}
+
+#keyboardInstructions{
+    font-size: 8pt;
+    width: 220px;
 }
