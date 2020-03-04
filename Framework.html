@@ -102,7 +102,7 @@
                         <div class="buttonDiv"><button class="editorButton" id="paintTurnstileRButton" title="Shift+T">Right</button><br><span class="hotkey">Shift&nbsp;&nbsp;T</span></div>
                     </td></tr>
                     <tr class="spacer experimental hotkeySpacer"><td></td></tr>
-                    
+
                     <tr class="experimental"><td class="buttonHeader">Scissor Lifts</td></tr>
                     <tr class="experimental"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintClosedLiftButton" title="X">Closed</button><br><span class="hotkey">X</span></div>
@@ -121,33 +121,37 @@
         </tr>
     </table>
 
-    <div style="text-align:center;font-size:10pt;font-family: Arial">
-        <div id="paradoxDiv" style="background:#f88;"></div>
-        <div id="levelType" style="font-family:Arial;font-size: 12pt;color:slateblue; margin: 10px 0 10px 0;">STANDARD
-            LEVEL<br><span style="font-size:6pt;">contains only original Snakebird elements</span></div>
-        <div style="margin-top:20px; font-size:12pt;">CONTROLS</div><div style="font-size:8pt;">hover for hotkeys</div>
-        <div style="margin-top: 20px; font-size: 8pt;">use keyboard arrows<span id="wasdSpan"> or WASD</span> to move, or use the buttons below</div>
-        <div id="controlButtons">
-            <div style="display: table-cell; vertical-align: middle;"><button id="switchSnakesButton" class="bottomButton" title="(Shift+)Spacebar, (Shift+)Tab, 1 - Red, 2 - Green, 3 - Blue, 4 - Yellow">Switch Snake</button></div>
-            <div id="arrowsHolder">
-                <button id="arrowLeft" class="arrow bottomButton">&#8592;</button>
-                <div id="verticalArrowsHolder">
-                    <button id="arrowUp" class="arrow bottomButton" style="margin-bottom: 5px; display: block;">&#8593;</button>
-                    <button id="arrowDown" class="arrow bottomButton" style="display: block;">&#8595;</button>
+    <div id="paradoxDiv" style="background:#f88;"></div>
+    <div id="bottomBlock">
+        <div style="font-size:12pt;font-family: Arial;margin-top: 10px;">CONTROLS</div><div style="font-size:8pt;font-family: Arial;margin-bottom: 20px;">hover for hotkeys</div>
+        <div style="text-align:center;font-size:10pt;font-family:Arial;display:inline-block;vertical-align: top;">
+            <div id="keyboardInstructions">use the arrows<span id="wasdSpan"> or WASD</span> keys on your keyboard to move, or use the buttons below</div>
+            <div id="controlButtons">
+                <div style="display: table-cell; vertical-align: middle;"><button id="switchSnakesButton" class="bottomButton" title="(Shift+) Spacebar, (Shift+) Tab&#013;&#013;1, 2, 3, and 4 cycle through like-colored snakes, with each number representing a different color">Switch Snake</button></div>
+                <div id="arrowsHolder">
+                    <button id="arrowLeft" class="arrow bottomButton">&#8592;</button>
+                    <div id="verticalArrowsHolder">
+                        <button id="arrowUp" class="arrow bottomButton" style="margin-bottom: 5px; display: block;">&#8593;</button>
+                        <button id="arrowDown" class="arrow bottomButton" style="display: block;">&#8595;</button>
+                    </div>
+                    <button id="arrowRight" class="arrow bottomButton">&#8594;</button>
                 </div>
-                <button id="arrowRight" class="arrow bottomButton">&#8594;</button>
             </div>
         </div>
-        <button id="restartButton" class="bottomButton" title="R - Unmove all the way. Shift+R - Re-move all the way">Restart</button>
-        <button id="unmoveButton" class="bottomButton" title="Backspace, Z, Q" disabled>Unmove &lt;&lt;</button>
-        <span class="bottomButton">Moves: </span><span id="movesSpan" class="bottomButton">0+0</span>
-        <button id="removeButton" class="bottomButton" title="Y, Shift+Backspace, Shift+Z, Shift+Q" disabled>&gt;&gt; Re-move</button>
-        <button id="saveProgressButton" class="bottomButton" title="Ctrl+Shift+S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift+R to restore state.">Save Progress</button><br>
-        <button id="bigButtonButton" class="bottomButton">Large Buttons</button>
-        <button id="showGridButton" class="bottomButton" title="G">Show Grid</button>
-        <button id="hideHotkeyButton" class="bottomButton" title="H">Hide Hotkeys</button>
-        <button id="themeButton" class="bottomButton" title="Return">Theme: <b>Spring</b></button>
-        <button id="checkSolutionButton" class="bottomButton" title="Saves a Solution Verification URL to your clipboard.">Copy Verification Link</button>
+        <div id="separator"></div>
+        <div style="text-align:center;font-size:10pt;font-family: Arial;display: inline-block;vertical-align: top;">
+            <div id="levelType">STANDARD LEVEL<br><span style="font-size:6pt;">contains only original Snakebird elements</span></div>
+            <button id="unmoveButton" class="bottomButton" title="Backspace, Z, Q" disabled>Unmove &lt;&lt;</button>
+            <span class="bottomButton">Moves: </span><span id="movesSpan" class="bottomButton">0+0</span>
+            <button id="removeButton" class="bottomButton" title="Y, Shift+Backspace, Shift+Z, Shift+Q" disabled>&gt;&gt; Re-move</button><br>
+            <button id="restartButton" class="bottomButton" title="R - Unmove all the way. Shift+R - Re-move all the way">Restart</button>
+            <button id="saveProgressButton" class="bottomButton" title="Ctrl+Shift+S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift+R to restore state.">Save Progress</button><br><br>
+            <button id="showGridButton" class="bottomButton" title="G">Show Grid</button>
+            <button id="themeButton" class="bottomButton" title="Return">Theme: <b>Spring</b></button><br>
+            <button id="bigButtonButton" class="bottomButton">Large Buttons</button>
+            <button id="hideHotkeyButton" class="bottomButton" title="H">Hide Hotkeys</button><br>
+            <button id="checkSolutionButton" class="bottomButton" title="Saves a Solution Verification URL to your clipboard.">Copy Verification Link</button>
+        </div>
     </div>
 
     <button id="showHideEditor" title="\">Show Editor Stuff</button>
