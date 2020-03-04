@@ -261,3 +261,7 @@ form{
     filter: blur(8px);
     visibility: hidden;*/
 }
+
+.vColumn{
+    font-size: 10pt;
+}
