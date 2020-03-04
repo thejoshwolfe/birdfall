@@ -642,10 +642,10 @@ document.getElementById("arrowRight").addEventListener("click", function () {
     return;
 });
 document.getElementById("showGridButton").addEventListener("click", function () {
-    toggleHotkeys();
+    toggleGrid();
 });
 document.getElementById("hideHotkeyButton").addEventListener("click", function () {
-
+    toggleHotkeys();
 });
 document.getElementById("saveProgressButton").addEventListener("click", function () {
     saveReplay();
@@ -2578,7 +2578,7 @@ function render() {
                     for (var c = 0; c < level.width; c++) {
                         location = getLocation(level, r, c);
                         tileCode = level.map[location];
-                        if (tileCode === WATER || tileCode === LAVA) drawTile(tileCode, r, c, level, location, false);    //draws only walls
+                        if (tileCode === WATER || tileCode === LAVA || tileCode === SPIKE) drawTile(tileCode, r, c, level, location, false);    //draws only walls
                     }
                 }
             }
