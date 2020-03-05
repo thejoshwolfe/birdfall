@@ -120,7 +120,7 @@ canvas{
 
 .hotkey{
     font-size: 6pt; 
-    color: gray;
+    color: rgba(0,0,0,.5);
     font-family: Arial;
 }
 
