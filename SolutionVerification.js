@@ -2399,20 +2399,39 @@ function render() {
         }
     }
 
-    function getTintedColor(color, v) {
-        if (color.length > 6) { color = color.substring(1, color.length) }
-        var rgb = parseInt(color, 16);
-        var r = Math.abs(((rgb >> 16) & 0xFF) + v); if (r > 255) r = r - (r - 255);
-        var g = Math.abs(((rgb >> 8) & 0xFF) + v); if (g > 255) g = g - (g - 255);
-        var b = Math.abs((rgb & 0xFF) + v); if (b > 255) b = b - (b - 255);
-        r = Number(r < 0 || isNaN(r)) ? 0 : ((r > 255) ? 255 : r).toString(16);
-        if (r.length == 1) r = '0' + r;
-        g = Number(g < 0 || isNaN(g)) ? 0 : ((g > 255) ? 255 : g).toString(16);
-        if (g.length == 1) g = '0' + g;
-        b = Number(b < 0 || isNaN(b)) ? 0 : ((b > 255) ? 255 : b).toString(16);
-        if (b.length == 1) b = '0' + b;
-        return "#" + r + g + b;
+    function tint(hex, delta) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+        var r = parseInt(result[1], 16);
+        var g = parseInt(result[2], 16);
+        var b = parseInt(result[3], 16);
+
+        r /= 255, g /= 255, b /= 255;
+        var max = Math.max(r, g, b), min = Math.min(r, g, b);
+        var h, s, l = (max + min) / 2;
+
+        if (max == min) {
+            h = s = 0; // achromatic
+        } else {
+            var d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch (max) {
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h /= 6;
+        }
+
+        s = s * 100;
+        s = Math.round(s);
+        l = l * 100 * delta;
+        l = Math.round(l);
+        h = Math.round(360 * h);
+
+        return 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
     }
+
 
     function drawObject(object) {
         switch (object.type) {
@@ -2424,8 +2443,7 @@ function render() {
                 var nextRowcol = null
                 var color = snakeColors[object.id % snakeColors.length];
                 var colorIndex = object.id % snakeColors.length;
-                var altColor = getTintedColor(color, 50);
-                if (themeName === "Classic") altColor = color;
+                var altColor = tint(color, 1.2);
                 var headRowcol;
                 var orientation = 10;
                 for (var i = 0; i < object.locations.length; i++) {
