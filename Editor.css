@@ -40,7 +40,7 @@ button:focus{
 }
 
 button:active{
-    box-shadow: 0 0 2px black inset;
+    box-shadow: .8pt .8pt 1px gray inset;
     color: black;
 }
 
