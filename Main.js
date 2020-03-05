@@ -48,6 +48,9 @@ var headColMove;
 var checkResult = false;
 var cr = false;
 var cs = false;
+var postPortalSnakeOutline = [];
+var portalConflicts = [];
+var portalFailure = false;
 
 var tileSize = 34;
 var level;
@@ -1466,6 +1469,7 @@ function undo(undoStuff) {
     undoStuffChanged(undoStuff);
 }
 function reset(undoStuff) {
+    portalFailure = false;
     animationQueue = [];
     animationQueueCursor = 0;
     paradoxes = [];
@@ -1503,6 +1507,7 @@ function redoAll(undoStuff) {
     }
 
     var sv = "https://jmdiamond3.github.io/Snakefall-Redesign/SolutionVerification.html" + hash;
+    //var sv = "http://127.0.0.1:5500/Snakefall/SolutionVerification.html" + hash;
     copyToClipboard(sv);
 }
 function copyToClipboard(text) {
@@ -1849,6 +1854,7 @@ function showEditorChanged() {
 }
 
 function move(dr, dc) {
+    portalFailure = false;
     if (!isAlive()) return;
     animationQueue = [];
     animationQueueCursor = 0;
@@ -1965,8 +1971,9 @@ function move(dr, dc) {
         if (portalActivationLocations.length === 1) {
             var portalAnimations = [300];
             if (activatePortal(portalLocations, portalActivationLocations[0], portalAnimations, changeLog)) {
+                portalFailure = false;
                 animationQueue.push(portalAnimations);
-            }
+            } else portalFailure = true;
             portalActivationLocations = [];
         }
         // now do falling logic
@@ -2193,13 +2200,14 @@ function moveObjects(objects, dr, dc, portalLocations, portalActivationLocations
         });
         if (activatingPortals.length === 1) {
             // exactly one new portal we're touching. activate it
-            //drawObject(newSnake("white", object.locations));
             portalActivationLocations.push(activatingPortals[0]);
         }
     });
 }
 
 function activatePortal(portalLocations, portalLocation, animations, changeLog) {
+    postPortalSnakeOutline = [];
+    portalConflicts = [];
     var otherPortalLocation = portalLocations[1 - portalLocations.indexOf(portalLocation)];
     var portalRowcol = getRowcol(level, portalLocation);
     var otherPortalRowcol = getRowcol(level, otherPortalLocation);
@@ -2211,16 +2219,19 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
         var rowcol = getRowcol(level, object.locations[i]);
         var r = rowcol.r + delta.r;
         var c = rowcol.c + delta.c;
+        postPortalSnakeOutline[i] = { r: rowcol.r + delta.r, c: rowcol.c + delta.c };
+
         if (!isInBounds(level, r, c)) return false; // out of bounds
         newLocations.push(getLocation(level, r, c));
     }
 
     for (var i = 0; i < newLocations.length; i++) {
         var location = newLocations[i];
-        if (!isTileCodeAir(object, null, level.map[location], 0, 0)) return false; // blocked by tile
+        if (!isTileCodeAir(object, null, level.map[location], 0, 0)) portalConflicts.push(getRowcol(level, location)); // blocked by tile
         var otherObject = findObjectAtLocation(location);
-        if (otherObject != null && otherObject !== object) return false; // blocked by object
+        if (otherObject != null && otherObject !== object) portalConflicts.push(getRowcol(level, location)); // blocked by object
     }
+    if (portalConflicts.length > 0) return false;
 
     // zappo presto!
     var oldState = serializeObjectState(object);
@@ -2622,6 +2633,7 @@ function render() {
             }
         }
 
+        if (portalFailure) drawSnakeOutline(postPortalSnakeOutline, portalConflicts);
         // banners
         if (countSnakes() === 0 && !cs) {
             context.fillStyle = textStyle[1];
@@ -2747,12 +2759,12 @@ function render() {
                 context.save();
                 if (activePortalLocations.indexOf(location) !== -1) {
                     context.fillStyle = "black";
-                    context.strokeStyle = "white";
-                    context.shadowColor = "white";
+                    context.strokeStyle = "purple";
+                    context.shadowColor = "purple";
                     context.shadowBlur = 5;
                     context.lineWidth = 3;
                     context.beginPath();
-                    context.arc(c * tileSize + tileSize / 2, r * tileSize + tileSize / 2, tileSize / 1.7, 0, 2 * Math.PI);
+                    context.arc(c * tileSize + tileSize / 2, r * tileSize + tileSize / 2, tileSize / 1.9, 0, 2 * Math.PI);
                     context.closePath();
                     context.fill();
                     context.stroke();
@@ -2997,7 +3009,6 @@ function render() {
                         context.strokeStyle = "white";
                         resize = tileSize * 1.4;
                     }
-                    //context.fillStyle = "#ff6b45";
                     context.beginPath();
                     context.moveTo(startC, startR);
                     context.bezierCurveTo(startC - resize * .1, startR - resize * .05, startC - resize * .25, startR - resize * .1, startC - resize * .3, startR + resize * .05);
@@ -4243,12 +4254,8 @@ function render() {
         ctx.lineTo(x, y + radius.tl);
         ctx.quadraticCurveTo(x, y, x + radius.tl, y);
         ctx.closePath();
-        if (fill) {
-            ctx.fill();
-        }
-        if (stroke) {
-            ctx.stroke();
-        }
+        if (fill) ctx.fill();
+        if (stroke) ctx.stroke();
     }
 
     function shadeColor(color, percent) {
@@ -4302,6 +4309,39 @@ function render() {
 
         context.save();
         context.globalAlpha = 0.4;
+        context.drawImage(buffer, 0, 0);
+        context.restore();
+    }
+
+    function drawSnakeOutline(outline, conflicts) {
+        var buffer = document.createElement("canvas");
+        buffer.width = canvas.width;
+        buffer.height = canvas.height;
+        var localContext = buffer.getContext("2d");
+
+        localContext.setLineDash([8, 4]);
+        localContext.strokeStyle = "white";
+        localContext.lineWidth = tileSize / 6;
+        for (var i = 0; i < outline.length; i++) {
+            roundRect(localContext, outline[i].c * tileSize, outline[i].r * tileSize, tileSize, tileSize, 5, false, true);
+        }
+
+        localContext.setLineDash([]);
+        localContext.strokeStyle = "red";
+        localContext.lineWidth = tileSize / 3;
+        for (var i = 0; i < conflicts.length; i++) {
+            var c = conflicts[i].c;
+            var r = conflicts[i].r;
+            localContext.beginPath();
+            localContext.moveTo((c - .2) * tileSize, (r - .2) * tileSize);
+            localContext.lineTo((c + 1.2) * tileSize, (r + 1.2) * tileSize);
+            localContext.moveTo((c + 1.2) * tileSize, (r - .2) * tileSize);
+            localContext.lineTo((c - .2) * tileSize, (r + 1.2) * tileSize);
+            localContext.stroke();
+        }
+
+        context.save();
+        context.globalAlpha = 1;
         context.drawImage(buffer, 0, 0);
         context.restore();
     }
