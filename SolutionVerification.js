@@ -1446,58 +1446,26 @@ var themeName = "Spring";   //Gooby
 var background, surface, material, snakeColors, blockColors, spikeColors, fruitColors, textStyle, experimentalColors;
 var curlyOutline = false;
 
-var bg1 = "rgba(145, 198, 254 * rgba(133, 192, 255";
-var bg2 = "rgba(254, 198, 145 * rgba(255, 192, 133";
-var bg3 = "rgba(145, 254, 198 * rgba(117, 255, 192";
-var bg4 = "rgba(7, 7, 83 * rgba(0, 0, 70";
+var bg1 = ["rgba(145, 198, 254", "rgba(133, 192, 255"];
 
-var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];
-var snakeColors2 = ["#f00", "#0f0", "#00f", "#ff0"];
-var snakeColors3 = ["#BA145C", "#E91624", "#F75802", "#FEFE28"];
+var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];    //must be full length to satisfy tint function
 
 var fruitColors1 = ["#ff0066", "#ff36a6", "#ff6b1f", "#ff9900", "#ff2600"];
-var fruitColors2 = ["black", "black", "black", "black", "black"];
 
-var spikeColors1 = ["#999", "#444", "#555", "#777"];    //spike, support, box, bolt
-var spikeColors2 = ["gray", "black", "white", "black"];
-var spikeColors3 = ["#333", "#333", "#333", "#777"];
+var spikeColors1 = ["#999", "#444", "#555", "#777"];    //spokes, supports, box, bolt
 
-var blockColors1 = [
-    ["#de5a6d", "#fa65dd", "#c367e3", "#9c62fa", "#625ff0"],
-    ["#853641", "#963c84", "#753d88", "#5d3a96", "#3a3990"]
-];
-var blockColors2 = [
-    ["#999"],
-    ["#999"]
-];
-var blockColors3 = [
-    ["#de7913", "#7d46a0", "#39868b", "#41ccc2", "#ded800"],
-    ["#8d4d0c", "#532f6a", "#2c686d", "#207973", "#999400"]
-];
-var blockColors4 = [
-    ["#150612", "#a52e8b", "#990077", "#d917af", "#4d003c"],
-    ["#8d4d0c", "#532f6a", "#2c686d", "#207973", "#999400"]
-];
+var blockColors1 = ["#de5a6d", "#fa65dd", "#c367e3", "#9c62fa", "#625ff0"];    //must be 6-digit hex colors to satisfy tint function
 
 var fontSize = tileSize * 5;
 var textStyle1 = ["" + fontSize + "px Impact", "#fdc122", "#fd0c0b"];    //font, Win, Lose
-var textStyle2 = ["" + fontSize + "px Impact", "#5702c6", "#ff0098"];
-var textStyle3 = ["" + fontSize + "px Impact", "#BA145C", "#F75802"];
-var textStyle4 = ["" + fontSize + "px Impact", "#ff0", "#f00"];
 
 var experimentalColors1 = ["white", "#ffccff"];
-var experimentalColors2 = ["white", "#FEFE28"];
 
 var themeCounter = 0;
 
 var themes = [  //name, background, material, surface, curlyOutline, blockColors, spikeColors, fruitColors, stemColor, textStyle, experimentalColors
     //["sky",],
     ["Spring", bg1, "#976537", "#95ff45", true, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
-    ["Winter", bg1, "#30455B", "white", true, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
-    ["Classic", "#8888ff", "#844204", "#282", false, snakeColors2, blockColors1, spikeColors3, fruitColors1, "green", textStyle4, experimentalColors1],
-    ["Summer", bg2, "#734d26", "#009933", true, snakeColors3, blockColors3, spikeColors1, fruitColors1, "green", textStyle3, experimentalColors2],
-    ["Dream", bg3, "#00aaff", "#ffb3ec", true, snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2, experimentalColors2],
-    ["Midnight Rainbow", bg4, "black", "rainbow", false, snakeColors1, blockColors2, spikeColors2, "white", "white", textStyle1, experimentalColors1]
 ];
 
 
@@ -2086,20 +2054,19 @@ function render() {
         textStyle = themes[themeCounter][10];
         experimentalColors = themes[themeCounter][11];
 
-        if (background.substr(0, 1) == "#") {
+        if (!Array.isArray(background)) {
             context.fillStyle = background;
             context.fillRect(0, 0, canvas.width, canvas.height);
         }
         else {
             for (var i = 0; i < level.width; i++) {   //checkerboard background
                 for (var j = 0; j < level.height; j++) {
-                    var bgColor1 = background.substr(0, background.indexOf('*'));
-                    var bgColor2 = background.substr(background.indexOf('*') + 2, background.length);
+                    var bgColor1 = background[0];
+                    var bgColor2 = background[1];
                     var shade = (j + 1) * .03 + .5;
                     if ((i + j) % 2 == 0) context.fillStyle = bgColor1 + ", " + shade + ")";
                     else context.fillStyle = bgColor2 + ", " + shade + ")";
                     context.fillRect(i * tileSize, j * tileSize, tileSize, tileSize);
-                    //context.fillText(i+" "+j,i*tileSize, j*tileSize);
                 }
             }
         }
@@ -2182,8 +2149,9 @@ function render() {
                         rowcol2.r -= minR;
                         rowcol2.c -= minC;
                         var cornerRowcol = { r: rowcol1.r, c: rowcol2.c };
-                        drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, blockColors[1][object.id % blockColors[1].length]);
-                        drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, blockColors[1][object.id % blockColors[1].length]);
+                        var connectorColor = tint(blockColors[object.id % blockColors.length], .5);
+                        drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
+                        drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                     }
                 }
                 var r = minR + animationDisplacementRowcol.r;
@@ -3026,8 +2994,8 @@ function render() {
             context.closePath();
 
             var bgColor;
-            if ((c + r) % 2 == 0) bgColor = background.substr(0, background.indexOf('*'));
-            else bgColor = background.substr(background.indexOf('*') + 2, background.length);
+            if ((c + r) % 2 == 0) bgColor = background[0];
+            else bgColor = background[1];
             var r1, r2, b1, b2, g1, g2;
             r1 = bgColor.substr(5, bgColor.indexOf(",") - 5);
             g1 = bgColor.substr(bgColor.indexOf(",") + 1, bgColor.indexOf(",") - 4);
@@ -3050,8 +3018,8 @@ function render() {
             context.closePath();
 
             var bgColor;
-            if ((c + r) % 2 == 0) bgColor = background.substr(0, background.indexOf('*'));
-            else bgColor = background.substr(background.indexOf('*') + 2, background.length);
+            if ((c + r) % 2 == 0) bgColor = background[0];
+            else bgColor = background[1];
             var r1, r2, b1, b2, g1, g2;
             r1 = bgColor.substr(5, bgColor.indexOf(",") - 5);
             g1 = bgColor.substr(bgColor.indexOf(",") + 1, bgColor.indexOf(",") - 4);
@@ -3067,6 +3035,7 @@ function render() {
             context.globalCompositeOperation = "source-over";
         }
     }
+
 
     function drawTileOutlines(r, c, isOccupied, outlineThickness, curlyOutline) { //Gooby
         if (surface != "rainbow") {
