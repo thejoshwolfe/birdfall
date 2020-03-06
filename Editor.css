@@ -172,6 +172,13 @@ canvas{
     padding: 10px;
 }
 
+#bigButtonButton{
+    position: absolute;
+    left: 10;
+    font-size: 20pt;
+    padding: 10px;
+}
+
 #bottomBlock{
     text-align: center;
     vertical-align: top;
