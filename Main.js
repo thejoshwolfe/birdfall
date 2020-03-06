@@ -705,23 +705,23 @@ function toggleGrid() {
     render();
 }
 function toggleHotkeys() {
+    persistentState.hideHotkeys = !persistentState.hideHotkeys;
+    savePersistentState();
     var hotkeys = document.getElementsByClassName("hotkey");
     var spacers = document.getElementsByClassName("hotkeySpacer");
     var spacers2 = document.getElementsByClassName("hotkeySpacer2");
     for (var i = 0; i < hotkeys.length; i++) {
-        if (persistentState.hideHotkeys) hotkeys[i].style.display = "block";
-        else hotkeys[i].style.display = "none";
+        if (persistentState.hideHotkeys) hotkeys[i].style.display = "none";
+        else hotkeys[i].style.display = "block";
     }
     for (var i = 0; i < spacers.length; i++) {
-        if (persistentState.hideHotkeys) spacers[i].style.display = "none";
-        else spacers[i].style.display = "block";
+        if (persistentState.hideHotkeys) spacers[i].style.display = "block";
+        else spacers[i].style.display = "none";
     }
     for (var i = 0; i < spacers2.length; i++) {
-        if (persistentState.hideHotkeys) spacers2[i].style.display = "block";
-        else spacers2[i].style.display = "none";
+        if (persistentState.hideHotkeys) spacers2[i].style.display = "none";
+        else spacers2[i].style.display = "block";
     }
-    persistentState.hideHotkeys = !persistentState.hideHotkeys;
-    savePersistentState();
     render();
 }
 
