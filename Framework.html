@@ -54,6 +54,7 @@
                     <tr class="standard header" style="font-family: cursive;"><td>---------------------------</td></tr>
 
                     <tr class="standard"><td class="buttonHeader">Static</td></tr>
+                    <tr class="hotkeySpacer2 standard"><td></td></tr>
                     <tr class="standard"><td>
                             <div class="buttonDiv"><button class="editorButton" id="paintWallButton" title="W">Wall</button><br><span class="hotkey">W</span></div>
                             <div class="buttonDiv"><button class="editorButton" id="paintSpikeButton" title="S">Spike</button><br><span class="hotkey">S</span></div>
@@ -63,6 +64,7 @@
                     <tr class="spacer standard hotkeySpacer"><td></td></tr>
 
                     <tr class="standard"><td class="buttonHeader">Kinetic</td></tr>
+                    <tr class="hotkeySpacer2 standard"><td></td></tr>
                     <tr class="standard"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintSnakeButton" title="Shift+S">Snake</button><br><span class="hotkey">Shift&nbsp;&nbsp;S</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintFruitButton" title="F">Fruit</button><br><span class="hotkey">F</span></div>
@@ -75,6 +77,7 @@
                     <tr class="experimental header" style="font-family: cursive;"><td>---------------------------</td></tr>
 
                     <tr class="experimental"><td class="buttonHeader">Kinetic</td></tr>
+                    <tr class="hotkeySpacer2 experimental"><td></td></tr>
                     <tr class="experimental"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintPoisonFruitButton" title="Shift+F&#013;&#013;Shrinks snake by one segment">Poison</button><br><span class="hotkey">Shift&nbsp;&nbsp;F</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintCloudButton" title="C&#013;&#013;Unaffected by pushed objects">Cloud</button><br><span class="hotkey">C</span></div>
@@ -82,14 +85,16 @@
                     </td></tr>
                     <tr class="spacer experimental hotkeySpacer"><td></td></tr>
 
-                    <tr class="experimental" style="margin-bottom: 10px;"><td class="buttonHeader">Multi-Way Platforms</td></tr>
+                    <tr class="experimental"><td class="buttonHeader">Multi-Way Platforms</td></tr>
+                    <tr class="hotkeySpacer2 experimental"><td></td></tr>
                     <tr class="experimental"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintPlatformButton" title="M">Rainbow</button><br><span class="hotkey">M</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintTrellisButton" title="Shift+M">Trellis</button><br><span class="hotkey">Shift&nbsp;&nbsp;M</span></div><br>
                     </td></tr>
                     <tr class="spacer experimental hotkeySpacer"><td></td></tr>
                     
-                    <tr class="experimental" style="margin-bottom: 10px;"><td class="buttonHeader">One Way Platforms</td></tr>
+                    <tr class="experimental"><td class="buttonHeader">One Way Platforms</td></tr>
+                    <tr class="hotkeySpacer2 experimental"><td></td></tr>
                     <tr class="experimental"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintOneWayWallUButton" title="O">Up</button><br><span class="hotkey">O</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintOneWayWallDButton" title="O">Down</button><br><span class="hotkey">Shift&nbsp;&nbsp;O</span></div>
@@ -97,6 +102,7 @@
                     <tr class="spacer experimental hotkeySpacer"><td></td></tr>
 
                     <tr class="experimental"><td class="buttonHeader">Turnstiles</td></tr>
+                    <tr class="hotkeySpacer2 experimental"><td></td></tr>
                     <tr class="experimental"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintTurnstileLButton" title="T">Left</button><br><span class="hotkey">T</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintTurnstileRButton" title="Shift+T">Right</button><br><span class="hotkey">Shift&nbsp;&nbsp;T</span></div>
@@ -104,6 +110,7 @@
                     <tr class="spacer experimental hotkeySpacer"><td></td></tr>
 
                     <tr class="experimental"><td class="buttonHeader">Scissor Lifts</td></tr>
+                    <tr class="hotkeySpacer2 experimental"><td></td></tr>
                     <tr class="experimental"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintClosedLiftButton" title="X">Closed</button><br><span class="hotkey">X</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintOpenLiftButton" title="Shift+X">Open</button><br><span class="hotkey">Shift&nbsp;&nbsp;X</span></div>
@@ -111,6 +118,7 @@
                     <tr class="spacer experimental hotkeySpacer"><td></td></tr>
 
                     <tr class="experimental"><td class="buttonHeader">Liquids</td></tr>
+                    <tr class="hotkeySpacer2 experimental"><td></td></tr>
                     <tr class="experimental"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintLavaButton" title="L&#013;&#013;Disintegrates blocks and snakes">Lava</button><br><span class="hotkey">L</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintWaterButton" title="Shift+L, Shift+W&#013;&#013;Swallows blocks but buoys snakes">Water</button><br><span class="hotkey">Shift&nbsp;&nbsp;L</span></div>
@@ -122,6 +130,7 @@
     </table>
 
     <div id="paradoxDiv" style="background:#f88;"></div>
+    <button id="bigButtonButton" class="bottomButton">Large Buttons</button>
     <div id="bottomBlock">
         <div style="font-size:12pt;font-family: Arial;margin-top: 10px;">CONTROLS</div><div style="font-size:8pt;font-family: Arial;margin-bottom: 20px;">hover for hotkeys</div>
         <div style="text-align:center;font-size:10pt;font-family:Arial;display:inline-block;vertical-align: top;">
@@ -147,9 +156,8 @@
             <button id="restartButton" class="bottomButton" title="R - Unmove all the way. Shift+R - Re-move all the way">Restart</button>
             <button id="saveProgressButton" class="bottomButton" title="Ctrl+Shift+S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift+R to restore state.">Save Progress</button><br><br>
             <button id="showGridButton" class="bottomButton" title="G">Show Grid</button>
+            <button id="hideHotkeyButton" class="bottomButton" title="H">Hide Hotkeys</button>
             <button id="themeButton" class="bottomButton" title="Return">Theme: <b>Spring</b></button><br>
-            <button id="bigButtonButton" class="bottomButton">Large Buttons</button>
-            <button id="hideHotkeyButton" class="bottomButton" title="H">Hide Hotkeys</button><br>
             <button id="checkSolutionButton" class="bottomButton" title="Saves a Solution Verification URL to your clipboard.">Copy Verification Link</button>
         </div>
     </div>
