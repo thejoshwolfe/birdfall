@@ -39,7 +39,7 @@ button:focus{
     color: white;
 }
 
-button:active{
+button:active:enabled{
     box-shadow: .8pt .8pt 1px gray inset;
     color: black;
 }
