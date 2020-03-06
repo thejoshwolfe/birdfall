@@ -4361,15 +4361,15 @@ function render() {
         }
 
         localContext.strokeStyle = "red";
-        localContext.lineWidth = tileSize / 3;
+        localContext.lineWidth = tileSize / 2.8;
         for (var i = 0; i < conflicts.length; i++) {
             var c = conflicts[i].c;
             var r = conflicts[i].r;
             localContext.beginPath();
-            localContext.moveTo((c - .2) * tileSize, (r - .2) * tileSize);
-            localContext.lineTo((c + 1.2) * tileSize, (r + 1.2) * tileSize);
-            localContext.moveTo((c + 1.2) * tileSize, (r - .2) * tileSize);
-            localContext.lineTo((c - .2) * tileSize, (r + 1.2) * tileSize);
+            localContext.moveTo((c - .12) * tileSize, (r - .12) * tileSize);
+            localContext.lineTo((c + 1.12) * tileSize, (r + 1.12) * tileSize);
+            localContext.moveTo((c + 1.12) * tileSize, (r - .12) * tileSize);
+            localContext.lineTo((c - .12) * tileSize, (r + 1.12) * tileSize);
             localContext.stroke();
         }
 
