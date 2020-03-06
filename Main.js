@@ -153,6 +153,9 @@ function parseLevel(string) {
         level.map.push(tileCode);
     }
 
+    var url = window.location.href;
+
+
     // objects
     skipWhitespace();
     while (cursor < string.length) {
@@ -683,6 +686,8 @@ function toggleShowEditor() {
     showEditorChanged();
 }
 function toggleButtonSize() {
+    persistentState.bigButton = !persistentState.bigButton;
+    savePersistentState();
     var buttons = document.getElementsByClassName("bottomButton");
     if (persistentState.bigButton) {
         for (var i = 0; i < buttons.length; i++)
@@ -692,8 +697,6 @@ function toggleButtonSize() {
         for (var i = 0; i < buttons.length; i++)
             buttons[i].classList.remove("bigButton");
     }
-    persistentState.bigButton = !persistentState.bigButton;
-    savePersistentState();
     render();
 }
 function toggleGrid() {
@@ -704,6 +707,7 @@ function toggleGrid() {
 function toggleHotkeys() {
     var hotkeys = document.getElementsByClassName("hotkey");
     var spacers = document.getElementsByClassName("hotkeySpacer");
+    var spacers2 = document.getElementsByClassName("hotkeySpacer2");
     for (var i = 0; i < hotkeys.length; i++) {
         if (persistentState.hideHotkeys) hotkeys[i].style.display = "block";
         else hotkeys[i].style.display = "none";
@@ -711,6 +715,10 @@ function toggleHotkeys() {
     for (var i = 0; i < spacers.length; i++) {
         if (persistentState.hideHotkeys) spacers[i].style.display = "none";
         else spacers[i].style.display = "block";
+    }
+    for (var i = 0; i < spacers2.length; i++) {
+        if (persistentState.hideHotkeys) spacers2[i].style.display = "block";
+        else spacers2[i].style.display = "none";
     }
     persistentState.hideHotkeys = !persistentState.hideHotkeys;
     savePersistentState();
@@ -1764,9 +1772,9 @@ function haveCheatcodesBeenUsed() {
 
 var persistentState = {
     showEditor: false,
-    bigButton: false,
     showGrid: false,
-    hideHotkeys: true,
+    bigButton: false,
+    hideHotkeys: false,
 };
 function savePersistentState() {
     localStorage.snakefall = JSON.stringify(persistentState);
@@ -2522,7 +2530,7 @@ function render() {
 
     // throw this in there somewhere
     document.getElementById("showGridButton").textContent = (persistentState.showGrid ? "Hide" : "Show") + " Grid";
-    document.getElementById("hideHotkeyButton").textContent = (persistentState.hideHotkeys ? "Hide" : "Show") + " Hotkeys";
+    document.getElementById("hideHotkeyButton").textContent = (persistentState.hideHotkeys ? "Show" : "Hide") + " Hotkeys";
     document.getElementById("bigButtonButton").textContent = (persistentState.bigButton ? "Regular" : "Large") + " Buttons";
 
     if (animationProgress < 1.0) requestAnimationFrame(render);
