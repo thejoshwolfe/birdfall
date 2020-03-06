@@ -4007,7 +4007,7 @@ function render() {
     }
     function drawFace2(snake, headCol, headRow, orientation, isOccupied) {
         var forwardLocation;
-        var forwardObject;
+        var forwardObject = null;
         var straight;
 
         var x = headCol * tileSize;
@@ -4041,8 +4041,10 @@ function render() {
                 scale1 = scaleFactor;
                 scale2 = 1;
 
-                forwardLocation = getLocation(level, headRow - 1, headCol);
-                forwardObject = findObjectAtLocation(forwardLocation);
+                if (1 <= headRow && headRow < level.height - 1) {
+                    forwardLocation = getLocation(level, headRow - 1, headCol);
+                    forwardObject = findObjectAtLocation(forwardLocation);
+                }
                 if (isOccupied(-1, 0) || forwardObject != null) {
                     straight = false;
                     b1 = tileSize * .6;
@@ -4078,8 +4080,10 @@ function render() {
                 scale1 = 1;
                 scale2 = scaleFactor;
 
-                forwardLocation = getLocation(level, headRow, headCol + 1);
-                forwardObject = findObjectAtLocation(forwardLocation);
+                if (1 <= headCol && headCol < level.width - 1) {
+                    forwardLocation = getLocation(level, headRow, headCol + 1);
+                    forwardObject = findObjectAtLocation(forwardLocation);
+                }
                 if (isOccupied(0, 1) || forwardObject != null) {
                     straight = false;
                     b1 = tileSize;
@@ -4115,8 +4119,10 @@ function render() {
                 scale1 = scaleFactor;
                 scale2 = 1;
 
-                forwardLocation = getLocation(level, headRow + 1, headCol);
-                forwardObject = findObjectAtLocation(forwardLocation);
+                if (1 <= headRow && headRow < level.height - 1) {
+                    forwardLocation = getLocation(level, headRow + 1, headCol);
+                    forwardObject = findObjectAtLocation(forwardLocation);
+                }
                 if (isOccupied(1, 0) || forwardObject != null) {
                     straight = false;
                     b1 = tileSize * .4;
@@ -4152,8 +4158,10 @@ function render() {
                 scale1 = 1;
                 scale2 = scaleFactor;
 
-                forwardLocation = getLocation(level, headRow, headCol - 1);
-                forwardObject = findObjectAtLocation(forwardLocation);
+                if (1 <= headCol && headCol < level.width - 1) {
+                    forwardLocation = getLocation(level, headRow, headCol - 1);
+                    forwardObject = findObjectAtLocation(forwardLocation);
+                }
                 if (isOccupied(0, -1) || forwardObject != null) {
                     straight = false;
                     b1 = 0;
@@ -4189,8 +4197,10 @@ function render() {
                 scale1 = scaleFactor;
                 scale2 = 1;
 
-                forwardLocation = getLocation(level, headRow - 1, headCol);
-                forwardObject = findObjectAtLocation(forwardLocation);
+                if (1 <= headRow && headRow < level.height - 1) {
+                    forwardLocation = getLocation(level, headRow - 1, headCol);
+                    forwardObject = findObjectAtLocation(forwardLocation);
+                }
                 if (isOccupied(-1, 0) || forwardObject != null) {
                     straight = false;
                     b1 = tileSize * .4;
@@ -4226,8 +4236,10 @@ function render() {
                 scale1 = 1;
                 scale2 = scaleFactor;
 
-                forwardLocation = getLocation(level, headRow, headCol + 1);
-                forwardObject = findObjectAtLocation(forwardLocation);
+                if (1 <= headCol && headCol < level.width - 1) {
+                    forwardLocation = getLocation(level, headRow, headCol + 1);
+                    forwardObject = findObjectAtLocation(forwardLocation);
+                }
                 if (isOccupied(0, 1) || forwardObject != null) {
                     straight = false;
                     b1 = tileSize;
@@ -4263,8 +4275,10 @@ function render() {
                 scale1 = scaleFactor;
                 scale2 = 1;
 
-                forwardLocation = getLocation(level, headRow + 1, headCol);
-                forwardObject = findObjectAtLocation(forwardLocation);
+                if (1 <= headRow && headRow < level.height - 1) {
+                    forwardLocation = getLocation(level, headRow + 1, headCol);
+                    forwardObject = findObjectAtLocation(forwardLocation);
+                }
                 if (isOccupied(1, 0) || forwardObject != null) {
                     straight = false;
                     b1 = tileSize * .6;
@@ -4300,8 +4314,10 @@ function render() {
                 scale1 = 1;
                 scale2 = scaleFactor;
 
-                forwardLocation = getLocation(level, headRow, headCol - 1);
-                forwardObject = findObjectAtLocation(forwardLocation);
+                if (1 <= headCol && headCol < level.width - 1) {
+                    forwardLocation = getLocation(level, headRow, headCol - 1);
+                    forwardObject = findObjectAtLocation(forwardLocation);
+                }
                 if (isOccupied(0, -1) || forwardObject != null) {
                     straight = false;
                     b1 = 0;
@@ -4337,8 +4353,10 @@ function render() {
                 scale1 = 1;
                 scale2 = scaleFactor;
 
-                forwardLocation = getLocation(level, headRow, headCol + 1);
-                forwardObject = findObjectAtLocation(forwardLocation);
+                if (1 <= headCol && headCol < level.width - 1) {
+                    forwardLocation = getLocation(level, headRow, headCol + 1);
+                    forwardObject = findObjectAtLocation(forwardLocation);
+                }
                 if (isOccupied(0, 1) || forwardObject != null) {
                     straight = false;
                     b1 = tileSize;
