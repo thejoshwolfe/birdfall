@@ -1470,6 +1470,9 @@ function reduceChangeLog(changeLog) {
     }
 }
 function undo(undoStuff) {
+    postPortalSnakeOutline = [];
+    portalConflicts = [];
+    portalOutOfBounds = false;
     if (undoStuff.undoStack.length === 0) return; // already at the beginning
     animationQueue = [];
     animationQueueCursor = 0;
@@ -3073,19 +3076,17 @@ function render() {
 
     function newPlatform(r, c, isOccupied) {
 
-        var x1 = .05;
-        var x2 = .05;
-        if (isOccupied(-1, 0)) x1 = 0;
-        if (isOccupied(1, 0)) x2 = 0;
+        var x1 = (isOccupied(-1, 0)) ? 0 : .05;
+        var x2 = (isOccupied(1, 0)) ? 0 : .05;
 
         var platformColors = ["#ffcccc", "#ffe0cc", "#ffffcc", "#e6ffe6", "#e6e6ff"];
-        for (var i = 0; i < 5; i++) {
-            var j = i - 1;
-            if (j < 0) j = 0;
+        for (var i = 0; i < 3; i++) {
+            var j = (i != 0) ? i - 1 : 0;
             context.beginPath();
             context.moveTo(c * tileSize + tileSize * (i * x1), r * tileSize + tileSize * (.05 + (.1 * i) - (j * .02)));
             context.strokeStyle = platformColors[i];
-            context.lineWidth = tileSize * (.1 - (i * .02));
+            var lw = tileSize * (.1 - (i * .02));
+            context.lineWidth = lw;
             context.lineTo(c * tileSize + tileSize * (1 - (i * x2)), r * tileSize + tileSize * (.05 + (.1 * i) - (j * .02)));
             context.stroke();
         }
