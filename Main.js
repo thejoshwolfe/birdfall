@@ -3356,9 +3356,18 @@ function render() {
             tubColor = "white";
         }
 
+        context.fillStyle = color3;
+        roundRect(context, c * tileSize, r * tileSize, tileSize, tileSize, 0, true, false);
+
         context.shadowBlur = 10;
         context.lineWidth = 3.5;
-        for (var i = -.1; i <= 1; i += .1) {
+        for (var i = .1; i <= .8; i += .1) {
+            var mod = Math.round((i + .1) * 10) % 3;
+            switch (mod) {
+                case 0: context.strokeStyle = color2; break;
+                case 1: context.strokeStyle = color3; break;
+                case 2: context.strokeStyle = color1; break;
+            }
             context.beginPath();
             context.moveTo(c * tileSize, (r + i + .1) * tileSize);
             context.bezierCurveTo((c + 1 / 6) * tileSize, (r + i) * tileSize, (c + 1 / 3) * tileSize, (r + i) * tileSize, (c + 1 / 2) * tileSize, (r + i + .1) * tileSize);
@@ -3366,28 +3375,22 @@ function render() {
             context.stroke();
             context.shadowBlur = 0;
             context.shadowColor = "transparent";
-            var mod = Math.round((i + .1) * 10) % 3;
-            switch (mod) {
-                case 0: context.strokeStyle = color2; break;
-                case 1: context.strokeStyle = color3; break;
-                case 2: context.strokeStyle = color1; break;
-            }
         }
 
-        context.fillStyle = tubColor;
+        context.fillStyle = color3;
         if (!isOccupied(-1, 0)) {
-            if (isOccupied(-1, -1)) roundRect(context, c * tileSize - tileSize * .1, (r + .1) * tileSize, tileSize * .2, tileSize * 1.2, 0, true, false);
-            else roundRect(context, c * tileSize - tileSize * .1, (r - .1) * tileSize, tileSize * .2, tileSize * 1.4, 0, true, false);
+            if (isOccupied(-1, -1)) roundRect(context, c * tileSize - tileSize * .1, r * tileSize, tileSize * .2, tileSize, 0, true, false);
+            else roundRect(context, c * tileSize - tileSize * .1, r * tileSize, tileSize * .2, tileSize, 0, true, false);
         }
         if (!isOccupied(1, 0)) {
-            if (isOccupied(1, -1)) roundRect(context, c * tileSize + tileSize * .9, (r + .1) * tileSize, tileSize * .2, tileSize * 1.2, 0, true, false);
-            else roundRect(context, c * tileSize + tileSize * .9, (r - .1) * tileSize, tileSize * .2, tileSize * 1.4, 0, true, false);
+            if (isOccupied(1, -1)) roundRect(context, c * tileSize + tileSize * .9, r * tileSize, tileSize * .2, tileSize, 0, true, false);
+            else roundRect(context, c * tileSize + tileSize * .9, r * tileSize, tileSize * .2, tileSize, 0, true, false);
         }
         if (!isOccupied(0, 1)) {
-            if (isOccupied(-1, 1) && !isOccupied(1, 1)) roundRect(context, c * tileSize - tileSize * .1, (r + 1.05) * tileSize, tileSize * 1.1, tileSize * .25, 0, true, false);
-            else if (!isOccupied(-1, 1) && isOccupied(1, 1)) roundRect(context, c * tileSize, (r + 1.05) * tileSize, tileSize * 1.3, tileSize * .25, 0, true, false);
-            else if (isOccupied(-1, 1) && isOccupied(1, 1)) roundRect(context, c * tileSize - tileSize * .1, (r + 1.05) * tileSize, tileSize * 1.1, tileSize * .25, 0, true, false);
-            else roundRect(context, c * tileSize, (r + 1.05) * tileSize, tileSize * 1.1, tileSize * .25, 0, true, false);
+            if (isOccupied(-1, 1) && !isOccupied(1, 1)) roundRect(context, (c - .1) * tileSize, (r + .8) * tileSize, tileSize * 1.2, tileSize * .25, 0, true, false);
+            else if (!isOccupied(-1, 1) && isOccupied(1, 1)) roundRect(context, (c - .1) * tileSize, (r + .8) * tileSize, tileSize * 1.2, tileSize * .25, 0, true, false);
+            else if (isOccupied(-1, 1) && isOccupied(1, 1)) roundRect(context, (c - .1) * tileSize, (r + .8) * tileSize, tileSize * 1.2, tileSize * .25, 0, true, false);
+            else roundRect(context, (c - .1) * tileSize, (r + .8) * tileSize, tileSize * 1.2, tileSize * .25, 0, true, false);
         }
         context.restore();
     }
