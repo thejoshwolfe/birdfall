@@ -566,7 +566,7 @@ document.addEventListener("keydown", function (event) {
         case "V".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("paste"); break; }
         case "H".charCodeAt(0):
-            if (modifierMask === 0) { toggleHotkeys(); break; }
+            if (persistentState.showEditor && modifierMask === 0) { toggleHotkeys(); break; }
         case "T".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(TURNSTILEL); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TURNSTILER); break; }
@@ -1858,6 +1858,9 @@ function showEditorChanged() {
         document.getElementById(id).style.display = persistentState.showEditor ? "block" : "none";
     });
     document.getElementById("wasdSpan").textContent = persistentState.showEditor ? "" : " or WASD";
+
+    if (!persistentState.showEditor) document.getElementById("hideHotkeyButton").disabled = true;
+    else document.getElementById("hideHotkeyButton").disabled = false;
 
     render();
 }
