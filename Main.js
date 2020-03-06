@@ -2896,6 +2896,7 @@ function render() {
     }
 
     function drawObject(object) {
+        var r, c;
         switch (object.type) {
             case SNAKE:
                 var falling = false;
@@ -3015,7 +3016,9 @@ function render() {
                         else roundRect(context, cx, cy, tileSize, tileSize, 10, true, false);
                     }
                 }
-                drawFace(object.id, headRowcol.c, headRowcol.r, orientation);
+                r = headRowcol.r;
+                c = headRowcol.c;
+                drawFace(object.id, c, r, orientation, getAdjacentTiles());
                 break;
             case BLOCK:
                 drawBlock(object);
@@ -3062,6 +3065,23 @@ function render() {
                 else drawCircle(rowcol.r, rowcol.c, 1, color);
                 break;
             default: throw unreachable();
+        }
+        function getAdjacentTiles() {
+            return [
+                [getTile(r - 1, c - 1),
+                getTile(r - 1, c + 0),
+                getTile(r - 1, c + 1)],
+                [getTile(r + 0, c - 1),
+                    null,
+                getTile(r + 0, c + 1)],
+                [getTile(r + 1, c - 1),
+                getTile(r + 1, c + 0),
+                getTile(r + 1, c + 1)],
+            ];
+        }
+        function getTile(r, c) {
+            if (!isInBounds(level, r, c)) return null;
+            return level.map[getLocation(level, r, c)];
         }
     }
 
@@ -3978,7 +3998,18 @@ function render() {
         //c.stroke();
     }
 
-    function drawFace(snake, headCol, headRow, orientation) {
+    function drawFace(snake, headCol, headRow, orientation, adjacentTiles) {
+        drawFace2(snake, headCol, headRow, orientation, isNotSpace);
+        function isNotSpace(dr, dc) {
+            var tileCode = adjacentTiles[1 + dr][1 + dc];
+            return tileCode === WALL || tileCode === SPIKE || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER;
+        }
+    }
+    function drawFace2(snake, headCol, headRow, orientation, isOccupied) {
+        var forwardLocation;
+        var forwardObject;
+        var straight;
+
         var x = headCol * tileSize;
         var y = headRow * tileSize;
 
@@ -3992,6 +4023,7 @@ function render() {
         var eyeRotation = 2;
         var z1, z2, z3, z4, z5, z6, z7, z8;
         var a1, a2, a3, a4, a5, a6, a7, a8;
+        var b1, b2, b3, b4, b5, b6;
         var beakRotation = 1.5;
         var arcDirection = false;
 
@@ -4008,6 +4040,19 @@ function render() {
                 eyeRotation = 1.5;
                 scale1 = scaleFactor;
                 scale2 = 1;
+
+                forwardLocation = getLocation(level, headRow - 1, headCol);
+                forwardObject = findObjectAtLocation(forwardLocation);
+                if (isOccupied(-1, 0) || forwardObject != null) {
+                    straight = false;
+                    b1 = tileSize * .6;
+                    b2 = 0;
+                    b3 = tileSize * .4;
+                    b4 = tileSize * .1;
+                    b5 = tileSize * .2;
+                    b6 = tileSize * .2;
+                }
+                else straight = true;
 
                 a1 = tileSize * .7;
                 a2 = tileSize - tileSize * .7;
@@ -4033,6 +4078,19 @@ function render() {
                 scale1 = 1;
                 scale2 = scaleFactor;
 
+                forwardLocation = getLocation(level, headRow, headCol + 1);
+                forwardObject = findObjectAtLocation(forwardLocation);
+                if (isOccupied(0, 1) || forwardObject != null) {
+                    straight = false;
+                    b1 = tileSize;
+                    b2 = tileSize * .6;
+                    b3 = -tileSize * .1;
+                    b4 = tileSize * .4;
+                    b5 = -tileSize * .2;
+                    b6 = tileSize * .2;
+                }
+                else straight = true;
+
                 a1 = tileSize * .7;
                 a2 = tileSize * .7;
                 a3 = tileSize * 1.3;
@@ -4057,6 +4115,19 @@ function render() {
                 scale1 = scaleFactor;
                 scale2 = 1;
 
+                forwardLocation = getLocation(level, headRow + 1, headCol);
+                forwardObject = findObjectAtLocation(forwardLocation);
+                if (isOccupied(1, 0) || forwardObject != null) {
+                    straight = false;
+                    b1 = tileSize * .4;
+                    b2 = tileSize;
+                    b3 = -tileSize * .4;
+                    b4 = -tileSize * .1;
+                    b5 = -tileSize * .2;
+                    b6 = -tileSize * .2;
+                }
+                else straight = true;
+
                 a1 = tileSize - tileSize * .7;
                 a2 = tileSize * .7;
                 a3 = tileSize - tileSize * .7;
@@ -4065,8 +4136,8 @@ function render() {
                 a6 = tileSize * .7;
                 a7 = tileSize / 6;
                 a8 = 0;
-                beakRotation = 1;
-                arcDirection = true;
+                beakRotation = 2;
+                arcDirection = false;
                 break;
             case 3:    //red left and blue down
                 z1 = tileSize - eye1;
@@ -4081,6 +4152,19 @@ function render() {
                 scale1 = 1;
                 scale2 = scaleFactor;
 
+                forwardLocation = getLocation(level, headRow, headCol - 1);
+                forwardObject = findObjectAtLocation(forwardLocation);
+                if (isOccupied(0, -1) || forwardObject != null) {
+                    straight = false;
+                    b1 = 0;
+                    b2 = tileSize * .4;
+                    b3 = tileSize * .1;
+                    b4 = -tileSize * .4;
+                    b5 = tileSize * .2;
+                    b6 = -tileSize * .2;
+                }
+                else straight = true;
+
                 a1 = tileSize - tileSize * .7;
                 a2 = tileSize - tileSize * .7;
                 a3 = tileSize - tileSize * 1.3;
@@ -4089,8 +4173,8 @@ function render() {
                 a6 = tileSize - tileSize * .7;
                 a7 = 0;
                 a8 = tileSize / 6;
-                beakRotation = 1.5;
-                arcDirection = true;
+                beakRotation = 2.5;
+                arcDirection = false;
                 break;
             case 4:    //green up and yellow right
                 z1 = tileSize - eye2;
@@ -4105,6 +4189,19 @@ function render() {
                 scale1 = scaleFactor;
                 scale2 = 1;
 
+                forwardLocation = getLocation(level, headRow - 1, headCol);
+                forwardObject = findObjectAtLocation(forwardLocation);
+                if (isOccupied(-1, 0) || forwardObject != null) {
+                    straight = false;
+                    b1 = tileSize * .4;
+                    b2 = 0;
+                    b3 = -tileSize * .4;
+                    b4 = tileSize * .1;
+                    b5 = -tileSize * .2;
+                    b6 = tileSize * .2;
+                }
+                else straight = true;
+
                 a1 = tileSize - tileSize * .7;
                 a2 = tileSize - tileSize * .7;
                 a3 = tileSize - tileSize * .7;
@@ -4113,8 +4210,8 @@ function render() {
                 a6 = tileSize * .3;
                 a7 = tileSize / 6;
                 a8 = 0;
-                beakRotation = 1;
-                arcDirection = false;
+                beakRotation = 2;
+                arcDirection = true;
                 break;
             case 5:    //green right and yellow down
                 z1 = eye1;
@@ -4129,6 +4226,19 @@ function render() {
                 scale1 = 1;
                 scale2 = scaleFactor;
 
+                forwardLocation = getLocation(level, headRow, headCol + 1);
+                forwardObject = findObjectAtLocation(forwardLocation);
+                if (isOccupied(0, 1) || forwardObject != null) {
+                    straight = false;
+                    b1 = tileSize;
+                    b2 = tileSize * .4;
+                    b3 = -tileSize * .1;
+                    b4 = -tileSize * .4;
+                    b5 = -tileSize * .2;
+                    b6 = -tileSize * .2;
+                }
+                else straight = true;
+
                 a1 = tileSize * .7;
                 a2 = tileSize - tileSize * .7;
                 a3 = tileSize * 1.3;
@@ -4137,8 +4247,8 @@ function render() {
                 a6 = tileSize - tileSize * .7;
                 a7 = 0;
                 a8 = tileSize / 6;
-                beakRotation = 1.5;
-                arcDirection = false;
+                beakRotation = .5;
+                arcDirection = true;
                 break;
             case 6:    //green down and yellow left
                 z1 = eye2;
@@ -4152,6 +4262,19 @@ function render() {
                 eyeRotation = 1.5;
                 scale1 = scaleFactor;
                 scale2 = 1;
+
+                forwardLocation = getLocation(level, headRow + 1, headCol);
+                forwardObject = findObjectAtLocation(forwardLocation);
+                if (isOccupied(1, 0) || forwardObject != null) {
+                    straight = false;
+                    b1 = tileSize * .6;
+                    b2 = tileSize;
+                    b3 = tileSize * .4;
+                    b4 = -tileSize * .1;
+                    b5 = tileSize * .2;
+                    b6 = -tileSize * .2;
+                }
+                else straight = true;
 
                 a1 = tileSize * .7;
                 a2 = tileSize * .7;
@@ -4177,6 +4300,19 @@ function render() {
                 scale1 = 1;
                 scale2 = scaleFactor;
 
+                forwardLocation = getLocation(level, headRow, headCol - 1);
+                forwardObject = findObjectAtLocation(forwardLocation);
+                if (isOccupied(0, -1) || forwardObject != null) {
+                    straight = false;
+                    b1 = 0;
+                    b2 = tileSize * .6;
+                    b3 = tileSize * .1;
+                    b4 = tileSize * .4;
+                    b5 = tileSize * .2;
+                    b6 = tileSize * .2;
+                }
+                else straight = true;
+
                 a1 = tileSize - tileSize * .7;
                 a2 = tileSize * .7;
                 a3 = tileSize - tileSize * 1.3;
@@ -4200,6 +4336,19 @@ function render() {
                 eyeRotation = 2;
                 scale1 = 1;
                 scale2 = scaleFactor;
+
+                forwardLocation = getLocation(level, headRow, headCol + 1);
+                forwardObject = findObjectAtLocation(forwardLocation);
+                if (isOccupied(0, 1) || forwardObject != null) {
+                    straight = false;
+                    b1 = tileSize;
+                    b2 = tileSize * .6;
+                    b3 = -tileSize * .1;
+                    b4 = tileSize * .4;
+                    b5 = -tileSize * .2;
+                    b6 = tileSize * .2;
+                }
+                else straight = true;
 
                 a1 = tileSize * .7;
                 a2 = tileSize * .7;
@@ -4256,8 +4405,12 @@ function render() {
         context.fillStyle = "#F9921C";
         context.beginPath();
         context.arc(x + a1, y + a2, tileSize / 6, (beakRotation - 1) * Math.PI, beakRotation * Math.PI, arcDirection);
-        context.lineTo(x + a3, y + a4);
-        context.lineTo(x + a5 + a7, y + a6 + a8);
+        if (straight) context.lineTo(x + a3, y + a4);
+        else {
+            context.lineTo(x + b1, y + b2);
+            context.lineTo(x + b1 + b3, y + b2 + b4);
+            context.lineTo(x + b1 + b5, y + b2 + b6);
+        }
         context.closePath();
         context.fill();
     }
