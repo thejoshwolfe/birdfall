@@ -1972,10 +1972,18 @@ function move(dr, dc) {
         // do portals separate from falling logic
         if (portalActivationLocations.length === 1) {
             var portalAnimations = [300];
-            if (activatePortal(portalLocations, portalActivationLocations[0], portalAnimations, changeLog)) {
+            var result = activatePortal(portalLocations, portalActivationLocations[0], portalAnimations, changeLog);
+            if (result === "works") {
                 portalFailure = false;
+                portalOutOfBounds = false;
                 animationQueue.push(portalAnimations);
-            } else portalFailure = true;
+            } else if (result === "blocked") {
+                portalFailure = true;
+                portalOutOfBounds = false;
+            } else if (result === "outside") {
+                portalFailure = true;
+                portalOutOfBounds = true;
+            }
             portalActivationLocations = [];
         }
         // now do falling logic
@@ -2221,12 +2229,12 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
         var rowcol = getRowcol(level, object.locations[i]);
         var r = rowcol.r + delta.r;
         var c = rowcol.c + delta.c;
-        postPortalSnakeOutline[i] = { r: rowcol.r + delta.r, c: rowcol.c + delta.c };
-
-        if (!isInBounds(level, r, c)) portalOutOfBounds = true; // out of bounds
-        newLocations.push(getLocation(level, r, c));
+        if (r >= 0 && c >= 0) {
+            postPortalSnakeOutline[i] = { r: r, c: c };
+            newLocations.push(getLocation(level, r, c));
+        }
+        if (!isInBounds(level, r, c)) return "outside"; // out of bounds
     }
-    if (portalOutOfBounds) return false;
 
     for (var i = 0; i < newLocations.length; i++) {
         var location = newLocations[i];
@@ -2234,7 +2242,7 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
         var otherObject = findObjectAtLocation(location);
         if (otherObject != null && otherObject !== object) portalConflicts.push(getRowcol(level, location)); // blocked by object
     }
-    if (portalConflicts.length > 0) return false;
+    if (portalConflicts.length > 0) return "blocked";
 
     // zappo presto!
     var oldState = serializeObjectState(object);
@@ -2246,7 +2254,7 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
         delta.r,
         delta.c,
     ]);
-    return true;
+    return "works";
 }
 
 function isTileCodeAir(pusher, pushedObject, tileCode, dr, dc) {
@@ -2636,17 +2644,13 @@ function render() {
             }
         }
 
-        if (portalFailure) drawSnakeOutline(postPortalSnakeOutline, portalConflicts);
-        if (portalOutOfBounds) {
-            context.fillStyle = "red";
-            context.font = textStyle[0];
-            context.shadowOffsetX = 5;
-            context.shadowOffsetY = 5;
-            context.shadowColor = "rgba(0,0,0,0.5)";
-            context.shadowBlur = 4;
-            var textString = "Out of Bounds";
-            var textWidth = context.measureText(textString).width;
-            context.fillText(textString, (canvas.width / 2) - (textWidth / 2), canvas.height / 2);
+        if (portalFailure) {
+            drawSnakeOutline(postPortalSnakeOutline, portalConflicts);   //failed portal diagram
+            if (portalOutOfBounds) {
+                context.strokeStyle = "rgba(255,0,0,.5)";
+                context.lineWidth = tileSize / 2;
+                roundRect(context, 0, 0, canvas.width, canvas.height, 0, false, true);
+            }
         }
 
         // banners
