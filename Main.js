@@ -683,8 +683,6 @@ function toggleShowEditor() {
     showEditorChanged();
 }
 function toggleButtonSize() {
-    persistentState.bigButton = !persistentState.bigButton;
-    savePersistentState();
     var buttons = document.getElementsByClassName("bottomButton");
     if (persistentState.bigButton) {
         for (var i = 0; i < buttons.length; i++)
@@ -694,6 +692,8 @@ function toggleButtonSize() {
         for (var i = 0; i < buttons.length; i++)
             buttons[i].classList.remove("bigButton");
     }
+    persistentState.bigButton = !persistentState.bigButton;
+    savePersistentState();
     render();
 }
 function toggleGrid() {
@@ -702,8 +702,6 @@ function toggleGrid() {
     render();
 }
 function toggleHotkeys() {
-    persistentState.hideHotkeys = !persistentState.hideHotkeys;
-    savePersistentState();
     var hotkeys = document.getElementsByClassName("hotkey");
     var spacers = document.getElementsByClassName("hotkeySpacer");
     for (var i = 0; i < hotkeys.length; i++) {
@@ -714,6 +712,8 @@ function toggleHotkeys() {
         if (persistentState.hideHotkeys) spacers[i].style.display = "none";
         else spacers[i].style.display = "block";
     }
+    persistentState.hideHotkeys = !persistentState.hideHotkeys;
+    savePersistentState();
     render();
 }
 
