@@ -51,6 +51,7 @@ var cs = false;
 var postPortalSnakeOutline = [];
 var portalConflicts = [];
 var portalFailure = false;
+var portalOutOfBounds = false;
 
 var tileSize = 34;
 var level;
@@ -1854,6 +1855,7 @@ function showEditorChanged() {
 }
 
 function move(dr, dc) {
+    portalOutOfBounds = false;
     portalFailure = false;
     if (!isAlive()) return;
     animationQueue = [];
@@ -2221,9 +2223,10 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
         var c = rowcol.c + delta.c;
         postPortalSnakeOutline[i] = { r: rowcol.r + delta.r, c: rowcol.c + delta.c };
 
-        if (!isInBounds(level, r, c)) return false; // out of bounds
+        if (!isInBounds(level, r, c)) portalOutOfBounds = true; // out of bounds
         newLocations.push(getLocation(level, r, c));
     }
+    if (portalOutOfBounds) return false;
 
     for (var i = 0; i < newLocations.length; i++) {
         var location = newLocations[i];
@@ -2634,6 +2637,18 @@ function render() {
         }
 
         if (portalFailure) drawSnakeOutline(postPortalSnakeOutline, portalConflicts);
+        if (portalOutOfBounds) {
+            context.fillStyle = "red";
+            context.font = textStyle[0];
+            context.shadowOffsetX = 5;
+            context.shadowOffsetY = 5;
+            context.shadowColor = "rgba(0,0,0,0.5)";
+            context.shadowBlur = 4;
+            var textString = "Out of Bounds";
+            var textWidth = context.measureText(textString).width;
+            context.fillText(textString, (canvas.width / 2) - (textWidth / 2), canvas.height / 2);
+        }
+
         // banners
         if (countSnakes() === 0 && !cs) {
             context.fillStyle = textStyle[1];
@@ -4319,14 +4334,32 @@ function render() {
         buffer.height = canvas.height;
         var localContext = buffer.getContext("2d");
 
-        localContext.setLineDash([8, 4]);
         localContext.strokeStyle = "white";
         localContext.lineWidth = tileSize / 6;
         for (var i = 0; i < outline.length; i++) {
-            roundRect(localContext, outline[i].c * tileSize, outline[i].r * tileSize, tileSize, tileSize, 5, false, true);
+            var c = outline[i].c;
+            var r = outline[i].r;
+            localContext.beginPath();
+            localContext.moveTo((c + .35) * tileSize, r * tileSize);
+            localContext.lineTo((c + .65) * tileSize, r * tileSize);
+            localContext.moveTo((c + .9) * tileSize, r * tileSize);
+            localContext.arcTo((c + 1) * tileSize, r * tileSize, (c + 1) * tileSize, (r + .1) * tileSize, tileSize / 6);
+            localContext.moveTo((c + 1) * tileSize, (r + .35) * tileSize);
+            localContext.lineTo((c + 1) * tileSize, (r + .65) * tileSize);
+            localContext.moveTo((c + 1) * tileSize, (r + .9) * tileSize);
+            localContext.arcTo((c + 1) * tileSize, (r + 1) * tileSize, (c + .9) * tileSize, (r + 1) * tileSize, tileSize / 6);
+            localContext.moveTo((c + .65) * tileSize, (r + 1) * tileSize);
+            localContext.lineTo((c + .35) * tileSize, (r + 1) * tileSize);
+            localContext.moveTo((c + .1) * tileSize, (r + 1) * tileSize);
+            localContext.arcTo(c * tileSize, (r + 1) * tileSize, c * tileSize, (r + .9) * tileSize, tileSize / 6);
+            localContext.moveTo(c * tileSize, (r + .65) * tileSize);
+            localContext.lineTo(c * tileSize, (r + .35) * tileSize);
+            localContext.moveTo(c * tileSize, (r + .1) * tileSize);
+            localContext.arcTo(c * tileSize, r * tileSize, (c + .1) * tileSize, r * tileSize, tileSize / 6);
+            localContext.stroke();
+            //roundRect(localContext, outline[i].c * tileSize, outline[i].r * tileSize, tileSize, tileSize, 5, false, true);
         }
 
-        localContext.setLineDash([]);
         localContext.strokeStyle = "red";
         localContext.lineWidth = tileSize / 3;
         for (var i = 0; i < conflicts.length; i++) {
