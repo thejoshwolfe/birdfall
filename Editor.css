@@ -111,7 +111,15 @@ button:active:enabled{
     font-family: Arial;
     font-size: 12pt;
     color:slateblue; 
-    margin: 0 0 10px 0;
+    margin: 10px 0 10px 0;
+    display: inline-block;
+    vertical-align: top;
+    font-weight: 900;
+}
+
+#levelType span{
+    font-size: 6pt;
+    font-weight: 100;
 }
 
 canvas{
@@ -167,6 +175,13 @@ canvas{
     margin-left: 5px;
 }
 
+.plusMinus{
+    min-height: 20px;
+    min-width: 20px;
+    font-size: 10pt;
+    display: table-cell;
+}
+
 .bigButton{
     font-size: 20pt;
     padding: 10px;
@@ -200,4 +215,37 @@ canvas{
 #keyboardInstructions{
     font-size: 8pt;
     width: 220px;
+}
+
+#levelSize{
+    width: fit-content;
+    display: table;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: rgba(0,0,0,.03);
+    padding: 5px 10px 5px 10px;
+}
+
+#levelSizeText{
+    display: inline-block;
+    padding: 5px 10px 5px 10px;
+    margin: 0 10px 0 10px;
+}
+
+#levelSizeText:hover{
+    cursor: default;
+    border-radius: 3px;
+    background-color: rgba(0,0,0, .05); 
+}
+
+#levelSizeText:active{
+    transform: scale(.97);
+}
+
+
+
+
+.optionsHeaders{
+    font-weight: 900;
 }
