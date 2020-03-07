@@ -227,6 +227,7 @@ canvas{
     border-radius: 5px;
     background-color: rgba(0,0,0,.03);
     padding: 5px 10px 5px 10px;
+    position: relative;
 }
 
 #levelSizeText{
@@ -256,4 +257,23 @@ canvas{
     font-family:Arial;
     display:inline-block;
     vertical-align: top;
+}
+
+#fitButton{
+    position: absolute;
+    font-size: 8pt;
+    top: 23%;
+    left: -30px;
+    cursor: default;
+    padding: 3px;
+    border-radius: 2px;
+}
+
+#fitButton:hover{
+    background-color: slateblue;
+    color: white;
+}
+
+#fitButton:active{
+    transform: scale(.9);
 }
