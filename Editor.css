@@ -34,6 +34,10 @@ button{
     box-shadow: .5px .5px 1px black;
 }
 
+button:hover:enabled{
+    color: slateblue;
+}
+
 button:focus{
     background-image: linear-gradient(#4b91ff, #055ce4);
     color: white;
@@ -239,7 +243,8 @@ canvas{
 #levelSizeText:hover{
     cursor: default;
     border-radius: 3px;
-    background-color: rgba(0,0,0, .05); 
+    background-color: slateblue;
+    color: white;
 }
 
 #levelSizeText:active{
@@ -265,7 +270,7 @@ canvas{
     top: 25%;
     left: -30px;
     cursor: default;
-    padding: 3px;
+    padding: 3px 5px 3px 5px;
     border-radius: 2px;
 }
 
