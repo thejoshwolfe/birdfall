@@ -682,7 +682,7 @@ document.getElementById("arrowRight").addEventListener("click", function () {
     return;
 });
 document.getElementById("minus").addEventListener("click", function () {
-    tileSize += 2;
+    tileSize -= 2;
     borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
     localStorage.setItem("cachedTileSize", tileSize);
