@@ -215,6 +215,8 @@ canvas{
 #keyboardInstructions{
     font-size: 8pt;
     width: 220px;
+    text-align: center;
+    display: inline-block;
 }
 
 #levelSize{
@@ -243,9 +245,15 @@ canvas{
     transform: scale(.97);
 }
 
-
-
-
 .optionsHeaders{
     font-weight: 900;
+}
+
+.bottomBlockBox{
+    width: 280px;
+    text-align:center;
+    font-size:10pt;
+    font-family:Arial;
+    display:inline-block;
+    vertical-align: top;
 }
