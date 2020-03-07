@@ -1907,7 +1907,8 @@ var themeCounter = 0;
 var cachedTheme = localStorage.getItem("cachedTheme");
 if (cachedTheme == null || cachedTheme == "null") themeCounter = 0;
 else themeCounter = cachedTheme;
-
+var themeName = themes[themeCounter][0];
+document.getElementById("themeButton").innerHTML = "Theme: <b>" + themeName + "</b>";
 
 function showEditorChanged() {
     document.getElementById("showHideEditor").textContent = (persistentState.showEditor ? "Hide" : "Show") + " Editor";
