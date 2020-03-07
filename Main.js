@@ -54,6 +54,9 @@ var portalFailure = false;
 var portalOutOfBounds = false;
 
 var tileSize = 34;
+var cachedTileSize = localStorage.getItem("cachedTileSize");
+if (localStorage.getItem("cachedTileSize") === null) tileSize = 34;
+else tileSize = parseInt(cachedTileSize);
 var borderRadiusFactor = 3.4;
 var borderRadius = tileSize / borderRadiusFactor;
 
@@ -486,18 +489,21 @@ document.addEventListener("keydown", function (event) {
             tileSize = 34;
             borderRadius = tileSize / borderRadiusFactor;
             textStyle[0] = tileSize * 5;
+            localStorage.setItem("cachedTileSize", tileSize);
             render();
             return;
         case 187:   //equals and plus
             tileSize += 2;
             borderRadius = tileSize / borderRadiusFactor;
             textStyle[0] = tileSize * 5;
+            localStorage.setItem("cachedTileSize", tileSize);
             render();
             return;
         case 189:   //minus
             tileSize -= 2;
             borderRadius = tileSize / borderRadiusFactor;
             textStyle[0] = tileSize * 5;
+            localStorage.setItem("cachedTileSize", tileSize);
             render();
             return;
         case "Q".charCodeAt(0):
@@ -674,6 +680,7 @@ document.getElementById("minus").addEventListener("click", function () {
     tileSize += 2;
     borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
+    localStorage.setItem("cachedTileSize", tileSize);
     render();
     return;
 });
@@ -681,6 +688,7 @@ document.getElementById("plus").addEventListener("click", function () {
     tileSize += 2;
     borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
+    localStorage.setItem("cachedTileSize", tileSize);
     render();
     return;
 });
@@ -688,6 +696,7 @@ document.getElementById("levelSizeText").addEventListener("click", function () {
     tileSize = 34;
     borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
+    localStorage.setItem("cachedTileSize", tileSize);
     render();
     return;
 });
@@ -858,9 +867,9 @@ document.getElementById("themeButton").addEventListener("click", function () {
     toggleTheme();
 });
 function toggleTheme() {
-    if (themeCounter < themes.length - 1) themeCounter++;
-    else themeCounter = 0;
+    (themeCounter < themes.length - 1) ? themeCounter++ : themeCounter = 0;
     blockSupportRenderCache = [];
+    localStorage.setItem("cachedTheme", themeCounter);
     render();
     document.getElementById("themeButton").innerHTML = "Theme: <b>" + themes[themeCounter][0] + "</b>";
 }
@@ -1848,7 +1857,7 @@ function isAnyCheatcodeEnabled() {
         !isGravityEnabled || !isCollisionEnabled
     );
 }
-var themeName = "Spring";
+
 var background, surface, material, snakeColors, blockColors, spikeColors, fruitColors, textStyle, experimentalColors;
 var curlyOutline = false;
 
@@ -1884,8 +1893,6 @@ var textStyle4 = [fontSize, "px Arial", "#ff0", "#f00"];
 var experimentalColors1 = ["white", "#ffccff"];
 var experimentalColors2 = ["white", "#FEFE28"];
 
-var themeCounter = 0;
-
 var themes = [  //name, background, material, surface, curlyOutline, blockColors, spikeColors, fruitColors, stemColor, textStyle, experimentalColors
     //["sky",],
     ["Spring", bg1, "#976537", "#95ff45", true, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
@@ -1895,6 +1902,11 @@ var themes = [  //name, background, material, surface, curlyOutline, blockColors
     ["Dream", bg3, "#00aaff", "#ffb3ec", true, snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2, experimentalColors2],
     ["Midnight Rainbow", bg4, "black", "rainbow", false, snakeColors1, blockColors5, spikeColors2, "white", "white", textStyle1, experimentalColors1]
 ];
+
+var themeCounter = 0;
+var cachedTheme = localStorage.getItem("cachedTheme");
+if (cachedTheme == null || cachedTheme == "null") themeCounter = 0;
+else themeCounter = cachedTheme;
 
 
 function showEditorChanged() {
