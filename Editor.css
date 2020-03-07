@@ -282,3 +282,8 @@ canvas{
 #fitButton:active{
     transform: scale(.9);
 }
+
+#paradoxDiv{
+    background: #f88;
+    text-align: center;
+}
