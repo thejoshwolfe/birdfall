@@ -3764,9 +3764,9 @@ function render() {
     }
 
     function drawSpikes(r, c, adjacentTiles) {
-        if (themeName = "Classic") {
-            var x = c * tileSize;
-            var y = r * tileSize;
+        var x = c * tileSize;
+        var y = r * tileSize;
+        if (themeName === "Classic") {
             context.fillStyle = "#333";
             context.beginPath();
             context.moveTo(x + tileSize * 0.3, y + tileSize * 0.3);
@@ -3789,11 +3789,7 @@ function render() {
             context.fill();
         }
         else {
-
-            var x = c * tileSize;
-            var y = r * tileSize;
             context.fillStyle = spikeColors[0];
-
             context.beginPath();
             context.moveTo(x + tileSize * 0.25, y + tileSize * 0.3); //top spikes
             context.lineTo(x + tileSize * 0.35, y + tileSize * 0.0);
@@ -3823,19 +3819,6 @@ function render() {
             context.lineTo(x + tileSize * 0.0, y + tileSize * 0.35);
             context.lineTo(x + tileSize * 0.3, y + tileSize * 0.25);
             context.closePath();
-
-            /*context.lineTo(x + tileSize * 1.0, y + tileSize * 0.4);      
-            context.lineTo(x + tileSize * 0.7, y + tileSize * 0.5);
-            context.lineTo(x + tileSize * 1.0, y + tileSize * 0.6);
-            context.lineTo(x + tileSize * 0.7, y + tileSize * 0.7);
-            context.lineTo(x + tileSize * 0.6, y + tileSize * 1.0);
-            context.lineTo(x + tileSize * 0.5, y + tileSize * 0.7);
-            context.lineTo(x + tileSize * 0.4, y + tileSize * 1.0);
-            context.lineTo(x + tileSize * 0.3, y + tileSize * 0.7);
-            context.lineTo(x + tileSize * 0.0, y + tileSize * 0.6);
-            context.lineTo(x + tileSize * 0.3, y + tileSize * 0.5);
-            context.lineTo(x + tileSize * 0.0, y + tileSize * 0.4);
-            context.lineTo(x + tileSize * 0.3, y + tileSize * 0.3);*/
             context.fill();
             drawSpikeSupports(r, c, isSpike, isWall);
 
