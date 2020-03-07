@@ -1951,6 +1951,8 @@ function showEditorChanged() {
 }
 
 function move(dr, dc) {
+    postPortalSnakeOutline = [];
+    portalConflicts = [];
     portalOutOfBounds = false;
     portalFailure = false;
     cycle = false;
