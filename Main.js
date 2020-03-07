@@ -763,10 +763,13 @@ function toggleButtonSize() {
     if (persistentState.bigButton) {
         for (var i = 0; i < buttons.length; i++)
             buttons[i].classList.add("bigButton");
+        document.getElementById("fitButton").style.display = "none";
+
     }
     else {
         for (var i = 0; i < buttons.length; i++)
             buttons[i].classList.remove("bigButton");
+        document.getElementById("fitButton").style.display = "block";
     }
     render();
 }
@@ -2694,7 +2697,12 @@ function render() {
 
             for (var i = 0; i < objects.length; i++) {
                 var object = objects[i];
-                if (object.type === SNAKE || object.type === BLOCK) drawObject(object);  //draws snakes and blocks
+                if (object.type === SNAKE) drawObject(object);
+            }
+
+            for (var i = 0; i < objects.length; i++) {
+                var object = objects[i];
+                if (object.type === BLOCK) drawObject(object);
             }
 
             if (onlyTheseObjects == null) {
