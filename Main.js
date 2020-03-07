@@ -52,6 +52,8 @@ var postPortalSnakeOutline = [];
 var portalConflicts = [];
 var portalFailure = false;
 var portalOutOfBounds = false;
+var cycle = false;
+var cycleID = -1;
 
 var tileSize = 34;
 var cachedTileSize = localStorage.getItem("cachedTileSize");
@@ -609,7 +611,9 @@ document.addEventListener("keydown", function (event) {
         case "M".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TRELLIS); break; }
-        case 13: //return
+        case "N".charCodeAt(0):
+            if (modifierMask === 0) { cycle = true; cycleID++; render(); break; }
+        case 13: // return
             if (modifierMask === 0) { toggleTheme(); break; }
         case 32: // spacebar
         case 9: // tab
@@ -1949,6 +1953,9 @@ function showEditorChanged() {
 function move(dr, dc) {
     portalOutOfBounds = false;
     portalFailure = false;
+    cycle = false;
+    cycleID = -1;
+
     if (!isAlive()) return;
     animationQueue = [];
     animationQueueCursor = 0;
@@ -2308,21 +2315,26 @@ function moveObjects(objects, dr, dc, portalLocations, portalActivationLocations
 }
 
 function activatePortal(portalLocations, portalLocation, animations, changeLog) {
-    postPortalSnakeOutline = [];
-    portalConflicts = [];
     var otherPortalLocation = portalLocations[1 - portalLocations.indexOf(portalLocation)];
     var portalRowcol = getRowcol(level, portalLocation);
     var otherPortalRowcol = getRowcol(level, otherPortalLocation);
     var delta = { r: otherPortalRowcol.r - portalRowcol.r, c: otherPortalRowcol.c - portalRowcol.c };
 
     var object = findObjectAtLocation(portalLocation);
+    var objectLength = object.locations.length;
     var newLocations = [];
-    for (var i = 0; i < object.locations.length; i++) {
+    for (var i = 0; i < objectLength; i++) {
         var rowcol = getRowcol(level, object.locations[i]);
         var r = rowcol.r + delta.r;
         var c = rowcol.c + delta.c;
+
+        var outlineID = Math.floor(postPortalSnakeOutline.length / objectLength);
         if (r >= 0 && c >= 0) {
-            postPortalSnakeOutline[i] = { r: r, c: c };
+            postPortalSnakeOutline.push({
+                id: outlineID,
+                r: r,
+                c: c,
+            });
             newLocations.push(getLocation(level, r, c));
         }
         if (!isInBounds(level, r, c)) return "outside"; // out of bounds
@@ -4597,50 +4609,69 @@ function render() {
     }
 
     function drawSnakeOutline(outline, conflicts) {
+        context.fillStyle = "rgba(0,0,0,.2)";
+        context.font = "50pt Impact";
+        var textString = "Press N to cycle through diagrams";
+        var textWidth = context.measureText(textString).width;
+        context.fillText(textString, (canvas.width / 2) - (textWidth / 2), 80);
+
+        var maxID = 0;
+        for (var i = 0; i < outline.length; i++) {
+            maxID = outline[i].id;
+        }
+
         var buffer = document.createElement("canvas");
         buffer.width = canvas.width;
         buffer.height = canvas.height;
         var localContext = buffer.getContext("2d");
 
-        localContext.strokeStyle = "white";
-        localContext.lineWidth = tileSize / 6;
+        if (cycle) {
+            context.fillStyle = "rgba(0, 0, 0, 0.8)";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+        }
         for (var i = 0; i < outline.length; i++) {
-            var c = outline[i].c;
-            var r = outline[i].r;
-            localContext.beginPath();
-            localContext.moveTo((c + .35) * tileSize, r * tileSize);
-            localContext.lineTo((c + .65) * tileSize, r * tileSize);
-            localContext.moveTo((c + .9) * tileSize, r * tileSize);
-            localContext.arcTo((c + 1) * tileSize, r * tileSize, (c + 1) * tileSize, (r + .1) * tileSize, tileSize / 6);
-            localContext.moveTo((c + 1) * tileSize, (r + .35) * tileSize);
-            localContext.lineTo((c + 1) * tileSize, (r + .65) * tileSize);
-            localContext.moveTo((c + 1) * tileSize, (r + .9) * tileSize);
-            localContext.arcTo((c + 1) * tileSize, (r + 1) * tileSize, (c + .9) * tileSize, (r + 1) * tileSize, tileSize / 6);
-            localContext.moveTo((c + .65) * tileSize, (r + 1) * tileSize);
-            localContext.lineTo((c + .35) * tileSize, (r + 1) * tileSize);
-            localContext.moveTo((c + .1) * tileSize, (r + 1) * tileSize);
-            localContext.arcTo(c * tileSize, (r + 1) * tileSize, c * tileSize, (r + .9) * tileSize, tileSize / 6);
-            localContext.moveTo(c * tileSize, (r + .65) * tileSize);
-            localContext.lineTo(c * tileSize, (r + .35) * tileSize);
-            localContext.moveTo(c * tileSize, (r + .1) * tileSize);
-            localContext.arcTo(c * tileSize, r * tileSize, (c + .1) * tileSize, r * tileSize, tileSize / 6);
-            localContext.stroke();
-            //roundRect(localContext, outline[i].c * tileSize, outline[i].r * tileSize, tileSize, tileSize, 5, false, true);
+            if (!(cycle && outline[i].id != cycleID)) {
+                localContext.strokeStyle = "white";
+                localContext.lineWidth = tileSize / 6;
+                var c = outline[i].c;
+                var r = outline[i].r;
+                localContext.beginPath();
+                localContext.moveTo((c + .35) * tileSize, r * tileSize);
+                localContext.lineTo((c + .65) * tileSize, r * tileSize);
+                localContext.moveTo((c + .9) * tileSize, r * tileSize);
+                localContext.arcTo((c + 1) * tileSize, r * tileSize, (c + 1) * tileSize, (r + .1) * tileSize, tileSize / 6);
+                localContext.moveTo((c + 1) * tileSize, (r + .35) * tileSize);
+                localContext.lineTo((c + 1) * tileSize, (r + .65) * tileSize);
+                localContext.moveTo((c + 1) * tileSize, (r + .9) * tileSize);
+                localContext.arcTo((c + 1) * tileSize, (r + 1) * tileSize, (c + .9) * tileSize, (r + 1) * tileSize, tileSize / 6);
+                localContext.moveTo((c + .65) * tileSize, (r + 1) * tileSize);
+                localContext.lineTo((c + .35) * tileSize, (r + 1) * tileSize);
+                localContext.moveTo((c + .1) * tileSize, (r + 1) * tileSize);
+                localContext.arcTo(c * tileSize, (r + 1) * tileSize, c * tileSize, (r + .9) * tileSize, tileSize / 6);
+                localContext.moveTo(c * tileSize, (r + .65) * tileSize);
+                localContext.lineTo(c * tileSize, (r + .35) * tileSize);
+                localContext.moveTo(c * tileSize, (r + .1) * tileSize);
+                localContext.arcTo(c * tileSize, r * tileSize, (c + .1) * tileSize, r * tileSize, tileSize / 6);
+                localContext.stroke();
+
+                for (var j = 0; j < conflicts.length; j++) {
+                    if (conflicts[j].c === c && conflicts[j].r === r) {
+                        c = conflicts[j].c;
+                        r = conflicts[j].r;
+                        localContext.strokeStyle = "red";
+                        localContext.lineWidth = tileSize / 2.8;
+                        localContext.beginPath();
+                        localContext.moveTo((c - .12) * tileSize, (r - .12) * tileSize);
+                        localContext.lineTo((c + 1.12) * tileSize, (r + 1.12) * tileSize);
+                        localContext.moveTo((c + 1.12) * tileSize, (r - .12) * tileSize);
+                        localContext.lineTo((c - .12) * tileSize, (r + 1.12) * tileSize);
+                        localContext.stroke();
+                    }
+                }
+            }
         }
 
-        localContext.strokeStyle = "red";
-        localContext.lineWidth = tileSize / 2.8;
-        for (var i = 0; i < conflicts.length; i++) {
-            var c = conflicts[i].c;
-            var r = conflicts[i].r;
-            localContext.beginPath();
-            localContext.moveTo((c - .12) * tileSize, (r - .12) * tileSize);
-            localContext.lineTo((c + 1.12) * tileSize, (r + 1.12) * tileSize);
-            localContext.moveTo((c + 1.12) * tileSize, (r - .12) * tileSize);
-            localContext.lineTo((c - .12) * tileSize, (r + 1.12) * tileSize);
-            localContext.stroke();
-        }
-
+        if (cycleID > maxID) cycleID = -1;
         context.save();
         context.globalAlpha = 1;
         context.drawImage(buffer, 0, 0);
