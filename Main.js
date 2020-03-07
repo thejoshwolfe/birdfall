@@ -3760,62 +3760,89 @@ function render() {
     }
 
     function drawSpikes(r, c, adjacentTiles) {
-        var x = c * tileSize;
-        var y = r * tileSize;
-        context.fillStyle = spikeColors[0];
-
-        context.beginPath();
-        context.moveTo(x + tileSize * 0.25, y + tileSize * 0.3); //top spikes
-        context.lineTo(x + tileSize * 0.35, y + tileSize * 0.0);
-        context.lineTo(x + tileSize * 0.45, y + tileSize * 0.3);
-        context.lineTo(x + tileSize * 0.55, y + tileSize * 0.3);
-        context.lineTo(x + tileSize * 0.65, y + tileSize * 0.0);
-        context.lineTo(x + tileSize * 0.75, y + tileSize * 0.3);
-
-        context.moveTo(x + tileSize * 0.7, y + tileSize * 0.25); //right spikes
-        context.lineTo(x + tileSize * 1.0, y + tileSize * 0.35);
-        context.lineTo(x + tileSize * 0.7, y + tileSize * 0.45);
-        context.lineTo(x + tileSize * 0.7, y + tileSize * 0.55);
-        context.lineTo(x + tileSize * 1.0, y + tileSize * 0.65);
-        context.lineTo(x + tileSize * 0.7, y + tileSize * 0.75);
-
-        context.moveTo(x + tileSize * 0.75, y + tileSize * 0.7); //bottom spikes
-        context.lineTo(x + tileSize * 0.65, y + tileSize * 1.0);
-        context.lineTo(x + tileSize * 0.55, y + tileSize * 0.7);
-        context.lineTo(x + tileSize * 0.45, y + tileSize * 0.7);
-        context.lineTo(x + tileSize * 0.35, y + tileSize * 1.0);
-        context.lineTo(x + tileSize * 0.25, y + tileSize * 0.7);
-
-        context.moveTo(x + tileSize * 0.3, y + tileSize * 0.75); //left spikes
-        context.lineTo(x + tileSize * 0.0, y + tileSize * 0.65);
-        context.lineTo(x + tileSize * 0.3, y + tileSize * 0.55);
-        context.lineTo(x + tileSize * 0.3, y + tileSize * 0.45);
-        context.lineTo(x + tileSize * 0.0, y + tileSize * 0.35);
-        context.lineTo(x + tileSize * 0.3, y + tileSize * 0.25);
-        context.closePath();
-
-        /*context.lineTo(x + tileSize * 1.0, y + tileSize * 0.4);      
-        context.lineTo(x + tileSize * 0.7, y + tileSize * 0.5);
-        context.lineTo(x + tileSize * 1.0, y + tileSize * 0.6);
-        context.lineTo(x + tileSize * 0.7, y + tileSize * 0.7);
-        context.lineTo(x + tileSize * 0.6, y + tileSize * 1.0);
-        context.lineTo(x + tileSize * 0.5, y + tileSize * 0.7);
-        context.lineTo(x + tileSize * 0.4, y + tileSize * 1.0);
-        context.lineTo(x + tileSize * 0.3, y + tileSize * 0.7);
-        context.lineTo(x + tileSize * 0.0, y + tileSize * 0.6);
-        context.lineTo(x + tileSize * 0.3, y + tileSize * 0.5);
-        context.lineTo(x + tileSize * 0.0, y + tileSize * 0.4);
-        context.lineTo(x + tileSize * 0.3, y + tileSize * 0.3);*/
-        context.fill();
-        drawSpikeSupports(r, c, isSpike, isWall);
-
-        function isSpike(dc, dr) {
-            var tileCode = adjacentTiles[1 + dr][1 + dc];
-            return tileCode == null || tileCode === SPIKE;
+        if (themeName = "Classic") {
+            var x = c * tileSize;
+            var y = r * tileSize;
+            context.fillStyle = "#333";
+            context.beginPath();
+            context.moveTo(x + tileSize * 0.3, y + tileSize * 0.3);
+            context.lineTo(x + tileSize * 0.4, y + tileSize * 0.0);
+            context.lineTo(x + tileSize * 0.5, y + tileSize * 0.3);
+            context.lineTo(x + tileSize * 0.6, y + tileSize * 0.0);
+            context.lineTo(x + tileSize * 0.7, y + tileSize * 0.3);
+            context.lineTo(x + tileSize * 1.0, y + tileSize * 0.4);
+            context.lineTo(x + tileSize * 0.7, y + tileSize * 0.5);
+            context.lineTo(x + tileSize * 1.0, y + tileSize * 0.6);
+            context.lineTo(x + tileSize * 0.7, y + tileSize * 0.7);
+            context.lineTo(x + tileSize * 0.6, y + tileSize * 1.0);
+            context.lineTo(x + tileSize * 0.5, y + tileSize * 0.7);
+            context.lineTo(x + tileSize * 0.4, y + tileSize * 1.0);
+            context.lineTo(x + tileSize * 0.3, y + tileSize * 0.7);
+            context.lineTo(x + tileSize * 0.0, y + tileSize * 0.6);
+            context.lineTo(x + tileSize * 0.3, y + tileSize * 0.5);
+            context.lineTo(x + tileSize * 0.0, y + tileSize * 0.4);
+            context.lineTo(x + tileSize * 0.3, y + tileSize * 0.3);
+            context.fill();
         }
-        function isWall(dc, dr) {
-            var tileCode = adjacentTiles[1 + dr][1 + dc];
-            return tileCode == null || tileCode === WALL;
+        else {
+
+            var x = c * tileSize;
+            var y = r * tileSize;
+            context.fillStyle = spikeColors[0];
+
+            context.beginPath();
+            context.moveTo(x + tileSize * 0.25, y + tileSize * 0.3); //top spikes
+            context.lineTo(x + tileSize * 0.35, y + tileSize * 0.0);
+            context.lineTo(x + tileSize * 0.45, y + tileSize * 0.3);
+            context.lineTo(x + tileSize * 0.55, y + tileSize * 0.3);
+            context.lineTo(x + tileSize * 0.65, y + tileSize * 0.0);
+            context.lineTo(x + tileSize * 0.75, y + tileSize * 0.3);
+
+            context.moveTo(x + tileSize * 0.7, y + tileSize * 0.25); //right spikes
+            context.lineTo(x + tileSize * 1.0, y + tileSize * 0.35);
+            context.lineTo(x + tileSize * 0.7, y + tileSize * 0.45);
+            context.lineTo(x + tileSize * 0.7, y + tileSize * 0.55);
+            context.lineTo(x + tileSize * 1.0, y + tileSize * 0.65);
+            context.lineTo(x + tileSize * 0.7, y + tileSize * 0.75);
+
+            context.moveTo(x + tileSize * 0.75, y + tileSize * 0.7); //bottom spikes
+            context.lineTo(x + tileSize * 0.65, y + tileSize * 1.0);
+            context.lineTo(x + tileSize * 0.55, y + tileSize * 0.7);
+            context.lineTo(x + tileSize * 0.45, y + tileSize * 0.7);
+            context.lineTo(x + tileSize * 0.35, y + tileSize * 1.0);
+            context.lineTo(x + tileSize * 0.25, y + tileSize * 0.7);
+
+            context.moveTo(x + tileSize * 0.3, y + tileSize * 0.75); //left spikes
+            context.lineTo(x + tileSize * 0.0, y + tileSize * 0.65);
+            context.lineTo(x + tileSize * 0.3, y + tileSize * 0.55);
+            context.lineTo(x + tileSize * 0.3, y + tileSize * 0.45);
+            context.lineTo(x + tileSize * 0.0, y + tileSize * 0.35);
+            context.lineTo(x + tileSize * 0.3, y + tileSize * 0.25);
+            context.closePath();
+
+            /*context.lineTo(x + tileSize * 1.0, y + tileSize * 0.4);      
+            context.lineTo(x + tileSize * 0.7, y + tileSize * 0.5);
+            context.lineTo(x + tileSize * 1.0, y + tileSize * 0.6);
+            context.lineTo(x + tileSize * 0.7, y + tileSize * 0.7);
+            context.lineTo(x + tileSize * 0.6, y + tileSize * 1.0);
+            context.lineTo(x + tileSize * 0.5, y + tileSize * 0.7);
+            context.lineTo(x + tileSize * 0.4, y + tileSize * 1.0);
+            context.lineTo(x + tileSize * 0.3, y + tileSize * 0.7);
+            context.lineTo(x + tileSize * 0.0, y + tileSize * 0.6);
+            context.lineTo(x + tileSize * 0.3, y + tileSize * 0.5);
+            context.lineTo(x + tileSize * 0.0, y + tileSize * 0.4);
+            context.lineTo(x + tileSize * 0.3, y + tileSize * 0.3);*/
+            context.fill();
+            drawSpikeSupports(r, c, isSpike, isWall);
+
+            function isSpike(dc, dr) {
+                var tileCode = adjacentTiles[1 + dr][1 + dc];
+                return tileCode == null || tileCode === SPIKE;
+            }
+            function isWall(dc, dr) {
+                var tileCode = adjacentTiles[1 + dr][1 + dc];
+                return tileCode == null || tileCode === WALL;
+            }
         }
     }
 
