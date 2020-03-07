@@ -4613,10 +4613,10 @@ function render() {
     function drawSnakeOutline(outline, conflicts) {
         context.fillStyle = "rgba(0,0,0,.2)";
         context.font = "50pt Impact";
-        var textString = "Press N to cycle through diagrams";
-        var textWidth = context.measureText(textString).width;
-        context.fillText(textString, (canvas.width / 2) - (textWidth / 2), 80);
+        var textString = "Press the / (forward slash) key to cycle through diagrams";
+        document.getElementById("paradoxDiv").innerHTML = textString;
 
+        var xSpots = [];
         var maxID = 0;
         for (var i = 0; i < outline.length; i++) {
             maxID = outline[i].id;
@@ -4627,10 +4627,6 @@ function render() {
         buffer.height = canvas.height;
         var localContext = buffer.getContext("2d");
 
-        if (cycle) {
-            context.fillStyle = "rgba(0, 0, 0, 0.8)";
-            context.fillRect(0, 0, canvas.width, canvas.height);
-        }
         for (var i = 0; i < outline.length; i++) {
             if (!(cycle && outline[i].id != cycleID)) {
                 localContext.strokeStyle = "white";
@@ -4658,19 +4654,25 @@ function render() {
 
                 for (var j = 0; j < conflicts.length; j++) {
                     if (conflicts[j].c === c && conflicts[j].r === r) {
-                        c = conflicts[j].c;
-                        r = conflicts[j].r;
-                        localContext.strokeStyle = "red";
-                        localContext.lineWidth = tileSize / 2.8;
-                        localContext.beginPath();
-                        localContext.moveTo((c - .12) * tileSize, (r - .12) * tileSize);
-                        localContext.lineTo((c + 1.12) * tileSize, (r + 1.12) * tileSize);
-                        localContext.moveTo((c + 1.12) * tileSize, (r - .12) * tileSize);
-                        localContext.lineTo((c - .12) * tileSize, (r + 1.12) * tileSize);
-                        localContext.stroke();
+                        xSpots.push({
+                            c: conflicts[j].c,
+                            r: conflicts[j].r
+                        });
                     }
                 }
             }
+        }
+        for (var i = 0; i < xSpots.length; i++) {
+            c = xSpots[i].c;
+            r = xSpots[i].r;
+            localContext.strokeStyle = "red";
+            localContext.lineWidth = tileSize / 2.8;
+            localContext.beginPath();
+            localContext.moveTo((c - .12) * tileSize, (r - .12) * tileSize);
+            localContext.lineTo((c + 1.12) * tileSize, (r + 1.12) * tileSize);
+            localContext.moveTo((c + 1.12) * tileSize, (r - .12) * tileSize);
+            localContext.lineTo((c - .12) * tileSize, (r + 1.12) * tileSize);
+            localContext.stroke();
         }
 
         if (cycleID > maxID) cycleID = -1;
@@ -4678,6 +4680,15 @@ function render() {
         context.globalAlpha = 1;
         context.drawImage(buffer, 0, 0);
         context.restore();
+    }
+
+    function fitTextOnCanvas(text, fontface, yPosition) {
+        var fontsize = 50;
+        do {
+            fontsize--;
+            context.font = fontsize + "px " + fontface;
+        } while (context.measureText(text).width > canvas.width)
+        context.fillText(text, 0, yPosition);
     }
 }
 
