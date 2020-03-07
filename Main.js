@@ -704,6 +704,16 @@ document.getElementById("levelSizeText").addEventListener("click", function () {
     render();
     return;
 });
+document.getElementById("fitButton").addEventListener("click", function () {
+    var maxW = screen.width / level.width;
+    var maxH = screen.height / level.height;
+    tileSize = Math.min(maxW, maxH) * .8;
+    borderRadius = tileSize / borderRadiusFactor;
+    textStyle[0] = tileSize * 5;
+    localStorage.setItem("cachedTileSize", tileSize);
+    render();
+    return;
+});
 document.getElementById("bigButtonButton").addEventListener("click", function () {
     toggleButtonSize();
 });
