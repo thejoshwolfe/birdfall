@@ -566,6 +566,7 @@ document.addEventListener("keydown", function (event) {
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(POISON_FRUIT); break; }
             if (!persistentState.showEditor && modifierMask === 0) { fitCanvas(); break; }
+            if (persistentState.showEditor && modifierMask === CTRL) { fitCanvas(); break; }
             return;
         case "D".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { move(0, 1); break; }
