@@ -64,9 +64,13 @@ var level;
 var unmoveStuff = { undoStack: [], redoStack: [], spanId: "movesSpan", undoButtonId: "unmoveButton", redoButtonId: "removeButton" };
 var uneditStuff = { undoStack: [], redoStack: [], spanId: "editsSpan", undoButtonId: "uneditButton", redoButtonId: "reeditButton" };
 var paradoxes = [];
+var enhanced = false;
 function loadLevel(newLevel) {
     level = newLevel;
     currentSerializedLevel = compressSerialization(stringifyLevel(newLevel));
+    var string = stringifyLevel(newLevel);
+    var levelString = string.substring(string.indexOf("?") + 1, string.indexOf("/"));
+    if (levelString.match(/[a-z]/i)) enhanced = true;
 
     activateAnySnakePlease();
     unmoveStuff.undoStack = [];
@@ -200,8 +204,8 @@ function parseLevel(string) {
         skipWhitespace();
     }
 
-    if (tileCounter > 0) document.getElementById("levelType").innerHTML = "Experimental Level<br><span style='font-size:8pt'>contains experimental elements</span>";
-    else document.getElementById("levelType").innerHTML = "Standard Level<br><span style='font-size:8pt'>does not contain experimental elements</span>";
+    if (enhanced) document.getElementById("levelType").innerHTML = "Enhanced Level<br><span style='font-size:8pt'>contains new elements not present in the original Snakebird game</span>";
+    else document.getElementById("levelType").innerHTML = "Standard Level<br><span style='font-size:8pt'>contains only original Snakebird elements</span>";
 
     for (var i = 0; i < upconvertedObjects.length; i++) {
         level.objects.push(upconvertedObjects[i]);
