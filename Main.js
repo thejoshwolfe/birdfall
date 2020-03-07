@@ -565,6 +565,7 @@ document.addEventListener("keydown", function (event) {
         case "F".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(POISON_FRUIT); break; }
+            if (!persistentState.showEditor && modifierMask === 0) { fitCanvas(); break; }
             return;
         case "D".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { move(0, 1); break; }
@@ -705,12 +706,7 @@ document.getElementById("levelSizeText").addEventListener("click", function () {
     return;
 });
 document.getElementById("fitButton").addEventListener("click", function () {
-    var maxW = screen.width / level.width;
-    var maxH = screen.height / level.height;
-    tileSize = Math.min(maxW, maxH) * .8;
-    borderRadius = tileSize / borderRadiusFactor;
-    textStyle[0] = tileSize * 5;
-    localStorage.setItem("cachedTileSize", tileSize);
+    fitCanvas();
     render();
     return;
 });
@@ -745,6 +741,15 @@ document.getElementById("removeButton").addEventListener("click", function () {
 document.getElementById("showHideEditor").addEventListener("click", function () {
     toggleShowEditor();
 });
+function fitCanvas() {
+    var maxW = screen.width / level.width;
+    var maxH = screen.height / level.height;
+    tileSize = Math.min(maxW, maxH) * .8;
+    borderRadius = tileSize / borderRadiusFactor;
+    textStyle[0] = tileSize * 5;
+    localStorage.setItem("cachedTileSize", tileSize);
+    location.reload();  //without this, tiles appear to have borders
+}
 function toggleShowEditor() {
     persistentState.showEditor = !persistentState.showEditor;
     savePersistentState();
