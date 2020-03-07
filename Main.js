@@ -2757,7 +2757,7 @@ function render() {
             document.getElementById("checkSolutionButton").disabled = false;
         }
         if (isDead()) {
-            context.fillStyle = textStyle[2];
+            context.fillStyle = textStyle[3];
             context.font = textStyle[0] + textStyle[1];
             context.shadowOffsetX = 5;
             context.shadowOffsetY = 5;
