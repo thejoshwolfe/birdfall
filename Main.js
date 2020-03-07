@@ -4126,6 +4126,7 @@ function render() {
                 arcDirection = false;
                 break;
             case 1:    //red right and blue up
+            case 10:
                 z1 = eye1;
                 z2 = eye2;
                 z3 = eye2;
@@ -4411,45 +4412,6 @@ function render() {
                 a8 = tileSize / 6;
                 beakRotation = 1.5;
                 arcDirection = true;
-                break;
-            case 10:    //single unit snake
-                z1 = eye1;
-                z2 = eye2;
-                z3 = eye2;
-                z4 = eye2;
-                z5 = eye1;
-                z6 = eye2;
-                z7 = eye2;
-                z8 = eye2;
-                eyeRotation = 2;
-                scale1 = 1;
-                scale2 = scaleFactor;
-
-                if (1 <= headCol && headCol < level.width - 1) {
-                    forwardLocation = getLocation(level, headRow, headCol + 1);
-                    forwardObject = findObjectAtLocation(forwardLocation);
-                }
-                if (isOccupied(0, 1) || forwardObject != null) {
-                    straight = false;
-                    b1 = tileSize;
-                    b2 = tileSize * .6;
-                    b3 = -tileSize * .1;
-                    b4 = tileSize * .4;
-                    b5 = -tileSize * .2;
-                    b6 = tileSize * .2;
-                }
-                else straight = true;
-
-                a1 = tileSize * .7;
-                a2 = tileSize * .7;
-                a3 = tileSize * 1.3;
-                a4 = tileSize * .7;
-                a5 = tileSize * .7;
-                a6 = tileSize * .7;
-                a7 = 0;
-                a8 = tileSize / 6;
-                beakRotation = 1.5;
-                arcDirection = false;
                 break;
         }
 
