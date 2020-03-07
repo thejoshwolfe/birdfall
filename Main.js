@@ -54,6 +54,9 @@ var portalFailure = false;
 var portalOutOfBounds = false;
 
 var tileSize = 34;
+var borderRadiusFactor = 3.4;
+var borderRadius = tileSize / borderRadiusFactor;
+
 var level;
 var unmoveStuff = { undoStack: [], redoStack: [], spanId: "movesSpan", undoButtonId: "unmoveButton", redoButtonId: "removeButton" };
 var uneditStuff = { undoStack: [], redoStack: [], spanId: "editsSpan", undoButtonId: "uneditButton", redoButtonId: "reeditButton" };
@@ -194,8 +197,8 @@ function parseLevel(string) {
         skipWhitespace();
     }
 
-    if (tileCounter > 0) document.getElementById("levelType").innerHTML = "EXPERIMENTAL LEVEL<br><span style='font-size:8pt'>contains experimental elements</span>";
-    else document.getElementById("levelType").innerHTML = "STANDARD LEVEL<br><span style='font-size:8pt'>does not contain experimental elements</span>";
+    if (tileCounter > 0) document.getElementById("levelType").innerHTML = "Experimental Level<br><span style='font-size:8pt'>contains experimental elements</span>";
+    else document.getElementById("levelType").innerHTML = "Standard Level<br><span style='font-size:8pt'>does not contain experimental elements</span>";
 
     for (var i = 0; i < upconvertedObjects.length; i++) {
         level.objects.push(upconvertedObjects[i]);
@@ -479,6 +482,24 @@ document.addEventListener("keydown", function (event) {
             if (modifierMask === 0) { undo(unmoveStuff); break; }
             if (modifierMask === SHIFT) { redo(unmoveStuff); break; }
             return;
+        case 48:   //zero
+            tileSize = 34;
+            borderRadius = tileSize / borderRadiusFactor;
+            textStyle[0] = tileSize * 5;
+            render();
+            return;
+        case 187:   //equals and plus
+            tileSize += 2;
+            borderRadius = tileSize / borderRadiusFactor;
+            textStyle[0] = tileSize * 5;
+            render();
+            return;
+        case 189:   //minus
+            tileSize -= 2;
+            borderRadius = tileSize / borderRadiusFactor;
+            textStyle[0] = tileSize * 5;
+            render();
+            return;
         case "Q".charCodeAt(0):
             if (modifierMask === 0) { undo(unmoveStuff); break; }
             if (modifierMask === SHIFT) { redo(unmoveStuff); break; }
@@ -577,7 +598,7 @@ document.addEventListener("keydown", function (event) {
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TRELLIS); break; }
         case 13: //return
-            if (persistentState.showEditor && modifierMask === 0) { toggleTheme(); break; }
+            if (modifierMask === 0) { toggleTheme(); break; }
         case 32: // spacebar
         case 9: // tab
             if (modifierMask === 0) { switchSnakes(1); break; }
@@ -647,6 +668,27 @@ document.getElementById("arrowLeft").addEventListener("click", function () {
 });
 document.getElementById("arrowRight").addEventListener("click", function () {
     move(0, 1);
+    return;
+});
+document.getElementById("minus").addEventListener("click", function () {
+    tileSize += 2;
+    borderRadius = tileSize / borderRadiusFactor;
+    textStyle[0] = tileSize * 5;
+    render();
+    return;
+});
+document.getElementById("plus").addEventListener("click", function () {
+    tileSize += 2;
+    borderRadius = tileSize / borderRadiusFactor;
+    textStyle[0] = tileSize * 5;
+    render();
+    return;
+});
+document.getElementById("levelSizeText").addEventListener("click", function () {
+    tileSize = 34;
+    borderRadius = tileSize / borderRadiusFactor;
+    textStyle[0] = tileSize * 5;
+    render();
     return;
 });
 document.getElementById("bigButtonButton").addEventListener("click", function () {
@@ -1834,10 +1876,10 @@ var blockColors4 = ["#660050", "#990033", "#b32400", "#e6b800 ", "#008000"];
 var blockColors5 = ["#ffccff", "#ffc2b3", "#ffffcc", "#ccffe6", "#ccffff"];
 
 var fontSize = tileSize * 5;
-var textStyle1 = ["" + fontSize + "px Impact", "#fdc122", "#fd0c0b"];    //font, Win, Lose
-var textStyle2 = ["" + fontSize + "px Impact", "#400080", "#ff6600"];
-var textStyle3 = ["" + fontSize + "px Impact", "#BA145C", "#F75802"];
-var textStyle4 = ["" + fontSize + "px Impact", "#ff0", "#f00"];
+var textStyle1 = [fontSize, "px Impact", "#fdc122", "#fd0c0b"];    //font, Win, Lose
+var textStyle2 = [fontSize, "px Futura", "#400080", "#ff6600"];
+var textStyle3 = [fontSize, "px Impact", "#BA145C", "#F75802"];
+var textStyle4 = [fontSize, "px Arial", "#ff0", "#f00"];
 
 var experimentalColors1 = ["white", "#ffccff"];
 var experimentalColors2 = ["white", "#FEFE28"];
@@ -2669,8 +2711,8 @@ function render() {
 
         // banners
         if (countSnakes() === 0 && !cs) {
-            context.fillStyle = textStyle[1];
-            context.font = textStyle[0];
+            context.fillStyle = textStyle[2];
+            context.font = textStyle[0] + textStyle[1];
             context.shadowOffsetX = 5;
             context.shadowOffsetY = 5;
             context.shadowColor = "rgba(0,0,0,0.5)";
@@ -2679,10 +2721,11 @@ function render() {
             var textWidth = context.measureText(textString).width;
             context.fillText(textString, (canvas.width / 2) - (textWidth / 2), canvas.height / 2);
             checkResult = true;
+            document.getElementById("checkSolutionButton").disabled = false;
         }
         if (isDead()) {
             context.fillStyle = textStyle[2];
-            context.font = textStyle[0];
+            context.font = textStyle[0] + textStyle[1];
             context.shadowOffsetX = 5;
             context.shadowOffsetY = 5;
             context.shadowColor = "rgba(0,0,0,0.5)";
@@ -2695,7 +2738,7 @@ function render() {
 
         if (cs && cr) {
             context.fillStyle = "green";
-            context.font = textStyle[0];
+            context.font = textStyle[0] + textStyle[1];
             context.shadowOffsetX = 5;
             context.shadowOffsetY = 5;
             context.shadowColor = "rgba(0,0,0,0.5)";
@@ -2706,7 +2749,7 @@ function render() {
         }
         else if (cs && !cr) {
             context.fillStyle = "red";
-            context.font = textStyle[0];
+            context.font = textStyle[0] + textStyle[1];
             context.shadowOffsetX = 5;
             context.shadowOffsetY = 5;
             context.shadowColor = "rgba(0,0,0,0.5)";
@@ -2959,35 +3002,35 @@ function render() {
                         //determines orientation of face
                         if (!falling) nextRowcol = getRowcol(level, object.locations[1]);
                         if (nextRowcol.r < rowcol.r) {  //last move down
-                            roundRect(context, cx, cy, tileSize, tileSize, { bl: 10, br: 10 }, true, false);  //draw head
+                            roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false);  //draw head
                             if (colorIndex === 0) orientation = 2;
                             else if (colorIndex === 1) orientation = 6;
                             else if (colorIndex === 2) orientation = 3;
                             else if (colorIndex === 3) orientation = 5;
                         }
                         else if (nextRowcol.r > rowcol.r) {  //last move up
-                            roundRect(context, cx, cy, tileSize, tileSize, { tl: 10, tr: 10 }, true, false);  //draw head
+                            roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false);  //draw head
                             if (colorIndex === 0) orientation = 0;
                             else if (colorIndex === 1) orientation = 4;
                             else if (colorIndex === 2) orientation = 1;
                             else if (colorIndex === 3) orientation = 7;
                         }
                         else if (nextRowcol.c < rowcol.c) {  //last move right
-                            roundRect(context, cx, cy, tileSize, tileSize, { tr: 10, br: 10 }, true, false);  //draw head
+                            roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false);  //draw head
                             if (colorIndex === 0) orientation = 1;
                             else if (colorIndex === 1) orientation = 5;
                             else if (colorIndex === 2) orientation = 2;
                             else if (colorIndex === 3) orientation = 4;
                         }
                         else if (nextRowcol.c > rowcol.c) {  //last move left
-                            roundRect(context, cx, cy, tileSize, tileSize, { tl: 10, bl: 10 }, true, false);  //draw head
+                            roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false);  //draw head
                             if (colorIndex === 0) orientation = 3;
                             else if (colorIndex === 1) orientation = 7;
                             else if (colorIndex === 2) orientation = 0;
                             else if (colorIndex === 3) orientation = 6;
                         }
                         else {
-                            roundRect(context, cx, cy, tileSize, tileSize, 10, true, false);  //draw head
+                            roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);  //draw head
                             orientation = 10;
                         }
                     } else {
@@ -2995,25 +3038,25 @@ function render() {
                         else context.fillStyle = altColor;
 
                         if (i === object.locations.length - 1) {
-                            if (lastRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: 10, tr: 10 }, true, false); }
-                            else if (lastRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: 10, br: 10 }, true, false); }
-                            else if (lastRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: 10, br: 10 }, true, false); }
-                            else if (lastRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: 10, bl: 10 }, true, false); }
+                            if (lastRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false); }
+                            else if (lastRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false); }
+                            else if (lastRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false); }
+                            else if (lastRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false); }
                         }
                         else if (i != object.locations.length - 1 && i != object.locations.length) {
-                            if (lastRowcol.r > rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: 10 }, true, false); }
-                            else if (lastRowcol.r > rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: 10 }, true, false); }
-                            else if (lastRowcol.r < rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { br: 10 }, true, false); }
-                            else if (lastRowcol.r < rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { bl: 10 }, true, false); }
+                            if (lastRowcol.r > rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
+                            else if (lastRowcol.r > rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
+                            else if (lastRowcol.r < rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
+                            else if (lastRowcol.r < rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
 
-                            else if (lastRowcol.c > rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: 10 }, true, false); }
-                            else if (lastRowcol.c > rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: 10 }, true, false); }
-                            else if (lastRowcol.c < rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { br: 10 }, true, false); }
-                            else if (lastRowcol.c < rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tr: 10 }, true, false); }
+                            else if (lastRowcol.c > rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
+                            else if (lastRowcol.c > rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
+                            else if (lastRowcol.c < rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
+                            else if (lastRowcol.c < rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
 
                             else if (lastRowcol.c < rowcol.c && nextRowcol.c > rowcol.c || lastRowcol.c > rowcol.c && nextRowcol.c < rowcol.c || lastRowcol.r < rowcol.r && nextRowcol.r > rowcol.r || lastRowcol.r > rowcol.r && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, 0, true, false); }
                         }
-                        else roundRect(context, cx, cy, tileSize, tileSize, 10, true, false);
+                        else roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);
                     }
                 }
                 r = headRowcol.r;
@@ -4023,7 +4066,7 @@ function render() {
         var eyeRotation = 2;
         var z1, z2, z3, z4, z5, z6, z7, z8;
         var a1, a2, a3, a4, a5, a6, a7, a8;
-        var b1, b2, b3, b4, b5, b6;
+        var b1, b2, b3, b4, b5, b6, b7, b8, b9, b10;
         var beakRotation = 1.5;
         var arcDirection = false;
 
@@ -4049,10 +4092,12 @@ function render() {
                     straight = false;
                     b1 = tileSize * .6;
                     b2 = 0;
-                    b3 = tileSize * .4;
-                    b4 = tileSize * .1;
-                    b5 = tileSize * .2;
+                    b3 = tileSize * .7;
+                    b4 = -tileSize * .1;
+                    b5 = tileSize;
                     b6 = tileSize * .2;
+                    b7 = tileSize * .2;
+                    b8 = tileSize * .2;
                 }
                 else straight = true;
 
@@ -4088,10 +4133,12 @@ function render() {
                     straight = false;
                     b1 = tileSize;
                     b2 = tileSize * .6;
-                    b3 = -tileSize * .1;
-                    b4 = tileSize * .4;
-                    b5 = -tileSize * .2;
-                    b6 = tileSize * .2;
+                    b3 = tileSize * 1.1;
+                    b4 = tileSize * .7;
+                    b5 = tileSize * .8;
+                    b6 = tileSize;
+                    b7 = -tileSize * .2;
+                    b8 = tileSize * .2;
                 }
                 else straight = true;
 
@@ -4127,10 +4174,12 @@ function render() {
                     straight = false;
                     b1 = tileSize * .4;
                     b2 = tileSize;
-                    b3 = -tileSize * .4;
-                    b4 = -tileSize * .1;
-                    b5 = -tileSize * .2;
-                    b6 = -tileSize * .2;
+                    b3 = tileSize * .3;
+                    b4 = tileSize * 1.1;
+                    b5 = 0;
+                    b6 = tileSize * .8;
+                    b7 = -tileSize * .2;
+                    b8 = -tileSize * .2;
                 }
                 else straight = true;
 
@@ -4166,10 +4215,12 @@ function render() {
                     straight = false;
                     b1 = 0;
                     b2 = tileSize * .4;
-                    b3 = tileSize * .1;
-                    b4 = -tileSize * .4;
+                    b3 = -tileSize * .1;
+                    b4 = tileSize * .3;
                     b5 = tileSize * .2;
-                    b6 = -tileSize * .2;
+                    b6 = 0;
+                    b7 = tileSize * .2;
+                    b8 = -tileSize * .2;
                 }
                 else straight = true;
 
@@ -4205,10 +4256,12 @@ function render() {
                     straight = false;
                     b1 = tileSize * .4;
                     b2 = 0;
-                    b3 = -tileSize * .4;
-                    b4 = tileSize * .1;
-                    b5 = -tileSize * .2;
+                    b3 = tileSize * .3;
+                    b4 = -tileSize * .1;
+                    b5 = 0;
                     b6 = tileSize * .2;
+                    b7 = -tileSize * .2;
+                    b8 = tileSize * .2;
                 }
                 else straight = true;
 
@@ -4244,10 +4297,12 @@ function render() {
                     straight = false;
                     b1 = tileSize;
                     b2 = tileSize * .4;
-                    b3 = -tileSize * .1;
-                    b4 = -tileSize * .4;
-                    b5 = -tileSize * .2;
-                    b6 = -tileSize * .2;
+                    b3 = tileSize * 1.1;
+                    b4 = tileSize * .3;
+                    b5 = tileSize * .8;
+                    b6 = 0;
+                    b7 = -tileSize * .2;
+                    b8 = -tileSize * .2;
                 }
                 else straight = true;
 
@@ -4283,10 +4338,12 @@ function render() {
                     straight = false;
                     b1 = tileSize * .6;
                     b2 = tileSize;
-                    b3 = tileSize * .4;
-                    b4 = -tileSize * .1;
-                    b5 = tileSize * .2;
-                    b6 = -tileSize * .2;
+                    b3 = tileSize * .7;
+                    b4 = tileSize * 1.1;
+                    b5 = tileSize;
+                    b6 = tileSize * .8;
+                    b7 = tileSize * .2;
+                    b8 = -tileSize * .2;
                 }
                 else straight = true;
 
@@ -4322,10 +4379,12 @@ function render() {
                     straight = false;
                     b1 = 0;
                     b2 = tileSize * .6;
-                    b3 = tileSize * .1;
-                    b4 = tileSize * .4;
+                    b3 = -tileSize * .1;
+                    b4 = tileSize * .7;
                     b5 = tileSize * .2;
-                    b6 = tileSize * .2;
+                    b6 = tileSize;
+                    b7 = tileSize * .2;
+                    b8 = tileSize * .2;
                 }
                 else straight = true;
 
@@ -4426,8 +4485,8 @@ function render() {
         if (straight) context.lineTo(x + a3, y + a4);
         else {
             context.lineTo(x + b1, y + b2);
-            context.lineTo(x + b1 + b3, y + b2 + b4);
-            context.lineTo(x + b1 + b5, y + b2 + b6);
+            context.bezierCurveTo(x + b1, y + b2, x + b3, y + b4, x + b5, y + b6);
+            context.lineTo(x + b1 + b7, y + b2 + b8);
         }
         context.closePath();
         context.fill();
