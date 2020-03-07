@@ -611,7 +611,7 @@ document.addEventListener("keydown", function (event) {
         case "M".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TRELLIS); break; }
-        case "N".charCodeAt(0):
+        case 191:
             if (modifierMask === 0) { cycle = true; cycleID++; render(); break; }
         case 13: // return
             if (modifierMask === 0) { toggleTheme(); break; }
