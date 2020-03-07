@@ -3102,43 +3102,7 @@ function render() {
             case FRUIT:
             case POISON_FRUIT:
                 var is_poison = object.type == POISON_FRUIT;
-                rowcol = getRowcol(level, object.locations[0]);
-                var c = rowcol.c;
-                var r = rowcol.r;
-                var startC = c * tileSize + tileSize / 2;
-                var startR = r * tileSize + tileSize * .2;
-                var resize = tileSize * 1.7;
-                var color = fruitColors[object.id % fruitColors.length];
-                var stemColor = themes[themeCounter][9]
-                if (themeName === "Classic") color = "#f0f";
-                if (is_poison) { color = "#666600"; stemColor = "black"; }
-                context.fillStyle = color;
-                if (themeName != "Classic") {
-                    if (surface == "rainbow") {
-                        stemColor = "white";
-                        if (!is_poison) context.fillStyle = "black";
-                        context.lineWidth = tileSize / 8;
-                        context.strokeStyle = "white";
-                        resize = tileSize * 1.4;
-                    }
-                    context.beginPath();
-                    context.moveTo(startC, startR);
-                    context.bezierCurveTo(startC - resize * .1, startR - resize * .05, startC - resize * .25, startR - resize * .1, startC - resize * .3, startR + resize * .05);
-                    context.bezierCurveTo(startC - resize * .35, startR + resize * .15, startC - resize * .3, startR + resize * .6, startC, startR + resize * .5);
-                    context.bezierCurveTo(startC + resize * .3, startR + resize * .6, startC + resize * .35, startR + resize * .15, startC + resize * .3, startR + resize * .05);
-                    context.bezierCurveTo(startC + resize * .25, startR - resize * .05, startC + resize * .1, startR - resize * .1, startC, startR);
-                    context.closePath();
-                    context.fill();
-                    if (surface == "rainbow") context.stroke();
-
-                    context.beginPath();
-                    context.moveTo(startC, startR);
-                    context.bezierCurveTo(startC - resize * .1, startR - resize * .05, startC, startR - resize * .1, startC - resize * .1, startR - resize * .15);
-                    context.bezierCurveTo(startC, startR - resize * .1, startC + resize * .05, startR - resize * .1, startC, startR);
-                    context.fillStyle = stemColor;
-                    context.fill();
-                }
-                else drawCircle(rowcol.r, rowcol.c, 1, color);
+                drawFruit(rowcol, object, is_poison);
                 break;
             default: throw unreachable();
         }
@@ -3978,6 +3942,47 @@ function render() {
         context.stroke();
     }
 
+    function drawFruit(rowcol, object, is_poison) {
+        var is_poison = object.type == POISON_FRUIT;
+        rowcol = getRowcol(level, object.locations[0]);
+        var c = rowcol.c;
+        var r = rowcol.r;
+        var startC = c * tileSize + tileSize / 2;
+        var startR = r * tileSize + tileSize * .08;
+        var resize = tileSize * 1.7;
+        var color = fruitColors[object.id % fruitColors.length];
+        var stemColor = themes[themeCounter][9]
+        if (themeName === "Classic") color = "#f0f";
+        if (is_poison) { color = "#666600"; stemColor = "black"; }
+        context.fillStyle = color;
+        if (themeName != "Classic") {
+            if (surface == "rainbow") {
+                stemColor = "white";
+                if (!is_poison) context.fillStyle = "black";
+                context.lineWidth = tileSize / 8;
+                context.strokeStyle = "white";
+                resize = tileSize * 1.4;
+            }
+            context.beginPath();
+            context.moveTo(startC, startR);
+            context.bezierCurveTo(startC - resize * .1, startR - resize * .05, startC - resize * .25, startR - resize * .1, startC - resize * .3, startR + resize * .05);
+            context.bezierCurveTo(startC - resize * .35, startR + resize * .15, startC - resize * .3, startR + resize * .6, startC, startR + resize * .5);
+            context.bezierCurveTo(startC + resize * .3, startR + resize * .6, startC + resize * .35, startR + resize * .15, startC + resize * .3, startR + resize * .05);
+            context.bezierCurveTo(startC + resize * .25, startR - resize * .05, startC + resize * .1, startR - resize * .1, startC, startR);
+            context.closePath();
+            context.fill();
+            if (surface == "rainbow") context.stroke();
+
+            context.beginPath();
+            context.moveTo(startC, startR);
+            context.bezierCurveTo(startC - resize * .1, startR - resize * .05, startC, startR - resize * .1, startC - resize * .1, startR - resize * .15);
+            context.bezierCurveTo(startC, startR - resize * .1, startC + resize * .05, startR - resize * .1, startC, startR);
+            context.fillStyle = stemColor;
+            context.fill();
+        }
+        else drawCircle(r, c, 1, color);
+    }
+
     function drawConnector(context, r1, c1, r2, c2, color) {
         // either r1 and r2 or c1 and c2 must be equal
         if (r1 > r2 || c1 > c2) {
@@ -3996,6 +4001,7 @@ function render() {
         context.fillStyle = color;
         context.fillRect(xLo, yLo, xHi - xLo, yHi - yLo);
     }
+
     function drawBlock(block) {
         var animationDisplacementRowcol = findAnimationDisplacementRowcol(block.type, block.id);
         var rowcols = block.locations.map(function (location) {
