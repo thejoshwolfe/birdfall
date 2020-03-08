@@ -4013,17 +4013,14 @@ function render() {
     function drawBolt(r, c) {
         context.strokeStyle = spikeColors[3];
         context.beginPath();
-        context.arc(c * tileSize + (tileSize * .55), r * tileSize + (tileSize * .45), 4, -.7 * Math.PI, .2 * Math.PI);
-        context.lineTo(c * tileSize + (tileSize * .45), r * tileSize + (tileSize * .35));
+        context.arc((c + .52) * tileSize, (r + .47) * tileSize, tileSize / 8, -.7 * Math.PI, .18 * Math.PI);
         context.closePath();
         context.fillStyle = spikeColors[3];
         context.fill();
         context.stroke();
 
         context.beginPath();
-        context.moveTo(c * tileSize + (tileSize * .43), r * tileSize + (tileSize * .47));
-        context.arc(c * tileSize + (tileSize * .48), r * tileSize + (tileSize * .52), 4, .2 * Math.PI, -.75 * Math.PI);
-        //context.lineTo(c*tileSize+(tileSize*.4),r*tileSize+(tileSize*.6));
+        context.arc((c + .48) * tileSize, (r + .52) * tileSize, tileSize / 9, .2 * Math.PI, -.75 * Math.PI);
         context.closePath();
         context.fillStyle = spikeColors[3];
         context.fill();
