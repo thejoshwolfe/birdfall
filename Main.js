@@ -3,6 +3,9 @@ if (typeof VERSION !== "undefined") {
     document.getElementById("versionSpan").innerHTML =
         '<a href="https://github.com/thejoshwolfe/snakefall/blob/' + VERSION.sha1 + '/README.md">' + VERSION.tag + '</a>';
 }
+
+var rng = new Math.seedrandom('hello.');
+
 /*$(document).ready(function() {
     var fruits1 = getObjectsOfType(FRUIT);
     $(fruits1[0]).jqFloat({
@@ -54,6 +57,7 @@ var portalFailure = false;
 var portalOutOfBounds = false;
 var cycle = false;
 var cycleID = -1;
+var multiDiagrams = false;
 
 var tileSize = 34;
 var cachedTileSize = localStorage.getItem("cachedTileSize");
@@ -206,8 +210,23 @@ function parseLevel(string) {
         skipWhitespace();
     }
 
-    if (enhanced) document.getElementById("levelType").innerHTML = "Enhanced Level<br><span style='font-size:8pt'>contains new elements not present in the original Snakebird game</span>";
-    else document.getElementById("levelType").innerHTML = "Standard Level<br><span style='font-size:8pt'>contains only original Snakebird elements</span>";
+    //describe level type
+    if (enhanced) {
+        document.getElementById("levelType").innerHTML = "Enhanced Level<br><span id='levelTypeSpan''>contains new elements not present in the original Snakebird game</span>";
+        document.getElementById("additions").style.color = "transparent";
+        if (tileCounter === 0) {
+            document.getElementById("additions").innerHTML = "*all initial enhanced elements have been removed but the level is not saved*";
+            document.getElementById("additions").style.color = "#f88";
+        }
+    }
+    else {
+        document.getElementById("levelType").innerHTML = "Standard Level<br><span id='levelTypeSpan'>contains only original Snakebird elements</span>";
+        if (tileCounter > 0) {
+            document.getElementById("additions").innerHTML = "*enhanced elements have been added to this level but the level is not saved*";
+            document.getElementById("additions").style.color = "#f88";
+        }
+        else document.getElementById("additions").style.color = "transparent";
+    }
 
     for (var i = 0; i < upconvertedObjects.length; i++) {
         level.objects.push(upconvertedObjects[i]);
@@ -407,6 +426,7 @@ function saveLevel() {
     unmoveStuff.redoStack = [];
     editorHasBeenTouched = false;
     undoStuffChanged(unmoveStuff);
+    location.reload();
 }
 
 function saveReplay() {
@@ -612,7 +632,7 @@ document.addEventListener("keydown", function (event) {
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TRELLIS); break; }
         case 191:
-            if (modifierMask === 0) { cycle = true; cycleID++; render(); break; }
+            if (modifierMask === 0) { if (multiDiagrams) { cycle = true; cycleID++; render(); } break; }
         case 13: // return
             if (modifierMask === 0) { toggleTheme(); break; }
         case 32: // spacebar
@@ -1951,12 +1971,14 @@ function showEditorChanged() {
 }
 
 function move(dr, dc) {
+    document.getElementById("cycleDiv").innerHTML = "";
     postPortalSnakeOutline = [];
     portalConflicts = [];
     portalOutOfBounds = false;
     portalFailure = false;
     cycle = false;
     cycleID = -1;
+    multiDiagrams = false;
 
     if (!isAlive()) return;
     animationQueue = [];
@@ -2084,6 +2106,9 @@ function move(dr, dc) {
             } else if (result === "outside") {
                 portalFailure = true;
                 portalOutOfBounds = true;
+            } else if (result === "blockedBySnake") {
+                portalFailure = false;
+                portalOutOfBounds = false;
             }
             portalActivationLocations = [];
         }
@@ -2342,11 +2367,19 @@ function activatePortal(portalLocations, portalLocation, animations, changeLog) 
         if (!isInBounds(level, r, c)) return "outside"; // out of bounds
     }
 
+    var blockedBySnake = false;
     for (var i = 0; i < newLocations.length; i++) {
         var location = newLocations[i];
         if (!isTileCodeAir(object, null, level.map[location], 0, 0)) portalConflicts.push(getRowcol(level, location)); // blocked by tile
         var otherObject = findObjectAtLocation(location);
-        if (otherObject != null && otherObject !== object) portalConflicts.push(getRowcol(level, location)); // blocked by object
+        if (otherObject != null && otherObject !== object) {
+            if (otherObject.type !== SNAKE) portalConflicts.push(getRowcol(level, location)); // blocked by object
+            else blockedBySnake = true;
+        }
+    }
+    if (blockedBySnake) {
+        portalConflicts = [];
+        return "blockedBySnake";
     }
     if (portalConflicts.length > 0) return "blocked";
 
@@ -2452,6 +2485,14 @@ function getPortalLocations() {
         if (level.map[i] === PORTAL) result.push(i);
     }
     return result;
+}
+function isSnakeOnPortal() {
+    var portalLocations = getPortalLocations();
+    if (portalLocations.length !== 2) return false;
+    var o1 = findObjectAtLocation(portalLocations[0]);
+    var o2 = findObjectAtLocation(portalLocations[1]);
+    if ((o1 != null && o1.type === SNAKE) || (o2 != null && o2.type === SNAKE)) return true;
+    return false;
 }
 function countSnakes() {
     return getSnakes().length;
@@ -2887,8 +2928,9 @@ function render() {
                 drawQuarterPie(r, c, radiusFactor, snakeColors[3], 3);
                 break;
             case PORTAL:
+                var whitePortal = isSnakeOnPortal();
                 context.save();
-                if (activePortalLocations.indexOf(location) !== -1) {
+                if (!whitePortal && activePortalLocations.indexOf(location) !== -1) {
                     context.fillStyle = "black";
                     context.strokeStyle = "purple";
                     context.shadowColor = "purple";
@@ -2896,6 +2938,18 @@ function render() {
                     context.lineWidth = 3;
                     context.beginPath();
                     context.arc(c * tileSize + tileSize / 2, r * tileSize + tileSize / 2, tileSize / 1.9, 0, 2 * Math.PI);
+                    context.closePath();
+                    context.fill();
+                    context.stroke();
+                }
+                else if (whitePortal) {
+                    context.fillStyle = "white";
+                    context.strokeStyle = "purple";
+                    context.shadowColor = "purple";
+                    context.shadowBlur = 5;
+                    context.lineWidth = 3;
+                    context.beginPath();
+                    context.arc(c * tileSize + tileSize / 2, r * tileSize + tileSize / 2, tileSize / 3, 0, 2 * Math.PI);
                     context.closePath();
                     context.fill();
                     context.stroke();
@@ -3162,7 +3216,7 @@ function render() {
         var x2 = (isOccupied(1, 0)) ? 0 : .05;
 
         var platformColors = ["#ffcccc", "#ffe0cc", "#ffffcc", "#e6ffe6", "#e6e6ff"];
-        for (var i = 0; i < 3; i++) {
+        for (var i = 0; i < 5; i++) {
             var j = (i != 0) ? i - 1 : 0;
             context.beginPath();
             context.moveTo(c * tileSize + tileSize * (i * x1), r * tileSize + tileSize * (.05 + (.1 * i) - (j * .02)));
@@ -3548,22 +3602,34 @@ function render() {
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, c * tileSize, r * tileSize, tileSize, tileSize, 10, true, false);
         else roundRect(context, c * tileSize, r * tileSize, tileSize, tileSize, 0, true, false);
 
-        /*var randomSpot = Math.floor(Math.random() * 5);   //random spots on dirt
-        var randomColor = Math.floor(Math.random() * 5);
+        /* var randomSpot = Math.floor(rng() * 5);   //random spots on dirt
+        var randomColor = Math.floor(rng() * 5);
         context.beginPath();
-        switch(randomSpot){
+        switch (randomSpot) {
             case 0:
-                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 5, 0, 2*Math.PI);
+                context.arc(c * tileSize + tileSize * .5, r * tileSize + tileSize * .5, 5, 0, 2 * Math.PI); break;
             case 1:
-                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 4, 0, 2*Math.PI);
+                context.arc(c * tileSize + tileSize * .5, r * tileSize + tileSize * .5, 4, 0, 2 * Math.PI); break;
             case 2:
-                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 3, 0, 2*Math.PI);
+                context.arc(c * tileSize + tileSize * .5, r * tileSize + tileSize * .5, 3, 0, 2 * Math.PI); break;
             case 3:
-                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 2, 0, 2*Math.PI);
+                context.arc(c * tileSize + tileSize * .5, r * tileSize + tileSize * .5, 2, 0, 2 * Math.PI); break;
             case 4:
-                context.arc(c*tileSize+tileSize*.5,r*tileSize+tileSize*.5, 1, 0, 2*Math.PI);
+                context.arc(c * tileSize + tileSize * .5, r * tileSize + tileSize * .5, 1, 0, 2 * Math.PI); break;
         }
-        context.stroke();*/
+        switch (randomColor) {
+            case 0:
+                context.fillStyle = "white"; break;
+            case 1:
+                context.fillStyle = "red"; break;
+            case 2:
+                context.fillStyle = "blue"; break;
+            case 3:
+                context.fillStyle = "yellow"; break;
+            case 4:
+                context.fillStyle = "black"; break;
+        }
+        context.fill(); */
     }
 
     function drawCurves(r, c, adjacentTiles) {
@@ -4063,12 +4129,6 @@ function render() {
         context.moveTo(cx, cy);
         context.arc(cx, cy, radiusFactor * tileSize / 2, quadrant * Math.PI / 2, (quadrant + 1) * Math.PI / 2);
         context.fill();
-    }
-    function drawDiamond(r, c, fillStyle) {
-        var x = c * tileSize;
-        var y = r * tileSize;
-        context.fillStyle = fillStyle;
-        roundRect(context, x, y, tileSize, tileSize, 10, true, false);
     }
     function drawCircle(r, c, radiusFactor, fillStyle) {
         context.fillStyle = fillStyle;
@@ -4611,16 +4671,14 @@ function render() {
     }
 
     function drawSnakeOutline(outline, conflicts) {
-        context.fillStyle = "rgba(0,0,0,.2)";
-        context.font = "50pt Impact";
-        var textString = "Press the / (forward slash) key to cycle through diagrams";
-        document.getElementById("paradoxDiv").innerHTML = textString;
+        if (multiDiagrams) document.getElementById("cycleDiv").innerHTML = "Press the / (forward slash) key to cycle through diagrams";
 
         var xSpots = [];
-        var maxID = 0;
+        var maxID = -1;
         for (var i = 0; i < outline.length; i++) {
             maxID = outline[i].id;
         }
+        if (maxID > 0) multiDiagrams = true;
 
         var buffer = document.createElement("canvas");
         buffer.width = canvas.width;
@@ -4675,7 +4733,7 @@ function render() {
             localContext.stroke();
         }
 
-        if (cycleID > maxID) cycleID = -1;
+        if (cycleID > maxID) cycleID = 0;
         context.save();
         context.globalAlpha = 1;
         context.drawImage(buffer, 0, 0);
