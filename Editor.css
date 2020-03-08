@@ -187,8 +187,7 @@ canvas{
 }
 
 #bigButtonButton{
-    position: absolute;
-    left: 10;
+    display: block;
     font-size: 20pt;
     padding: 10px;
 }
@@ -292,9 +291,29 @@ canvas{
     font-family: Arial;
     color: transparent; 
     font-size: 8pt;
+    margin-top: 1px;
 }
 
 #levelTypeSpan{
     font-size: 8pt;
     font-weight: 100;
+}
+
+#editorDiv{
+    width: 100%;
+    text-align: center;
+}
+
+#shareLink{
+    padding-right: 5px;
+    display: table-cell;
+    font-size: 10pt;
+}
+
+#shareLinkTextbox{
+    padding: 5px;
+    display: table-cell;
+    border-radius: 2px;
+    border: 1px solid black;
+    background-color:white;
 }
