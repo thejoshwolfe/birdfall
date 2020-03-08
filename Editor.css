@@ -115,15 +115,10 @@ button:active:enabled{
     font-family: Arial;
     font-size: 12pt;
     color:slateblue; 
-    margin: 10px 0 10px 0;
+    margin: 10px 0 1px 0;
     display: inline-block;
     vertical-align: top;
     font-weight: 900;
-}
-
-#levelType span{
-    font-size: 6pt;
-    font-weight: 100;
 }
 
 canvas{
@@ -286,4 +281,20 @@ canvas{
 #paradoxDiv{
     background: #f88;
     text-align: center;
+}
+
+#cycleDiv{
+    background: yellow;
+    text-align: center;
+}
+
+#additions{
+    font-family: Arial;
+    color: transparent; 
+    font-size: 8pt;
+}
+
+#levelTypeSpan{
+    font-size: 8pt;
+    font-weight: 100;
 }
