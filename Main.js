@@ -6,14 +6,10 @@ if (typeof VERSION !== "undefined") {
 
 var rng = new Math.seedrandom('hello.');
 
-/*$(document).ready(function() {
-    var fruits1 = getObjectsOfType(FRUIT);
-    $(fruits1[0]).jqFloat({
-            width: 10,
-            height: 10,
-            speed: 100
-        });
-});*/
+$(document).ready(function () {
+    var fruits = getObjectsOfType(FRUIT);
+
+});
 
 var img3 = document.createElement('img');
 //img3.src = '/Snakefall/Snakebird Images/Cherry2.png';
@@ -164,8 +160,8 @@ function parseLevel(string) {
             });
             tileCode = SPACE;
         }
-        if (tileCode === PLATFORM || tileCode === TRELLIS || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === TURNSTILEL || tileCode === TURNSTILER || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
         if (validTileCodes.indexOf(tileCode) === -1) throw parserError("invalid tilecode: " + JSON.stringify(mapData[i]));
+        if (tileCode === PLATFORM || tileCode === TRELLIS || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === TURNSTILEL || tileCode === TURNSTILER || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
         level.map.push(tileCode);
     }
 
@@ -2741,12 +2737,14 @@ function render() {
 
         if (!cs) {
             // terrain
+            var exitExists = false;
             if (onlyTheseObjects == null) {
                 for (var r = 0; r < level.height; r++) {
                     for (var c = 0; c < level.width; c++) {
                         var location = getLocation(level, r, c);
                         var tileCode = level.map[location];
                         drawTile(tileCode, r, c, level, location, true);
+                        if (tileCode === EXIT) exitExists = true;
                     }
                 }
             }
@@ -2807,7 +2805,7 @@ function render() {
         }
 
         // banners
-        if (countSnakes() === 0 && !cs) {
+        if (countSnakes() === 0 && exitExists && !cs) {
             context.fillStyle = textStyle[2];
             context.font = textStyle[0] + textStyle[1];
             context.shadowOffsetX = 5;
@@ -4217,16 +4215,16 @@ function render() {
                     forwardLocation = getLocation(level, headRow - 1, headCol);
                     forwardObject = findObjectAtLocation(forwardLocation);
                 }
-                if (isOccupied(-1, 0) || forwardObject != null) {
+                if (isOccupied(-1, 0) || (forwardObject != null && forwardObject.type !== FRUIT)) {
                     straight = false;
                     b1 = tileSize * .6;
-                    b2 = 0;
+                    b2 = tileSize * .05;
                     b3 = tileSize * .7;
-                    b4 = -tileSize * .1;
+                    b4 = -tileSize * .05;
                     b5 = tileSize;
-                    b6 = tileSize * .2;
+                    b6 = tileSize * .1;
                     b7 = tileSize * .2;
-                    b8 = tileSize * .2;
+                    b8 = tileSize * .1;
                 }
                 else straight = true;
 
@@ -4259,15 +4257,15 @@ function render() {
                     forwardLocation = getLocation(level, headRow, headCol + 1);
                     forwardObject = findObjectAtLocation(forwardLocation);
                 }
-                if (isOccupied(0, 1) || forwardObject != null) {
+                if (isOccupied(0, 1) || (forwardObject != null && forwardObject.type !== FRUIT)) {
                     straight = false;
-                    b1 = tileSize;
+                    b1 = tileSize * .95;
                     b2 = tileSize * .6;
-                    b3 = tileSize * 1.1;
+                    b3 = tileSize * 1.05;
                     b4 = tileSize * .7;
-                    b5 = tileSize * .8;
+                    b5 = tileSize * .9;
                     b6 = tileSize;
-                    b7 = -tileSize * .2;
+                    b7 = -tileSize * .1;
                     b8 = tileSize * .2;
                 }
                 else straight = true;
@@ -4300,16 +4298,16 @@ function render() {
                     forwardLocation = getLocation(level, headRow + 1, headCol);
                     forwardObject = findObjectAtLocation(forwardLocation);
                 }
-                if (isOccupied(1, 0) || forwardObject != null) {
+                if (isOccupied(1, 0) || (forwardObject != null && forwardObject.type !== FRUIT)) {
                     straight = false;
                     b1 = tileSize * .4;
-                    b2 = tileSize;
+                    b2 = tileSize * .95;
                     b3 = tileSize * .3;
-                    b4 = tileSize * 1.1;
+                    b4 = tileSize * 1.05;
                     b5 = 0;
-                    b6 = tileSize * .8;
+                    b6 = tileSize * .9;
                     b7 = -tileSize * .2;
-                    b8 = -tileSize * .2;
+                    b8 = -tileSize * .1;
                 }
                 else straight = true;
 
@@ -4341,15 +4339,15 @@ function render() {
                     forwardLocation = getLocation(level, headRow, headCol - 1);
                     forwardObject = findObjectAtLocation(forwardLocation);
                 }
-                if (isOccupied(0, -1) || forwardObject != null) {
+                if (isOccupied(0, -1) || (forwardObject != null && forwardObject.type !== FRUIT)) {
                     straight = false;
-                    b1 = 0;
+                    b1 = tileSize * .05;
                     b2 = tileSize * .4;
-                    b3 = -tileSize * .1;
+                    b3 = -tileSize * .05;
                     b4 = tileSize * .3;
-                    b5 = tileSize * .2;
+                    b5 = tileSize * .1;
                     b6 = 0;
-                    b7 = tileSize * .2;
+                    b7 = tileSize * .1;
                     b8 = -tileSize * .2;
                 }
                 else straight = true;
@@ -4382,16 +4380,16 @@ function render() {
                     forwardLocation = getLocation(level, headRow - 1, headCol);
                     forwardObject = findObjectAtLocation(forwardLocation);
                 }
-                if (isOccupied(-1, 0) || forwardObject != null) {
+                if (isOccupied(-1, 0) || (forwardObject != null && forwardObject.type !== FRUIT)) {
                     straight = false;
                     b1 = tileSize * .4;
-                    b2 = 0;
+                    b2 = tileSize * .05;
                     b3 = tileSize * .3;
-                    b4 = -tileSize * .1;
+                    b4 = -tileSize * .05;
                     b5 = 0;
-                    b6 = tileSize * .2;
+                    b6 = tileSize * .1;
                     b7 = -tileSize * .2;
-                    b8 = tileSize * .2;
+                    b8 = tileSize * .1;
                 }
                 else straight = true;
 
@@ -4423,15 +4421,15 @@ function render() {
                     forwardLocation = getLocation(level, headRow, headCol + 1);
                     forwardObject = findObjectAtLocation(forwardLocation);
                 }
-                if (isOccupied(0, 1) || forwardObject != null) {
+                if (isOccupied(0, 1) || (forwardObject != null && forwardObject.type !== FRUIT)) {
                     straight = false;
-                    b1 = tileSize;
+                    b1 = tileSize * .95;
                     b2 = tileSize * .4;
-                    b3 = tileSize * 1.1;
+                    b3 = tileSize * 1.05;
                     b4 = tileSize * .3;
-                    b5 = tileSize * .8;
+                    b5 = tileSize * .9;
                     b6 = 0;
-                    b7 = -tileSize * .2;
+                    b7 = -tileSize * .1;
                     b8 = -tileSize * .2;
                 }
                 else straight = true;
@@ -4464,16 +4462,16 @@ function render() {
                     forwardLocation = getLocation(level, headRow + 1, headCol);
                     forwardObject = findObjectAtLocation(forwardLocation);
                 }
-                if (isOccupied(1, 0) || forwardObject != null) {
+                if (isOccupied(1, 0) || (forwardObject != null && forwardObject.type !== FRUIT)) {
                     straight = false;
                     b1 = tileSize * .6;
-                    b2 = tileSize;
+                    b2 = tileSize * .95;
                     b3 = tileSize * .7;
-                    b4 = tileSize * 1.1;
+                    b4 = tileSize * 1.05;
                     b5 = tileSize;
-                    b6 = tileSize * .8;
+                    b6 = tileSize * .9;
                     b7 = tileSize * .2;
-                    b8 = -tileSize * .2;
+                    b8 = -tileSize * .1;
                 }
                 else straight = true;
 
@@ -4505,15 +4503,15 @@ function render() {
                     forwardLocation = getLocation(level, headRow, headCol - 1);
                     forwardObject = findObjectAtLocation(forwardLocation);
                 }
-                if (isOccupied(0, -1) || forwardObject != null) {
+                if (isOccupied(0, -1) || (forwardObject != null && forwardObject.type !== FRUIT)) {
                     straight = false;
-                    b1 = 0;
+                    b1 = tileSize * .05;
                     b2 = tileSize * .6;
-                    b3 = -tileSize * .1;
+                    b3 = -tileSize * .05;
                     b4 = tileSize * .7;
-                    b5 = tileSize * .2;
+                    b5 = tileSize * .1;
                     b6 = tileSize;
-                    b7 = tileSize * .2;
+                    b7 = tileSize * .1;
                     b8 = tileSize * .2;
                 }
                 else straight = true;
@@ -4571,6 +4569,8 @@ function render() {
 
         //beak
         context.fillStyle = "#F9921C";
+        context.strokeStyle = "#f98806";
+        context.lineWidth = tileSize / 24;
         context.beginPath();
         context.arc(x + a1, y + a2, tileSize / 6, (beakRotation - 1) * Math.PI, beakRotation * Math.PI, arcDirection);
         if (straight) context.lineTo(x + a3, y + a4);
@@ -4580,6 +4580,7 @@ function render() {
             context.lineTo(x + b1 + b7, y + b2 + b8);
         }
         context.closePath();
+        context.stroke();
         context.fill();
     }
 
