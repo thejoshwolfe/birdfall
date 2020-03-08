@@ -1961,7 +1961,7 @@ document.getElementById("themeButton").innerHTML = "Theme: <b>" + themeName + "<
 function showEditorChanged() {
     document.getElementById("showHideEditor").textContent = (persistentState.showEditor ? "Hide" : "Show") + " Editor";
     ["editorDiv", "editorPane"].forEach(function (id) {
-        document.getElementById(id).style.display = persistentState.showEditor ? "block" : "none";
+        document.getElementById(id).style.display = persistentState.showEditor ? "inline-block" : "none";
     });
     document.getElementById("wasdSpan").textContent = persistentState.showEditor ? "" : " or WASD";
 
@@ -2797,7 +2797,7 @@ function render() {
             }
         }
 
-        if (portalFailure) {
+        if (portalFailure && countSnakes() != 0) {
             drawSnakeOutline(postPortalSnakeOutline, portalConflicts);   //failed portal diagram
             if (portalOutOfBounds) {
                 context.strokeStyle = "rgba(255,0,0,.5)";
