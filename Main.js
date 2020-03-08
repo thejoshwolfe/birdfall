@@ -588,7 +588,6 @@ document.addEventListener("keydown", function (event) {
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(POISON_FRUIT); break; }
             if (!persistentState.showEditor && modifierMask === 0) { fitCanvas(); break; }
-            if (persistentState.showEditor && modifierMask === CTRL) { fitCanvas(); break; }
             return;
         case "D".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { move(0, 1); break; }
@@ -631,6 +630,8 @@ document.addEventListener("keydown", function (event) {
         case "M".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TRELLIS); break; }
+        case 192:
+            if (modifierMask === 0) { fitCanvas(); break; }
         case 191:
             if (modifierMask === 0) { if (multiDiagrams) { cycle = true; cycleID++; render(); } break; }
         case 13: // return
@@ -1944,8 +1945,8 @@ var themes = [  //name, background, material, surface, curlyOutline, blockColors
     //["sky",],
     ["Spring", bg1, "#976537", "#95ff45", true, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
     ["Winter", bg1, "#30455B", "white", true, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
-    ["Classic", "#8888ff", "#844204", "#282", false, snakeColors2, blockColors1, spikeColors3, fruitColors1, "green", textStyle4, experimentalColors1],
     ["Summer", bg2, "#734d26", "#009933", true, snakeColors3, blockColors3, spikeColors1, fruitColors1, "green", textStyle3, experimentalColors2],
+    ["Classic", "#8888ff", "#844204", "#282", false, snakeColors2, blockColors1, spikeColors3, fruitColors1, "green", textStyle4, experimentalColors1],
     ["Dream", bg3, "#00aaff", "#ffb3ec", true, snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2, experimentalColors2],
     ["Midnight Rainbow", bg4, "black", "rainbow", false, snakeColors1, blockColors5, spikeColors2, "white", "white", textStyle1, experimentalColors1]
 ];
