@@ -8,8 +8,10 @@
     <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee"
         src="//local.adguard.org?ts=1579613273701&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Assistant&amp;type=user-script"></script>
     <script src="jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <script type="text/javascript" src="jscript/Main.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
 </head>
-
 <body>
     <table id="levelTable">
         <tr>
@@ -130,9 +132,11 @@
     </table>
 
     <div id="paradoxDiv"></div>
+    <div id="cycleDiv"></div>
     <button id="bigButtonButton" class="bottomButton">Large Buttons</button>
     <div id="bottomBlock">
-        <div id="levelType">Standard Level<br><span>contains only original Snakebird elements</span></div><br><br>
+        <div id="levelType">Standard Level<br><span>contains only original Snakebird elements</span></div>
+        <div id="additions">*</div><br>
         <div class="bottomBlockBox">
             <div class="optionsHeaders">Game Controls</div><br>
             <div id="keyboardInstructions">use the arrows<span id="wasdSpan"> or WASD</span> keys on your keyboard to move, or use the buttons below</div>
@@ -162,9 +166,9 @@
         <div class="bottomBlockBox">
             <div class="optionsHeaders">Options</div><br>
             <div id="levelSize" class="bottomButton"><div id="fitButton" title="F (when editor is closed)">FIT</div><button id="minus" class="plusMinus bottomButton" title="Decrease game size">-</button><div id="levelSizeText" class="bottomButton" title="Revert to default game size">Level Size</div><button id="plus" class="plusMinus bottomButton" title="Increase game size">+</button></div>
+            <button id="themeButton" class="bottomButton" title="Return">Theme: <b>Spring</b></button><br><br>
             <button id="showGridButton" class="bottomButton" title="G">Show Grid</button>
             <button id="hideHotkeyButton" class="bottomButton" title="H">Hide Hotkeys</button><br>
-            <button id="themeButton" class="bottomButton" title="Return">Theme: <b>Spring</b></button><br><br>
         </div>
 
     </div>
