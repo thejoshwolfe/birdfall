@@ -1905,7 +1905,7 @@ var bg1 = ["rgba(145, 198, 254", "rgba(133, 192, 255"];
 var bg2 = ["rgba(254, 198, 145", "rgba(255, 192, 133"];
 var bg3 = ["rgba(145, 254, 198", "rgba(117, 255, 192"];
 var bg4 = ["rgba(7, 7, 83", "rgba(0, 0, 70"];
-var bg5 = ["rgba(153, 255, 204", "rgba(102, 255, 179"];
+var bg5 = ["rgba(70, 120, 120", "rgba(60, 110, 110"];
 
 var wall1 = ["#976537", "#95ff45", true, false];    //base, surface, curlyOutline, randomColors
 var wall2 = ["#30455B", "white", true, false];
@@ -1913,7 +1913,7 @@ var wall3 = ["#734d26", "#009933", true, false];
 var wall4 = ["#844204", "#282", false, false];
 var wall5 = ["#00aaff", "#ffb3ec", true, false];
 var wall6 = ["black", "rainbow", false, false];
-var wall7 = ["", "", false, true];
+var wall7 = ["transparent", "green", true, true];
 
 var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];    //must be full length to satisfy tint function
 var snakeColors2 = ["#ff0000", "#00ff00", "#0000ff", "#ffff00"];
@@ -1922,6 +1922,7 @@ var snakeColors4 = ["#000000", "#000000", "#000000", "#000000"];
 
 var fruitColors1 = ["#ff0066", "#ff36a6", "#ff6b1f", "#ff9900", "#ff2600"];
 var fruitColors2 = ["black", "black", "black", "black", "black"];
+var fruitColors3 = ["#0087FF", "#00FFFB", "#00FFB2", "#80FF00"];
 
 var spikeColors1 = ["#999", "#444", "#555", "#777"];    //spokes, supports, box, bolt
 var spikeColors2 = ["#333", "#333", "#111", "#333"];
@@ -1932,6 +1933,7 @@ var blockColors2 = ["#ffffff", "#999999", "#555555", "#000000"];
 var blockColors3 = ["#de7913", "#7d46a0", "#39868b", "#41ccc2", "#ccc500"];
 var blockColors4 = ["#660050", "#990033", "#b32400", "#e6b800 ", "#008000"];
 var blockColors5 = ["#ffccff", "#ffc2b3", "#ffffcc", "#ccffe6", "#ccffff"];
+var blockColors6 = ["#c65364", "#e9638f", "#9966cc", "#754db3", "#4d6dcb"];    //must be 6-digit hex colors to satisfy tint function
 
 var fontSize = tileSize * 5;
 var textStyle1 = [fontSize, "px Impact", "#fdc122", "#fd0c0b"];    //font, Win, Lose
@@ -1944,10 +1946,10 @@ var experimentalColors2 = ["white", "#FEFE28"];
 
 var themes = [  //name, background, wall, snakeColors, blockColors, spikeColors, fruitColors, stemColor, textStyle, experimentalColors
     //["sky",],
-    ["Spring", bg1, wall1, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
+    ["Spring", bg1, wall1, snakeColors1, blockColors6, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
     ["Winter", bg1, wall2, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
     ["Summer", bg2, wall3, snakeColors3, blockColors3, spikeColors1, fruitColors1, "green", textStyle3, experimentalColors2],
-    // ["Stone", bg5, wall7, snakeColors1, blockColors1, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
+    ["Submerged", bg5, wall7, snakeColors1, blockColors1, spikeColors1, fruitColors3, "green", textStyle1, experimentalColors1],
     ["Classic", "#8888ff", wall4, snakeColors2, blockColors1, spikeColors3, fruitColors1, "green", textStyle4, experimentalColors1],
     ["Dream", bg3, wall5, snakeColors1, blockColors4, spikeColors1, fruitColors2, "white", textStyle2, experimentalColors2],
     ["Midnight Rainbow", bg4, wall6, snakeColors1, blockColors5, spikeColors2, "white", "white", textStyle1, experimentalColors1]
@@ -3555,7 +3557,7 @@ function render() {
 
     function drawWall(r, c, adjacentTiles) {
         drawBase(r, c, isWall, wall[0]);
-        if (!wall[3]) drawTileOutlines(r, c, isWall, .2, wall[2]);
+        drawTileOutlines(r, c, isWall, .2, wall[2]);
         context.save();
         if (wall[2]) drawBushes(r, c, isWall);
         context.restore();
@@ -3570,8 +3572,28 @@ function render() {
         var x = c * tileSize;
         var y = r * tileSize;
 
-        if (!wall[3]) {
-            context.fillStyle = fillStyle;
+        context.fillStyle = fillStyle;
+        if (wall[3]) {
+            context.fillStyle = "rgb(50,70,100)";
+            if (isOccupied(0, 1) && isOccupied(1, 0) && isOccupied(1, 1)) context.fillRect((c + .5) * tileSize, (r + .5) * tileSize, tileSize, tileSize);
+            if (r === 0 && isOccupied(1, 0)) context.fillRect((c + .5) * tileSize, (r - .5) * tileSize, tileSize, tileSize);
+            if (c === 0) context.fillRect((c - .5) * tileSize, (r + .5) * tileSize, tileSize, tileSize);
+            if (r === 0 && c === 0) context.fillRect((c - .5) * tileSize, (r - .5) * tileSize, tileSize, tileSize);
+            var color = Math.floor(rng() * 4) * 10;
+            context.fillStyle = "rgb(" + (color + 50) + "," + (color + 70) + "," + (color + 100) + ")";
+            roundRect(context, x, y, tileSize, tileSize, 10, true, false);
+
+            if (isOccupied(0, 1) && isOccupied(-1, 0) && isOccupied(-1, 1)) {
+                if (rng() > .95) {
+                    context.fillStyle = "green";
+                    context.beginPath();
+                    context.arc(c * tileSize, (r + 1.2) * tileSize, tileSize / 2, Math.PI, 2 * Math.PI)
+                    context.closePath();
+                    context.fill();
+                }
+            }
+        }
+        else {
             if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { bl: 10, br: 10 }, true, false);
             else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: 10, bl: 10 }, true, false);
             else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: 10, tr: 10 }, true, false);
@@ -3582,14 +3604,6 @@ function render() {
             else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tr: 10 }, true, false);
             else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, 10, true, false);
             else roundRect(context, x, y, tileSize, tileSize, 0, true, false);
-        }
-        else {
-            var color = Math.floor(rng() * 50) + 50;
-            context.fillStyle = "rgb(" + color + "," + color + "," + color + ")";
-            roundRect(context, x, y, tileSize, tileSize, 10, true, false);
-        }
-
-        if (!wall[3]) {
             var color = Math.floor(rng() * 2);
             switch (color) {
                 case 0: context.fillStyle = "rgba(0,0,0,.05)"; break;
@@ -3617,53 +3631,29 @@ function render() {
 
     function drawCurves2(r, c, isOccupied, base) {
         context.fillStyle = base;
-        if (isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(1, 1) && wall[2]) {
-            context.fillRect((c + 1) * tileSize, (r + 1) * tileSize, tileSize / 6, tileSize / 6);
-            //context.globalCompositeOperation = "destination-out";
+        var size = .6;
+        var inverse = 1 - size;
+        if (isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(1, 1) && wall[2]) { //under side right
+            r = r + 1;
+            c = c + 1;
             context.beginPath();
-            context.arc((c + 1) * tileSize + tileSize / 6, (r + 1) * tileSize + tileSize / 6, tileSize / 6, 0, 2 * Math.PI);
+            context.moveTo((c + inverse) * tileSize, r * tileSize);
+            context.lineTo(c * tileSize, r * tileSize);
+            context.lineTo(c * tileSize, (r + inverse) * tileSize);
+            context.arc((c + inverse) * tileSize, (r + inverse) * tileSize, inverse * tileSize, Math.PI, 1.5 * Math.PI, false);
             context.closePath();
-
-            var bgColor;
-            if ((c + r) % 2 == 0) bgColor = background[0];
-            else bgColor = background[1];
-            var r1, r2, b1, b2, g1, g2;
-            r1 = bgColor.substr(5, bgColor.indexOf(",") - 5);
-            g1 = bgColor.substr(bgColor.indexOf(",") + 1, bgColor.indexOf(",") - 4);
-            b1 = bgColor.substr(bgColor.indexOf(",", bgColor.indexOf(",") + 1) + 1, bgColor.indexOf(",") - 4);
-            var shade = (r + 1) * .03 + .5;
-            if (shade > 1)
-                shade = 1;
-            r2 = 255 + (r1 - 255) * shade;
-            g2 = 255 + (g1 - 255) * shade;
-            b2 = 255 + (b1 - 255) * shade;
-            context.fillStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
             context.fill();
-            context.globalCompositeOperation = "source-over";
         }
-        if (isOccupied(-1, 0) && isOccupied(0, 1) && !isOccupied(-1, 1) && wall[2]) {
-            context.fillRect(c * tileSize - tileSize / 6, (r + 1) * tileSize, tileSize / 6, tileSize / 6);
-            //context.globalCompositeOperation = "destination-out";
+        else if (isOccupied(-1, 0) && isOccupied(0, 1) && !isOccupied(-1, 1) && wall[2]) { //under side left
+            r = r + 1;
+            c = c - 1;
             context.beginPath();
-            context.arc(c * tileSize - tileSize / 6, (r + 1) * tileSize + tileSize / 6, tileSize / 6, 0, 2 * Math.PI);
+            context.moveTo((c + size) * tileSize, r * tileSize);
+            context.lineTo((c + 1) * tileSize, r * tileSize);
+            context.lineTo((c + 1) * tileSize, (r + inverse) * tileSize);
+            context.arc((c + size) * tileSize, (r + inverse) * tileSize, inverse * tileSize, 0, 1.5 * Math.PI, true);
             context.closePath();
-
-            var bgColor;
-            if ((c + r) % 2 == 0) bgColor = background[0];
-            else bgColor = background[1];
-            var r1, r2, b1, b2, g1, g2;
-            r1 = bgColor.substr(5, bgColor.indexOf(",") - 5);
-            g1 = bgColor.substr(bgColor.indexOf(",") + 1, bgColor.indexOf(",") - 4);
-            b1 = bgColor.substr(bgColor.indexOf(",", bgColor.indexOf(",") + 1) + 1, bgColor.indexOf(",") - 4);
-            var shade = (r + 1) * .03 + .5;
-            if (shade > 1)
-                shade = 1;
-            r2 = 255 + (r1 - 255) * shade;
-            g2 = 255 + (g1 - 255) * shade;
-            b2 = 255 + (b1 - 255) * shade;
-            context.fillStyle = "rgb(" + r2 + ", " + g2 + ", " + b2 + ")";
             context.fill();
-            context.globalCompositeOperation = "source-over";
         }
     }
 
@@ -3695,25 +3685,20 @@ function render() {
             }
         }
         if (!isOccupied(0, -1)) {
-            var bladeCount = 1;
-            /* var freq = Math.floor(rng() * 8);
-            if (freq < 4) bladeCount = 0;
-            else if (freq > 4 && freq < 8) bladeCount = 1;
-            else if (freq > 8) bladeCount = 2; */
-            var bladeStart = rng();
-            context.beginPath();
-            context.moveTo((c + bladeStart) * tileSize, (r + .1) * tileSize);
-            context.bezierCurveTo((c + bladeStart) * tileSize, r * tileSize, (c + bladeStart + .1) * tileSize, (r - .2) * tileSize, (c + bladeStart + .2) * tileSize, (r - .2) * tileSize);
-            context.strokeStyle = wall[1];
-            context.lineWidth = tileSize / 70;
-            context.stroke();
-            var bladeStart = rng();
-            context.beginPath();
-            context.moveTo((c + 1 - bladeStart) * tileSize, (r + .1) * tileSize);
-            context.bezierCurveTo((c + 1 - bladeStart) * tileSize, r * tileSize, (c + 1 - bladeStart - .1) * tileSize, (r - .2) * tileSize, (c + 1 - bladeStart - .2) * tileSize, (r - .2) * tileSize);
-            context.strokeStyle = wall[1];
-            context.lineWidth = tileSize / 70;
-            context.stroke();
+            for (var i = 0; i < 2; i++) {
+                var bladeStart = rng();
+                var curve = .1;
+                if (i % 2 != 0) {
+                    bladeStart = bladeStart * (-1) + 1;
+                    curve = curve * (-1);
+                }
+                context.beginPath();
+                context.moveTo((c + bladeStart) * tileSize, (r + .1) * tileSize);
+                context.bezierCurveTo((c + bladeStart) * tileSize, r * tileSize, (c + bladeStart + curve) * tileSize, (r - .2) * tileSize, (c + bladeStart + curve * 2) * tileSize, (r - .2) * tileSize);
+                context.strokeStyle = wall[1];
+                context.lineWidth = tileSize / 70;
+                context.stroke();
+            }
         }
 
         var complement = 1 - outlineThickness;
@@ -3898,7 +3883,6 @@ function render() {
 
     function drawSpikeSupports(r, c, isOccupied, canConnect) {
         var boltBool = false;
-        var occupiedCount = 0;
         if (canConnect(0, 1)) {
             context.fillStyle = spikeColors[1];
             context.fillRect(c * tileSize + (tileSize * .3), r * tileSize + (tileSize * .8), tileSize * .4, tileSize * .4);
@@ -3929,76 +3913,113 @@ function render() {
             }
         }
 
+        var spikeSize = .2;
         context.fillStyle = spikeColors[2];
         if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {                                             //TOUCHING ONE
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize, tileSize * .6, tileSize * .8, { bl: 4, br: 4 }, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
             boltBool = true;
         }
         else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize + (tileSize * .2), tileSize, tileSize * .6, { tl: 4, bl: 4 }, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize, tileSize * .6, 0, true, false);
             boltBool = true;
         }
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) {
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize + (tileSize * .2), tileSize * .6, tileSize * .8, { tl: 4, tr: 4 }, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
             boltBool = true;
         }
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) {
-            roundRect(context, c * tileSize, r * tileSize + (tileSize * .2), tileSize * .8, tileSize * .6, { tr: 4, br: 4 }, true, false);
+            roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
             boltBool = true;
         }
         else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {                                         //TOUCHING TWO (CORNERS)
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize, tileSize * .6, tileSize * .8, { bl: 4 }, true, false);
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize + (tileSize * .2), tileSize * .8, tileSize * .6, { bl: 4 }, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
             if (!canConnect(1, -1)) boltBool = true;
         }
         else if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) {
-            roundRect(context, c * tileSize, r * tileSize + (tileSize * .2), tileSize * .8, tileSize * .6, { br: 4 }, true, false);
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize, tileSize * .6, tileSize * .8, { br: 4 }, true, false);
+            roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
             if (!canConnect(-1, -1)) boltBool = true;
         }
         else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) {
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize + (tileSize * .2), tileSize * .8, tileSize * .6, { tl: 4 }, true, false);
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize + (tileSize * .2), tileSize * .6, tileSize * .8, { tl: 4 }, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
             if (!canConnect(1, 1)) boltBool = true;
         }
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) {
-            roundRect(context, c * tileSize, r * tileSize + (tileSize * .2), tileSize * .8, tileSize * .6, { tr: 4 }, true, false);
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize + (tileSize * .2), tileSize * .6, tileSize * .8, { tr: 4 }, true, false);
+            roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
             if (!canConnect(-1, 1)) boltBool = true;
         }
+        /* if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {                                             //TOUCHING ONE
+            roundRect(context, (c+spikeSize)*tileSize, r * tileSize, tileSize * .6, tileSize * .8, { bl: 4, br: 4 }, true, false);
+            boltBool = true;
+        }
+        else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {
+            roundRect(context, (c+spikeSize)*tileSize, (r+spikeSize)*tileSize, tileSize, tileSize * .6, { tl: 4, bl: 4 }, true, false);
+            boltBool = true;
+        }
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) {
+            roundRect(context, (c+spikeSize)*tileSize, (r+spikeSize)*tileSize, tileSize * .6, tileSize * .8, { tl: 4, tr: 4 }, true, false);
+            boltBool = true;
+        }
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) {
+            roundRect(context, c * tileSize, (r+spikeSize)*tileSize, tileSize * .8, tileSize * .6, { tr: 4, br: 4 }, true, false);
+            boltBool = true;
+        }
+        else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {                                         //TOUCHING TWO (CORNERS)
+            roundRect(context, (c+spikeSize)*tileSize, r * tileSize, tileSize * .6, tileSize * .8, { bl: 4 }, true, false);
+            roundRect(context, (c+spikeSize)*tileSize, (r+spikeSize)*tileSize, tileSize * .8, tileSize * .6, { bl: 4 }, true, false);
+            if (!canConnect(1, -1)) boltBool = true;
+        }
+        else if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) {
+            roundRect(context, c * tileSize, (r+spikeSize)*tileSize, tileSize * .8, tileSize * .6, { br: 4 }, true, false);
+            roundRect(context, (c+spikeSize)*tileSize, r * tileSize, tileSize * .6, tileSize * .8, { br: 4 }, true, false);
+            if (!canConnect(-1, -1)) boltBool = true;
+        }
+        else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) {
+            roundRect(context, (c+spikeSize)*tileSize, (r+spikeSize)*tileSize, tileSize * .8, tileSize * .6, { tl: 4 }, true, false);
+            roundRect(context, (c+spikeSize)*tileSize, (r+spikeSize)*tileSize, tileSize * .6, tileSize * .8, { tl: 4 }, true, false);
+            if (!canConnect(1, 1)) boltBool = true;
+        }
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) {
+            roundRect(context, c * tileSize, (r+spikeSize)*tileSize, tileSize * .8, tileSize * .6, { tr: 4 }, true, false);
+            roundRect(context, (c+spikeSize)*tileSize, (r+spikeSize)*tileSize, tileSize * .6, tileSize * .8, { tr: 4 }, true, false);
+            if (!canConnect(-1, 1)) boltBool = true;
+        } */
         else if (isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) {                                         //TOUCHING TWO (OPPOSITES)
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize, tileSize * .6, tileSize, 0, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize, 0, true, false);
         }
         else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) {
-            roundRect(context, c * tileSize, r * tileSize + (tileSize * .2), tileSize, tileSize * .6, 0, true, false);
+            roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize, tileSize * .6, 0, true, false);
         }
         else if (isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) {                                         //TOUCHING THREE
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize, tileSize * .6, tileSize, 0, true, false);
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize + (tileSize * .2), tileSize * .8, tileSize * .6, 0, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize, 0, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
             boltBool = true;
         }
         else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) {
-            roundRect(context, c * tileSize, r * tileSize + (tileSize * .2), tileSize, tileSize * .6, 0, true, false);
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
+            roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize, tileSize * .6, 0, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
             boltBool = true;
         }
         else if (isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) {
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize, tileSize * .6, tileSize, 0, true, false);
-            roundRect(context, c * tileSize, r * tileSize + (tileSize * .2), tileSize * .8, tileSize * .6, 0, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize, 0, true, false);
+            roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
             boltBool = true;
         }
         else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) {
-            roundRect(context, c * tileSize, r * tileSize + (tileSize * .2), tileSize, tileSize * .6, 0, true, false);
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize + (tileSize * .2), tileSize * .6, tileSize * .8, 0, true, false);
+            roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize, tileSize * .6, 0, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
             boltBool = true;
         }
         else if (isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) {                                              //TOUCHING FOUR                                 
-            roundRect(context, c * tileSize, r * tileSize + (tileSize * .2), tileSize, tileSize * .6, 0, true, false);
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize, tileSize * .6, tileSize, 0, true, false);
+            roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize, tileSize * .6, 0, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize, 0, true, false);
             //boltBool = true;
         }
         else {
-            roundRect(context, c * tileSize + (tileSize * .2), r * tileSize + (tileSize * .2), tileSize * .6, tileSize * .6, 0, true, false);
+            roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * .6, 0, true, false);
             boltBool = true;
         }
 
@@ -4006,28 +4027,21 @@ function render() {
     }
 
     function drawBolt(r, c) {
-        var rand = 2 / rng();
+        var radius = .2;
         context.fillStyle = spikeColors[3];
-        context.strokeStyle = spikeColors[3];
-
-        context.save();
-        context.translate((c + .5) * tileSize, (r + .5) * tileSize);
-        context.rotate(rand * Math.PI);
         context.beginPath();
-        context.arc(.02 * tileSize, (-.03) * tileSize, tileSize / 8, -.7 * Math.PI, .18 * Math.PI);
+        context.arc((c + .5) * tileSize, (r + .5) * tileSize, radius * tileSize, 0, 2 * Math.PI);
         context.closePath();
-        context.restore();
         context.fill();
-        context.stroke();
 
-        context.save();
-        context.translate((c + .5) * tileSize, (r + .5) * tileSize);
-        context.rotate(rand * Math.PI);
+        context.strokeStyle = spikeColors[2];
+        var x = rng() * radius + .5 - radius;
+        var y = Math.sqrt(radius ^ 2 - (x - .5) ^ 2) + (.5 - radius);
+        if (Math.floor(rng() * 2) == 0) y = 1 - y;
         context.beginPath();
-        context.arc((-.02) * tileSize, .02 * tileSize, tileSize / 9, .2 * Math.PI, -.75 * Math.PI);
+        context.moveTo((c + x) * tileSize, (r + y) * tileSize);
+        context.lineTo((c + 1 - x) * tileSize, (r + 1 - y) * tileSize);
         context.closePath();
-        context.restore();
-        context.fill();
         context.stroke();
     }
 
@@ -4620,28 +4634,6 @@ function render() {
         if (fill) ctx.fill();
         if (stroke) ctx.stroke();
     }
-
-    function shadeColor(color, percent) {
-
-        var R = parseInt(color.substring(1, 3), 16);
-        var G = parseInt(color.substring(3, 5), 16);
-        var B = parseInt(color.substring(5, 7), 16);
-
-        R = parseInt(R * (100 + percent) / 100);
-        G = parseInt(G * (100 + percent) / 100);
-        B = parseInt(B * (100 + percent) / 100);
-
-        R = (R < 255) ? R : 255;
-        G = (G < 255) ? G : 255;
-        B = (B < 255) ? B : 255;
-
-        var RR = ((R.toString(16).length == 1) ? "0" + R.toString(16) : R.toString(16));
-        var GG = ((G.toString(16).length == 1) ? "0" + G.toString(16) : G.toString(16));
-        var BB = ((B.toString(16).length == 1) ? "0" + B.toString(16) : B.toString(16));
-
-        return "#" + RR + GG + BB;
-    }
-
 
     function drawR(r, c, fillStyle) {
         context.fillStyle = fillStyle;
