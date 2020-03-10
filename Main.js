@@ -3835,7 +3835,7 @@ function render() {
             }
         }
         if (!isOccupied(0, -1) && wall[4]) {
-            var count = Math.floor(rng() * 30 + 10);
+            var count = Math.floor(rng() * 50 + 10);
             for (var i = 0; i < count; i++) {
                 var bladeStart = rng();
                 var bladeHeight = rng() * .1 + .05;
