@@ -125,13 +125,14 @@ button:active:enabled {
 
 #levelTypeContainer {
     position: absolute;
-    bottom: -36px;
+    bottom: -50px;
     left: 0;
 }
 
 #levelType {
     font-family: Futura;
     font-size: 24pt;
+    line-height: 36pt;
     color: slateblue;
     font-weight: 900;
     text-align: left;
@@ -143,7 +144,7 @@ button:active:enabled {
     font-weight: 100;
     text-align: left;
     position: absolute;
-    bottom: -24px;
+    bottom: -10px;
     left: 0;
 }
 
@@ -213,18 +214,19 @@ canvas {
 }
 
 #bigButtonButton {
+    z-index: 10;
     color: slateblue;
     font-family: Futura;
     font-weight: 900;
     font-size: 24pt;
-    text-align: right;
+    line-height: 36pt;
     position: absolute;
-    bottom: -36px;
+    bottom: -50px;
     right: 0;
+    border-radius: 10px;
 }
 
 #bigButtonButton:hover {
-    background-color: rgba(0, 0, 0, .1);
     cursor: pointer;
 }
 
@@ -388,10 +390,26 @@ canvas {
     top: 0;
 }
 
-#topCanvas {
+#canvas1 {
+    z-index: 2;
+}
+
+#canvas2 {
     z-index: 1;
 }
 
-#bottomCanvas {
-    z-index: 0;
+#canvas3 {
+    z-index: 3;
+}
+
+#canvas4 {
+    z-index: 4;
+}
+
+#canvas5 {
+    z-index: 5;
+}
+
+#canvas6 {
+    z-index: 6;
 }
