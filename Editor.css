@@ -1,12 +1,18 @@
 @keyframes click_me {
-    0%   { background: linear-gradient(white, #e6e6e6); }
-    50%  { background: yellow; }
-    100% { background: linear-gradient(white, #e6e6e6); }
+    0% {
+        background: linear-gradient(white, #e6e6e6);
+    }
+    50% {
+        background: yellow;
+    }
+    100% {
+        background: linear-gradient(white, #e6e6e6);
+    }
 }
 
-@font-face{
+@font-face {
     font-family: Futura;
-    src: url('Futura.ttf')  format('truetype');
+    src: url("FuturaBT-Medium.woff") format("truetype");
 }
 
 button.click-me {
@@ -14,195 +20,226 @@ button.click-me {
     font-weight: bold;
 }
 
-table{
-    border-collapse: collapse;   
+table {
+    border-collapse: collapse;
 }
 
-td{
+td {
     text-align: center;
     line-height: 16px;
 }
 
-tr{
+tr {
     text-align: center;
 }
 
-body{
-    font-family: Futura, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+body {
+    font-family: Futura, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     background-color: aliceblue;
 }
 
-button{
+button {
     background-image: linear-gradient(white, #e6e6e6);
     border: none;
     border-radius: 3px;
-    box-shadow: .5px .5px 1px black;
+    box-shadow: 0.5px 0.5px 1px black;
 }
 
-button:hover:enabled{
-    color: slateblue;
+button:hover:enabled {
+    box-shadow: 0 0 0 2px slateblue;
 }
 
-button:focus{
+button:focus {
     background-image: linear-gradient(#4b91ff, #055ce4);
     color: white;
 }
 
-button:active:enabled{
-    box-shadow: .8pt .8pt 1px gray inset;
+button:active:enabled {
+    box-shadow: 0.8pt 0.8pt 1px gray inset;
     color: black;
 }
 
-#returnButton{
+#returnButton {
     text-decoration: none;
     color: #006666;
 }
 
-.editorButton{
-    margin: -1px; /* buttons have built in margins when HTML tags aren't on same line */
+.editorButton {
+    margin: -1px;
+    /* buttons have built in margins when HTML tags aren't on same line */
 }
 
-#levelTable{
+#levelTable {
     margin: 0 auto;
-}   
+}
 
-.buttonHeader{
+.buttonHeader {
     font-size: 10pt;
 }
 
-#editsSpan{
-    font-size: 10pt;   
+#editsSpan {
+    font-size: 10pt;
 }
 
-#editText{
-    font-size: 10pt;   
+#editText {
+    font-size: 10pt;
 }
 
-.standard{
-    background-color: lightsteelblue;   
+.standard {
+    background-color: lightsteelblue;
 }
 
-.controlsHeader{
+.controlsHeader {
     line-height: 20px;
 }
 
-.experimental{
-    background-color: lightblue;   
+.experimental {
+    background-color: lightblue;
 }
 
-.spacer{
+.spacer {
     height: 10px;
 }
 
-.hotkeySpacer{
+.hotkeySpacer {
     display: none;
 }
 
-#controls{
+#controls {
     background-color: aliceblue;
     width: 200px;
     border: 2px solid black;
 }
 
-.header{
+.header {
     font-style: italic;
 }
 
-#selectHolder{
+#selectHolder {
     display: inline-block;
 }
 
-#controlsRow button{
-    vertical-align: top;   
-}
-
-#levelType{
-    font-family: Arial;
-    font-size: 12pt;
-    color:slateblue; 
-    margin: 10px 0 1px 0;
-    display: inline-block;
+#controlsRow button {
     vertical-align: top;
+}
+
+#levelTypeContainer {
+    position: absolute;
+    bottom: -36px;
+    left: 0;
+}
+
+#levelType {
+    font-family: Futura;
+    font-size: 24pt;
+    color: slateblue;
     font-weight: 900;
+    text-align: left;
+    position: relative;
 }
 
-canvas{
-    border: 2px solid black;   
+#levelTypeSpan {
+    font-size: 8pt;
+    font-weight: 100;
+    text-align: left;
+    position: absolute;
+    bottom: -24px;
+    left: 0;
 }
 
-.hotkey{
-    font-size: 6pt; 
-    color: rgba(0,0,0,.5);
+canvas {
+    border: 2px solid black;
+}
+
+.hotkey {
+    font-size: 6pt;
+    color: rgba(0, 0, 0, 0.5);
     font-family: Arial;
 }
 
-.buttonDiv{
+.buttonDiv {
     display: inline-block;
 }
 
-#controlButtons{
+#controlButtons {
     margin: 0 auto;
     margin-top: 10px;
     margin-bottom: 10px;
     display: table;
 }
 
-#switchSnakesButton{
+#switchSnakesButton {
     min-height: 30px;
     margin-right: 10px;
 }
 
-#arrowsHolder{
+#arrowsHolder {
     display: flex;
     align-items: center;
 }
 
-.arrow{
+.arrow {
     min-height: 30px;
     min-width: 30px;
     font-size: 14pt;
     font-family: Futura;
 }
 
-#arrowLeft{
+#arrowLeft {
     float: left;
     margin-right: 5px;
 }
 
-#verticalArrowsHolder{
+#verticalArrowsHolder {
     float: left;
     width: fit-content;
 }
 
-#arrowRight{
+#arrowRight {
     float: left;
     margin-left: 5px;
 }
 
-.plusMinus{
+.plusMinus {
     min-height: 20px;
     min-width: 20px;
     font-size: 10pt;
     display: table-cell;
 }
 
-.bigButton{
+.bigButton {
     font-size: 20pt;
     padding: 10px;
 }
 
-#bigButtonButton{
-    display: block;
-    font-size: 20pt;
-    padding: 10px;
+#bigButtonButton {
+    color: slateblue;
+    font-family: Futura;
+    font-weight: 900;
+    font-size: 24pt;
+    text-align: right;
+    position: absolute;
+    bottom: -36px;
+    right: 0;
 }
 
-#bottomBlock{
+#bigButtonButton:hover {
+    background-color: rgba(0, 0, 0, .1);
+    cursor: pointer;
+}
+
+#bigButtonButton:active {
+    transform: scale(.97);
+}
+
+#bottomBlock {
     text-align: center;
     vertical-align: top;
+    position: relative;
+    margin-top: 50px;
 }
 
-#separator{
+#separator {
     background-color: black;
     height: 150px;
     width: 1px;
@@ -210,60 +247,60 @@ canvas{
     display: inline-block;
 }
 
-.optionsHeader{
+.optionsHeader {
     margin-top: 10px;
     font-family: Futura;
 }
 
-#keyboardInstructions{
+#keyboardInstructions {
     font-size: 8pt;
     width: 220px;
     text-align: center;
     display: inline-block;
 }
 
-#levelSize{
+#levelSize {
     width: fit-content;
     display: table;
     margin: 0 auto;
     margin-bottom: 10px;
     border-radius: 5px;
-    background-color: rgba(0,0,0,.03);
+    background-color: rgba(0, 0, 0, 0.03);
     padding: 5px 10px 5px 10px;
     position: relative;
 }
 
-#levelSizeText{
+#levelSizeText {
     display: inline-block;
     padding: 5px 10px 5px 10px;
     margin: 0 10px 0 10px;
 }
 
-#levelSizeText:hover{
+#levelSizeText:hover {
     cursor: default;
     border-radius: 3px;
     background-color: slateblue;
     color: white;
 }
 
-#levelSizeText:active{
-    transform: scale(.97);
+#levelSizeText:active {
+    transform: scale(0.97);
 }
 
-.optionsHeaders{
+.optionsHeaders {
     font-weight: 900;
 }
 
-.bottomBlockBox{
+.bottomBlockBox {
     width: 280px;
-    text-align:center;
-    font-size:10pt;
-    font-family:Arial;
-    display:inline-block;
+    text-align: center;
+    font-size: 10pt;
+    font-family: Arial;
+    display: inline-block;
     vertical-align: top;
 }
 
-#fitButton{
+#fitButton {
     position: absolute;
     font-size: 8pt;
     top: 25%;
@@ -273,79 +310,88 @@ canvas{
     border-radius: 2px;
 }
 
-#fitButton:hover{
+#fitButton:hover {
     background-color: slateblue;
     color: white;
 }
 
-#fitButton:active{
-    transform: scale(.9);
+#fitButton:active {
+    transform: scale(0.9);
 }
 
-#paradoxDiv{
+#paradoxDiv {
     background: #f88;
     text-align: center;
 }
 
-#cycleDiv{
+#cycleDiv {
     background: yellow;
     text-align: center;
 }
 
-#additions{
+#additions {
     font-family: Arial;
-    color: transparent; 
-    font-size: 8pt;
-    margin-top: 1px;
+    color: transparent;
+    font-size: 12pt;
+    margin-top: -30px;
+    margin-bottom: 30px;
 }
 
-#levelTypeSpan{
-    font-size: 8pt;
-    font-weight: 100;
-}
-
-#editorDiv{
+#editorDiv {
     width: 100%;
     text-align: center;
 }
 
-#shareLink{
+#shareLink {
     padding-right: 5px;
     display: table-cell;
     font-size: 10pt;
 }
 
-#shareLinkTextbox{
+#shareLinkTextbox {
     padding: 5px;
     display: table-cell;
     border-radius: 2px;
     border: 1px solid black;
-    background-color:slateblue;
+    background-color: slateblue;
     color: white;
 }
 
-#link2{
+#link2 {
     padding-right: 5px;
     display: table-cell;
     font-size: 10pt;
 }
 
-#link2Textbox{
+#link2Textbox {
     padding: 5px;
     display: table-cell;
     border-radius: 2px;
     border: 1px solid black;
-    background-color:slateblue;
+    background-color: slateblue;
     color: white;
 }
 
-#submitSerializationButton{
+#submitSerializationButton {
     padding: 5px;
     border-radius: 2px;
     border: 1px solid black;
     background-image: none;
-    background-color:slateblue;
+    background-color: slateblue;
     float: left;
     color: white;
+}
 
+canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+#topCanvas {
+    z-index: 1;
+}
+
+#bottomCanvas {
+    z-index: 0;
 }
