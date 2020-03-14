@@ -9,8 +9,13 @@ $(document).ready(function () {
     var fruits = getObjectsOfType(FRUIT);
 
 });
-var topCanvas = document.getElementById("topCanvas");
-var bottomCanvas = document.getElementById("bottomCanvas");
+var canvas1 = document.getElementById("canvas1");
+var canvas2 = document.getElementById("canvas2");
+var canvas3 = document.getElementById("canvas3");
+var canvas4 = document.getElementById("canvas4");
+var canvas5 = document.getElementById("canvas5");
+var canvas6 = document.getElementById("canvas6");
+// var canvas2 = document.getElementById("canvas2");
 
 var SPACE = "0".charCodeAt(0);
 var WALL = "1".charCodeAt(0);
@@ -82,20 +87,36 @@ function loadLevel(newLevel) {
     document.getElementById("canvasContainer").style.width = tileSize * level.width;
     document.getElementById("canvasContainer").style.height = tileSize * level.height;
 
-    bottomCanvas.width = tileSize * level.width;
-    bottomCanvas.height = tileSize * level.height;
-    var context = bottomCanvas.getContext("2d");
+    [canvas2, canvas3, canvas5].forEach(function (canvas) {
+        canvas.width = tileSize * level.width;
+        canvas.height = tileSize * level.height;
+    });
+    var context = canvas2.getContext("2d");
     populateThemeVars();
     drawBackground();
-
+    var context = canvas3.getContext("2d");
     for (var r = 0; r < level.height; r++) {
         for (var c = 0; c < level.width; c++) {
             var location = getLocation(level, r, c);
             var tileCode = level.map[location];
-            if (tileCode === WALL || tileCode === SPIKE) drawTile(tileCode, r, c, level, true, true);
+            if (tileCode === SPIKE || tileCode === PLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD) drawTile(tileCode, r, c, level, true, true);
         }
     }
-
+    context = canvas5.getContext("2d");
+    for (var r = 0; r < level.height; r++) {
+        for (var c = 0; c < level.width; c++) {
+            var location = getLocation(level, r, c);
+            var tileCode = level.map[location];
+            if (tileCode === WATER || tileCode === LAVA) drawTile(tileCode, r, c, level, location, false);
+        }
+    }
+    for (var r = 0; r < level.height; r++) {
+        for (var c = 0; c < level.width; c++) {
+            var location = getLocation(level, r, c);
+            var tileCode = level.map[location];
+            if (tileCode === WALL) drawTile(tileCode, r, c, level, true, true);
+        }
+    }
     for (var r = 0; r < level.height; r++) {
         for (var c = 0; c < level.width; c++) {
             var location = getLocation(level, r, c);
@@ -103,14 +124,20 @@ function loadLevel(newLevel) {
             if (tileCode === WALL) drawTile(tileCode, r, c, level, false, true);
         }
     }
-
+    for (var r = 0; r < level.height; r++) {
+        for (var c = 0; c < level.width; c++) {
+            var location = getLocation(level, r, c);
+            var tileCode = level.map[location];
+            if (tileCode === TRELLIS) drawTile(tileCode, r, c, level, false, true);
+        }
+    }
     render();
 
     function drawBackground() {
         //solid color background
         if (!Array.isArray(background)) {
             context.fillStyle = background;
-            context.fillRect(0, 0, bottomCanvas.width, bottomCanvas.height);
+            context.fillRect(0, 0, canvas2.width, canvas2.height);
         }
         else {
             //checkerboard background
@@ -138,12 +165,12 @@ function loadLevel(newLevel) {
             }
             //gradient background
             else if (background[0] == "gradient") {
-                var grd = context.createLinearGradient(0, 0, 0, bottomCanvas.height);
+                var grd = context.createLinearGradient(0, 0, 0, canvas2.height);
                 grd.addColorStop(0, "rgba(255,255,255,.5)");
                 grd.addColorStop(1 / 2, "rgba(0, 200, 255, .5)");
                 grd.addColorStop(1, "rgba(0, 100, 255, .5)");
                 context.fillStyle = grd;
-                context.fillRect(0, 0, bottomCanvas.width, bottomCanvas.height);
+                context.fillRect(0, 0, canvas2.width, canvas2.height);
             }
         }
     }
@@ -370,7 +397,8 @@ function loadLevel(newLevel) {
     }
 
     function drawTileOutlines(r, c, isOccupied, outlineThickness, curlySurface, grass) {
-        if (grass && !isOccupied(0, -1) && wall[4]) { drawGrass(); }
+        // if (grass && !isOccupied(0, -1) && wall[4]) { drawGrass(); }
+        var surfaceType = "grass";
         if (wall[1] != "rainbow") context.fillStyle = wall[1];
         else {
             context.fillStyle = "white";
@@ -400,6 +428,23 @@ function loadLevel(newLevel) {
         var outlinePixels = outlineThickness * tileSize;
 
         if (curlySurface && !isOccupied(0, -1)) {
+            switch (surfaceType) {
+                case "grass": drawGrassSurface(); break;
+                case "moss": drawMossSurface(); break;
+            }
+        }
+        else if (!curlySurface && !isOccupied(0, -1)) {
+            context.fillRect((c) * tileSize, (r) * tileSize, tileSize, outlinePixels);
+        }
+        if (!curlySurface && !isOccupied(-1, -1)) context.fillRect((c) * tileSize, (r) * tileSize, outlinePixels, outlinePixels);
+        if (!curlySurface && !isOccupied(1, -1)) context.fillRect((c + complement) * tileSize, (r) * tileSize, outlinePixels, outlinePixels);
+        if (!curlySurface && !isOccupied(-1, 1)) context.fillRect((c) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
+        if (!curlySurface && !isOccupied(1, 1)) context.fillRect((c + complement) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
+        if (!curlySurface && !isOccupied(0, 1)) context.fillRect((c) * tileSize, (r + complement) * tileSize, tileSize, outlinePixels);
+        if (!curlySurface && !isOccupied(-1, 0)) context.fillRect((c) * tileSize, (r) * tileSize, outlinePixels, tileSize);
+        if (!curlySurface && !isOccupied(1, 0)) context.fillRect((c + complement) * tileSize, (r) * tileSize, outlinePixels, tileSize);
+
+        function drawGrassSurface() {
             if (!isOccupied(-1, 0) && isOccupied(1, 0) && !wall[6]) {
                 context.beginPath();
                 context.moveTo((c + .1) * tileSize, (r + .2) * tileSize);
@@ -445,27 +490,64 @@ function loadLevel(newLevel) {
             }
             context.fill();
         }
-        else if (!curlySurface && !isOccupied(0, -1)) {
-            context.fillRect((c) * tileSize, (r) * tileSize, tileSize, outlinePixels);
+
+        function drawMossSurface() {
+            if (!isOccupied(-1, 0) && isOccupied(1, 0) && !wall[6]) {
+                context.beginPath();
+                context.moveTo((c + .1) * tileSize, (r + .2) * tileSize);
+                context.bezierCurveTo((c + .05) * tileSize, (r + .3) * tileSize, (c + .3) * tileSize, (r + .4) * tileSize, (c + .33) * tileSize, (r + .2) * tileSize);
+                context.bezierCurveTo((c + .35) * tileSize, (r + .4) * tileSize, (c + .6) * tileSize, (r + .4) * tileSize, (c + .67) * tileSize, (r + .2) * tileSize);
+                context.bezierCurveTo((c + .75) * tileSize, (r + .3) * tileSize, (c + .9) * tileSize, (r + .4) * tileSize, c * tileSize + tileSize * 1, (r + .2) * tileSize);
+                context.lineTo(c * tileSize + tileSize, r * tileSize);
+                context.lineTo((c + .2) * tileSize, r * tileSize);
+                context.bezierCurveTo((c - .2) * tileSize, (r - .05) * tileSize, (c - .15) * tileSize, (r + .5) * tileSize, (c + .1) * tileSize, (r + .25) * tileSize);
+                context.closePath();
+            }
+            else if (isOccupied(-1, 0) && !isOccupied(1, 0) && !wall[6]) {
+                context.beginPath();
+                context.moveTo((c + .9) * tileSize, (r + .2) * tileSize);
+                context.bezierCurveTo((c + .95) * tileSize, (r + .3) * tileSize, (c + .7) * tileSize, (r + .4) * tileSize, (c + .67) * tileSize, (r + .2) * tileSize);
+                context.bezierCurveTo((c + .65) * tileSize, (r + .4) * tileSize, (c + .4) * tileSize, (r + .4) * tileSize, (c + .33) * tileSize, (r + .2) * tileSize);
+                context.bezierCurveTo((c + .3) * tileSize, (r + .3) * tileSize, (c + .1) * tileSize, (r + .4) * tileSize, c * tileSize, (r + .2) * tileSize);
+                context.lineTo(c * tileSize, r * tileSize);
+                context.lineTo((c + .8) * tileSize, r * tileSize);
+                context.bezierCurveTo((c + 1.2) * tileSize, (r - .05) * tileSize, (c + 1.15) * tileSize, (r + .5) * tileSize, (c + 1) * tileSize - tileSize * .1, (r + .25) * tileSize);
+                context.closePath();
+            }
+            else if (!isOccupied(-1, 0) && !isOccupied(1, 0) || wall[6]) {
+                context.beginPath();
+                context.moveTo((c + .9) * tileSize, r * tileSize - tileSize * 0);
+                context.lineTo((c + .2) * tileSize, r * tileSize);
+                context.bezierCurveTo((c - .2) * tileSize, (r - .05) * tileSize, (c - .15) * tileSize, (r + .5) * tileSize, (c + .1) * tileSize, (r + .25) * tileSize);
+                context.bezierCurveTo((c + .05) * tileSize, (r + .3) * tileSize, (c + .3) * tileSize, (r + .4) * tileSize, (c + .33) * tileSize, (r + .2) * tileSize);
+                context.bezierCurveTo((c + .35) * tileSize, (r + .4) * tileSize, (c + .6) * tileSize, (r + .4) * tileSize, (c + .67) * tileSize, (r + .2) * tileSize);
+                context.bezierCurveTo((c + .75) * tileSize, (r + .3) * tileSize, (c + .8) * tileSize, (r + .4) * tileSize, (c + .9) * tileSize, (r + .2) * tileSize);
+                context.bezierCurveTo((c + 1) * tileSize - tileSize * .1, (r + .4) * tileSize, (c + 1.3) * tileSize, (r + .3) * tileSize, (c + 1) * tileSize, (r + .02) * tileSize);
+                context.closePath();
+            }
+            else {
+                context.beginPath();
+                context.moveTo(c * tileSize, r * tileSize);
+                context.lineTo(c * tileSize, (r + .15) * tileSize);
+                context.bezierCurveTo(c * tileSize + tileSize * 0, (r + .4) * tileSize, (c + .3) * tileSize, (r + .3) * tileSize, (c + .33) * tileSize, (r + .2) * tileSize);
+                context.bezierCurveTo((c + .35) * tileSize, (r + .3) * tileSize, (c + .6) * tileSize, (r + .3) * tileSize, (c + .67) * tileSize, (r + .2) * tileSize);
+                context.bezierCurveTo((c + .75) * tileSize, (r + .4) * tileSize, (c + .9) * tileSize, (r + .3) * tileSize, c * tileSize + tileSize * 1, (r + .2) * tileSize);
+                context.lineTo(c * tileSize + tileSize, r * tileSize);
+                context.closePath();
+            }
+            context.fill();
         }
-        if (!curlySurface && !isOccupied(-1, -1)) context.fillRect((c) * tileSize, (r) * tileSize, outlinePixels, outlinePixels);
-        if (!curlySurface && !isOccupied(1, -1)) context.fillRect((c + complement) * tileSize, (r) * tileSize, outlinePixels, outlinePixels);
-        if (!curlySurface && !isOccupied(-1, 1)) context.fillRect((c) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
-        if (!curlySurface && !isOccupied(1, 1)) context.fillRect((c + complement) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
-        if (!curlySurface && !isOccupied(0, 1)) context.fillRect((c) * tileSize, (r + complement) * tileSize, tileSize, outlinePixels);
-        if (!curlySurface && !isOccupied(-1, 0)) context.fillRect((c) * tileSize, (r) * tileSize, outlinePixels, tileSize);
-        if (!curlySurface && !isOccupied(1, 0)) context.fillRect((c + complement) * tileSize, (r) * tileSize, outlinePixels, tileSize);
 
         function drawGrass() {
-            var count = Math.floor(rng() * 3 + 10);
+            var count = Math.floor(rng() * 50 + 10);
             for (var i = 0; i < count; i++) {
                 var bladeStart = rng();
                 var bladeHeight = rng() * .1 + .05;
                 var curve = rng() * .15;
-                if (i % 2 != 0) {
-                    bladeStart = bladeStart * (-1) + 1;
-                    curve = curve * (-1);
-                }
+                // if (i % 2 != 0) {
+                //     bladeStart = bladeStart * (-1) + 1;
+                //     curve = curve * (-1);
+                // }
                 context.beginPath();
                 context.moveTo((c + bladeStart) * tileSize, (r + .1) * tileSize);
                 context.bezierCurveTo((c + bladeStart) * tileSize, r * tileSize, (c + bladeStart / 1.2 + curve) * tileSize, (r - bladeHeight) * tileSize, (c + bladeStart / 1.2 + curve * 2) * tileSize, (r - bladeHeight) * tileSize);
@@ -1714,7 +1796,7 @@ function refreshCheatButtonText() {
 var lastDraggingRowcol = null;
 var hoverLocation = null;
 var draggingChangeLog = null;
-topCanvas.addEventListener("mousedown", function (event) {
+canvas4.addEventListener("mousedown", function (event) {
     if (event.altKey) return;
     if (event.button !== 0) return;
     event.preventDefault();
@@ -1736,7 +1818,7 @@ topCanvas.addEventListener("mousedown", function (event) {
         render();
     }
 });
-topCanvas.addEventListener("dblclick", function (event) {
+canvas4.addEventListener("dblclick", function (event) {
     if (event.altKey) return;
     if (event.button !== 0) return;
     event.preventDefault();
@@ -1778,7 +1860,7 @@ function stopDragging() {
         draggingChangeLog = null;
     }
 }
-topCanvas.addEventListener("mousemove", function (event) {
+canvas4.addEventListener("mousemove", function (event) {
     if (!persistentState.showEditor) return;
     var location = getLocationFromEvent(event);
     var mouseRowcol = getRowcol(level, location);
@@ -1803,7 +1885,7 @@ topCanvas.addEventListener("mousemove", function (event) {
         }
     }
 });
-topCanvas.addEventListener("mouseout", function () {
+canvas4.addEventListener("mouseout", function () {
     if (hoverLocation !== location) {
         // turn off the hover when the mouse leaves
         hoverLocation = null;
@@ -1811,16 +1893,16 @@ topCanvas.addEventListener("mouseout", function () {
     }
 });
 function getLocationFromEvent(event) {
-    var r = Math.floor(eventToMouseY(event, topCanvas) / tileSize);
-    var c = Math.floor(eventToMouseX(event, topCanvas) / tileSize);
-    // since the topCanvas is centered, the bounding client rect can be half-pixel aligned,
+    var r = Math.floor(eventToMouseY(event, canvas4) / tileSize);
+    var c = Math.floor(eventToMouseX(event, canvas4) / tileSize);
+    // since the canvas4 is centered, the bounding client rect can be half-pixel aligned,
     // resulting in slightly out-of-bounds mouse events.
     r = clamp(r, 0, level.height);
     c = clamp(c, 0, level.width);
     return getLocation(level, r, c);
 }
-function eventToMouseX(event, topCanvas) { return event.clientX - topCanvas.getBoundingClientRect().left; }
-function eventToMouseY(event, topCanvas) { return event.clientY - topCanvas.getBoundingClientRect().top; }
+function eventToMouseX(event, canvas4) { return event.clientX - canvas4.getBoundingClientRect().left; }
+function eventToMouseY(event, canvas4) { return event.clientY - canvas4.getBoundingClientRect().top; }
 
 function selectAll() {
     selectionStart = 0;
@@ -2758,7 +2840,9 @@ function showEditorChanged() {
     ["editorDiv", "editorPane"].forEach(function (id) {
         document.getElementById(id).style.display = persistentState.showEditor ? "inline-block" : "none";
     });
-    document.getElementById("bottomCanvas").style.display = persistentState.showEditor ? "none" : "block";
+    ["canvas2", "canvas5", "canvas6"].forEach(function (canvas) {
+        document.getElementById(canvas).style.display = persistentState.showEditor ? "none" : "block";
+    });
     document.getElementById("wasdSpan").textContent = persistentState.showEditor ? "" : " or WASD";
 
     if (!persistentState.showEditor) document.getElementById("hideHotkeyButton").disabled = true;
@@ -3363,7 +3447,7 @@ var freshlyRemovedAnimatedObjects = [];
 // render the support beams for blocks into a temporary buffer, and remember it.
 // this is due to stencil buffers causing slowdown on some platforms. see #25.
 var blockSupportRenderCache = {
-    // id: topCanvas,
+    // id: canvas4,
     // "0": document.createElement("canvas"),
 };
 
@@ -3386,9 +3470,11 @@ function render() {
     }
     if (animationQueueCursor === animationQueue.length) animationProgress = 1.0;
 
-    topCanvas.width = level.width * tileSize;
-    topCanvas.height = level.height * tileSize;
-    var context = topCanvas.getContext("2d");
+    [canvas1, canvas4, canvas6].forEach(function (canvas) {
+        canvas.width = tileSize * level.width;
+        canvas.height = tileSize * level.height;
+    });
+    var context = canvas4.getContext("2d");
 
     themeName = themes[themeCounter][0];
     background = themes[themeCounter][1];
@@ -3420,7 +3506,7 @@ function render() {
             if (paintBrushBlockId != null) {
                 // fade everything else away
                 context.fillStyle = "rgba(0, 0, 0, 0.8)";
-                context.fillRect(0, 0, topCanvas.width, topCanvas.height);
+                context.fillRect(0, 0, canvas4.width, canvas4.height);
                 // and render just this object in focus
                 var activeBlock = findBlockById(paintBrushBlockId);
                 renderLevel([activeBlock]);
@@ -3511,7 +3597,10 @@ function render() {
             }
             var r = minR + animationDisplacementRowcol.r;
             var c = minC + animationDisplacementRowcol.c;
+            var savedContext2 = context;
+            context = canvas1.getContext("2d");
             context.drawImage(image, c * tileSize, r * tileSize);
+            context = savedContext2;
         });
 
         var exitExists = false;
@@ -3536,7 +3625,7 @@ function render() {
             if (object.type === BLOCK) drawObject(object);
         }
 
-        if (onlyTheseObjects == null) {
+        if (persistentState.showEditor && onlyTheseObjects == null) {
             for (var r = 0; r < level.height; r++) {
                 for (var c = 0; c < level.width; c++) {
                     var location = getLocation(level, r, c);
@@ -3556,12 +3645,13 @@ function render() {
             }
         }
 
+        if (!persistentState.showEditor) context = canvas6.getContext("2d");    //slows down game
         if (onlyTheseObjects == null) {
             for (var r = 0; r < level.height; r++) {
                 for (var c = 0; c < level.width; c++) {
                     location = getLocation(level, r, c);
                     tileCode = level.map[location];
-                    if (tileCode === TURNSTILER || tileCode === TURNSTILEL || tileCode === CLOUD || tileCode === BUBBLE || tileCode === TRELLIS) drawTile(tileCode, r, c, level, location, false);
+                    if ((persistentState.showEditor && (tileCode === TURNSTILER || tileCode === TURNSTILEL || tileCode === TRELLIS)) || tileCode === CLOUD || tileCode === BUBBLE) drawTile(tileCode, r, c, level, location, false);
                 }
             }
         }
@@ -3576,7 +3666,7 @@ function render() {
             if (portalOutOfBounds) {
                 context.strokeStyle = "rgba(255,0,0,.5)";
                 context.lineWidth = tileSize / 2;
-                roundRect(context, 0, 0, topCanvas.width, topCanvas.height, 0, false, true);
+                roundRect(context, 0, 0, canvas4.width, canvas4.height, 0, false, true);
             }
         }
 
@@ -3590,7 +3680,7 @@ function render() {
             context.shadowBlur = 4;
             var textString = "WIN";
             var textWidth = context.measureText(textString).width;
-            context.fillText(textString, (topCanvas.width / 2) - (textWidth / 2), topCanvas.height / 2);
+            context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
             checkResult = true;
             document.getElementById("checkSolutionButton").disabled = false;
         }
@@ -3603,7 +3693,7 @@ function render() {
             context.shadowBlur = 4;
             textString = "LOSE";
             textWidth = context.measureText(textString).width;
-            context.fillText(textString, (topCanvas.width / 2) - (textWidth / 2), topCanvas.height / 2);
+            context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
             checkResult = false;
         }
 
@@ -3612,8 +3702,8 @@ function render() {
 
             var savedContext = context;
             var buffer = document.createElement("canvas");
-            buffer.width = topCanvas.width;
-            buffer.height = topCanvas.height;
+            buffer.width = canvas4.width;
+            buffer.height = canvas4.height;
             context = buffer.getContext("2d");
 
             var hoverRowcol = getRowcol(level, hoverLocation);
@@ -3655,7 +3745,7 @@ function render() {
 
             context = savedContext;
             context.save();
-            context.globalAlpha = 0.2;
+            context.globalAlpha = .2;
             context.drawImage(buffer, 0, 0);
             context.restore();
         }
@@ -3665,7 +3755,7 @@ function render() {
         //solid color background
         if (!Array.isArray(background)) {
             context.fillStyle = background;
-            context.fillRect(0, 0, topCanvas.width, topCanvas.height);
+            context.fillRect(0, 0, canvas4.width, canvas4.height);
         }
         else {
             //checkerboard background
@@ -3693,12 +3783,12 @@ function render() {
             }
             //gradient background
             else if (background[0] == "gradient") {
-                var grd = context.createLinearGradient(0, 0, 0, topCanvas.height);
+                var grd = context.createLinearGradient(0, 0, 0, canvas4.height);
                 grd.addColorStop(0, "rgba(255,255,255,.5)");
                 grd.addColorStop(1 / 2, "rgba(0, 200, 255, .5)");
                 grd.addColorStop(1, "rgba(0, 100, 255, .5)");
                 context.fillStyle = grd;
-                context.fillRect(0, 0, topCanvas.width, topCanvas.height);
+                context.fillRect(0, 0, canvas4.width, canvas4.height);
             }
         }
     }
@@ -5651,8 +5741,8 @@ function render() {
 
     function drawGrid() {
         var buffer = document.createElement("canvas");
-        buffer.width = topCanvas.width;
-        buffer.height = topCanvas.height;
+        buffer.width = canvas4.width;
+        buffer.height = canvas4.height;
         var localContext = buffer.getContext("2d");
 
         localContext.strokeStyle = "#fff";
@@ -5684,8 +5774,8 @@ function render() {
         if (maxID > 0) multiDiagrams = true;
 
         var buffer = document.createElement("canvas");
-        buffer.width = topCanvas.width;
-        buffer.height = topCanvas.height;
+        buffer.width = canvas4.width;
+        buffer.height = canvas4.height;
         var localContext = buffer.getContext("2d");
 
         for (var i = 0; i < outline.length; i++) {
@@ -5748,7 +5838,7 @@ function render() {
         do {
             fontsize--;
             context.font = fontsize + "px " + fontface;
-        } while (context.measureText(text).width > topCanvas.width)
+        } while (context.measureText(text).width > canvas4.width)
         context.fillText(text, 0, yPosition);
     }
 }
