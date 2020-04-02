@@ -65,6 +65,7 @@ var unmoveStuff = { undoStack: [], redoStack: [], spanId: "movesSpan", undoButto
 var uneditStuff = { undoStack: [], redoStack: [], spanId: "editsSpan", undoButtonId: "uneditButton", redoButtonId: "reeditButton" };
 var paradoxes = [];
 var enhanced = false;
+var replayAnimationStatus = document.getElementById("replayAnimationsSlider").checked;
 
 function loadLevel(newLevel) {
     level = newLevel;
@@ -822,6 +823,9 @@ document.getElementById("showHideEditor").addEventListener("click", function () 
 });
 document.getElementById("showDetailsButton").addEventListener("click", function () {
     toggleShowDetails();
+});
+document.getElementById("replayAnimationsSlider").addEventListener("click", function () {
+    replayAnimationStatus = document.getElementById("replayAnimationsSlider").checked;
 });
 function resizeCanvasContainer(cc) {
     cc = document.getElementById("canvasContainer");
@@ -1758,7 +1762,6 @@ function redoOneFrame(undoStuff) {
         undoChangeLog.push(level.width);
         undoStuff.undoStack.push(undoChangeLog);
     }
-
     if (undoStuff === uneditStuff) editorHasBeenTouched = true;
 }
 function undoChanges(changes, changeLog) {
@@ -1770,7 +1773,7 @@ function undoChanges(changes, changeLog) {
     }
 
     var lastChange = changes[changes.length - 1];
-    if (lastChange[0] === "i") {
+    if (replayAnimationStatus && lastChange[0] === "i") {
         // replay animation
         animationQueue = lastChange[4];
         animationQueueCursor = 0;
@@ -1901,7 +1904,7 @@ function describe(arg1, arg2) {
 }
 
 function undoStuffChanged(undoStuff) {
-    var movesText = undoStuff.undoStack.length + " | " + undoStuff.redoStack.length;
+    var movesText = undoStuff.undoStack.length + "\xa0\xa0✾\xa0\xa0" + undoStuff.redoStack.length;
     document.getElementById(undoStuff.spanId).textContent = movesText;
     document.getElementById(undoStuff.undoButtonId).disabled = undoStuff.undoStack.length === 0;
     document.getElementById(undoStuff.redoButtonId).disabled = undoStuff.redoStack.length === 0;
@@ -2178,8 +2181,9 @@ function move(dr, dc) {
     // slither forward
     var activeSnakeOldState = serializeObjectState(activeSnake);
     var size1 = activeSnake.locations.length === 1;
+    var speed = 70;
     var slitherAnimations = [
-        70,
+        speed,
         [
             // size-1 snakes really do more of a move than a slither
             size1 ? MOVE_SNAKE : SLITHER_HEAD,
@@ -2785,7 +2789,7 @@ function render() {
         var link = location.href.substring(0, location.href.length - location.hash.length);
         link += "#level=" + compressSerialization(serialization);
         document.getElementById("shareLinkTextbox").value = link;
-        document.getElementById("link2Textbox").value = "#level=" + compressSerialization(serialization);
+        document.getElementById("link2Textbox").value = "#level=" + compressSerialization(serialization) + "#replay=" + compressSerialization(stringifyReplay());
     }
 
     // throw this in there somewhere
@@ -3206,9 +3210,9 @@ function render() {
                 c = headRowcol.c;
                 if (!persistentState.showEditor || persistentState.showDetails) drawFace(object.id, c, r, orientation, getAdjacentTiles());
                 else {
-                    context.strokeStyle = "white";
-                    context.lineWidth = 3;
-                    roundRect(context, c * tileSize, r * tileSize, tileSize, tileSize, borderRadius, false, true);
+                    context.strokeStyle = tint(color, 1.5);
+                    context.lineWidth = tileSize * .1;
+                    roundRect(context, (c + .05) * tileSize, (r + .05) * tileSize, tileSize * .9, tileSize * .9, 0, false, true);
                     if (object.id === activeSnakeId) {
                         drawCircle(context, r, c, .5, "white");
                         drawCircle(context, r, c, .25, "black");
