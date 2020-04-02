@@ -10,11 +10,6 @@
     }
 }
 
-@font-face {
-    font-family: Futura;
-    src: url("FuturaBT-Medium.woff") format("truetype");
-}
-
 button.click-me {
     animation: click_me 1s infinite;
     font-weight: bold;
@@ -34,7 +29,7 @@ tr {
 }
 
 body {
-    font-family: Futura, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    font-family: Trebuchet MS, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
     background-color: aliceblue;
 }
 
@@ -43,6 +38,8 @@ button {
     border: none;
     border-radius: 3px;
     box-shadow: 0.5px 0.5px 1px black;
+    font-family: Trebuchet MS;
+    margin: 4px 0 0 0;
 }
 
 button:hover:enabled {
@@ -80,6 +77,7 @@ button:active:enabled {
 
 .buttonHeader {
     font-size: 10pt;
+    font-weight: 900;
 }
 
 #editsSpan {
@@ -130,12 +128,12 @@ button:active:enabled {
 
 #levelTypeContainer {
     position: absolute;
-    bottom: -50px;
-    left: 0;
+    top: 50px;
+    left: 300px;
 }
 
 #levelType {
-    font-family: Futura;
+    font-family: Trebuchet MS;
     font-size: 24pt;
     line-height: 36pt;
     color: slateblue;
@@ -158,9 +156,9 @@ canvas {
 }
 
 .hotkey {
-    font-size: 6pt;
+    font-size: 8pt;
     color: rgba(0, 0, 0, 0.5);
-    font-family: Arial;
+    font-family: Trebuchet MS;
 }
 
 .buttonDiv {
@@ -219,13 +217,13 @@ canvas {
 #bigButtonButton {
     z-index: 10;
     color: slateblue;
-    font-family: Futura;
+    font-family: Trebuchet MS;
     font-weight: 900;
     font-size: 24pt;
     line-height: 36pt;
     position: absolute;
-    bottom: -50px;
-    right: 0;
+    top: 50px;
+    right: 300px;
     border-radius: 10px;
 }
 
@@ -241,7 +239,6 @@ canvas {
     text-align: center;
     vertical-align: top;
     position: relative;
-    margin-top: 50px;
 }
 
 #separator {
@@ -254,7 +251,7 @@ canvas {
 
 .optionsHeader {
     margin-top: 10px;
-    font-family: Futura;
+    font-family: Trebuchet MS;
 }
 
 #keyboardInstructions {
@@ -270,7 +267,7 @@ canvas {
     margin: 0 auto;
     margin-bottom: 10px;
     border-radius: 5px;
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: rgba(0, 0, 0, 0.05);
     padding: 5px 10px 5px 10px;
     position: relative;
 }
@@ -300,7 +297,7 @@ canvas {
     width: 280px;
     text-align: center;
     font-size: 10pt;
-    font-family: Arial;
+    font-family: Trebuchet MS;
     display: inline-block;
     vertical-align: top;
 }
@@ -419,4 +416,111 @@ canvas {
 
 #canvas6 {
     z-index: 6;
+}
+
+#progressButtons {
+    display: table;
+    margin: 0 auto;
+}
+
+#unmoveButton {
+    font-size: 20pt;
+    height: 16px;
+    line-height: 10pt;
+    transform: scale(-1, 1);
+    display: table-cell;
+    vertical-align: top;
+    margin-right: 10px;
+}
+
+#removeButton {
+    font-size: 20pt;
+    height: 16px;
+    line-height: 10pt;
+    display: table-cell;
+    vertical-align: top;
+    margin-left: 10px;
+}
+
+#movesSpan {
+    display: table-cell;
+    vertical-align: bottom;
+}
+
+.bottomButton {}
+
+#sliderContainer {
+    display: table;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 5px 10px 5px 10px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+}
+
+#sliderLabel {
+    font-family: Trebuchet MS;
+    font-size: 8pt;
+    line-height: 12pt;
+    margin-right: 10px;
+}
+
+.switch {
+    position: relative;
+    display: table-cell;
+    vertical-align: top;
+    width: 30px;
+    height: 17px;
+}
+
+/* Hide default HTML checkbox */
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #555;
+    border-radius: 5px;
+    -webkit-transition: .2s;
+    transition: .2s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 13px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    border-radius: 3px;
+    -webkit-transition: .2s;
+    transition: .2s;
+}
+
+input:checked+.slider {
+    background-color: slateblue;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px slateblue;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(13px);
+    -ms-transform: translateX(13px);
+    transform: translateX(13px);
+}
+
+.small {
+    font-size: 6pt;
 }
