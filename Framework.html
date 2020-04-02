@@ -2,7 +2,7 @@
 
 <head>
     <title>Snakefall Redesign</title>
-    <link rel="stylesheet" href="Editor.css" />
+    <link rel="stylesheet" href="/Snakefall/Editor.css" />
     <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee"
         src="//local.adguard.org?ts=1579613273701&amp;type=content-script&amp;dmn=wolfesoftware.com&amp;css=1&amp;js=1&amp;gcss=1&amp;rel=1&amp;rji=1&amp;stealth=1&amp;uag="></script>
     <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee"
@@ -16,7 +16,7 @@
     <table id="levelTable">
         <tr>
             <td>
-                <div id="canvasContainer" style="position: relative;">
+                <div id="canvasContainer">
                     <canvas id="canvas1" width=750 height=600></canvas>
                     <canvas id="canvas2" width=750 height=600></canvas>
                     <canvas id="canvas3" width=750 height=600></canvas>
@@ -30,7 +30,7 @@
                     <div id="bigButtonButton">Large Buttons</div>
                 </div>
             </td>
-            <td id="editorPane" style="display:none;padding-left: 5px;">
+            <td id="editorPane">
                 <table id="controls">
                     <tr class="spacer"><td></td></tr>
                     <tr><td><a id="returnButton" href="https://jmdiamond3.github.io/Snakefall-Redesign/">&#x2190;Snakefall Redesign</a></td></tr>
@@ -91,6 +91,13 @@
                     <tr class="spacer experimental"><td></td></tr>
                     <tr class="experimental header"><td>Enhanced Elements</td></tr>
                     <tr class="experimental header" style="font-family: cursive;"><td>---------------------------</td></tr>
+
+                    <tr class="experimental"><td class="buttonHeader">Splocks</td></tr>
+                    <tr class="hotkeySpacer2 experimental"><td></td></tr>
+                    <tr class="experimental"><td>
+                        <div class="buttonDiv"><button class="editorButton" id="paintSplockButton" title="K" disabled>Add Spike to Block</button><br><span class="hotkey">Feature coming soon</span></div>
+                    </td></tr>
+                    <tr class="spacer experimental hotkeySpacer"><td></td></tr>
 
                     <tr class="experimental"><td class="buttonHeader">Kinetic</td></tr>
                     <tr class="hotkeySpacer2 experimental"><td></td></tr>
@@ -167,9 +174,9 @@
         <div id="separator"></div>
         <div class="bottomBlockBox">
             <div class="optionsHeaders">Progress Tracking</div><br>
-            <button id="unmoveButton" class="bottomButton" title="Backspace&#013;Z&#013;Q" disabled>Unmove &lt;&lt;</button>
-            <span class="bottomButton">Moves: </span><span id="movesSpan" class="bottomButton">0+0</span>
-            <button id="removeButton" class="bottomButton" title="Y&#013;Shift + Backspace&#013;Shift + Z&#013;Shift + Q" disabled>&gt;&gt; Re-move</button><br>
+            <button id="unmoveButton" class="bottomButton" title="Backspace&#013;Z&#013;Q&#013;&#013;Unmove snake" disabled>&#171;</button>
+            <span id="movesSpan" class="bottomButton">0 | 0</span>
+            <button id="removeButton" class="bottomButton" title="Y&#013;Shift + Backspace&#013;Shift + Z&#013;Shift + Q&#013;&#013;Re-move snake" disabled>&#187;</button><br>
             <button id="restartButton" class="bottomButton" title="R - Unmove completely&#013;&#013;Shift + R - Re-move completely">Restart</button>
             <button id="saveProgressButton" class="bottomButton" title="Ctrl + Shift + S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift + R to restore state.">Save Progress</button><br><br>
             <button id="checkSolutionButton" class="bottomButton" title="Saves a Solution Verification URL to your clipboard." disabled>Copy Verification Link</button>
@@ -178,7 +185,7 @@
         <div class="bottomBlockBox">
             <div class="optionsHeaders">Options</div><br>
             <div id="levelSize" class="bottomButton"><div id="fitButton" title="` (Grave Accent, located under Escape Key)">FIT</div><button id="minus" class="plusMinus bottomButton" title="Decrease game size">-</button><div id="levelSizeText" class="bottomButton" title="Revert to default game size">Level Size</div><button id="plus" class="plusMinus bottomButton" title="Increase game size">+</button></div>
-            <button id="themeButton" class="bottomButton" title="Return">Theme: <b>Spring</b></button>
+            <button id="themeButton" class="bottomButton" title="Return">Theme | <b>Spring</b></button>
             <button id="showGridButton" class="bottomButton" title="G">Show Grid</button>
             <br><br>
             <button id="showHideEditor" class="bottomButton" title="\">Show Editor Stuff</button>
