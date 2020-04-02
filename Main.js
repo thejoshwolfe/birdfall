@@ -1170,7 +1170,7 @@ function setPaintBrushTileCode(tileCode) {
             // cycle through block ids
             blocks.sort(compareId);
             if (paintBrushBlockId != null) {
-                document.getElementById("paintSplockButton").disabled = false;
+                // document.getElementById("paintSplockButton").disabled = false;
                 (function () {
                     for (var i = 0; i < blocks.length; i++) {
                         if (blocks[i].id === paintBrushBlockId) {
@@ -1190,7 +1190,7 @@ function setPaintBrushTileCode(tileCode) {
             } else {
                 // first one
                 paintBrushBlockId = blocks[0].id;
-                document.getElementById("paintSplockButton").disabled = false;
+                // document.getElementById("paintSplockButton").disabled = false;
             }
         } else {
             // new block id
