@@ -1495,7 +1495,7 @@ function paintAtLocation(location, changeLog) {
         }
         changeLog.push([paintBrushObject.type, paintBrushObject.id, oldSnakeSerialization, serializeObjectState(paintBrushObject)]);
     } else if (paintBrushTileCode === BLOCK) {
-        document.getElementById("paintSplockButton").disabled = false;
+        // document.getElementById("paintSplockButton").disabled = false;
         var objectHere = findObjectAtLocation(location);
         if (paintBrushBlockId == null && objectHere != null && objectHere.type === BLOCK) {
             // just start editing this block
