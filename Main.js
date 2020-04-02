@@ -671,7 +671,8 @@ document.addEventListener("keydown", function (event) {
         case "V".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("paste"); break; }
         case "H".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === 0) { toggleHotkeys(); break; }
+            if (persistentState.showEditor && modifierMask === 0) { toggleShowDetails(); break; }
+            if (persistentState.showEditor && modifierMask === SHIFT) { toggleHotkeys(); break; }
         case "T".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(TURNSTILEL); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TURNSTILER); break; }
@@ -816,9 +817,11 @@ document.getElementById("removeButton").addEventListener("click", function () {
     redo(unmoveStuff);
     render();
 });
-
 document.getElementById("showHideEditor").addEventListener("click", function () {
     toggleShowEditor();
+});
+document.getElementById("showDetailsButton").addEventListener("click", function () {
+    toggleShowDetails();
 });
 function resizeCanvasContainer(cc) {
     cc = document.getElementById("canvasContainer");
@@ -826,18 +829,16 @@ function resizeCanvasContainer(cc) {
     cc.style.height = tileSize * level.height;
 }
 function resetCanvases() {
-    if (!persistentState.showEditor) {
-        ["canvas1", "canvas2", "canvas3", "canvas4", "canvas5", "canvas6"].forEach(function (id) {
-            var canvas = document.getElementById(id);
-            var context = canvas.getContext("2d");
-            context.clearRect(0, 0, canvas.width, canvas.height);
-        });
-        if (!loadFromLocationHash()) {
-            loadLevel(parseLevel(exampleLevel));
-        }
-        loadFromLocationHash();
-        return;
+    ["canvas1", "canvas2", "canvas3", "canvas4", "canvas5", "canvas6"].forEach(function (id) {
+        var canvas = document.getElementById(id);
+        var context = canvas.getContext("2d");
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    });
+    if (!loadFromLocationHash()) {
+        loadLevel(parseLevel(exampleLevel));
     }
+    loadFromLocationHash();
+    return;
 }
 function fitCanvas() {
     var maxW = screen.width / level.width;
@@ -854,6 +855,11 @@ function toggleShowEditor() {
     showEditorChanged();
     resetCanvases();
     resizeCanvasContainer();
+}
+function toggleShowDetails() {
+    persistentState.showDetails = !persistentState.showDetails;
+    savePersistentState();
+    render();
 }
 function toggleButtonSize() {
     persistentState.bigButton = !persistentState.bigButton;
@@ -1972,6 +1978,7 @@ function haveCheatcodesBeenUsed() {
 
 var persistentState = {
     showEditor: false,
+    showDetails: false,
     showGrid: false,
     bigButton: false,
     hideHotkeys: false,
@@ -1985,6 +1992,7 @@ function loadPersistentState() {
     } catch (e) {
     }
     persistentState.showEditor = !!persistentState.showEditor;
+    persistentState.showDetails = !!persistentState.showDetails;
     persistentState.bigButton = !!persistentState.bigButton;
     persistentState.showGrid = !!persistentState.showGrid;
     persistentState.hideHotkeys = !!persistentState.hideHotkeys;
@@ -2085,13 +2093,19 @@ function showEditorChanged() {
     ["editorDiv", "editorPane"].forEach(function (id) {
         document.getElementById(id).style.display = persistentState.showEditor ? "inline-block" : "none";
     });
-    ["canvas1", "canvas3", "canvas5", "canvas6"].forEach(function (canvas) {
+    ["canvas3", "canvas5", "canvas6"].forEach(function (canvas) {
         document.getElementById(canvas).style.display = persistentState.showEditor ? "none" : "block";
     });
     document.getElementById("wasdSpan").textContent = persistentState.showEditor ? "" : " or WASD";
 
-    if (!persistentState.showEditor) document.getElementById("hideHotkeyButton").disabled = true;
-    else document.getElementById("hideHotkeyButton").disabled = false;
+    if (!persistentState.showEditor) {
+        document.getElementById("hideHotkeyButton").disabled = true;
+        document.getElementById("showDetailsButton").disabled = true;
+    }
+    else {
+        document.getElementById("hideHotkeyButton").disabled = false;
+        document.getElementById("showDetailsButton").disabled = false;
+    }
 
     render();
 }
@@ -2736,8 +2750,6 @@ function render() {
     textStyle = themes[themeCounter][8];
     experimentalColors = themes[themeCounter][9];
 
-    if (persistentState.showEditor) drawBackground(context, canvas4);
-
     if (persistentState.showGrid && !persistentState.showEditor) {
         drawGrid();
     }
@@ -2777,6 +2789,7 @@ function render() {
     }
 
     // throw this in there somewhere
+    document.getElementById("showDetailsButton").textContent = (persistentState.showDetails ? "Hide" : "Show") + " Details";
     document.getElementById("showGridButton").textContent = (persistentState.showGrid ? "Hide" : "Show") + " Grid";
     document.getElementById("hideHotkeyButton").textContent = (persistentState.hideHotkeys ? "Show" : "Hide") + " Hotkeys";
     document.getElementById("bigButtonButton").textContent = (persistentState.bigButton ? "Regular" : "Large") + " Buttons";
@@ -2850,7 +2863,7 @@ function render() {
             context = savedContext2;
         });
 
-        var rng = new Math.seedrandom("b");
+        var rng = persistentState.showDetails ? new Math.seedrandom("b") : 0;
         var exitExists = false;
         if (onlyTheseObjects == null) {
             for (var r = 0; r < level.height; r++) {    //draws wall underside curves and/or grass
@@ -2865,7 +2878,7 @@ function render() {
 
         for (var i = 0; i < objects.length; i++) {
             var object = objects[i];
-            if (object.type === SNAKE) drawObject(object);
+            if (object.type === SNAKE) drawObject(object, rng);
         }
 
         for (var i = 0; i < objects.length; i++) {
@@ -3068,7 +3081,7 @@ function render() {
     //     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     // }
 
-    function drawObject(object) {
+    function drawObject(object, rng) {
         var r, c;
         switch (object.type) {
             case SNAKE:
@@ -3191,7 +3204,16 @@ function render() {
                 }
                 r = headRowcol.r;
                 c = headRowcol.c;
-                drawFace(object.id, c, r, orientation, getAdjacentTiles());
+                if (!persistentState.showEditor || persistentState.showDetails) drawFace(object.id, c, r, orientation, getAdjacentTiles());
+                else {
+                    context.strokeStyle = "white";
+                    context.lineWidth = 3;
+                    roundRect(context, c * tileSize, r * tileSize, tileSize, tileSize, borderRadius, false, true);
+                    if (object.id === activeSnakeId) {
+                        drawCircle(context, r, c, .5, "white");
+                        drawCircle(context, r, c, .25, "black");
+                    }
+                }
                 break;
             case BLOCK:
                 drawBlock(object);
@@ -3649,12 +3671,20 @@ function render() {
         var startC = c * tileSize + tileSize / 2;
         var startR = (r + .08) * tileSize;
         var resize = tileSize * 1.7;
+
         var color = fruitColors[object.id % fruitColors.length];
         var stemColor = themes[themeCounter][7];
-        if (themeName === "Classic") color = "#f0f";
+        if (themeName === "Classic" || (!persistentState.showDetails && persistentState.showEditor)) {
+            var circle = true;
+            color = "#f0f";
+        }
         if (isPoison) { color = "#666600"; stemColor = "black"; }
+
         context.fillStyle = color;
-        if (themeName != "Classic") {
+        if (circle) {
+            drawCircle(context, r, c, 1, color);
+        }
+        else {
             if (wall[1] == "rainbow") {
                 stemColor = "white";
                 if (!isPoison) context.fillStyle = "black";
@@ -3679,7 +3709,6 @@ function render() {
             context.fillStyle = stemColor;
             context.fill();
         }
-        else drawCircle(context, r, c, 1, color);
     }
 
     function drawConnector(context, r1, c1, r2, c2, color) {
@@ -3871,7 +3900,7 @@ function drawTile(context, tileCode, r, c, level, location, rng, isCurve, grass)
         case SPACE:
             break;
         case WALL:
-            if (isCurve && wall[2]) drawCurves(context, r, c, getAdjacentTiles());
+            if (isCurve && (!persistentState.showEditor || persistentState.showDetails) && wall[2]) drawCurves(context, r, c, getAdjacentTiles());
             else if (!isCurve && wall[2]) drawWall(context, r, c, getAdjacentTiles(), rng, false);
 
             if (!wall[2]) drawWall(context, r, c, getAdjacentTiles(), rng, grass);
@@ -3959,11 +3988,11 @@ function drawBackground(context, canvas) {
                 for (var j = 0; j < level.height; j++) {
                     /* var bgColor1 = hexToRgb(background[1]);
                     var bgColor2 = tint(background[1], .8);
-
+ 
                     var h = bgColor2.substr(bgColor2.indexOf("(") + 1, bgColor2.indexOf(","));
                     var s = bgColor2.substr(bgColor2.indexOf(",") + 1, bgColor2.indexOf(","));
                     var l = bgColor2.substr(bgColor2.split(",", 1).join(",").length + 1, bgColor2.indexOf(")"));
-
+ 
                     bgColor2 = hslToRgb(h, s, l); */
 
                     var bgColor1 = background[1];
@@ -4023,7 +4052,7 @@ function drawCurves2(context, r, c, isOccupied, base) {
         context.closePath();
         context.fill();
     }
-    else if (isOccupied(-1, -1) && isOccupied(0, -1) && !isOccupied(-1, 0) && wall[2]) { //under side left (no idea why this is needed)
+    else if (r != 0 && isOccupied(-1, -1) && isOccupied(0, -1) && !isOccupied(-1, 0) && wall[2]) { //under side left (no idea why this is needed)
         r = r;
         c = c - 1;
         context.beginPath();
@@ -4038,10 +4067,8 @@ function drawCurves2(context, r, c, isOccupied, base) {
 
 function drawWall(context, r, c, adjacentTiles, rng, grass) {
     drawBase(context, r, c, isWall, rng, wall[0]);
-    drawTileOutlines(context, r, c, isWall, .2, wall[3], grass);
-    context.save();
-    if (wall[3] && !wall[6]) drawBushes(context, r, c, isWall);
-    context.restore();
+    if (!persistentState.showEditor || persistentState.showDetails) drawTileOutlines(context, r, c, isWall, .2, wall[3], grass);
+    if (!persistentState.showEditor || persistentState.showDetails && wall[3] && !wall[6]) drawBushes(context, r, c, isWall);
 
     function isWall(dc, dr) {
         var tileCode = adjacentTiles[1 + dr][1 + dc];
@@ -4060,103 +4087,105 @@ function drawBase(context, r, c, isOccupied, rng, fillStyle) {
         if (r === 0 && isOccupied(1, 0)) context.fillRect((c + .5) * tileSize, (r - .5) * tileSize, tileSize, tileSize);
         if (c === 0) context.fillRect((c - .5) * tileSize, (r + .5) * tileSize, tileSize, tileSize);
         if (r === 0 && c === 0) context.fillRect((c - .5) * tileSize, (r - .5) * tileSize, tileSize, tileSize);
-        var color = Math.floor(rng() * 4) * 10;
+        var color = rng === 0 ? 0 : Math.floor(rng() * 4) * 10;
         context.fillStyle = "rgb(" + (color + 50) + "," + (color + 70) + "," + (color + 100) + ")";
         roundRect(context, x, y, tileSize, tileSize, 10, true, false);
 
-        context.save();
-        if (isOccupied(0, 1) && isOccupied(-1, 0) && isOccupied(-1, 1)) {
-            if (rng() > .95) {
-                context.fillStyle = "green";
-                x = (c) * tileSize;
-                y = (r + .9) * tileSize;
-                var width = tileSize * .5;
-                var height = tileSize * .2;
-                var cx = x + width / 2;
-                var cy = y + height / 2;
+        if (!persistentState.showEditor || persistentState.showDetails) {
+            context.save();
+            if (isOccupied(0, 1) && isOccupied(-1, 0) && isOccupied(-1, 1)) {
+                if (rng() > .95) {
+                    context.fillStyle = "green";
+                    x = (c) * tileSize;
+                    y = (r + .9) * tileSize;
+                    var width = tileSize * .5;
+                    var height = tileSize * .2;
+                    var cx = x + width / 2;
+                    var cy = y + height / 2;
 
-                context.translate(cx, cy);
-                context.rotate(-.25 * Math.PI);
-                context.translate(-cx, -cy);
-                context.fillRect(x, y, width, height);
+                    context.translate(cx, cy);
+                    context.rotate(-.25 * Math.PI);
+                    context.translate(-cx, -cy);
+                    context.fillRect(x, y, width, height);
 
-                context.beginPath();
-                context.arc((c + .5) * tileSize, (r + 1) * tileSize, height / 2, 0, 2 * Math.PI);
-                context.closePath();
-                context.fill();
+                    context.beginPath();
+                    context.arc((c + .5) * tileSize, (r + 1) * tileSize, height / 2, 0, 2 * Math.PI);
+                    context.closePath();
+                    context.fill();
 
-                x = (c - .1) * tileSize;
-                y = (r + .75) * tileSize;
-                var width = tileSize * .6;
-                var height = tileSize * .2;
-                var cx = x + width / 2;
-                var cy = y + height / 2;
+                    x = (c - .1) * tileSize;
+                    y = (r + .75) * tileSize;
+                    var width = tileSize * .6;
+                    var height = tileSize * .2;
+                    var cx = x + width / 2;
+                    var cy = y + height / 2;
 
-                context.translate(cx, cy);
-                context.rotate(-.125 * Math.PI);
-                context.translate(-cx, -cy);
-                context.fillRect(x, y, width, height);
+                    context.translate(cx, cy);
+                    context.rotate(-.125 * Math.PI);
+                    context.translate(-cx, -cy);
+                    context.fillRect(x, y, width, height);
 
-                context.beginPath();
-                context.arc((c + .5) * tileSize, (r + .85) * tileSize, height / 2, 0, 2 * Math.PI);
-                context.closePath();
-                context.fill();
+                    context.beginPath();
+                    context.arc((c + .5) * tileSize, (r + .85) * tileSize, height / 2, 0, 2 * Math.PI);
+                    context.closePath();
+                    context.fill();
 
-                x = (c - .1) * tileSize;
-                y = (r + .6) * tileSize;
-                var width = tileSize * .7;
-                var height = tileSize * .2;
-                var cx = x + width / 2;
-                var cy = y + height / 2;
+                    x = (c - .1) * tileSize;
+                    y = (r + .6) * tileSize;
+                    var width = tileSize * .7;
+                    var height = tileSize * .2;
+                    var cx = x + width / 2;
+                    var cy = y + height / 2;
 
-                context.translate(cx, cy);
-                context.rotate(-.125 * Math.PI);
-                context.translate(-cx, -cy);
-                context.fillRect(x, y, width, height);
+                    context.translate(cx, cy);
+                    context.rotate(-.125 * Math.PI);
+                    context.translate(-cx, -cy);
+                    context.fillRect(x, y, width, height);
 
-                context.beginPath();
-                context.arc((c + .6) * tileSize, (r + .7) * tileSize, height / 2, 0, 2 * Math.PI);
-                context.closePath();
-                context.fill();
+                    context.beginPath();
+                    context.arc((c + .6) * tileSize, (r + .7) * tileSize, height / 2, 0, 2 * Math.PI);
+                    context.closePath();
+                    context.fill();
 
-                x = (c - .3) * tileSize;
-                y = (r + .5) * tileSize;
-                var width = tileSize * .7;
-                var height = tileSize * .2;
-                var cx = x + width / 2;
-                var cy = y + height / 2;
+                    x = (c - .3) * tileSize;
+                    y = (r + .5) * tileSize;
+                    var width = tileSize * .7;
+                    var height = tileSize * .2;
+                    var cx = x + width / 2;
+                    var cy = y + height / 2;
 
-                context.translate(cx, cy);
-                context.rotate(-.125 * Math.PI);
-                context.translate(-cx, -cy);
-                context.fillRect(x, y, width, height);
+                    context.translate(cx, cy);
+                    context.rotate(-.125 * Math.PI);
+                    context.translate(-cx, -cy);
+                    context.fillRect(x, y, width, height);
 
-                context.beginPath();
-                context.arc((c + .4) * tileSize, (r + .6) * tileSize, height / 2, 0, 2 * Math.PI);
-                context.closePath();
-                context.fill();
+                    context.beginPath();
+                    context.arc((c + .4) * tileSize, (r + .6) * tileSize, height / 2, 0, 2 * Math.PI);
+                    context.closePath();
+                    context.fill();
 
-                x = (c - .4) * tileSize;
-                y = (r + .5) * tileSize;
-                var width = tileSize * .7;
-                var height = tileSize * .2;
-                var cx = x + width / 2;
-                var cy = y + height / 2;
+                    x = (c - .4) * tileSize;
+                    y = (r + .5) * tileSize;
+                    var width = tileSize * .7;
+                    var height = tileSize * .2;
+                    var cx = x + width / 2;
+                    var cy = y + height / 2;
 
-                context.translate(cx, cy);
-                context.rotate(-.125 * Math.PI);
-                context.translate(-cx, -cy);
-                context.fillRect(x, y, width, height);
+                    context.translate(cx, cy);
+                    context.rotate(-.125 * Math.PI);
+                    context.translate(-cx, -cy);
+                    context.fillRect(x, y, width, height);
 
-                context.beginPath();
-                context.arc((c + .3) * tileSize, (r + .6) * tileSize, height / 2, 0, 2 * Math.PI);
-                context.closePath();
-                context.fill();
+                    context.beginPath();
+                    context.arc((c + .3) * tileSize, (r + .6) * tileSize, height / 2, 0, 2 * Math.PI);
+                    context.closePath();
+                    context.fill();
+                }
             }
+            context.restore();
         }
-        context.restore();
     }
-    else {
+    else if (!persistentState.showEditor || persistentState.showDetails) {
         if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { bl: 10, br: 10 }, true, false);
         else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: 10, bl: 10 }, true, false);
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: 10, tr: 10 }, true, false);
@@ -4184,6 +4213,7 @@ function drawBase(context, r, c, isOccupied, rng, fillStyle) {
             context.fill();
         }
     }
+    else roundRect(context, x, y, tileSize, tileSize, 0, true, false);
 }
 
 function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurface, grass) {
@@ -4589,7 +4619,7 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, color, isOccupied, c
         boltBool = true;
     }
 
-    if (boltBool) drawBolt(context, r, c, rng);
+    if ((!persistentState.showEditor || persistentState.showDetails) && boltBool) drawBolt(context, r, c, rng);
 
     function drawCenterSpikes(context, x, y, spikeWidth, fillStyle) {
         context.fillStyle = fillStyle;
@@ -4809,14 +4839,14 @@ grd.addColorStop(.7, "rgba(255,255,255,.4)");
 grd.addColorStop(.8, "rgba(255,255,255,.5)");
 grd.addColorStop(.9, "rgba(255,255,255,.6)");
 grd.addColorStop(1, "rgba(255,255,255,.5)");
-
+ 
 context.fillStyle = grd;
 roundRect(context, c * tileSize, r * tileSize, tileSize, tileSize, 2, true, false);
 context.save();
 var color1 = color2 = color3 = color4 = "transparent";
-
+ 
 var preventColor = "rgba(255,0,0,.5)";
-
+ 
 context.fillStyle = "black";
 if (type === 0) {
     color1 = "black";
@@ -4877,20 +4907,20 @@ else if (type === 4) {
     context.closePath();
     context.fill();
 }
-
+ 
 context.strokeStyle = "red";
 context.lineWidth = 2;
 context.beginPath();
 context.arc((c + .5) * tileSize, (r + .5) * tileSize, tileSize / 3, 0, 2 * Math.PI);
 context.closePath();
 context.stroke();
-
+ 
 context.beginPath();
 context.moveTo((c + .3) * tileSize, (r + .3) * tileSize);
 context.lineTo((c + .7) * tileSize, (r + .7) * tileSize);
 context.closePath();
 context.stroke();
-
+ 
 context.shadowBlur = 3;
 context.lineWidth = 3;
 context.strokeStyle = color1;
