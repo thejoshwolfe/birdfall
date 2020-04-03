@@ -43,7 +43,7 @@ button {
 }
 
 button:hover:enabled {
-    box-shadow: 0 0 0 2px slateblue;
+    box-shadow: 0 0 0 1px slateblue;
 }
 
 button:focus {
@@ -52,18 +52,76 @@ button:focus {
 }
 
 button:active:enabled {
-    box-shadow: 0.8pt 0.8pt 1px gray inset;
+    transform: scale(.98);
     color: black;
 }
 
+#saveLevelButton {
+    font-size: 12pt;
+    margin-bottom: 2px;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%
+    }
+    50% {
+        background-position: 100% 50%
+    }
+    100% {
+        background-position: 0% 50%
+    }
+}
+
 #returnButton {
+    display: table;
     text-decoration: none;
-    color: #006666;
+    color: white;
+    background-color: slateblue;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    font-size: 8pt;
+    margin: 0 auto;
+    position: relative;
+}
+
+#returnButton:hover {
+    background-image: linear-gradient(45deg, slateblue, slateblue, slateblue, slateblue, #fdc122, #dc6a3f, #d55945, #dc6a3f, #fdc122);
+    background-size: 800% 800%;
+    animation: gradient 4s ease infinite;
+}
+
+#returnButton a {
+    display: table-cell;
+    text-decoration: none;
+    vertical-align: middle;
+    margin: auto;
+}
+
+#returnButton a:visited {
+    text-decoration: none;
+    color: white;
+}
+
+#returnArrow {
+    position: absolute;
+    top: 10%;
+    left: 40%;
+    font-size: 12pt;
 }
 
 .editorButton {
-    margin: -1px;
-    /* buttons have built in margins when HTML tags aren't on same line */
+    margin: -1;
+}
+
+#uneditButton {
+    margin-right: 10px;
+}
+
+#reeditButton {
+    margin-left: 10px;
 }
 
 #editorPane {
@@ -127,28 +185,22 @@ button:active:enabled {
 }
 
 #levelTypeContainer {
-    position: absolute;
-    top: 50px;
-    left: 300px;
+    display: flex;
+    align-items: center;
+    width: 280px;
 }
 
 #levelType {
-    font-family: Trebuchet MS;
-    font-size: 24pt;
-    line-height: 36pt;
+    flex-grow: 1;
+    font-size: 16pt;
     color: slateblue;
     font-weight: 900;
-    text-align: left;
-    position: relative;
 }
 
 #levelTypeSpan {
     font-size: 8pt;
     font-weight: 100;
-    text-align: left;
-    position: absolute;
-    bottom: -10px;
-    left: 0;
+    margin-bottom: 5px;
 }
 
 canvas {
@@ -174,7 +226,7 @@ canvas {
 
 #switchSnakesButton {
     min-height: 30px;
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 #arrowsHolder {
@@ -203,28 +255,16 @@ canvas {
 }
 
 .plusMinus {
-    min-height: 20px;
-    min-width: 20px;
-    font-size: 10pt;
+    min-height: 10px;
+    min-width: 10px;
+    font-size: 8pt;
+    font-weight: 900;
     display: table-cell;
 }
 
 .bigButton {
     font-size: 20pt;
     padding: 10px;
-}
-
-#bigButtonButton {
-    z-index: 10;
-    color: slateblue;
-    font-family: Trebuchet MS;
-    font-weight: 900;
-    font-size: 24pt;
-    line-height: 36pt;
-    position: absolute;
-    top: 50px;
-    right: 300px;
-    border-radius: 10px;
 }
 
 #bigButtonButton:hover {
@@ -236,12 +276,14 @@ canvas {
 }
 
 #bottomBlock {
+    display: table;
+    width: 1200px;
+    margin: 0 auto;
+    margin-top: 20px;
     text-align: center;
-    vertical-align: top;
-    position: relative;
 }
 
-#separator {
+.separator {
     background-color: black;
     height: 150px;
     width: 1px;
@@ -267,12 +309,13 @@ canvas {
     margin: 0 auto;
     margin-bottom: 10px;
     border-radius: 5px;
+    padding: 4px 10px 5px 10px;
     background-color: rgba(0, 0, 0, 0.05);
-    padding: 5px 10px 5px 10px;
     position: relative;
 }
 
 #levelSizeText {
+    font-size: 8pt;
     display: inline-block;
     padding: 5px 10px 5px 10px;
     margin: 0 10px 0 10px;
@@ -294,11 +337,11 @@ canvas {
 }
 
 .bottomBlockBox {
-    width: 280px;
+    width: 300px;
     text-align: center;
     font-size: 10pt;
     font-family: Trebuchet MS;
-    display: inline-block;
+    display: table-cell;
     vertical-align: top;
 }
 
@@ -332,11 +375,16 @@ canvas {
 }
 
 #additions {
-    font-family: Arial;
-    color: transparent;
-    font-size: 12pt;
-    margin-top: -30px;
-    margin-bottom: 30px;
+    display: none;
+    font-family: Trebuchet MS;
+    color: white;
+    font-size: 8pt;
+    width: 100px;
+    margin: 0 auto;
+    border-radius: 10px;
+    background-color: rgba(255, 0, 0, .3);
+    margin-top: 20px;
+    padding: 5px;
 }
 
 #editorDiv {
@@ -523,4 +571,16 @@ input:checked+.slider:before {
 
 .small {
     font-size: 6pt;
+}
+
+#levelRow {}
+
+#emptyBox {
+    height: 500;
+    width: 100px;
+    border: 5px solid transparent;
+}
+
+#emptyBox:hover {
+    border: 5px solid red;
 }
