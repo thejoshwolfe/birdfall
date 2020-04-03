@@ -83,6 +83,10 @@ function loadLevel(newLevel) {
     undoStuffChanged(uneditStuff);
     blockSupportRenderCache = {};
 
+    if (!persistentState.showEditor) document.getElementById("emptyBox").style.display = "none";
+    // else toggleEditorLocation(localStorage.getItem("editorLocation"));
+    // document.getElementById("emptyBox").style.height = document.getElementById("editorPane").style.height;   //not working
+
     resizeCanvasContainer();
     [canvas1, canvas3, canvas5].forEach(function (canvas) {
         canvas.width = tileSize * level.width;
@@ -254,21 +258,21 @@ function parseLevel(string) {
     //describe level type
     if (enhanced) {
         document.getElementById("levelType").innerHTML = "Enhanced Level";
-        document.getElementById("levelTypeSpan").innerHTML = "contains new elements not present in the original Snakebird game";
-        document.getElementById("additions").style.color = "transparent";
-        if (tileCounter === 0) {
-            document.getElementById("additions").innerHTML = "*all initial enhanced elements have been removed but the level is not saved*";
-            document.getElementById("additions").style.color = "#f88";
+        document.getElementById("levelTypeSpan").innerHTML = "contains new user-created elements";
+        document.getElementById("additions").style.display = "none";
+        if (persistentState.showEditor && tileCounter === 0) {
+            document.getElementById("additions").innerHTML = "all initial enhanced elements have been removed but the level is not saved";
+            document.getElementById("additions").style.display = "block";
         }
     }
     else {
         document.getElementById("levelType").innerHTML = "Standard Level";
         document.getElementById("levelTypeSpan").innerHTML = "contains only original Snakebird elements";
-        if (tileCounter > 0) {
-            document.getElementById("additions").innerHTML = "*enhanced elements have been added to this level but the level is not saved*";
-            document.getElementById("additions").style.color = "#f88";
+        if (persistentState.showEditor && tileCounter > 0) {
+            document.getElementById("additions").innerHTML = "enhanced elements have been added to this level but the level is not saved";
+            document.getElementById("additions").style.display = "block";
         }
-        else document.getElementById("additions").style.color = "transparent";
+        else document.getElementById("additions").style.display = "none";
     }
 
     for (var i = 0; i < upconvertedObjects.length; i++) {
@@ -767,6 +771,8 @@ document.getElementById("minus").addEventListener("click", function () {
     borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
     localStorage.setItem("cachedTileSize", tileSize);
+    resetCanvases();
+    resizeCanvasContainer();
     render();
     return;
 });
@@ -775,6 +781,8 @@ document.getElementById("plus").addEventListener("click", function () {
     borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
     localStorage.setItem("cachedTileSize", tileSize);
+    resetCanvases();
+    resizeCanvasContainer();
     render();
     return;
 });
@@ -783,6 +791,8 @@ document.getElementById("levelSizeText").addEventListener("click", function () {
     borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
     localStorage.setItem("cachedTileSize", tileSize);
+    resetCanvases();
+    resizeCanvasContainer();
     render();
     return;
 });
@@ -827,6 +837,9 @@ document.getElementById("showDetailsButton").addEventListener("click", function 
 document.getElementById("replayAnimationsSlider").addEventListener("click", function () {
     replayAnimationStatus = document.getElementById("replayAnimationsSlider").checked;
 });
+document.getElementById("emptyBox").addEventListener("click", function () {
+    toggleEditorLocation();
+});
 function resizeCanvasContainer(cc) {
     cc = document.getElementById("canvasContainer");
     cc.style.width = tileSize * level.width;
@@ -859,6 +872,29 @@ function toggleShowEditor() {
     showEditorChanged();
     resetCanvases();
     resizeCanvasContainer();
+}
+function toggleEditorLocation(cached) {
+    persistentState.editorLeft = cached == undefined ? !persistentState.editorLeft : cached;   //sometimes it works and sometimes it doesn't
+    savePersistentState();
+    localStorage.setItem("editorLocation", persistentState.editorLeft);
+
+    var levelTable = document.getElementById("levelTable");
+    var emptyBox = document.getElementById("emptyBox");
+    var canvasContainerTD = document.getElementById("canvasContainerTD");
+    var editorPane = document.getElementById("editorPane");
+
+    var emptyBoxClone = emptyBox.cloneNode(true);
+    var canvasContainerTDClone = canvasContainerTD.cloneNode(true);
+    var editorPaneClone = editorPane.cloneNode(true);
+
+    var td1 = persistentState.editorLeft ? editorPaneClone : emptyBoxClone;
+    var td3 = persistentState.editorLeft ? emptyBoxClone : editorPaneClone;
+
+    levelTable.deleteRow(0);
+    var newRow = levelTable.insertRow(0);
+    newRow.appendChild(td1);
+    newRow.appendChild(canvasContainerTDClone);
+    newRow.appendChild(td3);
 }
 function toggleShowDetails() {
     persistentState.showDetails = !persistentState.showDetails;
@@ -1981,6 +2017,7 @@ function haveCheatcodesBeenUsed() {
 
 var persistentState = {
     showEditor: false,
+    editorLeft: false,
     showDetails: false,
     showGrid: false,
     bigButton: false,
@@ -1995,6 +2032,7 @@ function loadPersistentState() {
     } catch (e) {
     }
     persistentState.showEditor = !!persistentState.showEditor;
+    persistentState.editorLeft = !!persistentState.editorLeft;
     persistentState.showDetails = !!persistentState.showDetails;
     persistentState.bigButton = !!persistentState.bigButton;
     persistentState.showGrid = !!persistentState.showGrid;
@@ -2093,12 +2131,16 @@ function populateThemeVars() {
 
 function showEditorChanged() {
     document.getElementById("showHideEditor").textContent = (persistentState.showEditor ? "Hide" : "Show") + " Editor";
+    document.getElementById("emptyBox").style.display = persistentState.showEditor ? "block" : "none";
+
     ["editorDiv", "editorPane"].forEach(function (id) {
         document.getElementById(id).style.display = persistentState.showEditor ? "inline-block" : "none";
     });
+
     ["canvas3", "canvas5", "canvas6"].forEach(function (canvas) {
         document.getElementById(canvas).style.display = persistentState.showEditor ? "none" : "block";
     });
+
     document.getElementById("wasdSpan").textContent = persistentState.showEditor ? "" : " or WASD";
 
     if (!persistentState.showEditor) {
@@ -2882,7 +2924,7 @@ function render() {
 
         for (var i = 0; i < objects.length; i++) {
             var object = objects[i];
-            if (object.type === SNAKE) drawObject(object, rng);
+            if (object.type === SNAKE) drawObject(object);
         }
 
         for (var i = 0; i < objects.length; i++) {
@@ -3085,139 +3127,11 @@ function render() {
     //     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     // }
 
-    function drawObject(object, rng) {
+    function drawObject(object) {
         var r, c;
         switch (object.type) {
             case SNAKE:
-                var falling = false;
-                var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
-                if (animationDisplacementRowcol.r != 0) falling = true;
-                var lastRowcol = null
-                var nextRowcol = null
-                var color = snakeColors[object.id % snakeColors.length];
-                var colorIndex = object.id % snakeColors.length;
-                var altColor = tint(color, 1.2);
-                if (snakeColors === snakeColors2) altColor = color;
-                var headRowcol;
-                var orientation = 10;
-                for (var i = 0; i < object.locations.length; i++) {
-                    var animation;
-                    var rowcol;
-                    if (i === 0 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {  // animate head slithering forward
-                        rowcol = getRowcol(level, object.locations[i]);
-                        rowcol.r += animation[2] * (animationProgress - 1);
-                        rowcol.c += animation[3] * (animationProgress - 1);
-                    } else if (i === object.locations.length) {
-                        // animated tail?
-                        if ((animation = findAnimation([SLITHER_TAIL], object.id)) != null) {
-                            // animate tail slithering to catch up
-                            rowcol = getRowcol(level, object.locations[i - 1]);
-                            rowcol.r += animation[2] * (animationProgress - 1);
-                            rowcol.c += animation[3] * (animationProgress - 1);
-                        } else {
-                            // no animated tail needed
-                            break;
-                        }
-                    } else rowcol = getRowcol(level, object.locations[i]);
-
-                    lastRowcol = getRowcol(level, object.locations[i - 1]); //closer to head
-                    nextRowcol = getRowcol(level, object.locations[i + 1]); //closer to tail
-                    var rc = rowcol;
-                    var lrc = lastRowcol;
-                    var nrc = nextRowcol;
-
-                    if (object.dead) {    //if snake dies after moving left or right, head is positioned down
-                        rowcol.r += .5;
-                        lastRowcol.r += .5;
-                        nextRowcol.r += .5;
-                        falling = true;
-                    }
-                    rowcol.r += animationDisplacementRowcol.r;
-                    rowcol.c += animationDisplacementRowcol.c;
-                    lastRowcol.r += animationDisplacementRowcol.r;
-                    lastRowcol.c += animationDisplacementRowcol.c;
-                    nextRowcol.r += animationDisplacementRowcol.r;
-                    nextRowcol.c += animationDisplacementRowcol.c;
-
-                    var cx = rowcol.c * tileSize;
-                    var cy = rowcol.r * tileSize;
-
-                    if (i === 0) {
-                        context.fillStyle = color;
-                        headRowcol = rowcol;
-
-                        //determines orientation of face
-                        if (!falling) nextRowcol = getRowcol(level, object.locations[1]);
-                        if (nextRowcol.r < rowcol.r) {  //last move down
-                            roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false);  //draw head
-                            if (colorIndex === 0) orientation = 2;
-                            else if (colorIndex === 1) orientation = 6;
-                            else if (colorIndex === 2) orientation = 3;
-                            else if (colorIndex === 3) orientation = 5;
-                        }
-                        else if (nextRowcol.r > rowcol.r) {  //last move up
-                            roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false);  //draw head
-                            if (colorIndex === 0) orientation = 0;
-                            else if (colorIndex === 1) orientation = 4;
-                            else if (colorIndex === 2) orientation = 1;
-                            else if (colorIndex === 3) orientation = 7;
-                        }
-                        else if (nextRowcol.c < rowcol.c) {  //last move right
-                            roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false);  //draw head
-                            if (colorIndex === 0) orientation = 1;
-                            else if (colorIndex === 1) orientation = 5;
-                            else if (colorIndex === 2) orientation = 2;
-                            else if (colorIndex === 3) orientation = 4;
-                        }
-                        else if (nextRowcol.c > rowcol.c) {  //last move left
-                            roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false);  //draw head
-                            if (colorIndex === 0) orientation = 3;
-                            else if (colorIndex === 1) orientation = 7;
-                            else if (colorIndex === 2) orientation = 0;
-                            else if (colorIndex === 3) orientation = 6;
-                        }
-                        else {
-                            roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);  //draw head
-                            orientation = 10;
-                        }
-                    } else {
-                        if (i % 2 == 0) context.fillStyle = color;
-                        else context.fillStyle = altColor;
-
-                        if (i === object.locations.length - 1) {
-                            if (lastRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false); }
-                            else if (lastRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false); }
-                            else if (lastRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false); }
-                            else if (lastRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false); }
-                        }
-                        else if (i != object.locations.length - 1 && i != object.locations.length) {
-                            if (lastRowcol.r > rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
-                            else if (lastRowcol.r > rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
-                            else if (lastRowcol.r < rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
-                            else if (lastRowcol.r < rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
-
-                            else if (lastRowcol.c > rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
-                            else if (lastRowcol.c > rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
-                            else if (lastRowcol.c < rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
-                            else if (lastRowcol.c < rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
-
-                            else if (lastRowcol.c < rowcol.c && nextRowcol.c > rowcol.c || lastRowcol.c > rowcol.c && nextRowcol.c < rowcol.c || lastRowcol.r < rowcol.r && nextRowcol.r > rowcol.r || lastRowcol.r > rowcol.r && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, 0, true, false); }
-                        }
-                        else roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);
-                    }
-                }
-                r = headRowcol.r;
-                c = headRowcol.c;
-                if (!persistentState.showEditor || persistentState.showDetails) drawFace(object.id, c, r, orientation, getAdjacentTiles());
-                else {
-                    context.strokeStyle = tint(color, 1.5);
-                    context.lineWidth = tileSize * .1;
-                    roundRect(context, (c + .05) * tileSize, (r + .05) * tileSize, tileSize * .9, tileSize * .9, 0, false, true);
-                    if (object.id === activeSnakeId) {
-                        drawCircle(context, r, c, .5, "white");
-                        drawCircle(context, r, c, .25, "black");
-                    }
-                }
+                (persistentState.showDetails || !persistentState.showEditor) && themeName !== "Classic" ? drawNewSnake() : drawOriginalSnake();
                 break;
             case BLOCK:
                 drawBlock(object);
@@ -3245,6 +3159,221 @@ function render() {
         function getTile(r, c) {
             if (!isInBounds(level, r, c)) return null;
             return level.map[getLocation(level, r, c)];
+        }
+
+        function drawNewSnake() {
+            var falling = false;
+            var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
+            if (animationDisplacementRowcol.r != 0) falling = true;
+            var lastRowcol = null
+            var nextRowcol = null
+            var color = snakeColors[object.id % snakeColors.length];
+            var colorIndex = object.id % snakeColors.length;
+            var altColor = tint(color, 1.2);
+            if (snakeColors === snakeColors2) altColor = color;
+            var headRowcol;
+            var orientation = 10;
+            for (var i = 0; i < object.locations.length; i++) {
+                var animation;
+                var rowcol;
+                if (i === 0 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {  // animate head slithering forward
+                    rowcol = getRowcol(level, object.locations[i]);
+                    rowcol.r += animation[2] * (animationProgress - 1);
+                    rowcol.c += animation[3] * (animationProgress - 1);
+                } else if (i === object.locations.length) {
+                    // animated tail?
+                    if ((animation = findAnimation([SLITHER_TAIL], object.id)) != null) {
+                        // animate tail slithering to catch up
+                        rowcol = getRowcol(level, object.locations[i - 1]);
+                        rowcol.r += animation[2] * (animationProgress - 1);
+                        rowcol.c += animation[3] * (animationProgress - 1);
+                    } else {
+                        // no animated tail needed
+                        break;
+                    }
+                } else rowcol = getRowcol(level, object.locations[i]);
+
+                lastRowcol = getRowcol(level, object.locations[i - 1]); //closer to head
+                nextRowcol = getRowcol(level, object.locations[i + 1]); //closer to tail
+                var rc = rowcol;
+                var lrc = lastRowcol;
+                var nrc = nextRowcol;
+
+                if (object.dead) {    //if snake dies after moving left or right, head is positioned down
+                    rowcol.r += .5;
+                    lastRowcol.r += .5;
+                    nextRowcol.r += .5;
+                    falling = true;
+                }
+                rowcol.r += animationDisplacementRowcol.r;
+                rowcol.c += animationDisplacementRowcol.c;
+                lastRowcol.r += animationDisplacementRowcol.r;
+                lastRowcol.c += animationDisplacementRowcol.c;
+                nextRowcol.r += animationDisplacementRowcol.r;
+                nextRowcol.c += animationDisplacementRowcol.c;
+
+                var cx = rowcol.c * tileSize;
+                var cy = rowcol.r * tileSize;
+
+                if (i === 0) {
+                    context.fillStyle = color;
+                    headRowcol = rowcol;
+
+                    //determines orientation of face
+                    if (!falling) nextRowcol = getRowcol(level, object.locations[1]);
+                    if (nextRowcol.r < rowcol.r) {  //last move down
+                        roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false);  //draw head
+                        if (colorIndex === 0) orientation = 2;
+                        else if (colorIndex === 1) orientation = 6;
+                        else if (colorIndex === 2) orientation = 3;
+                        else if (colorIndex === 3) orientation = 5;
+                    }
+                    else if (nextRowcol.r > rowcol.r) {  //last move up
+                        roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false);  //draw head
+                        if (colorIndex === 0) orientation = 0;
+                        else if (colorIndex === 1) orientation = 4;
+                        else if (colorIndex === 2) orientation = 1;
+                        else if (colorIndex === 3) orientation = 7;
+                    }
+                    else if (nextRowcol.c < rowcol.c) {  //last move right
+                        roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false);  //draw head
+                        if (colorIndex === 0) orientation = 1;
+                        else if (colorIndex === 1) orientation = 5;
+                        else if (colorIndex === 2) orientation = 2;
+                        else if (colorIndex === 3) orientation = 4;
+                    }
+                    else if (nextRowcol.c > rowcol.c) {  //last move left
+                        roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false);  //draw head
+                        if (colorIndex === 0) orientation = 3;
+                        else if (colorIndex === 1) orientation = 7;
+                        else if (colorIndex === 2) orientation = 0;
+                        else if (colorIndex === 3) orientation = 6;
+                    }
+                    else {
+                        roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);  //draw head
+                        orientation = 10;
+                    }
+                } else {
+                    if (i % 2 == 0) context.fillStyle = color;
+                    else context.fillStyle = altColor;
+
+                    if (i === object.locations.length - 1) {
+                        if (lastRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false); }
+                        else if (lastRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false); }
+                        else if (lastRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false); }
+                        else if (lastRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false); }
+                    }
+                    else if (i != object.locations.length - 1 && i != object.locations.length) {
+                        if (lastRowcol.r > rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
+                        else if (lastRowcol.r > rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
+                        else if (lastRowcol.r < rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
+                        else if (lastRowcol.r < rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
+
+                        else if (lastRowcol.c > rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
+                        else if (lastRowcol.c > rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
+                        else if (lastRowcol.c < rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
+                        else if (lastRowcol.c < rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
+
+                        else if (lastRowcol.c < rowcol.c && nextRowcol.c > rowcol.c || lastRowcol.c > rowcol.c && nextRowcol.c < rowcol.c || lastRowcol.r < rowcol.r && nextRowcol.r > rowcol.r || lastRowcol.r > rowcol.r && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, 0, true, false); }
+                    }
+                    else roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);
+                }
+            }
+            r = headRowcol.r;
+            c = headRowcol.c;
+            if (!persistentState.showEditor || persistentState.showDetails) drawFace(object.id, c, r, orientation, getAdjacentTiles());
+        }
+
+        function drawOriginalSnake() {
+            var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
+            var lastRowcol = null
+            var color = snakeColors[object.id % snakeColors.length];
+            var headRowcol;
+            for (var i = 0; i <= object.locations.length; i++) {
+                var animation;
+                var rowcol;
+                if (i === 0 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {
+                    // animate head slithering forward
+                    rowcol = getRowcol(level, object.locations[i]);
+                    rowcol.r += animation[2] * (animationProgress - 1);
+                    rowcol.c += animation[3] * (animationProgress - 1);
+                } else if (i === object.locations.length) {
+                    // // animated tail?
+                    // if ((animation = findAnimation([SLITHER_TAIL], object.id)) != null) {
+                    //     // animate tail slithering to catch up
+                    //     rowcol = getRowcol(level, object.locations[i - 1]);
+                    //     rowcol.r += animation[2] * (animationProgress - 1);
+                    //     rowcol.c += animation[3] * (animationProgress - 1);
+                    // } else {
+                    //     // no animated tail needed
+                    //     break;
+                    // }
+                } else {
+                    rowcol = getRowcol(level, object.locations[i]);
+                }
+                if (object.dead) rowcol.r += 0.5;
+                rowcol.r += animationDisplacementRowcol.r;
+                rowcol.c += animationDisplacementRowcol.c;
+                if (i === 0) {
+                    // head
+                    headRowcol = rowcol;
+                    drawDiamond(rowcol.r, rowcol.c, color);
+                } else {
+                    // middle
+                    var cx = (rowcol.c + 0.5) * tileSize;
+                    var cy = (rowcol.r + 0.5) * tileSize;
+                    context.fillStyle = color;
+                    var orientation;
+                    if (lastRowcol.r < rowcol.r) {
+                        orientation = 0;
+                        context.beginPath();
+                        context.moveTo((lastRowcol.c + 0) * tileSize, (lastRowcol.r + 0.5) * tileSize);
+                        context.lineTo((lastRowcol.c + 1) * tileSize, (lastRowcol.r + 0.5) * tileSize);
+                        context.arc(cx, cy, tileSize / 2, 0, Math.PI);
+                        context.fill();
+                    } else if (lastRowcol.r > rowcol.r) {
+                        orientation = 2;
+                        context.beginPath();
+                        context.moveTo((lastRowcol.c + 1) * tileSize, (lastRowcol.r + 0.5) * tileSize);
+                        context.lineTo((lastRowcol.c + 0) * tileSize, (lastRowcol.r + 0.5) * tileSize);
+                        context.arc(cx, cy, tileSize / 2, Math.PI, 0);
+                        context.fill();
+                    } else if (lastRowcol.c < rowcol.c) {
+                        orientation = 3;
+                        context.beginPath();
+                        context.moveTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 1) * tileSize);
+                        context.lineTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 0) * tileSize);
+                        context.arc(cx, cy, tileSize / 2, 1.5 * Math.PI, 2.5 * Math.PI);
+                        context.fill();
+                    } else if (lastRowcol.c > rowcol.c) {
+                        orientation = 1;
+                        context.beginPath();
+                        context.moveTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 0) * tileSize);
+                        context.lineTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 1) * tileSize);
+                        context.arc(cx, cy, tileSize / 2, 2.5 * Math.PI, 1.5 * Math.PI);
+                        context.fill();
+                    }
+                }
+                lastRowcol = rowcol;
+            }
+            // eye
+            if (object.id === activeSnakeId) {
+                drawCircle(context, headRowcol.r, headRowcol.c, 0.5, "#fff");
+                drawCircle(context, headRowcol.r, headRowcol.c, 0.2, "#000");
+            }
+
+            function drawDiamond(r, c, fillStyle) {
+                var x = c * tileSize;
+                var y = r * tileSize;
+                context.fillStyle = fillStyle;
+                context.beginPath();
+                context.moveTo(x + tileSize / 2, y);
+                context.lineTo(x + tileSize, y + tileSize / 2);
+                context.lineTo(x + tileSize / 2, y + tileSize);
+                context.lineTo(x, y + tileSize / 2);
+                context.lineTo(x + tileSize / 2, y);
+                context.fill();
+            }
         }
     }
 
@@ -4072,7 +4201,7 @@ function drawCurves2(context, r, c, isOccupied, base) {
 function drawWall(context, r, c, adjacentTiles, rng, grass) {
     drawBase(context, r, c, isWall, rng, wall[0]);
     if (!persistentState.showEditor || persistentState.showDetails) drawTileOutlines(context, r, c, isWall, .2, wall[3], grass);
-    if (!persistentState.showEditor || persistentState.showDetails && wall[3] && !wall[6]) drawBushes(context, r, c, isWall);
+    if ((!persistentState.showEditor || persistentState.showDetails) && wall[3] && !wall[6]) drawBushes(context, r, c, isWall);
 
     function isWall(dc, dr) {
         var tileCode = adjacentTiles[1 + dr][1 + dc];
