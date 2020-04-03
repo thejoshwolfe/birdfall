@@ -5478,7 +5478,6 @@ function loadFromLocationHash() {
         try {
             if (hashPairs[1][0] !== "replay") throw new Error("unexpected hash pair: " + hashPairs[1][0]);
             parseAndLoadReplay(hashPairs[1][1]);
-                        fitCanvas();
         } catch (e) {
             alert(e);
             return false;
