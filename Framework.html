@@ -28,7 +28,7 @@
             </td>
             <td id="editorPane">
                 <table id="controls">
-                    <tr><td><button id="saveLevelButton" title="Ctrl + S - saves the current state to the URL bar of your browser; clears unmove/re-move history">Save Level</button></td></tr>
+                    <tr><td><button id="saveLevelButton" title="Ctrl + S - saves the current state to the URL bar of your browser; clears unmove/re-move history">Save Changes</button></td></tr>
                     <tr><td>
                         <button id="uneditButton" title="Ctrl + Z" disabled>Unedit</button>
                         <span id="editsSpan">0+0</span>
@@ -60,7 +60,6 @@
 
                     <tr class="spacer standard"><td></td></tr>
                     <tr class="standard header"><td>Standard Elements</td></tr>
-                    <tr class="standard header" style="font-family: cursive;"><td>---------------------------</td></tr>
 
                     <tr class="standard"><td class="buttonHeader">Static</td></tr>
                     <tr class="hotkeySpacer2 standard"><td></td></tr>
@@ -83,7 +82,6 @@
 
                     <tr class="spacer experimental"><td></td></tr>
                     <tr class="experimental header"><td>Enhanced Elements</td></tr>
-                    <tr class="experimental header" style="font-family: cursive;"><td>---------------------------</td></tr>
 
                     <tr class="experimental"><td class="buttonHeader">Splocks</td></tr>
                     <tr class="hotkeySpacer2 experimental"><td></td></tr>
@@ -179,9 +177,9 @@
         <div class="bottomBlockBox">
             <div class="optionsHeaders">Progress Tracking</div><br>
             <div id="progressButtons">
-                <button id="unmoveButton" class="bottomButton" title="Backspace&#013;Z&#013;Q&#013;&#013;Unmove snake" disabled>&#10143;</button>
+                <div id="unmoveButton" class="progressButton" title="Backspace&#013;Z&#013;Q&#013;&#013;Unmove snake" disabled>&#10148;</div>
                 <span id="movesSpan" class="bottomButton">0 || 0</span>
-                <button id="removeButton" class="bottomButton" title="Y&#013;Shift + Backspace&#013;Shift + Z&#013;Shift + Q&#013;&#013;Re-move snake" disabled>&#10143;</button>
+                <div id="removeButton" class="progressButton" title="Y&#013;Shift + Backspace&#013;Shift + Z&#013;Shift + Q&#013;&#013;Re-move snake" disabled>&#10148;</div>
             </div>
 
             <button id="restartButton" class="bottomButton" title="R - Unmove completely&#013;&#013;Shift + R - Re-move completely">Restart</button>
