@@ -67,6 +67,12 @@ var paradoxes = [];
 var enhanced = false;
 var replayAnimationStatus = document.getElementById("replayAnimationsSlider").checked;
 
+var cursor = 0;
+var cursorOffset = 0;
+var replayString = false;
+var replayLength = 0;
+var switchSnakesArray = [];
+
 function loadLevel(newLevel) {
     level = newLevel;
     currentSerializedLevel = compressSerialization(stringifyLevel(newLevel));
@@ -169,15 +175,15 @@ var testLevel_v0_converted = "HyRr4JK1&5&5?0005*4024005*001000/b0?7&6&15&23/s3?1
 
 function parseLevel(string) {
     // magic number
-    var cursor = 0;
+    var localCursor = 0;
     skipWhitespace();
-    var versionTag = string.substr(cursor, magicNumber.length);
+    var versionTag = string.substr(localCursor, magicNumber.length);
     switch (versionTag) {
         case magicNumber_v0:
         case magicNumber: break;
         default: throw new Error("not a snakefall level");
     }
-    cursor += magicNumber.length;
+    localCursor += magicNumber.length;
     consumeKeyword("&");
 
     var level = {
@@ -219,7 +225,7 @@ function parseLevel(string) {
 
     // objects
     skipWhitespace();
-    while (cursor < string.length) {
+    while (localCursor < string.length) {
         var object = {
             type: "?",
             id: -1,
@@ -229,12 +235,12 @@ function parseLevel(string) {
         };
 
         // type
-        object.type = string[cursor];
+        object.type = string[localCursor];
         var locationsLimit;
         if (object.type === SNAKE || object.type === BLOCK) locationsLimit = -1;
         else if (object.type === FRUIT || object.type === POISON_FRUIT) locationsLimit = 1;
         else throw parserError("expected object type code");
-        cursor += 1;
+        localCursor += 1;
 
         // id
         object.id = readInt();
@@ -282,34 +288,34 @@ function parseLevel(string) {
     return level;
 
     function skipWhitespace() {
-        while (" \n\t\r".indexOf(string[cursor]) !== -1) {
-            cursor += 1;
+        while (" \n\t\r".indexOf(string[localCursor]) !== -1) {
+            localCursor += 1;
         }
     }
     function consumeKeyword(keyword) {
         skipWhitespace();
-        if (string.indexOf(keyword, cursor) !== cursor) throw parserError("expected " + JSON.stringify(keyword));
-        cursor += 1;
+        if (string.indexOf(keyword, localCursor) !== localCursor) throw parserError("expected " + JSON.stringify(keyword));
+        localCursor += 1;
     }
     function readInt() {
         skipWhitespace();
-        for (var i = cursor; i < string.length; i++) {
+        for (var i = localCursor; i < string.length; i++) {
             if ("0123456789".indexOf(string[i]) === -1) break;
         }
-        var substring = string.substring(cursor, i);
+        var substring = string.substring(localCursor, i);
         if (substring.length === 0) throw parserError("expected int");
-        cursor = i;
+        localCursor = i;
         return parseInt(substring, 10);
     }
     function readRun() {
         consumeKeyword("?");
-        var endIndex = string.indexOf("/", cursor);
-        var substring = string.substring(cursor, endIndex);
-        cursor = endIndex + 1;
+        var endIndex = string.indexOf("/", localCursor);
+        var substring = string.substring(localCursor, endIndex);
+        localCursor = endIndex + 1;
         return substring;
     }
     function parserError(message) {
-        return new Error("parse error at position " + cursor + ": " + message);
+        return new Error("parse error at position " + localCursor + ": " + message);
     }
 }
 
@@ -416,26 +422,24 @@ function stringifyReplay() {
     }
     return output;
 }
-function parseAndLoadReplay(string) {
-    string = decompressSerialization(string);
+function advance() {
     var expectedPrefix = replayMagicNumber + "&";
-    if (string.substring(0, expectedPrefix.length) !== expectedPrefix) throw new Error("unrecognized replay string");
-    var cursor = expectedPrefix.length;
+    if (cursor < expectedPrefix.length) cursor = expectedPrefix.length;
 
-    // the starting snakeid is 0, which may not exist, but we only validate it when doing a move.
-    activeSnakeId = 0;
-    while (cursor < string.length) {
+    while (cursor < replayString.length) {
         var snakeIdStr = "";
-        var c = string.charAt(cursor);
+        var c = replayString.charAt(cursor);
         cursor += 1;
         while ('0' <= c && c <= '9') {
+            if (!switchSnakesArray.includes(cursor)) switchSnakesArray.push(cursor);
             snakeIdStr += c;
-            if (cursor >= string.length) throw new Error("replay string has unexpected end of input");
-            c = string.charAt(cursor);
+            if (cursor >= replayString.length) throw new Error("replay string has unexpected end of input");
+            c = replayString.charAt(cursor);
             cursor += 1;
         }
         if (snakeIdStr.length > 0) {
             activeSnakeId = parseInt(snakeIdStr);
+            cursorOffset++;
             // don't just validate when switching snakes, but on every move.
         }
 
@@ -446,17 +450,47 @@ function parseAndLoadReplay(string) {
             throw new Error("invalid snake id: " + activeSnakeId);
         }
         switch (c) {
-            case 'l': move(0, -1); break;
-            case 'u': move(-1, 0); break;
-            case 'r': move(0, 1); break;
-            case 'd': move(1, 0); break;
+            case 'l': move(0, -1, replayAnimationStatus); break;
+            case 'u': move(-1, 0, replayAnimationStatus); break;
+            case 'r': move(0, 1, replayAnimationStatus); break;
+            case 'd': move(1, 0, replayAnimationStatus); break;
             default: throw new Error("replay string has invalid direction: " + c);
         }
+        break;
+    }
+    var pre = cursor - expectedPrefix.length - cursorOffset;
+    var post = replayLength - cursor + expectedPrefix.length + cursorOffset;
+    var movesText = pre + "\xa0\xa0✾\xa0\xa0" + post;
+    document.getElementById("movesSpan").textContent = movesText;
+}
+function parseAndLoadReplay(string) {
+    replayString = decompressSerialization(string);
+    var expectedPrefix = replayMagicNumber + "&";
+    if (replayString.substring(0, expectedPrefix.length) !== expectedPrefix) throw new Error("unrecognized replay string");
+    cursor = expectedPrefix.length;
+    activeSnakeId = 0;
+
+    while (cursor < replayString.length) {
+        var c = replayString.charAt(cursor);
+        switch (c) {
+            case 'l':
+            case 'u':
+            case 'r':
+            case 'd': replayLength++; break;
+        }
+        cursor++;
     }
 
+    var movesText = "0\xa0\xa0✾\xa0\xa0" + replayLength;
+    document.getElementById("movesSpan").textContent = movesText;
+
+    cursor = expectedPrefix.length;
+
+    // the starting snakeid is 0, which may not exist, but we only validate it when doing a move.
+
     // now that the replay was executed successfully, undo it all so that it's available in the redo buffer.
-    reset(unmoveStuff);
-    document.getElementById("removeButton").classList.add("click-me");
+    // reset(unmoveStuff);
+    // document.getElementById("removeButton").classList.add("click-me");
 }
 
 var currentSerializedLevel;
@@ -543,16 +577,16 @@ document.addEventListener("keydown", function (event) {
     );
     switch (event.keyCode) {
         case 37: // left
-            if (modifierMask === 0) { move(0, -1); break; }
+            if (modifierMask === 0) { replayString = false; move(0, -1); break; }
             return;
         case 38: // up
-            if (modifierMask === 0) { move(-1, 0); break; }
+            if (modifierMask === 0) { replayString = false; move(-1, 0); break; }
             return;
         case 39: // right
-            if (modifierMask === 0) { move(0, 1); break; }
+            if (modifierMask === 0) { replayString = false; move(0, 1); break; }
             return;
         case 40: // down
-            if (modifierMask === 0) { move(1, 0); break; }
+            if (modifierMask === 0) { replayString = false; move(1, 0); break; }
             return;
         case 8:  // backspace
             if (modifierMask === 0) { undo(unmoveStuff); break; }
@@ -591,12 +625,14 @@ document.addEventListener("keydown", function (event) {
             return;
         case "Z".charCodeAt(0):
             if (modifierMask === 0) { undo(unmoveStuff); break; }
-            if (modifierMask === SHIFT) { redo(unmoveStuff); break; }
+            if (modifierMask === SHIFT && !replayString) { redo(unmoveStuff); break; }
+            if (modifierMask === SHIFT && replayString) { advance(); break; }
             if (persistentState.showEditor && modifierMask === CTRL) { undo(uneditStuff); break; }
             if (persistentState.showEditor && modifierMask === CTRL | SHIFT) { redo(uneditStuff); break; }
             return;
         case "Y".charCodeAt(0):
-            if (modifierMask === 0) { redo(unmoveStuff); break; }
+            if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
+            if (modifierMask === 0 && replayString) { advance(); break; }
             if (persistentState.showEditor && modifierMask === CTRL) { redo(uneditStuff); break; }
             return;
         case "R".charCodeAt(0):
@@ -611,7 +647,7 @@ document.addEventListener("keydown", function (event) {
             }
             return;
         case "A".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { move(0, -1); break; }
+            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(0, -1); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("select"); break; }
             if (persistentState.showEditor && modifierMask === CTRL) { selectAll(); break; }
             return;
@@ -623,12 +659,12 @@ document.addEventListener("keydown", function (event) {
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPACE); break; }
             return;
         case "W".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
+            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(WALL); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(WATER); break; }
             return;
         case "S".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { move(1, 0); break; }
+            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(1, 0); break; }
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPIKE); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(SNAKE); break; }
             if (persistentState.showEditor && modifierMask === CTRL) { saveLevel(); break; }
@@ -646,21 +682,21 @@ document.addEventListener("keydown", function (event) {
             if (!persistentState.showEditor && modifierMask === 0) { fitCanvas(); break; }
             return;
         case "D".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { move(0, 1); break; }
+            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(0, 1); break; }
             return;
         case "B".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(BLOCK); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(BUBBLE); break; }
             return;
         case "P".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
+            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PORTAL); break; }
             return;
         case "U".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
+            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
             return;
         case "L".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { move(-1, 0); break; }
+            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(LAVA); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(WATER); break; }
             return;
@@ -687,9 +723,11 @@ document.addEventListener("keydown", function (event) {
         case "M".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TRELLIS); break; }
+        case "J".charCodeAt(0):
+            if (modifierMask === 0) { advance(); break; }
         // case "K".charCodeAt(0):
         //     if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK) { splockActive = true; break; }
-        case 192:
+        case 192:   //grave accent
             if (modifierMask === 0) { fitCanvas(); break; }
         case 191:
             if (modifierMask === 0) { if (multiDiagrams) { cycle = true; cycleID++; render(); } break; }
@@ -751,18 +789,22 @@ function switchSnakes(delta) {
     activeSnakeId = snakes[0].id;
 }
 document.getElementById("arrowUp").addEventListener("click", function () {
+    replayString = false;
     move(-1, 0);
     return;
 });
 document.getElementById("arrowDown").addEventListener("click", function () {
+    replayString = false;
     move(1, 0);
     return;
 });
 document.getElementById("arrowLeft").addEventListener("click", function () {
+    replayString = false;
     move(0, -1);
     return;
 });
 document.getElementById("arrowRight").addEventListener("click", function () {
+    replayString = false;
     move(0, 1);
     return;
 });
@@ -1712,6 +1754,19 @@ function reduceChangeLog(changeLog) {
     }
 }
 function undo(undoStuff) {
+    if (replayString) {
+        var expectedPrefix = replayMagicNumber + "&";
+        if (cursor > expectedPrefix.length) cursor--;
+        var c = replayString.charAt(cursor - 1);
+        if ('0' <= c && c <= '9') {
+            var previousSnake = Math.max.apply(Math, switchSnakesArray.filter(function (x) { return x < cursor }));
+            var snakeIdStr = replayString.charAt(previousSnake - 1);
+            activeSnakeId = parseInt(snakeIdStr);
+            cursor--;
+            cursorOffset--;
+        }
+    }
+
     postPortalSnakeOutline = [];
     portalConflicts = [];
     portalOutOfBounds = false;
@@ -1723,6 +1778,7 @@ function undo(undoStuff) {
     undoStuffChanged(undoStuff);
 }
 function reset(undoStuff) {
+    cursor = 0;
     portalFailure = false;
     animationQueue = [];
     animationQueueCursor = 0;
@@ -1809,7 +1865,7 @@ function undoChanges(changes, changeLog) {
     }
 
     var lastChange = changes[changes.length - 1];
-    if (replayAnimationStatus && lastChange[0] === "i") {
+    if (lastChange[0] === "i") {
         // replay animation
         animationQueue = lastChange[4];
         animationQueueCursor = 0;
@@ -1940,10 +1996,18 @@ function describe(arg1, arg2) {
 }
 
 function undoStuffChanged(undoStuff) {
-    var movesText = undoStuff.undoStack.length + "\xa0\xa0✾\xa0\xa0" + undoStuff.redoStack.length;
-    document.getElementById(undoStuff.spanId).textContent = movesText;
-    document.getElementById(undoStuff.undoButtonId).disabled = undoStuff.undoStack.length === 0;
-    document.getElementById(undoStuff.redoButtonId).disabled = undoStuff.redoStack.length === 0;
+    if (replayString) {
+        var expectedPrefix = replayMagicNumber + "&";
+        var pre = cursor - expectedPrefix.length - cursorOffset;
+        var post = replayLength - cursor + expectedPrefix.length + cursorOffset;
+        var movesText = pre + "\xa0\xa0✾\xa0\xa0" + post;
+        document.getElementById("movesSpan").textContent = movesText;
+    } else {
+        var movesText = undoStuff.undoStack.length + "\xa0\xa0✾\xa0\xa0" + undoStuff.redoStack.length;
+        document.getElementById(undoStuff.spanId).textContent = movesText;
+        document.getElementById(undoStuff.undoButtonId).disabled = undoStuff.undoStack.length === 0;
+        document.getElementById(undoStuff.redoButtonId).disabled = undoStuff.redoStack.length === 0;
+    }
 
     // render paradox display
     var uniqueParadoxes = [];
@@ -2151,11 +2215,10 @@ function showEditorChanged() {
         document.getElementById("hideHotkeyButton").disabled = false;
         document.getElementById("showDetailsButton").disabled = false;
     }
-
     render();
 }
 
-function move(dr, dc) {
+function move(dr, dc, doAnimations) {
     // var a = getBlocks();
     // a[0].splocks = [];
     document.getElementById("cycleDiv").innerHTML = "";
@@ -2223,7 +2286,8 @@ function move(dr, dc) {
     // slither forward
     var activeSnakeOldState = serializeObjectState(activeSnake);
     var size1 = activeSnake.locations.length === 1;
-    var speed = 70;
+    if (doAnimations == undefined) doAnimations = true;
+    var speed = doAnimations ? 70 : 1;
     var slitherAnimations = [
         speed,
         [
@@ -2831,7 +2895,7 @@ function render() {
         var link = location.href.substring(0, location.href.length - location.hash.length);
         link += "#level=" + compressSerialization(serialization);
         document.getElementById("shareLinkTextbox").value = link;
-        document.getElementById("link2Textbox").value = "#level=" + compressSerialization(serialization) + "#replay=" + compressSerialization(stringifyReplay());
+        document.getElementById("link2Textbox").value = window.location.href.substring(46);
     }
 
     // throw this in there somewhere
