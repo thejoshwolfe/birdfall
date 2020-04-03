@@ -56,11 +56,6 @@ button:active:enabled {
     color: black;
 }
 
-#saveLevelButton {
-    font-size: 12pt;
-    margin-bottom: 2px;
-}
-
 @keyframes gradient {
     0% {
         background-position: 0% 50%
@@ -173,7 +168,7 @@ button:active:enabled {
 }
 
 .header {
-    font-style: italic;
+    font-weight: 900;
 }
 
 #selectHolder {
@@ -472,22 +467,22 @@ canvas {
 }
 
 #unmoveButton {
-    font-size: 20pt;
-    height: 16px;
-    line-height: 10pt;
     transform: scale(-1, 1);
-    display: table-cell;
-    vertical-align: top;
-    margin-right: 10px;
 }
 
-#removeButton {
-    font-size: 20pt;
-    height: 16px;
+#removeButton {}
+
+.progressButton {
+    font-size: 10pt;
     line-height: 10pt;
     display: table-cell;
     vertical-align: top;
-    margin-left: 10px;
+    padding: 1px 0 0 10px;
+}
+
+.progressButton:hover {
+    cursor: pointer;
+    color: slateblue;
 }
 
 #movesSpan {
