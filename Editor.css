@@ -84,7 +84,7 @@ button:active:enabled {
 
 #returnButton:hover {
     background-image: linear-gradient(45deg, slateblue, slateblue, slateblue, slateblue, #fdc122, #dc6a3f, #d55945, #dc6a3f, #fdc122);
-    background-size: 800% 800%;
+    background-size: 500% 500%;
     animation: gradient 4s ease infinite;
 }
 
