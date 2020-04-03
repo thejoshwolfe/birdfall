@@ -14,8 +14,9 @@
 </head>
 <body>
     <table id="levelTable">
-        <tr>
-            <td>
+        <tr id="levelRow">
+            <td><div id="emptyBox"></div></td>
+            <td id="canvasContainerTD">
                 <div id="canvasContainer">
                     <canvas id="canvas1" width=750 height=600></canvas>
                     <canvas id="canvas2" width=750 height=600></canvas>
@@ -27,15 +28,12 @@
             </td>
             <td id="editorPane">
                 <table id="controls">
-                    <tr class="spacer"><td></td></tr>
-                    <tr><td><a id="returnButton" href="https://jmdiamond3.github.io/Snakefall-Redesign/">&#x2190;Snakefall Redesign</a></td></tr>
-                    <tr class="spacer"><td></td></tr>
                     <tr><td><button id="saveLevelButton" title="Ctrl + S - saves the current state to the URL bar of your browser; clears unmove/re-move history">Save Level</button></td></tr>
                     <tr><td>
-                        <button class="editorButton" id="uneditButton" title="Ctrl + Z" disabled>Unedit &lt;&lt;</button>
-                        <button class="editorButton" id="reeditButton" title="Ctrl + Shift + Z, Ctrl + Y" disabled>&gt;&gt; Re-edit</button>
+                        <button id="uneditButton" title="Ctrl + Z" disabled>Unedit</button>
+                        <span id="editsSpan">0+0</span>
+                        <button id="reeditButton" title="Ctrl + Shift + Z, Ctrl + Y" disabled>Reëdit</button>
                     </td></tr>
-                    <tr><td class="controlsHeader" id="editText">Edits: <span id="editsSpan">0+0</span></td></tr>
 
                     <tr class="spacer"><td></td></tr>
                     <tr><td class="buttonHeader controlsHeader">Controls</td></tr>
@@ -150,12 +148,18 @@
     <div id="paradoxDiv"></div>
     <div id="cycleDiv"></div>
     <div id="bottomBlock">
-        <div id="levelTypeContainer">
-            <div id="levelType">Standard Level</div>
-            <div id="levelTypeSpan">contains only original Snakebird elements</div>
+        <div class="bottomBlockBox">
+            <div id="levelTypeContainer">
+                <div id="returnButton"><a href="https://jmdiamond3.github.io/Snakefall-Redesign/"><div id="returnArrow"></div>Snakefall<br>Redesign</a></div>
+                <div style="vertical-align: middle;">
+                    <div id="levelType">Standard Level</div>
+                    <div id="levelTypeSpan">contains only original Snakebird elements</div>
+                </div>
         </div>
-        <div id="bigButtonButton">Large Buttons</div>
-        <div id="additions">*</div><br>
+            <div id="additions">*</div>
+
+        </div>
+        <div class="separator"></div>
         <div class="bottomBlockBox">
             <div class="optionsHeaders">Game Controls</div><br>
             <div id="keyboardInstructions">use the arrows<span id="wasdSpan"> or WASD</span> keys on your keyboard to move, or use the buttons below</div>
@@ -171,7 +175,7 @@
                 </div>
             </div>
         </div>
-        <div id="separator"></div>
+        <div class="separator"></div>
         <div class="bottomBlockBox">
             <div class="optionsHeaders">Progress Tracking</div><br>
             <div id="progressButtons">
@@ -191,15 +195,16 @@
             </div><br>
             <button id="checkSolutionButton" class="bottomButton" title="Saves a Solution Verification URL to your clipboard." disabled>Copy Verification Link</button>
         </div>
-        <div id="separator"></div>
+        <div class="separator"></div>
         <div class="bottomBlockBox">
             <div class="optionsHeaders">Options</div><br>
-            <div id="levelSize" class="bottomButton"><div id="fitButton" title="` (Grave Accent, located under Escape Key)">FIT</div><button id="minus" class="plusMinus bottomButton" title="Decrease game size">-</button><div id="levelSizeText" class="bottomButton" title="Revert to default game size">Level Size</div><button id="plus" class="plusMinus bottomButton" title="Increase game size">+</button></div>
+            <div id="levelSize" class="bottomButton"><div id="fitButton" title="` (Grave Accent, located under Escape Key)">FIT</div><button id="minus" class="plusMinus bottomButton" title="Decrease game size">—</button><div id="levelSizeText" class="bottomButton" title="Revert to default game size">Level Size</div><button id="plus" class="plusMinus bottomButton" title="Increase game size">+</button></div>
             <button id="themeButton" class="bottomButton" title="Return">Theme | <b>Spring</b></button>
             <button id="showGridButton" class="bottomButton" title="G">Show Grid</button><br>            
             <button id="showHideEditor" class="bottomButton" title="\">Show Editor Stuff</button>
             <button id="hideHotkeyButton" class="bottomButton" title="Shift + H">Hide Hotkeys</button>
-            <button id="showDetailsButton" class="bottomButton" title="H">Show Details</button>
+            <button id="showDetailsButton" class="bottomButton" title="H">Show Details</button><br><br>
+            <button id="bigButtonButton" class="bottomButton">Large Buttons</button>
         </div>
     </div>
 
