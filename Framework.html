@@ -196,48 +196,34 @@
         <div class="separator"></div>
         <div class="bottomBlockBox">
             <div class="optionsHeaders">Options</div><br>
+            <div id="levelSize"><div id="fitButton" title="` (Grave Accent, located under Escape Key)">FIT</div>
+            <button id="minus" class="plusMinus" title="Decrease game size">—</button>
+            <div id="levelSizeText" title="Revert to default game size">Level Size</div>
+            <button id="plus" class="plusMinus" title="Increase game size">+</button></div>
 
-            <div id="optionsBlock">
-                <div style="float:left; margin-right: 10px;">
-                    <div class="optionsSubOptionsContainer">
-                        <div class="optionsSubOptions">Canvas Options</div>
-                        <button id="themeButton" class="bottomButton" title="Return">Theme | <b>Spring</b></button>
-                        <button id="showGridButton" class="bottomButton" title="G">Show Grid</button>
-                    </div>
-
-                    <div class="optionsSubOptionsContainer">
-                        <div class="optionsSubOptions">Editor Options</div>
-                        <button id="showHideEditor" class="bottomButton" title="\">Show Editor Stuff</button>
-                        <button id="hideHotkeyButton" class="bottomButton" title="Shift + H">Hide Hotkeys</button>
-                        <button id="showDetailsButton" class="bottomButton" title="H">Show Details</button>
-                    </div>
+            <div class="sliderStack">
+                <div class="sliderContainer">
+                    <label class="sliderLabel" style="float:left">Animations</label>
+                    <label class="switch">
+                        <input id="animationSlider" type="checkbox">
+                        <span class="slider"></span>
+                    </label>
                 </div>
-                <div style="float:right;"">
-                    <div id="levelSize"><div id="fitButton" title="` (Grave Accent, located under Escape Key)">FIT</div>
-                    <button id="minus" class="plusMinus" title="Decrease game size">—</button>
-                    <div id="levelSizeText" title="Revert to default game size">Level Size</div>
-                    <button id="plus" class="plusMinus" title="Increase game size">+</button></div>
-
-                    <div class="sliderStack">
-                        <div class="sliderContainer">
-                            <label class="sliderLabel" style="float:left">Animations</label>
-                            <label class="switch">
-                                <input id="animationSlider" type="checkbox">
-                                <span class="slider"></span>
-                            </label>
-                        </div><br>
-                        <div class="sliderContainer" style="margin-top: 5px;">
-                            <label class="sliderLabel">Off When Editing</label>
-                            <label class="switch">
-                                <input id="defaultSlider" type="checkbox">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
+                <div class="sliderContainer" style="float:left; margin-top: 5px;">
+                    <label class="sliderLabel">Off When Editing</label>
+                    <label class="switch">
+                        <input id="defaultSlider" type="checkbox">
+                        <span class="slider"></span>
+                    </label>
                 </div>
-            </div>
+            </div><br>
+
+            <button id="themeButton" class="bottomButton" title="Return">Theme | <b>Spring</b></button>
+            <button id="showGridButton" class="bottomButton" title="G">Show Grid</button><br>        
+            <button id="showHideEditor" class="bottomButton" title="\">Show Editor Stuff</button>
+            <button id="hideHotkeyButton" class="bottomButton" title="Shift + H">Hide Hotkeys</button>
+            <button id="showDetailsButton" class="bottomButton" title="H">Show Details</button>
             <button id="bigButtonButton">Large Buttons</button>
-        </div>
     </div>
 
     <br><br>
