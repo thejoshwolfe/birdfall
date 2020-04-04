@@ -1101,7 +1101,7 @@ function toggleTheme() {
     blockSupportRenderCache = [];
     localStorage.setItem("cachedTheme", themeCounter);
     document.getElementById("themeButton").innerHTML = "Theme: <b>" + themes[themeCounter][0] + "</b>";
-    location.reload();
+    drawStaticCanvases(getLevel());
 }
 function toggleGravity() {
     isGravityEnabled = !isGravityEnabled;
@@ -3093,7 +3093,7 @@ function render() {
 
         // banners
         if (countSnakes() === 0 && exitExists) {
-            context.fillStyle = "rgba(255,255,255,.5)";
+            context.fillStyle = "rgba(0,0,0,.3)";
             context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
 
             context.fillStyle = textStyle[2];
@@ -3214,14 +3214,14 @@ function render() {
         return 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
     }
 
-    // function hexToRgb(hex) {
-    //     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    //     return result ? {
-    //         r: parseInt(result[1], 16),
-    //         g: parseInt(result[2], 16),
-    //         b: parseInt(result[3], 16)
-    //     } : null;
-    // }
+    function hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    }
 
     // function hslToRgb(h, s, l) {
     //     var r, g, b;
