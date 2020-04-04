@@ -2926,7 +2926,7 @@ function render() {
         var link = location.href.substring(0, location.href.length - location.hash.length);
         link += "#level=" + compressSerialization(serialization);
         document.getElementById("shareLinkTextbox").value = link;
-        document.getElementById("link2Textbox").value = window.location.href.substring(46);
+        document.getElementById("link2Textbox").value = "#" + window.location.href.split("#")[1];
     }
 
     // throw this in there somewhere
