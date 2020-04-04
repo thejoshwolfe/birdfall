@@ -164,6 +164,7 @@ button:active:enabled {
 #controls {
     background-color: aliceblue;
     width: 200px;
+    margin: 0 2px 0 2px;
     border: 2px solid black;
     border-radius: 20px;
     overflow: hidden;
