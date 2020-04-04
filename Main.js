@@ -485,6 +485,7 @@ function parseAndLoadReplay(string) {
     if (replayString.substring(0, expectedPrefix.length) !== expectedPrefix) throw new Error("unrecognized replay string");
     cursor = expectedPrefix.length;
     activeSnakeId = 0;
+    replayLength = 0;
 
     while (cursor < replayString.length) {
         var c = replayString.charAt(cursor);
