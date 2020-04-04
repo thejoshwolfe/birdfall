@@ -3092,7 +3092,7 @@ function render() {
 
         // banners
         if (countSnakes() === 0 && exitExists) {
-            context.fillStyle = "rgba(0,0,0,.3)";
+            context.fillStyle = "rgba(0,0,0,.5)";
             context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
 
             context.fillStyle = textStyle[2];
