@@ -774,6 +774,7 @@ function changeCanvasSize(delta) {
     else tileSize = 34;
     borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
+    blockSupportRenderCache = {};
 
     drawStaticCanvases(getLevel());
     resizeCanvasContainer();
@@ -902,6 +903,7 @@ function fitCanvas() {
     tileSize = Math.round(Math.min(maxW, maxH) * .67);
     borderRadius = tileSize / borderRadiusFactor;
     // textStyle[0] = tileSize * 5;
+    blockSupportRenderCache = {};
     drawStaticCanvases(getLevel());
     render();
     // location.reload();  //without this, tiles appear to have borders (comment added before static canvases added)
