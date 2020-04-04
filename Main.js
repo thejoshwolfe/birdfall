@@ -26,15 +26,16 @@ var PLATFORM = "P".charCodeAt(0);
 var TRELLIS = "p".charCodeAt(0);
 var ONEWAYWALLU = "u".charCodeAt(0);
 var ONEWAYWALLD = "d".charCodeAt(0);
-var TURNSTILEL = "l".charCodeAt(0);
-var TURNSTILER = "r".charCodeAt(0);
+var ONEWAYWALLL = "l".charCodeAt(0);
+var ONEWAYWALLR = "r".charCodeAt(0);
 var CLOSEDLIFT = "c".charCodeAt(0);
 var OPENLIFT = "o".charCodeAt(0);
 var CLOUD = "C".charCodeAt(0);
 var BUBBLE = "b".charCodeAt(0);
 var LAVA = "v".charCodeAt(0);
 var WATER = "w".charCodeAt(0);
-var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, TRELLIS, ONEWAYWALLU, ONEWAYWALLD, TURNSTILEL, TURNSTILER, CLOSEDLIFT, OPENLIFT, CLOUD, BUBBLE, LAVA, WATER];
+var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, TRELLIS, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, CLOSEDLIFT, OPENLIFT, CLOUD, BUBBLE, LAVA, WATER];
+var OWWCounter = 0;
 
 // object types
 var SNAKE = "s";
@@ -235,7 +236,7 @@ function parseLevel(string) {
             tileCode = SPACE;
         }
         if (validTileCodes.indexOf(tileCode) === -1) throw parserError("invalid tilecode: " + JSON.stringify(mapData[i]));
-        if (tileCode === PLATFORM || tileCode === TRELLIS || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === TURNSTILEL || tileCode === TURNSTILER || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
+        if (tileCode === PLATFORM || tileCode === TRELLIS || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
         level.map.push(tileCode);
     }
 
@@ -729,14 +730,11 @@ document.addEventListener("keydown", function (event) {
         case "V".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("paste"); break; }
         case "H".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === 0) { toggleShowDetails(); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { toggleHotkeys(); break; }
+            if (persistentState.showEditor && modifierMask === 0) { toggleHotkeys(); break; }
         case "T".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(TURNSTILEL); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TURNSTILER); break; }
+            if (modifierMask === 0) { toggleTheme(); break; }
         case "O".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(ONEWAYWALLU); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(ONEWAYWALLD); break; }
+            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode([ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]); break; }
         case "M".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
             if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TRELLIS); break; }
@@ -748,8 +746,7 @@ document.addEventListener("keydown", function (event) {
             if (modifierMask === 0) { fitCanvas(); break; }
         case 191:
             if (modifierMask === 0) { if (multiDiagrams) { cycle = true; cycleID++; render(); } break; }
-        case 13: // return
-            if (modifierMask === 0) { toggleTheme(); break; }
+        // case 13: // return
         case 32: // spacebar
         case 9: // tab
             if (modifierMask === 0) { switchSnakes(1); break; }
@@ -890,9 +887,6 @@ document.getElementById("removeButton").addEventListener("click", function () {
 document.getElementById("showHideEditor").addEventListener("click", function () {
     toggleShowEditor();
 });
-document.getElementById("showDetailsButton").addEventListener("click", function () {
-    toggleShowDetails();
-});
 document.getElementById("animationSlider").addEventListener("click", function () {
     animationsOn = document.getElementById("animationSlider").checked;
     localStorage.setItem("cachedAO", animationsOn);
@@ -965,11 +959,6 @@ function toggleEditorLocation(cached) {
     newRow.appendChild(td1);
     newRow.appendChild(canvasContainerTDClone);
     newRow.appendChild(td3);
-}
-function toggleShowDetails() {
-    persistentState.showDetails = !persistentState.showDetails;
-    savePersistentState();
-    render();
 }
 function toggleButtonSize() {
     persistentState.bigButton = !persistentState.bigButton;
@@ -1064,10 +1053,7 @@ var paintButtonIdAndTileCodes = [
     ["paintPortalButton", PORTAL],
     ["paintPlatformButton", PLATFORM],
     ["paintTrellisButton", TRELLIS],
-    ["paintOneWayWallUButton", ONEWAYWALLU],
-    ["paintOneWayWallDButton", ONEWAYWALLD],
-    ["paintTurnstileLButton", TURNSTILEL],
-    ["paintTurnstileRButton", TURNSTILER],
+    ["paintOneWayWallButton", [ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]],
     ["paintClosedLiftButton", CLOSEDLIFT],
     ["paintOpenLiftButton", OPENLIFT],
     ["paintCloudButton", CLOUD],
@@ -1312,6 +1298,11 @@ function setPaintBrushTileCode(tileCode) {
             // new block id
             paintBrushBlockId = null;
         }
+    } else if (Array.isArray(tileCode)) {
+        if (paintBrushTileCode === tileCode[OWWCounter]) {
+            OWWCounter++;
+            if (OWWCounter > 3) OWWCounter = 0;
+        }
     } else if (tileCode == null) {
         // escape
         if (paintBrushTileCode === BLOCK && paintBrushBlockId != null) {
@@ -1320,7 +1311,7 @@ function setPaintBrushTileCode(tileCode) {
             paintBrushBlockId = null;
         }
     }
-    paintBrushTileCode = tileCode;
+    paintBrushTileCode = Array.isArray(tileCode) ? tileCode[OWWCounter] : tileCode;
     paintBrushTileCodeChanged();
 }
 function paintBrushTileCodeChanged() {
@@ -1329,7 +1320,17 @@ function paintBrushTileCodeChanged() {
         var tileCode = pair[1];
         var backgroundStyle = "";
         var textColor = "";
-        if (tileCode === paintBrushTileCode) {
+        if (Array.isArray(tileCode)) {
+            var direction = tileCode[OWWCounter];
+            switch (direction) {
+                case 117: direction = "Up"; break;
+                case 100: direction = "Down"; break;
+                case 108: direction = "Left"; break;
+                case 114: direction = "Right"; break;
+            }
+            document.getElementById("paintOneWayWallButton").textContent = "One-Way " + direction;
+        }
+        if (tileCode === paintBrushTileCode || tileCode[OWWCounter] === paintBrushTileCode) {
             if (tileCode === SNAKE) {
                 // show the color of the active snake in the color of the button
                 backgroundStyle = snakeColors[paintBrushSnakeColorIndex];
@@ -1987,8 +1988,8 @@ function describe(arg1, arg2) {
             case TRELLIS: return "a Trellis";
             case ONEWAYWALLU: return "a One Way Wall (facing U)";
             case ONEWAYWALLD: return "a One Way Wall (facing D)";
-            case TURNSTILEL: return "a One Way Wall (facing L)";
-            case TURNSTILER: return "a One Way Wall (facing R)";
+            case ONEWAYWALLL: return "a One Way Wall (facing L)";
+            case ONEWAYWALLR: return "a One Way Wall (facing R)";
             case CLOSEDLIFT: return "a Closed Lift";
             case OPENLIFT: return "an Open Lift";
             case CLOUD: return "a Cloud";
@@ -2110,7 +2111,6 @@ function haveCheatcodesBeenUsed() {
 var persistentState = {
     showEditor: false,
     editorLeft: false,
-    showDetails: false,
     showGrid: false,
     bigButton: false,
     hideHotkeys: false,
@@ -2125,7 +2125,6 @@ function loadPersistentState() {
     }
     persistentState.showEditor = !!persistentState.showEditor;
     persistentState.editorLeft = !!persistentState.editorLeft;
-    persistentState.showDetails = !!persistentState.showDetails;
     persistentState.bigButton = !!persistentState.bigButton;
     persistentState.showGrid = !!persistentState.showGrid;
     persistentState.hideHotkeys = !!persistentState.hideHotkeys;
@@ -2237,11 +2236,9 @@ function showEditorChanged() {
 
     if (!persistentState.showEditor) {
         document.getElementById("hideHotkeyButton").disabled = true;
-        document.getElementById("showDetailsButton").disabled = true;
     }
     else {
         document.getElementById("hideHotkeyButton").disabled = false;
-        document.getElementById("showDetailsButton").disabled = false;
     }
 
     if (persistentState.showEditor && defaultOn) document.getElementById("animationSlider").checked = animationsOn = false;
@@ -2690,8 +2687,8 @@ function isTileCodeAir(pusher, pushedObject, tileCode, dr, dc) {
         case PLATFORM: return dr != 1;
         case ONEWAYWALLU: return dr != 1;
         case ONEWAYWALLD: return dr != -1;
-        case TURNSTILEL: return dc != 1;
-        case TURNSTILER: return dc != -1;
+        case ONEWAYWALLL: return dc != 1;
+        case ONEWAYWALLR: return dc != -1;
         default: return false;
     }
 }
@@ -2933,7 +2930,6 @@ function render() {
     }
 
     // throw this in there somewhere
-    document.getElementById("showDetailsButton").textContent = (persistentState.showDetails ? "Hide" : "Show") + " Details";
     document.getElementById("showGridButton").textContent = (persistentState.showGrid ? "Hide" : "Show") + " Grid";
     document.getElementById("hideHotkeyButton").textContent = (persistentState.hideHotkeys ? "Show" : "Hide") + " Hotkeys";
     document.getElementById("bigButtonButton").textContent = (persistentState.bigButton ? "Regular" : "Large") + " Buttons";
@@ -3007,7 +3003,7 @@ function render() {
             context = savedContext2;
         });
 
-        var rng = persistentState.showDetails ? new Math.seedrandom("b") : 0;
+        var rng = new Math.seedrandom("b");
         var exitExists = false;
         if (onlyTheseObjects == null) {
             for (var r = 0; r < level.height; r++) {    //draws wall underside curves and/or grass
@@ -3056,7 +3052,7 @@ function render() {
                 for (var c = 0; c < level.width; c++) {
                     location = getLocation(level, r, c);
                     tileCode = level.map[location];
-                    if ((persistentState.showEditor && (tileCode === TURNSTILER || tileCode === TURNSTILEL || tileCode === TRELLIS)) || tileCode === CLOUD || tileCode === BUBBLE) drawTile(context, tileCode, r, c, level, location, rng, false);
+                    if ((persistentState.showEditor && (tileCode === ONEWAYWALLR || tileCode === ONEWAYWALLL || tileCode === TRELLIS)) || tileCode === CLOUD || tileCode === BUBBLE) drawTile(context, tileCode, r, c, level, location, rng, false);
                 }
             }
         }
@@ -3236,7 +3232,7 @@ function render() {
         var r, c;
         switch (object.type) {
             case SNAKE:
-                (persistentState.showDetails || !persistentState.showEditor) && themeName !== "Classic" ? drawNewSnake() : drawOriginalSnake();
+                themeName !== "Classic" ? drawNewSnake() : drawOriginalSnake();
                 break;
             case BLOCK:
                 drawBlock(object);
@@ -3386,7 +3382,7 @@ function render() {
             }
             r = headRowcol.r;
             c = headRowcol.c;
-            if (!persistentState.showEditor || persistentState.showDetails) drawFace(object.id, c, r, orientation, getAdjacentTiles());
+            drawFace(object.id, c, r, orientation, getAdjacentTiles());
         }
 
         function drawOriginalSnake() {
@@ -3912,7 +3908,7 @@ function render() {
 
         var color = fruitColors[object.id % fruitColors.length];
         var stemColor = themes[themeCounter][7];
-        if (themeName === "Classic" || (!persistentState.showDetails && persistentState.showEditor)) {
+        if (themeName === "Classic") {
             var circle = true;
             color = "#f0f";
         }
@@ -4138,7 +4134,7 @@ function drawTile(context, tileCode, r, c, level, location, rng, isCurve, grass)
         case SPACE:
             break;
         case WALL:
-            if (isCurve && (!persistentState.showEditor || persistentState.showDetails) && wall[2]) drawCurves(context, r, c, getAdjacentTiles());
+            if (isCurve && wall[2]) drawCurves(context, r, c, getAdjacentTiles());
             else if (!isCurve && wall[2]) drawWall(context, r, c, getAdjacentTiles(), rng, false);
 
             if (!wall[2]) drawWall(context, r, c, getAdjacentTiles(), rng, grass);
@@ -4163,16 +4159,16 @@ function drawTile(context, tileCode, r, c, level, location, rng, isCurve, grass)
             drawTrellis(context, r, c);
             break;
         case ONEWAYWALLU:
-            drawOneWayWall(context, r, c, -1);
+            drawOneWayWall(context, r, c, -1, 0);
             break;
         case ONEWAYWALLD:
-            drawOneWayWall(context, r, c, 1);
+            drawOneWayWall(context, r, c, 1, 0);
             break;
-        case TURNSTILEL:
-            drawTurnstile(context, r, c, -1);
+        case ONEWAYWALLL:
+            drawOneWayWall(context, r, c, 0, -1);
             break;
-        case TURNSTILER:
-            drawTurnstile(context, r, c, 1);
+        case ONEWAYWALLR:
+            drawOneWayWall(context, r, c, 0, 1);
             break;
         case CLOSEDLIFT:
             drawLift(context, r, c, false);
@@ -4305,8 +4301,8 @@ function drawCurves2(context, r, c, isOccupied, base) {
 
 function drawWall(context, r, c, adjacentTiles, rng, grass) {
     drawBase(context, r, c, isWall, rng, wall[0]);
-    if (!persistentState.showEditor || persistentState.showDetails) drawTileOutlines(context, r, c, isWall, .2, wall[3], grass);
-    if ((!persistentState.showEditor || persistentState.showDetails) && wall[3] && !wall[6]) drawBushes(context, r, c, isWall);
+    drawTileOutlines(context, r, c, isWall, .2, wall[3], grass);
+    if (wall[3] && !wall[6]) drawBushes(context, r, c, isWall);
 
     function isWall(dc, dr) {
         var tileCode = adjacentTiles[1 + dr][1 + dc];
@@ -4329,101 +4325,99 @@ function drawBase(context, r, c, isOccupied, rng, fillStyle) {
         context.fillStyle = "rgb(" + (color + 50) + "," + (color + 70) + "," + (color + 100) + ")";
         roundRect(context, x, y, tileSize, tileSize, 10, true, false);
 
-        if (!persistentState.showEditor || persistentState.showDetails) {
-            context.save();
-            if (isOccupied(0, 1) && isOccupied(-1, 0) && isOccupied(-1, 1)) {
-                if (rng() > .95) {
-                    context.fillStyle = "green";
-                    x = (c) * tileSize;
-                    y = (r + .9) * tileSize;
-                    var width = tileSize * .5;
-                    var height = tileSize * .2;
-                    var cx = x + width / 2;
-                    var cy = y + height / 2;
+        context.save();
+        if (isOccupied(0, 1) && isOccupied(-1, 0) && isOccupied(-1, 1)) {
+            if (rng() > .95) {
+                context.fillStyle = "green";
+                x = (c) * tileSize;
+                y = (r + .9) * tileSize;
+                var width = tileSize * .5;
+                var height = tileSize * .2;
+                var cx = x + width / 2;
+                var cy = y + height / 2;
 
-                    context.translate(cx, cy);
-                    context.rotate(-.25 * Math.PI);
-                    context.translate(-cx, -cy);
-                    context.fillRect(x, y, width, height);
+                context.translate(cx, cy);
+                context.rotate(-.25 * Math.PI);
+                context.translate(-cx, -cy);
+                context.fillRect(x, y, width, height);
 
-                    context.beginPath();
-                    context.arc((c + .5) * tileSize, (r + 1) * tileSize, height / 2, 0, 2 * Math.PI);
-                    context.closePath();
-                    context.fill();
+                context.beginPath();
+                context.arc((c + .5) * tileSize, (r + 1) * tileSize, height / 2, 0, 2 * Math.PI);
+                context.closePath();
+                context.fill();
 
-                    x = (c - .1) * tileSize;
-                    y = (r + .75) * tileSize;
-                    var width = tileSize * .6;
-                    var height = tileSize * .2;
-                    var cx = x + width / 2;
-                    var cy = y + height / 2;
+                x = (c - .1) * tileSize;
+                y = (r + .75) * tileSize;
+                var width = tileSize * .6;
+                var height = tileSize * .2;
+                var cx = x + width / 2;
+                var cy = y + height / 2;
 
-                    context.translate(cx, cy);
-                    context.rotate(-.125 * Math.PI);
-                    context.translate(-cx, -cy);
-                    context.fillRect(x, y, width, height);
+                context.translate(cx, cy);
+                context.rotate(-.125 * Math.PI);
+                context.translate(-cx, -cy);
+                context.fillRect(x, y, width, height);
 
-                    context.beginPath();
-                    context.arc((c + .5) * tileSize, (r + .85) * tileSize, height / 2, 0, 2 * Math.PI);
-                    context.closePath();
-                    context.fill();
+                context.beginPath();
+                context.arc((c + .5) * tileSize, (r + .85) * tileSize, height / 2, 0, 2 * Math.PI);
+                context.closePath();
+                context.fill();
 
-                    x = (c - .1) * tileSize;
-                    y = (r + .6) * tileSize;
-                    var width = tileSize * .7;
-                    var height = tileSize * .2;
-                    var cx = x + width / 2;
-                    var cy = y + height / 2;
+                x = (c - .1) * tileSize;
+                y = (r + .6) * tileSize;
+                var width = tileSize * .7;
+                var height = tileSize * .2;
+                var cx = x + width / 2;
+                var cy = y + height / 2;
 
-                    context.translate(cx, cy);
-                    context.rotate(-.125 * Math.PI);
-                    context.translate(-cx, -cy);
-                    context.fillRect(x, y, width, height);
+                context.translate(cx, cy);
+                context.rotate(-.125 * Math.PI);
+                context.translate(-cx, -cy);
+                context.fillRect(x, y, width, height);
 
-                    context.beginPath();
-                    context.arc((c + .6) * tileSize, (r + .7) * tileSize, height / 2, 0, 2 * Math.PI);
-                    context.closePath();
-                    context.fill();
+                context.beginPath();
+                context.arc((c + .6) * tileSize, (r + .7) * tileSize, height / 2, 0, 2 * Math.PI);
+                context.closePath();
+                context.fill();
 
-                    x = (c - .3) * tileSize;
-                    y = (r + .5) * tileSize;
-                    var width = tileSize * .7;
-                    var height = tileSize * .2;
-                    var cx = x + width / 2;
-                    var cy = y + height / 2;
+                x = (c - .3) * tileSize;
+                y = (r + .5) * tileSize;
+                var width = tileSize * .7;
+                var height = tileSize * .2;
+                var cx = x + width / 2;
+                var cy = y + height / 2;
 
-                    context.translate(cx, cy);
-                    context.rotate(-.125 * Math.PI);
-                    context.translate(-cx, -cy);
-                    context.fillRect(x, y, width, height);
+                context.translate(cx, cy);
+                context.rotate(-.125 * Math.PI);
+                context.translate(-cx, -cy);
+                context.fillRect(x, y, width, height);
 
-                    context.beginPath();
-                    context.arc((c + .4) * tileSize, (r + .6) * tileSize, height / 2, 0, 2 * Math.PI);
-                    context.closePath();
-                    context.fill();
+                context.beginPath();
+                context.arc((c + .4) * tileSize, (r + .6) * tileSize, height / 2, 0, 2 * Math.PI);
+                context.closePath();
+                context.fill();
 
-                    x = (c - .4) * tileSize;
-                    y = (r + .5) * tileSize;
-                    var width = tileSize * .7;
-                    var height = tileSize * .2;
-                    var cx = x + width / 2;
-                    var cy = y + height / 2;
+                x = (c - .4) * tileSize;
+                y = (r + .5) * tileSize;
+                var width = tileSize * .7;
+                var height = tileSize * .2;
+                var cx = x + width / 2;
+                var cy = y + height / 2;
 
-                    context.translate(cx, cy);
-                    context.rotate(-.125 * Math.PI);
-                    context.translate(-cx, -cy);
-                    context.fillRect(x, y, width, height);
+                context.translate(cx, cy);
+                context.rotate(-.125 * Math.PI);
+                context.translate(-cx, -cy);
+                context.fillRect(x, y, width, height);
 
-                    context.beginPath();
-                    context.arc((c + .3) * tileSize, (r + .6) * tileSize, height / 2, 0, 2 * Math.PI);
-                    context.closePath();
-                    context.fill();
-                }
+                context.beginPath();
+                context.arc((c + .3) * tileSize, (r + .6) * tileSize, height / 2, 0, 2 * Math.PI);
+                context.closePath();
+                context.fill();
             }
-            context.restore();
         }
+        context.restore();
     }
-    else if (!persistentState.showEditor || persistentState.showDetails) {
+    else {
         if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { bl: 10, br: 10 }, true, false);
         else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: 10, bl: 10 }, true, false);
         else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: 10, tr: 10 }, true, false);
@@ -4451,7 +4445,6 @@ function drawBase(context, r, c, isOccupied, rng, fillStyle) {
             context.fill();
         }
     }
-    else roundRect(context, x, y, tileSize, tileSize, 0, true, false);
 }
 
 function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurface, grass) {
@@ -4857,7 +4850,7 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, color, isOccupied, c
         boltBool = true;
     }
 
-    if ((!persistentState.showEditor || persistentState.showDetails) && boltBool) drawBolt(context, r, c, rng);
+    if (boltBool) drawBolt(context, r, c, rng);
 
     function drawCenterSpikes(context, x, y, spikeWidth, fillStyle) {
         context.fillStyle = fillStyle;
@@ -5039,7 +5032,7 @@ function drawTurnstile(context, r, c, dc) {
     }
 }
 
-function drawOneWayWall(context, r, c, dr) {
+function drawOneWayWall(context, r, c, dr, dc) {
     context.lineWidth = 2;
     context.strokeStyle = "#333";
     context.fillStyle = "orange";
@@ -5058,11 +5051,27 @@ function drawOneWayWall(context, r, c, dr) {
         context.moveTo(c * tileSize + 3 * tileSize / 4, r * tileSize + 3 * tileSize / 4);
         context.lineTo(c * tileSize + tileSize, r * tileSize + tileSize / 2);
     }
+    else if (dc == -1) {
+        context.moveTo(c * tileSize + tileSize / 2, r * tileSize);
+        context.lineTo(c * tileSize + tileSize / 4, r * tileSize + tileSize / 4);
+        context.stroke();
+        context.moveTo(c * tileSize + tileSize / 4, r * tileSize + 3 * tileSize / 4);
+        context.lineTo(c * tileSize + tileSize / 2, r * tileSize + tileSize);
+    }
+    else if (dc == 1) {
+        context.moveTo(c * tileSize + tileSize / 2, r * tileSize);
+        context.lineTo(c * tileSize + 3 * tileSize / 4, r * tileSize + tileSize / 4);
+        context.stroke();
+        context.moveTo(c * tileSize + 3 * tileSize / 4, r * tileSize + 3 * tileSize / 4);
+        context.lineTo(c * tileSize + tileSize / 2, r * tileSize + tileSize);
+    }
     context.stroke();
     context.lineWidth = 0;
 
-    if (dr == -1) roundRect(context, c * tileSize - tileSize / 15, r * tileSize - tileSize / 15, tileSize + 2 * tileSize / 15, tileSize / 4 + 2 * tileSize / 15, 2, true, false);
-    else if (dr == 1) roundRect(context, c * tileSize - tileSize / 15, (r + 1) * tileSize - tileSize / 15 - tileSize / 4, tileSize + 2 * tileSize / 15, tileSize / 4 + 2 * tileSize / 15, 2, true, false);
+    if (dr == -1) roundRect(context, (c - 1 / 15) * tileSize, (r - 1 / 15) * tileSize, tileSize + 2 * tileSize / 15, tileSize / 4 + 2 * tileSize / 15, 2, true, false);
+    else if (dr == 1) roundRect(context, (c - 1 / 15) * tileSize, (r + 1 - 1 / 15 - 1 / 4) * tileSize, tileSize + 2 * tileSize / 15, tileSize / 4 + 2 * tileSize / 15, 2, true, false);
+    else if (dc == -1) roundRect(context, (c - 1 / 15) * tileSize, r * tileSize - tileSize / 15, tileSize / 4 + 2 * tileSize / 15, tileSize + 2 * tileSize / 15, 2, true, false);
+    else if (dc == 1) roundRect(context, (c + 1 - 1 / 15 - 1 / 4) * tileSize, r * tileSize - tileSize / 15, tileSize / 4 + 2 * tileSize / 15, tileSize + 2 * tileSize / 15, 2, true, false);
 }
 
 /* var grd = context.createLinearGradient(c * tileSize, r * tileSize, (c + 1) * tileSize, (r + 1) * tileSize);
