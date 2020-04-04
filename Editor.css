@@ -166,6 +166,7 @@ button:active:enabled {
     width: 200px;
     border: 2px solid black;
     border-radius: 20px;
+    overflow: hidden;
 }
 
 .header {
