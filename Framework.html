@@ -27,7 +27,8 @@
                 </div>
             </td>
             <td id="editorPane">
-                <table id="controls">
+                <div id="controls">
+                <table style="width:200px">
                     <tr><td><button id="saveLevelButton" title="Ctrl + S - saves the current state to the URL bar of your browser; clears unmove/re-move history">Save Changes</button></td></tr>
                     <tr><td>
                         <button id="uneditButton" title="Ctrl + Z" disabled>Unedit</button>
@@ -135,10 +136,12 @@
                     <tr class="hotkeySpacer2 experimental"><td></td></tr>
                     <tr class="experimental"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintLavaButton" title="L&#013;&#013;Disintegrates blocks and snakes">Lava</button><br><span class="hotkey">L</span></div>
-                        <div class="buttonDiv"><button class="editorButton" id="paintWaterButton" title="Shift + L, Shift + W&#013;&#013;Swallows blocks but buoys snakes">Water</button><br><span class="hotkey"><span class="small">Shift</span> L</span></div>
+                        <div class="buttonDiv";"><button class="editorButton" id="paintWaterButton" title="Shift + L, Shift + W&#013;&#013;Swallows blocks but buoys snakes">Water</button><br><span class="hotkey"><span class="small">Shift</span> L</span></div>
                     </td></tr>
                     <tr class="spacer experimental hotkeySpacer"><td></td></tr>
                 </table>
+            </div>
+
             </td>
         </tr>
     </table>
@@ -146,18 +149,16 @@
     <div id="paradoxDiv"></div>
     <div id="cycleDiv"></div>
     <div id="bottomBlock">
-        <div class="bottomBlockBox">
+        <div id="firstBottomBlock">
             <div id="levelTypeContainer">
                 <div id="returnButton"><a href="https://jmdiamond3.github.io/Snakefall-Redesign/"><div id="returnArrow"></div>Snakefall<br>Redesign</a></div>
                 <div style="vertical-align: middle;">
                     <div id="levelType">Standard Level</div>
                     <div id="levelTypeSpan">contains only original Snakebird elements</div>
                 </div>
+                <div id="additions">*</div>
+            </div>
         </div>
-            <div id="additions">*</div>
-
-        </div>
-        <div class="separator"></div>
         <div class="bottomBlockBox">
             <div class="optionsHeaders">Game Controls</div><br>
             <div id="keyboardInstructions">use the arrows<span id="wasdSpan"> or WASD</span> keys on your keyboard to move, or use the buttons below</div>
@@ -224,8 +225,7 @@
             <button id="hideHotkeyButton" class="bottomButton" title="Shift + H">Hide Hotkeys</button>
             <button id="showDetailsButton" class="bottomButton" title="H">Show Details</button>
             <button id="bigButtonButton">Large Buttons</button>
-                    </div>
-
+        </div>
     </div>
 
     <br><br>
