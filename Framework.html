@@ -162,14 +162,14 @@
             <div class="optionsHeaders">Game Controls</div><br>
             <div id="keyboardInstructions">use the arrows<span id="wasdSpan"> or WASD</span> keys on your keyboard to move, or use the buttons below</div>
             <div id="controlButtons">
-                <div style="display: table-cell; vertical-align: middle;"><button id="switchSnakesButton" class="bottomButton" title="(Shift + ) Spacebar&#013;(Shift + ) Tab&#013;&#013;1, 2, 3, and 4 cycle through like-colored snakes, with each number representing a different color">Switch Snake</button></div>
+                <div style="display: table-cell; vertical-align: middle;"><button id="switchSnakesButton" title="(Shift + ) Spacebar&#013;(Shift + ) Tab&#013;&#013;1, 2, 3, and 4 cycle through like-colored snakes, with each number representing a different color">Switch Snake</button></div>
                 <div id="arrowsHolder">
-                    <button id="arrowLeft" class="arrow bottomButton">&#8592;</button>
+                    <button id="arrowLeft" class="arrow">&#8592;</button>
                     <div id="verticalArrowsHolder">
-                        <button id="arrowUp" class="arrow bottomButton" style="margin-bottom: 5px; display: block;">&#8593;</button>
-                        <button id="arrowDown" class="arrow bottomButton" style="display: block;">&#8595;</button>
+                        <button id="arrowUp" class="arrow" style="margin-bottom: 5px; display: block;">&#8593;</button>
+                        <button id="arrowDown" class="arrow" style="display: block;">&#8595;</button>
                     </div>
-                    <button id="arrowRight" class="arrow bottomButton">&#8594;</button>
+                    <button id="arrowRight" class="arrow">&#8594;</button>
                 </div>
             </div>
         </div>
@@ -178,31 +178,65 @@
             <div class="optionsHeaders">Progress Tracking</div><br>
             <div id="progressButtons">
                 <div id="unmoveButton" class="progressButton" title="Backspace&#013;Z&#013;Q&#013;&#013;Unmove snake" disabled>&#10148;</div>
-                <span id="movesSpan" class="bottomButton">0 || 0</span>
+                <span id="movesSpan">0 || 0</span>
                 <div id="removeButton" class="progressButton" title="Y&#013;Shift + Backspace&#013;Shift + Z&#013;Shift + Q&#013;&#013;Re-move snake" disabled>&#10148;</div>
             </div>
 
-            <button id="restartButton" class="bottomButton" title="R - Unmove completely&#013;&#013;Shift + R - Re-move completely">Restart</button>
-            <button id="saveProgressButton" class="bottomButton" title="Ctrl + Shift + S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift + R to restore state.">Save Progress</button><br><br>
-            <div id="sliderContainer">
-                <label id="sliderLabel">Replay Animations</label>
+            <button id="restartButton" title="R - Unmove completely&#013;&#013;Shift + R - Re-move completely">Restart</button>
+            <button id="saveProgressButton" title="Ctrl + Shift + S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift + R to restore state.">Save Progress</button><br><br>
+            <div class="sliderStack" style="background-color: rgba(0, 0, 0, 0.05); padding: 5px 10px 5px 10px; margin:0 auto">
+                <label class="sliderLabel">Replay Animations</label>
                 <label class="switch">
-                    <input id="replayAnimationsSlider" type="checkbox">
-                    <span class="slider round"></span>
+                    <input id="replayAnimationSlider" type="checkbox">
+                    <span class="slider"></span>
                 </label>
             </div><br>
-            <button id="checkSolutionButton" class="bottomButton" title="Saves a Solution Verification URL to your clipboard." disabled>Copy Verification Link</button>
+            <button id="checkSolutionButton" title="Saves a Solution Verification URL to your clipboard." disabled>Copy Verification Link</button>
         </div>
         <div class="separator"></div>
         <div class="bottomBlockBox">
             <div class="optionsHeaders">Options</div><br>
-            <div id="levelSize" class="bottomButton"><div id="fitButton" title="` (Grave Accent, located under Escape Key)">FIT</div><button id="minus" class="plusMinus bottomButton" title="Decrease game size">—</button><div id="levelSizeText" class="bottomButton" title="Revert to default game size">Level Size</div><button id="plus" class="plusMinus bottomButton" title="Increase game size">+</button></div>
-            <button id="themeButton" class="bottomButton" title="Return">Theme | <b>Spring</b></button>
-            <button id="showGridButton" class="bottomButton" title="G">Show Grid</button><br>            
-            <button id="showHideEditor" class="bottomButton" title="\">Show Editor Stuff</button>
-            <button id="hideHotkeyButton" class="bottomButton" title="Shift + H">Hide Hotkeys</button>
-            <button id="showDetailsButton" class="bottomButton" title="H">Show Details</button><br><br>
-            <button id="bigButtonButton" class="bottomButton">Large Buttons</button>
+
+            <div id="optionsBlock">
+                <div style="float:left; margin-right: 10px;">
+                    <div class="optionsSubOptionsContainer">
+                        <div class="optionsSubOptions">Canvas Options</div>
+                        <button id="themeButton" class="bottomButton" title="Return">Theme | <b>Spring</b></button>
+                        <button id="showGridButton" class="bottomButton" title="G">Show Grid</button>
+                    </div>
+
+                    <div class="optionsSubOptionsContainer">
+                        <div class="optionsSubOptions">Editor Options</div>
+                        <button id="showHideEditor" class="bottomButton" title="\">Show Editor Stuff</button>
+                        <button id="hideHotkeyButton" class="bottomButton" title="Shift + H">Hide Hotkeys</button>
+                        <button id="showDetailsButton" class="bottomButton" title="H">Show Details</button>
+                    </div>
+                </div>
+                <div style="float:right;"">
+                    <div id="levelSize"><div id="fitButton" title="` (Grave Accent, located under Escape Key)">FIT</div>
+                    <button id="minus" class="plusMinus" title="Decrease game size">—</button>
+                    <div id="levelSizeText" title="Revert to default game size">Level Size</div>
+                    <button id="plus" class="plusMinus" title="Increase game size">+</button></div>
+
+                    <div class="sliderStack">
+                        <div class="sliderContainer">
+                            <label class="sliderLabel" style="float:left">Animations</label>
+                            <label class="switch">
+                                <input id="animationSlider" type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div><br>
+                        <div class="sliderContainer" style="margin-top: 5px;">
+                            <label class="sliderLabel">Off When Editing</label>
+                            <label class="switch">
+                                <input id="defaultSlider" type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="bigButtonButton">Large Buttons</button>
         </div>
     </div>
 
