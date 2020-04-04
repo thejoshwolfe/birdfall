@@ -40,6 +40,7 @@ button {
     box-shadow: 0.5px 0.5px 1px black;
     font-family: Trebuchet MS;
     margin: 4px 0 0 0;
+    padding: 3px 6px 3px 6px;
 }
 
 button:hover:enabled {
@@ -168,6 +169,7 @@ button:active:enabled {
 }
 
 .header {
+    font-family: 'Trebuchet MS';
     font-weight: 900;
 }
 
@@ -262,6 +264,10 @@ canvas {
     padding: 10px;
 }
 
+#bigButtonButton {
+    display: none;
+}
+
 #bigButtonButton:hover {
     cursor: pointer;
 }
@@ -275,12 +281,11 @@ canvas {
     width: 1200px;
     margin: 0 auto;
     margin-top: 20px;
-    text-align: center;
 }
 
 .separator {
     background-color: black;
-    height: 150px;
+    height: 200px;
     width: 1px;
     margin: 0 5px 0 5px;
     display: inline-block;
@@ -341,6 +346,7 @@ canvas {
 }
 
 #fitButton {
+    display: none;
     position: absolute;
     font-size: 8pt;
     top: 25%;
@@ -490,18 +496,26 @@ canvas {
     vertical-align: bottom;
 }
 
-.bottomButton {}
+.bottomButton {
+    display: block;
+    width: 80px;
+}
 
-#sliderContainer {
-    display: table;
-    width: fit-content;
-    margin: 0 auto;
-    padding: 5px 10px 5px 10px;
+.sliderStack {
     background-color: rgba(0, 0, 0, 0.05);
+    padding: 5px 10px 5px 10px;
+    margin: 0 auto;
+    display: table;
     border-radius: 5px;
 }
 
-#sliderLabel {
+.sliderContainer {
+    display: block;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+.sliderLabel {
     font-family: Trebuchet MS;
     font-size: 8pt;
     line-height: 12pt;
@@ -512,6 +526,7 @@ canvas {
     position: relative;
     display: table-cell;
     vertical-align: top;
+    float: right;
     width: 30px;
     height: 17px;
 }
@@ -578,4 +593,22 @@ input:checked+.slider:before {
 
 #emptyBox:hover {
     border: 5px solid red;
+}
+
+#optionsBlock {
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.optionsSubOptionsContainer {
+    background-color: rgba(0, 0, 0, .05);
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.optionsSubOptions {
+    font-size: 8pt;
+    font-weight: 900;
+    margin-bottom: 6px;
 }
