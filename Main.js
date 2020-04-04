@@ -930,7 +930,7 @@ function resetCanvases() {
 function fitCanvas() {
     var maxW = screen.width / level.width;
     var maxH = screen.height / level.height;
-    tileSize = Math.min(maxW, maxH) * .8;
+    tileSize = Math.min(maxW, maxH) * .67;
     borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
     localStorage.setItem("cachedTileSize", tileSize);
@@ -2928,8 +2928,8 @@ function render() {
         link += "#level=" + compressSerialization(serialization);
         document.getElementById("shareLinkTextbox").value = link;
         var link2 = window.location.href.split("#");
-        var replay = link2 != undefined ? link2[2] : "";
-        document.getElementById("link2Textbox").value = "#" + link2[1] + "#" + replay;
+        var replay = link2[2] != undefined ? "#" + link2[2] : "";
+        document.getElementById("link2Textbox").value = "#" + link2[1] + replay;
     }
 
     // throw this in there somewhere
@@ -3077,6 +3077,9 @@ function render() {
 
         // banners
         if (countSnakes() === 0 && exitExists) {
+            context.fillStyle = "rgba(255,255,255,.5)";
+            context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+
             context.fillStyle = textStyle[2];
             context.font = textStyle[0] + textStyle[1];
             context.shadowOffsetX = 5;
@@ -3090,6 +3093,9 @@ function render() {
             document.getElementById("checkSolutionButton").disabled = false;
         }
         if (isDead()) {
+            context.fillStyle = "rgba(0,0,0,.5)";
+            context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+
             context.fillStyle = textStyle[3];
             context.font = textStyle[0] + textStyle[1];
             context.shadowOffsetX = 5;
