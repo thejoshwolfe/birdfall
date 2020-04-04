@@ -739,8 +739,7 @@ document.addEventListener("keydown", function (event) {
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode([ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]); break; }
         case "M".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
-        case "K".charCodeAt(0):
-            alert(cursor); break;
+        // case "K".charCodeAt(0):
         //     if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK) { splockActive = true; break; }
         case 192:   //grave accent
             if (modifierMask === 0) { fitCanvas(); break; }
