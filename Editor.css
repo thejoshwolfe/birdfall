@@ -165,6 +165,7 @@ button:active:enabled {
     background-color: aliceblue;
     width: 200px;
     border: 2px solid black;
+    border-radius: 20px;
 }
 
 .header {
@@ -183,6 +184,7 @@ button:active:enabled {
     display: flex;
     align-items: center;
     width: 280px;
+    position: relative;
 }
 
 #levelType {
@@ -200,6 +202,7 @@ button:active:enabled {
 
 canvas {
     border: 2px solid black;
+    border-radius: 20px;
 }
 
 .hotkey {
@@ -276,10 +279,11 @@ canvas {
 
 #bottomBlock {
     display: table;
-    width: 1200px;
+    width: 900px;
     margin: 0 auto;
     margin-top: 20px;
     text-align: center;
+    position: relative;
 }
 
 .separator {
@@ -336,12 +340,18 @@ canvas {
 }
 
 .bottomBlockBox {
-    width: 300px;
+    width: 33%;
     text-align: center;
     font-size: 10pt;
     font-family: Trebuchet MS;
     display: table-cell;
     vertical-align: top;
+}
+
+#firstBottomBlock {
+    position: absolute;
+    top: -12px;
+    left: -300px;
 }
 
 #fitButton {
@@ -378,12 +388,13 @@ canvas {
     font-family: Trebuchet MS;
     color: white;
     font-size: 8pt;
-    width: 100px;
-    margin: 0 auto;
+    width: 200px;
     border-radius: 10px;
     background-color: rgba(255, 0, 0, .3);
-    margin-top: 20px;
     padding: 5px;
+    position: absolute;
+    top: 52px;
+    right: 0;
 }
 
 #editorDiv {
