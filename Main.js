@@ -65,7 +65,22 @@ var unmoveStuff = { undoStack: [], redoStack: [], spanId: "movesSpan", undoButto
 var uneditStuff = { undoStack: [], redoStack: [], spanId: "editsSpan", undoButtonId: "uneditButton", redoButtonId: "reeditButton" };
 var paradoxes = [];
 var enhanced = false;
-var replayAnimationStatus = document.getElementById("replayAnimationsSlider").checked;
+
+var animationsOn = true;    //defaults
+var defaultOn = true;
+var replayAnimationsOn = false;
+function updateSwitches() {
+    if (localStorage.getItem("cachedAO") !== null) animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
+    if (localStorage.getItem("cachedDO") !== null) {
+        defaultOn = JSON.parse(localStorage.getItem("cachedDO"));
+        document.getElementById("defaultSlider").checked = defaultOn;
+    }
+    if (localStorage.getItem("cachedRAO") !== null) {
+        replayAnimationsOn = JSON.parse(localStorage.getItem("cachedRAO"));
+        document.getElementById("replayAnimationSlider").checked = replayAnimationsOn;
+    }
+    if (defaultOn && persistentState.showEditor) animationsOn = false;
+}
 
 var cursor = 0;
 var cursorOffset = 0;
@@ -92,6 +107,7 @@ function loadLevel(newLevel) {
     if (!persistentState.showEditor) document.getElementById("emptyBox").style.display = "none";
     // else toggleEditorLocation(localStorage.getItem("editorLocation"));
     // document.getElementById("emptyBox").style.height = document.getElementById("editorPane").style.height;   //not working
+    updateSwitches();
 
     resizeCanvasContainer();
     [canvas1, canvas3, canvas5].forEach(function (canvas) {
@@ -450,10 +466,10 @@ function advance() {
             throw new Error("invalid snake id: " + activeSnakeId);
         }
         switch (c) {
-            case 'l': move(0, -1, replayAnimationStatus); break;
-            case 'u': move(-1, 0, replayAnimationStatus); break;
-            case 'r': move(0, 1, replayAnimationStatus); break;
-            case 'd': move(1, 0, replayAnimationStatus); break;
+            case 'l': move(0, -1, replayAnimationsOn); break;
+            case 'u': move(-1, 0, replayAnimationsOn); break;
+            case 'r': move(0, 1, replayAnimationsOn); break;
+            case 'd': move(1, 0, replayAnimationsOn); break;
             default: throw new Error("replay string has invalid direction: " + c);
         }
         break;
@@ -876,8 +892,19 @@ document.getElementById("showHideEditor").addEventListener("click", function () 
 document.getElementById("showDetailsButton").addEventListener("click", function () {
     toggleShowDetails();
 });
-document.getElementById("replayAnimationsSlider").addEventListener("click", function () {
-    replayAnimationStatus = document.getElementById("replayAnimationsSlider").checked;
+document.getElementById("animationSlider").addEventListener("click", function () {
+    animationsOn = document.getElementById("animationSlider").checked;
+    localStorage.setItem("cachedAO", animationsOn);
+});
+document.getElementById("defaultSlider").addEventListener("click", function () {
+    defaultOn = document.getElementById("defaultSlider").checked;
+    localStorage.setItem("cachedDO", defaultOn);
+    if (defaultOn && persistentState.showEditor) document.getElementById("animationSlider").checked = false;
+    animationsOn = false;
+});
+document.getElementById("replayAnimationSlider").addEventListener("click", function () {
+    replayAnimationsOn = document.getElementById("replayAnimationSlider").checked;
+    localStorage.setItem("cachedRAO", replayAnimationsOn);
 });
 document.getElementById("emptyBox").addEventListener("click", function () {
     toggleEditorLocation();
@@ -1086,7 +1113,7 @@ function toggleTheme() {
     (themeCounter < themes.length - 1) ? themeCounter++ : themeCounter = 0;
     blockSupportRenderCache = [];
     localStorage.setItem("cachedTheme", themeCounter);
-    document.getElementById("themeButton").innerHTML = "Theme | <b>" + themes[themeCounter][0] + "</b>";
+    document.getElementById("themeButton").innerHTML = "Theme: <b>" + themes[themeCounter][0] + "</b>";
     location.reload();
 }
 function toggleGravity() {
@@ -2180,7 +2207,7 @@ var cachedTheme = localStorage.getItem("cachedTheme");
 if (cachedTheme == null || cachedTheme == "null") themeCounter = 0;
 else themeCounter = cachedTheme;
 var themeName = themes[themeCounter][0];
-document.getElementById("themeButton").innerHTML = "Theme | <b>" + themeName + "</b>";
+document.getElementById("themeButton").innerHTML = "Theme: <b>" + themeName + "</b>";
 function populateThemeVars() {
     themeName = themes[themeCounter][0];
     background = themes[themeCounter][1];
@@ -2215,7 +2242,11 @@ function showEditorChanged() {
         document.getElementById("hideHotkeyButton").disabled = false;
         document.getElementById("showDetailsButton").disabled = false;
     }
-    render();
+
+    if (persistentState.showEditor && defaultOn) document.getElementById("animationSlider").checked = animationsOn = false;
+    if (!persistentState.showEditor) document.getElementById("animationSlider").checked = animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
+
+    loadFromLocationHash();
 }
 
 function move(dr, dc, doAnimations) {
@@ -2286,7 +2317,7 @@ function move(dr, dc, doAnimations) {
     // slither forward
     var activeSnakeOldState = serializeObjectState(activeSnake);
     var size1 = activeSnake.locations.length === 1;
-    if (doAnimations == undefined) doAnimations = true;
+    doAnimations = doAnimations == undefined && animationsOn ? true : false;    //why does this need to be == true?
     var speed = doAnimations ? 70 : 1;
     var slitherAnimations = [
         speed,
@@ -3067,6 +3098,7 @@ function render() {
             context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
             checkResult = false;
         }
+
 
         // editor hover
         if (persistentState.showEditor && paintBrushTileCode != null && hoverLocation != null && hoverLocation < level.map.length) {
