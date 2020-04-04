@@ -443,17 +443,33 @@ function stringifyReplay() {
 function advance() {
     var expectedPrefix = replayMagicNumber + "&";
     if (cursor < expectedPrefix.length) cursor = expectedPrefix.length;
-
+    // alert(switchSnakesArray);
     while (cursor < replayString.length) {
         var snakeIdStr = "";
         var c = replayString.charAt(cursor);
-        cursor += 1;
+        cursor++;
+
         while ('0' <= c && c <= '9') {
+            //check if number has up to 3 digits (999)
+            var d = replayString.charAt(cursor);
+            var e = replayString.charAt(cursor + 1);
+            if ('0' <= d && d <= '9') {
+                c = c + d;
+                cursor++;
+                cursorOffset++;
+                if ('0' <= e && e <= '9') {
+                    c = c + e;
+                    cursor++;
+                    cursorOffset++;
+                }
+            }
+
+            //add cursor location of snake switch (location of last digit in multi-digit numbers)
             if (!switchSnakesArray.includes(cursor)) switchSnakesArray.push(cursor);
             snakeIdStr += c;
             if (cursor >= replayString.length) throw new Error("replay string has unexpected end of input");
             c = replayString.charAt(cursor);
-            cursor += 1;
+            cursor++;
         }
         if (snakeIdStr.length > 0) {
             activeSnakeId = parseInt(snakeIdStr);
@@ -486,6 +502,7 @@ function parseAndLoadReplay(string) {
     var expectedPrefix = replayMagicNumber + "&";
     if (replayString.substring(0, expectedPrefix.length) !== expectedPrefix) throw new Error("unrecognized replay string");
     cursor = expectedPrefix.length;
+    if (!switchSnakesArray.includes(cursor)) switchSnakesArray.push(cursor);
     activeSnakeId = 0;
     replayLength = 0;
 
@@ -722,15 +739,16 @@ document.addEventListener("keydown", function (event) {
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode([ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]); break; }
         case "M".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
-        case "J".charCodeAt(0):
-            if (modifierMask === 0) { advance(); break; }
-        // case "K".charCodeAt(0):
+        case "K".charCodeAt(0):
+            alert(cursor); break;
         //     if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK) { splockActive = true; break; }
         case 192:   //grave accent
             if (modifierMask === 0) { fitCanvas(); break; }
         case 191:
             if (modifierMask === 0) { if (multiDiagrams) { cycle = true; cycleID++; render(); } break; }
-        // case 13: // return
+        case 13:
+            if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
+            if (modifierMask === 0 && replayString) { advance(); break; }
         case 32: // spacebar
         case 9: // tab
             if (modifierMask === 0) { switchSnakes(1); break; }
@@ -912,8 +930,8 @@ function toggleShowEditor() {
     persistentState.showEditor = !persistentState.showEditor;
     savePersistentState();
     showEditorChanged();
-    resetCanvases();
-    resizeCanvasContainer();
+    // resetCanvases();
+    // resizeCanvasContainer();
 }
 function toggleEditorLocation(cached) {
     persistentState.editorLeft = cached == undefined ? !persistentState.editorLeft : cached;   //sometimes it works and sometimes it doesn't
@@ -1768,11 +1786,31 @@ function undo(undoStuff) {
     if (replayString) {
         var expectedPrefix = replayMagicNumber + "&";
         if (cursor > expectedPrefix.length) cursor--;
-        var c = replayString.charAt(cursor - 1);
+        if (cursor == expectedPrefix.length) activeSnakeId = 0;
+        var c = replayString.charAt(cursor);
+
         if ('0' <= c && c <= '9') {
+            var d = replayString.charAt(cursor - 1);
+            var e = replayString.charAt(cursor - 2);
+            if ('0' <= d && d <= '9') {
+                c = d + c;
+                cursor--;
+                cursorOffset--;
+                if ('0' <= e && e <= '9') {
+                    c = e + c;
+                    cursor--;
+                    cursorOffset--;
+                }
+            }
+
+            // var previousSnakeChanges = switchSnakesArray.slice(0,);
             var previousSnake = Math.max.apply(Math, switchSnakesArray.filter(function (x) { return x < cursor }));
-            var snakeIdStr = replayString.charAt(previousSnake - 1);
-            activeSnakeId = parseInt(snakeIdStr);
+            if (previousSnake == expectedPrefix.length) activeSnakeId = 0;
+            else {
+                var snakeIdStr = replayString.charAt(previousSnake - 1);
+                // alert(snakeIdStr);
+                activeSnakeId = parseInt(snakeIdStr);
+            }
             cursor--;
             cursorOffset--;
         }
@@ -2226,7 +2264,7 @@ function showEditorChanged() {
     if (persistentState.showEditor && defaultOn) document.getElementById("animationSlider").checked = animationsOn = false;
     if (!persistentState.showEditor) document.getElementById("animationSlider").checked = animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
 
-    loadFromLocationHash();
+    // loadFromLocationHash();
 }
 
 function move(dr, dc, doAnimations) {
