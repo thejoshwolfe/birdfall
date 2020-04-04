@@ -2928,7 +2928,7 @@ function render() {
         document.getElementById("shareLinkTextbox").value = link;
         var link2 = window.location.href.split("#");
         var replay = link2 != undefined ? link2[2] : "";
-        document.getElementById("link2Textbox").value = "#" + link2[1] + replay;
+        document.getElementById("link2Textbox").value = "#" + link2[1] + "#" + replay;
     }
 
     // throw this in there somewhere
