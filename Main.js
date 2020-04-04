@@ -54,8 +54,7 @@ var cycle = false;
 var cycleID = -1;
 var multiDiagrams = false;
 
-var cachedTileSize = localStorage.getItem("cachedTileSize");
-var tileSize = localStorage.getItem("cachedTileSize") === null ? 34 : parseInt(cachedTileSize);
+var tileSize = 34;
 var borderRadiusFactor = 3.4;
 var borderRadius = tileSize / borderRadiusFactor;
 
@@ -103,23 +102,13 @@ function loadLevel(newLevel) {
     undoStuffChanged(uneditStuff);
     blockSupportRenderCache = {};
 
-    // if (localStorage.getItem("cachedTileSize") != undefined) {
-    //     var maxW = screen.width / level.width;
-    //     var maxH = screen.height / level.height;
-    //     tileSize = Math.min(maxW, maxH) * .67;
-    //     borderRadius = tileSize / borderRadiusFactor;
-    //     // textStyle[0] = tileSize * 5;
-    //     localStorage.removeItem("cachedTileSize");
-    // }
-
     if (!persistentState.showEditor) document.getElementById("emptyBox").style.display = "none";
     // else toggleEditorLocation(localStorage.getItem("editorLocation"));
     // document.getElementById("emptyBox").style.height = document.getElementById("editorPane").style.height;   //not working
     updateSwitches();
-
     drawStaticCanvases(level);
-
     render();
+    fitCanvas();
 }
 
 function drawStaticCanvases(level) {
@@ -785,7 +774,7 @@ function changeCanvasSize(delta) {
     else tileSize = 34;
     borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
-    localStorage.setItem("cachedTileSize", tileSize);
+
     drawStaticCanvases(getLevel());
     resizeCanvasContainer();
     render();
@@ -841,7 +830,6 @@ document.getElementById("levelSizeText").addEventListener("click", function () {
 });
 document.getElementById("fitButton").addEventListener("click", function () {
     fitCanvas();
-    render();
     return;
 });
 document.getElementById("bigButtonButton").addEventListener("click", function () {
@@ -913,9 +901,9 @@ function fitCanvas() {
     var maxH = screen.height / level.height;
     tileSize = Math.round(Math.min(maxW, maxH) * .67);
     borderRadius = tileSize / borderRadiusFactor;
-    textStyle[0] = tileSize * 5;
-    localStorage.setItem("cachedTileSize", tileSize);
+    // textStyle[0] = tileSize * 5;
     drawStaticCanvases(getLevel());
+    render();
     // location.reload();  //without this, tiles appear to have borders (comment added before static canvases added)
 }
 function toggleShowEditor() {
