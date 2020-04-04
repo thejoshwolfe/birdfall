@@ -54,10 +54,8 @@ var cycle = false;
 var cycleID = -1;
 var multiDiagrams = false;
 
-var tileSize = 34;
 var cachedTileSize = localStorage.getItem("cachedTileSize");
-if (localStorage.getItem("cachedTileSize") === null) tileSize = 34;
-else tileSize = parseInt(cachedTileSize);
+var tileSize = localStorage.getItem("cachedTileSize") === null ? 34 : parseInt(cachedTileSize);
 var borderRadiusFactor = 3.4;
 var borderRadius = tileSize / borderRadiusFactor;
 
@@ -105,11 +103,26 @@ function loadLevel(newLevel) {
     undoStuffChanged(uneditStuff);
     blockSupportRenderCache = {};
 
+    // if (localStorage.getItem("cachedTileSize") != undefined) {
+    //     var maxW = screen.width / level.width;
+    //     var maxH = screen.height / level.height;
+    //     tileSize = Math.min(maxW, maxH) * .67;
+    //     borderRadius = tileSize / borderRadiusFactor;
+    //     // textStyle[0] = tileSize * 5;
+    //     localStorage.removeItem("cachedTileSize");
+    // }
+
     if (!persistentState.showEditor) document.getElementById("emptyBox").style.display = "none";
     // else toggleEditorLocation(localStorage.getItem("editorLocation"));
     // document.getElementById("emptyBox").style.height = document.getElementById("editorPane").style.height;   //not working
     updateSwitches();
 
+    drawStaticCanvases(level);
+
+    render();
+}
+
+function drawStaticCanvases(level) {
     resizeCanvasContainer();
     [canvas1, canvas3, canvas5].forEach(function (canvas) {
         canvas.width = tileSize * level.width;
@@ -157,7 +170,6 @@ function loadLevel(newLevel) {
             if (tileCode === TRELLIS) drawTile(context, tileCode, r, c, level, location, rng, false, true);
         }
     }
-    render();
 }
 
 var magicNumber_v0 = "3tFRIoTU";
@@ -611,31 +623,13 @@ document.addEventListener("keydown", function (event) {
             if (modifierMask === SHIFT) { redo(unmoveStuff); break; }
             return;
         case 48:   //zero
-            tileSize = 34;
-            borderRadius = tileSize / borderRadiusFactor;
-            textStyle[0] = tileSize * 5;
-            localStorage.setItem("cachedTileSize", tileSize);
-            resetCanvases();
-            resizeCanvasContainer();
-            render();
+            changeCanvasSize(34);
             return;
         case 187:   //equals and plus
-            tileSize += 2;
-            borderRadius = tileSize / borderRadiusFactor;
-            textStyle[0] = tileSize * 5;
-            localStorage.setItem("cachedTileSize", tileSize);
-            resetCanvases();
-            resizeCanvasContainer();
-            render();
+            changeCanvasSize(2);
             return;
         case 189:   //minus
-            tileSize -= 2;
-            borderRadius = tileSize / borderRadiusFactor;
-            textStyle[0] = tileSize * 5;
-            localStorage.setItem("cachedTileSize", tileSize);
-            resetCanvases();
-            resizeCanvasContainer();
-            render();
+            changeCanvasSize(-2);
             return;
         case "Q".charCodeAt(0):
             if (modifierMask === 0) { undo(unmoveStuff); break; }
@@ -786,6 +780,16 @@ document.addEventListener("keydown", function (event) {
     event.preventDefault();
     render();
 });
+function changeCanvasSize(delta) {
+    if (delta !== 34) tileSize += delta;
+    else tileSize = 34;
+    borderRadius = tileSize / borderRadiusFactor;
+    textStyle[0] = tileSize * 5;
+    localStorage.setItem("cachedTileSize", tileSize);
+    drawStaticCanvases(getLevel());
+    resizeCanvasContainer();
+    render();
+}
 
 document.getElementById("switchSnakesButton").addEventListener("click", function () {
     switchSnakes(1);
@@ -824,33 +828,15 @@ document.getElementById("arrowRight").addEventListener("click", function () {
     return;
 });
 document.getElementById("minus").addEventListener("click", function () {
-    tileSize -= 2;
-    borderRadius = tileSize / borderRadiusFactor;
-    textStyle[0] = tileSize * 5;
-    localStorage.setItem("cachedTileSize", tileSize);
-    resetCanvases();
-    resizeCanvasContainer();
-    render();
+    changeCanvasSize(-2);
     return;
 });
 document.getElementById("plus").addEventListener("click", function () {
-    tileSize += 2;
-    borderRadius = tileSize / borderRadiusFactor;
-    textStyle[0] = tileSize * 5;
-    localStorage.setItem("cachedTileSize", tileSize);
-    resetCanvases();
-    resizeCanvasContainer();
-    render();
+    changeCanvasSize(2);
     return;
 });
 document.getElementById("levelSizeText").addEventListener("click", function () {
-    tileSize = 34;
-    borderRadius = tileSize / borderRadiusFactor;
-    textStyle[0] = tileSize * 5;
-    localStorage.setItem("cachedTileSize", tileSize);
-    resetCanvases();
-    resizeCanvasContainer();
-    render();
+    changeCanvasSize(34);
     return;
 });
 document.getElementById("fitButton").addEventListener("click", function () {
@@ -925,11 +911,12 @@ function resetCanvases() {
 function fitCanvas() {
     var maxW = screen.width / level.width;
     var maxH = screen.height / level.height;
-    tileSize = Math.min(maxW, maxH) * .67;
+    tileSize = Math.round(Math.min(maxW, maxH) * .67);
     borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
     localStorage.setItem("cachedTileSize", tileSize);
-    location.reload();  //without this, tiles appear to have borders
+    drawStaticCanvases(getLevel());
+    // location.reload();  //without this, tiles appear to have borders (comment added before static canvases added)
 }
 function toggleShowEditor() {
     persistentState.showEditor = !persistentState.showEditor;
@@ -1011,15 +998,19 @@ function toggleHotkeys() {
     });
 });
 document.getElementById("submitSerializationButton").addEventListener("click", function () {
+    var newLevel = getLevel();
+    loadLevel(newLevel);
+});
+function getLevel() {
     var string = document.getElementById("serializationTextarea").value;
     try {
-        var newLevel = parseLevel(string);
+        var level = parseLevel(string);
     } catch (e) {
         alert(e);
         return;
     }
-    loadLevel(newLevel);
-});
+    return level;
+}
 document.getElementById("shareLinkTextbox").addEventListener("focus", function () {
     setTimeout(function () {
         document.getElementById("shareLinkTextbox").select();
