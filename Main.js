@@ -709,6 +709,7 @@ document.addEventListener("keydown", function (event) {
         case "P".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PORTAL); break; }
+            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(PLATFORM); break; }
             return;
         case "U".charCodeAt(0):
             if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
@@ -732,12 +733,12 @@ document.addEventListener("keydown", function (event) {
         case "H".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { toggleHotkeys(); break; }
         case "T".charCodeAt(0):
-            if (modifierMask === 0) { toggleTheme(); break; }
+            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(TRELLIS); break; }
+            if ((!persistentState.showEditor && modifierMask === 0) || (persistentState.showEditor && modifierMask === SHIFT)) { toggleTheme(); break; }
         case "O".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode([ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]); break; }
         case "M".charCodeAt(0):
             if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(TRELLIS); break; }
         case "J".charCodeAt(0):
             if (modifierMask === 0) { advance(); break; }
         // case "K".charCodeAt(0):
