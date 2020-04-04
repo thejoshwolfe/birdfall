@@ -40,7 +40,6 @@ button {
     box-shadow: 0.5px 0.5px 1px black;
     font-family: Trebuchet MS;
     margin: 4px 0 0 0;
-    padding: 3px 6px 3px 6px;
 }
 
 button:hover:enabled {
@@ -169,7 +168,6 @@ button:active:enabled {
 }
 
 .header {
-    font-family: 'Trebuchet MS';
     font-weight: 900;
 }
 
@@ -281,6 +279,7 @@ canvas {
     width: 1200px;
     margin: 0 auto;
     margin-top: 20px;
+    text-align: center;
 }
 
 .separator {
@@ -346,7 +345,6 @@ canvas {
 }
 
 #fitButton {
-    display: none;
     position: absolute;
     font-size: 8pt;
     top: 25%;
@@ -496,10 +494,7 @@ canvas {
     vertical-align: bottom;
 }
 
-.bottomButton {
-    display: block;
-    width: 80px;
-}
+.bottomButton {}
 
 .sliderStack {
     background-color: rgba(0, 0, 0, 0.05);
@@ -526,9 +521,9 @@ canvas {
     position: relative;
     display: table-cell;
     vertical-align: top;
-    float: right;
     width: 30px;
     height: 17px;
+    float: right;
 }
 
 /* Hide default HTML checkbox */
@@ -593,22 +588,4 @@ input:checked+.slider:before {
 
 #emptyBox:hover {
     border: 5px solid red;
-}
-
-#optionsBlock {
-    width: fit-content;
-    margin: 0 auto;
-}
-
-.optionsSubOptionsContainer {
-    background-color: rgba(0, 0, 0, .05);
-    border-radius: 5px;
-    margin-bottom: 10px;
-    padding: 10px;
-}
-
-.optionsSubOptions {
-    font-size: 8pt;
-    font-weight: 900;
-    margin-bottom: 6px;
 }
