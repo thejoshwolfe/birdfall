@@ -108,7 +108,7 @@ button:active:enabled {
 }
 
 .editorButton {
-    margin: -1;
+    margin: -1px;
 }
 
 #uneditButton {
@@ -162,10 +162,9 @@ button:active:enabled {
 }
 
 #controls {
-    background-color: aliceblue;
+    background-color: lightseagreen;
     width: 200px;
     margin: 0 2px 0 2px;
-    border: 2px solid black;
     border-radius: 20px;
     overflow: hidden;
 }
@@ -203,7 +202,6 @@ button:active:enabled {
 }
 
 canvas {
-    border: 2px solid black;
     border-radius: 20px;
 }
 
@@ -601,4 +599,12 @@ input:checked+.slider:before {
 
 #emptyBox:hover {
     border: 5px solid red;
+}
+
+#csButton {
+    margin: 0 auto;
+    margin-top: 20px;
+    font-size: 30pt;
+    left: 50%;
+    display: none;
 }
