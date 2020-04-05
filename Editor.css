@@ -10,10 +10,24 @@
     }
 }
 
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%
+    }
+    50% {
+        background-position: 100% 50%
+    }
+    100% {
+        background-position: 0% 50%
+    }
+}
+
 button.click-me {
     animation: click_me 1s infinite;
     font-weight: bold;
 }
+
+/* ----------------------------------------------------------------------------------------------------------------- */
 
 table {
     border-collapse: collapse;
@@ -43,7 +57,7 @@ button {
 }
 
 button:hover:enabled {
-    box-shadow: 0 0 0 1px slateblue;
+    box-shadow: 0 0 0 1px #1e90ff;
 }
 
 button:focus {
@@ -56,23 +70,13 @@ button:active:enabled {
     color: black;
 }
 
-@keyframes gradient {
-    0% {
-        background-position: 0% 50%
-    }
-    50% {
-        background-position: 100% 50%
-    }
-    100% {
-        background-position: 0% 50%
-    }
-}
+/* ----------------------------------------------------------------------------------------------------------------- */
 
 #returnButton {
     display: table;
     text-decoration: none;
     color: white;
-    background-color: slateblue;
+    background-color: #1e90ff;
     border-radius: 50%;
     width: 60px;
     height: 60px;
@@ -83,7 +87,7 @@ button:active:enabled {
 }
 
 #returnButton:hover {
-    background-image: linear-gradient(45deg, slateblue, slateblue, slateblue, slateblue, #fdc122, #dc6a3f, #d55945, #dc6a3f, #fdc122);
+    background-image: linear-gradient(45deg, #1e90ff, #1e90ff, #1e90ff, #1e90ff, #fdc122, #dc6a3f, #d55945, #dc6a3f, #fdc122);
     background-size: 500% 500%;
     animation: gradient 4s ease infinite;
 }
@@ -107,6 +111,15 @@ button:active:enabled {
     font-size: 12pt;
 }
 
+#levelTable {
+    margin: 0 auto;
+}
+
+#editorPane {
+    display: none;
+    padding-left: 5px;
+}
+
 .editorButton {
     margin: -1px;
 }
@@ -119,13 +132,8 @@ button:active:enabled {
     margin-left: 10px;
 }
 
-#editorPane {
-    display: none;
-    padding-left: 5px;
-}
-
-#levelTable {
-    margin: 0 auto;
+#editsSpan {
+    font-size: 10pt;
 }
 
 .buttonHeader {
@@ -133,24 +141,12 @@ button:active:enabled {
     font-weight: 900;
 }
 
-#editsSpan {
-    font-size: 10pt;
-}
-
-#editText {
-    font-size: 10pt;
-}
-
 .standard {
-    background-color: lightsteelblue;
-}
-
-.controlsHeader {
-    line-height: 20px;
+    background-color: #ded2b0;
 }
 
 .experimental {
-    background-color: lightblue;
+    background-color: #c7deb0;
 }
 
 .spacer {
@@ -158,11 +154,15 @@ button:active:enabled {
 }
 
 .hotkeySpacer {
-    display: none;
+    height: 1px;
+}
+
+.controlsHeader {
+    line-height: 20px;
 }
 
 #controls {
-    background-color: lightseagreen;
+    background-color: #deb0b0;
     width: 200px;
     margin: 0 2px 0 2px;
     border-radius: 20px;
@@ -191,7 +191,7 @@ button:active:enabled {
 #levelType {
     flex-grow: 1;
     font-size: 16pt;
-    color: slateblue;
+    color: #1e90ff;
     font-weight: 900;
 }
 
@@ -252,12 +252,16 @@ canvas {
     margin-left: 5px;
 }
 
+#plusMinusContainer {
+    margin-bottom: 5px;
+}
+
 .plusMinus {
     min-height: 10px;
     min-width: 10px;
     font-size: 8pt;
     font-weight: 900;
-    display: table-cell;
+    display: inline-block;
 }
 
 .bigButton {
@@ -288,7 +292,7 @@ canvas {
 
 .separator {
     background-color: black;
-    height: 200px;
+    height: 150px;
     width: 1px;
     margin: 0 5px 0 5px;
     display: inline-block;
@@ -306,28 +310,28 @@ canvas {
     display: inline-block;
 }
 
+#optionsStack {
+    display: inline-block;
+}
+
 #levelSize {
     width: fit-content;
-    display: table;
-    margin: 0 auto;
-    margin-bottom: 10px;
+    display: inline-block;
     border-radius: 5px;
-    padding: 4px 10px 5px 10px;
     background-color: rgba(0, 0, 0, 0.05);
-    position: relative;
+    vertical-align: top;
+    padding: 5px 10px 5px 10px;
 }
 
 #levelSizeText {
     font-size: 8pt;
     display: inline-block;
-    padding: 5px 10px 5px 10px;
-    margin: 0 10px 0 10px;
 }
 
 #levelSizeText:hover {
     cursor: default;
     border-radius: 3px;
-    background-color: slateblue;
+    background-color: #1e90ff;
     color: white;
 }
 
@@ -355,17 +359,13 @@ canvas {
 }
 
 #fitButton {
-    position: absolute;
     font-size: 8pt;
-    top: 25%;
-    left: -30px;
-    cursor: default;
-    padding: 3px 5px 3px 5px;
     border-radius: 2px;
+    margin-bottom: 5px;
 }
 
 #fitButton:hover {
-    background-color: slateblue;
+    background-color: #1e90ff;
     color: white;
 }
 
@@ -413,7 +413,7 @@ canvas {
     display: table-cell;
     border-radius: 2px;
     border: 1px solid black;
-    background-color: slateblue;
+    background-color: #1e90ff;
     color: white;
 }
 
@@ -428,7 +428,7 @@ canvas {
     display: table-cell;
     border-radius: 2px;
     border: 1px solid black;
-    background-color: slateblue;
+    background-color: #1e90ff;
     color: white;
 }
 
@@ -437,7 +437,7 @@ canvas {
     border-radius: 2px;
     border: 1px solid black;
     background-image: none;
-    background-color: slateblue;
+    background-color: #1e90ff;
     float: left;
     color: white;
 }
@@ -497,7 +497,7 @@ canvas {
 
 .progressButton:hover {
     cursor: pointer;
-    color: slateblue;
+    color: #1e90ff;
 }
 
 #movesSpan {
@@ -510,8 +510,7 @@ canvas {
 .sliderStack {
     background-color: rgba(0, 0, 0, 0.05);
     padding: 5px 10px 5px 10px;
-    margin: 0 auto;
-    display: table;
+    display: inline-block;
     border-radius: 5px;
 }
 
@@ -572,11 +571,11 @@ canvas {
 }
 
 input:checked+.slider {
-    background-color: slateblue;
+    background-color: #1e90ff;
 }
 
 input:focus+.slider {
-    box-shadow: 0 0 1px slateblue;
+    box-shadow: 0 0 1px #1e90ff;
 }
 
 input:checked+.slider:before {
