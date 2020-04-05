@@ -112,7 +112,7 @@ function loadLevel(newLevel) {
     updateSwitches();
     drawStaticCanvases(level);
     render();
-    fitCanvas(1);
+    sv ? fitCanvas(2) : fitCanvas(1);
 }
 
 function drawStaticCanvases(level) {
@@ -921,7 +921,12 @@ function resetCanvases() {
     return;
 }
 function fitCanvas(type) {
-    var offset = type === 0 ? 0 : document.getElementById("bottomBlock").offsetHeight + 20; //add 20 for spaces around tables/divs
+    var offset = 0;
+    switch (type) {
+        case 0: break;
+        case 1: offset = document.getElementById("bottomBlock").offsetHeight + 20; break;
+        case 2: offset = document.getElementById("csButton").offsetHeight + 30; break;
+    }
     var maxW = window.innerWidth / level.width;
     var maxH = (window.innerHeight - offset) / level.height;
     tileSize = Math.round(Math.min(maxW, maxH) * .98);
@@ -1871,8 +1876,8 @@ function redoAll(undoStuff) {
         hash += "#replay=" + compressSerialization(stringifyReplay());
     }
 
-    // var svURL = "https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html" + hash;
-    var svURL = "http://127.0.0.1:5500/Snakefall/Framework.html" + hash;
+    var svURL = "https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html" + hash;
+    // var svURL = "http://127.0.0.1:5500/Snakefall/Framework.html" + hash;
     copyToClipboard(svURL);
 }
 function advanceAll() {
