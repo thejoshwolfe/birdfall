@@ -9,6 +9,7 @@ if (typeof VERSION !== "undefined") {
 
 // });
 
+var sv = false;
 var canvas1 = document.getElementById("canvas1");
 var canvas2 = document.getElementById("canvas2");
 var canvas3 = document.getElementById("canvas3");
@@ -44,6 +45,9 @@ var FRUIT = "f";
 var POISON_FRUIT = "p";
 
 var checkResult = false;
+var cr = false;
+var cs = false;
+
 var postPortalSnakeOutline = [];
 var portalConflicts = [];
 var portalFailure = false;
@@ -107,6 +111,7 @@ function loadLevel(newLevel) {
     drawStaticCanvases(level);
     render();
     fitCanvas();
+
 }
 
 function drawStaticCanvases(level) {
@@ -117,6 +122,7 @@ function drawStaticCanvases(level) {
     });
     var context = canvas1.getContext("2d");
     populateThemeVars();
+    context.fillStyle = "white";
     drawBackground(context, canvas1);
 
     context = canvas3.getContext("2d");
@@ -157,6 +163,7 @@ function drawStaticCanvases(level) {
             if (tileCode === TRELLIS) drawTile(context, tileCode, r, c, level, location, rng, false, true);
         }
     }
+
 }
 
 var magicNumber_v0 = "3tFRIoTU";
@@ -441,54 +448,50 @@ function stringifyReplay() {
 function advance() {
     var expectedPrefix = replayMagicNumber + "&";
     if (cursor < expectedPrefix.length) cursor = expectedPrefix.length;
-    // alert(switchSnakesArray);
-    while (cursor < replayString.length) {
-        var snakeIdStr = "";
-        var c = replayString.charAt(cursor);
-        cursor++;
+    var snakeIdStr = "";
+    var c = replayString.charAt(cursor);
+    cursor++;
 
-        while ('0' <= c && c <= '9') {
-            //check if number has up to 3 digits (999)
-            var d = replayString.charAt(cursor);
-            var e = replayString.charAt(cursor + 1);
-            if ('0' <= d && d <= '9') {
-                c = c + d;
+    if ('0' <= c && c <= '9') {
+        //check if number has up to 3 digits (999)
+        var d = replayString.charAt(cursor);
+        var e = replayString.charAt(cursor + 1);
+        if ('0' <= d && d <= '9') {
+            c = c + d;
+            cursor++;
+            cursorOffset++;
+            if ('0' <= e && e <= '9') {
+                c = c + e;
                 cursor++;
                 cursorOffset++;
-                if ('0' <= e && e <= '9') {
-                    c = c + e;
-                    cursor++;
-                    cursorOffset++;
-                }
             }
-
-            //add cursor location of snake switch (location of last digit in multi-digit numbers)
-            if (!switchSnakesArray.includes(cursor)) switchSnakesArray.push(cursor);
-            snakeIdStr += c;
-            if (cursor >= replayString.length) throw new Error("replay string has unexpected end of input");
-            c = replayString.charAt(cursor);
-            cursor++;
-        }
-        if (snakeIdStr.length > 0) {
-            activeSnakeId = parseInt(snakeIdStr);
-            cursorOffset++;
-            // don't just validate when switching snakes, but on every move.
         }
 
-        // doing a move.
-        if (!getSnakes().some(function (snake) {
-            return snake.id === activeSnakeId;
-        })) {
-            throw new Error("invalid snake id: " + activeSnakeId);
-        }
-        switch (c) {
-            case 'l': move(0, -1, replayAnimationsOn); break;
-            case 'u': move(-1, 0, replayAnimationsOn); break;
-            case 'r': move(0, 1, replayAnimationsOn); break;
-            case 'd': move(1, 0, replayAnimationsOn); break;
-            default: throw new Error("replay string has invalid direction: " + c);
-        }
-        break;
+        //add cursor location of snake switch (location of last digit in multi-digit numbers)
+        if (!switchSnakesArray.includes(cursor)) switchSnakesArray.push(cursor);
+        snakeIdStr += c;
+        if (cursor >= replayString.length) throw new Error("replay string has unexpected end of input");
+        c = replayString.charAt(cursor);
+        cursor++;
+    }
+    if (snakeIdStr.length > 0) {
+        activeSnakeId = parseInt(snakeIdStr);
+        cursorOffset++;
+        // don't just validate when switching snakes, but on every move.
+    }
+
+    // doing a move.
+    if (!getSnakes().some(function (snake) {
+        return snake.id === activeSnakeId;
+    })) {
+        throw new Error("invalid snake id: " + activeSnakeId);
+    }
+    switch (c) {
+        case 'l': move(0, -1, replayAnimationsOn); break;
+        case 'u': move(-1, 0, replayAnimationsOn); break;
+        case 'r': move(0, 1, replayAnimationsOn); break;
+        case 'd': move(1, 0, replayAnimationsOn); break;
+        default: throw new Error("replay string has invalid direction: " + c);
     }
     var pre = cursor - expectedPrefix.length - cursorOffset;
     var post = replayLength - cursor + expectedPrefix.length + cursorOffset;
@@ -609,177 +612,179 @@ document.addEventListener("keydown", function (event) {
         (event.ctrlKey ? CTRL : 0) |
         (event.altKey ? ALT : 0)
     );
-    switch (event.keyCode) {
-        case 37: // left
-            if (modifierMask === 0) { replayString = false; move(0, -1); break; }
-            return;
-        case 38: // up
-            if (modifierMask === 0) { replayString = false; move(-1, 0); break; }
-            return;
-        case 39: // right
-            if (modifierMask === 0) { replayString = false; move(0, 1); break; }
-            return;
-        case 40: // down
-            if (modifierMask === 0) { replayString = false; move(1, 0); break; }
-            return;
-        case 8:  // backspace
-            if (modifierMask === 0) { undo(unmoveStuff); break; }
-            if (modifierMask === SHIFT) { redo(unmoveStuff); break; }
-            return;
-        case 48:   //zero
-            changeCanvasSize(34);
-            return;
-        case 187:   //equals and plus
-            changeCanvasSize(2);
-            return;
-        case 189:   //minus
-            changeCanvasSize(-2);
-            return;
-        case "Q".charCodeAt(0):
-            if (modifierMask === 0) { undo(unmoveStuff); break; }
-            if (modifierMask === SHIFT) { redo(unmoveStuff); break; }
-            return;
-        case "Z".charCodeAt(0):
-            if (modifierMask === 0) { undo(unmoveStuff); break; }
-            if (modifierMask === SHIFT && !replayString) { redo(unmoveStuff); break; }
-            if (modifierMask === SHIFT && replayString) { advance(); break; }
-            if (persistentState.showEditor && modifierMask === CTRL) { undo(uneditStuff); break; }
-            if (persistentState.showEditor && modifierMask === CTRL | SHIFT) { redo(uneditStuff); break; }
-            return;
-        case "Y".charCodeAt(0):
-            if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
-            if (modifierMask === 0 && replayString) { advance(); break; }
-            if (persistentState.showEditor && modifierMask === CTRL) { redo(uneditStuff); break; }
-            return;
-        case "R".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("resize"); break; }
-            if (modifierMask === 0) { reset(unmoveStuff); break; }
-            if (modifierMask === SHIFT) { unreset(unmoveStuff); break; }
-            return;
-        case 220: // backslash
-            if (modifierMask === 0) {
-                if (dirtyState != EDITOR_DIRTY) { toggleShowEditor(); break; }
-                else { alert("Can't hide editor with unsaved changes"); break; }
-            }
-            return;
-        case "A".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(0, -1); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("select"); break; }
-            if (persistentState.showEditor && modifierMask === CTRL) { selectAll(); break; }
-            return;
-        case "E".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPACE); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(EXIT); break; }
-            return;
-        case 46: // delete
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPACE); break; }
-            return;
-        case "W".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(WALL); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(WATER); break; }
-            return;
-        case "S".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(1, 0); break; }
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPIKE); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(SNAKE); break; }
-            if (persistentState.showEditor && modifierMask === CTRL) { saveLevel(); break; }
-            if (!persistentState.showEditor && modifierMask === CTRL) { saveReplay(); break; }
-            if (modifierMask === (CTRL | SHIFT)) { saveReplay(); break; }
-            return;
-        case "X".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === CTRL) { cutSelection(); break; }
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOSEDLIFT); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(OPENLIFT); break; }
-            return;
-        case "F".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(POISON_FRUIT); break; }
-            if (!persistentState.showEditor && modifierMask === 0) { fitCanvas(); break; }
-            return;
-        case "D".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(0, 1); break; }
-            return;
-        case "B".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(BLOCK); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(BUBBLE); break; }
-            return;
-        case "P".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PORTAL); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(PLATFORM); break; }
-            return;
-        case "U".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
-            return;
-        case "L".charCodeAt(0):
-            if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(LAVA); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(WATER); break; }
-            return;
-        case "G".charCodeAt(0):
-            if (modifierMask === 0) { toggleGrid(); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { toggleGravity(); break; }
-            return;
-        case "C".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOUD); break; }
-            if (persistentState.showEditor && modifierMask === SHIFT) { toggleCollision(); break; }
-            if (persistentState.showEditor && modifierMask === CTRL) { copySelection(); break; }
-            return;
-        case "V".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("paste"); break; }
-        case "H".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === 0) { toggleHotkeys(); break; }
-        case "T".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(TRELLIS); break; }
-            if ((!persistentState.showEditor && modifierMask === 0) || (persistentState.showEditor && modifierMask === SHIFT)) { toggleTheme(); break; }
-        case "O".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode([ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]); break; }
-        case "M".charCodeAt(0):
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
-        // case "K".charCodeAt(0):
-        //     if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK) { splockActive = true; break; }
-        case 192:   //grave accent
-            if (modifierMask === 0) { fitCanvas(); break; }
-        case 191:
-            if (modifierMask === 0) { if (multiDiagrams) { cycle = true; cycleID++; render(); } break; }
-        case 13:
-            if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
-            if (modifierMask === 0 && replayString) { advance(); break; }
-        case 32: // spacebar
-        case 9: // tab
-            if (modifierMask === 0) { switchSnakes(1); break; }
-            if (modifierMask === SHIFT) { switchSnakes(-1); break; }
-            return;
-        case "1".charCodeAt(0):
-        case "2".charCodeAt(0):
-        case "3".charCodeAt(0):
-        case "4".charCodeAt(0):
-            var index = event.keyCode - "1".charCodeAt(0);
-            var delta;
-            if (modifierMask === 0) {
-                delta = 1;
-            } else if (modifierMask === SHIFT) {
-                delta = -1;
-            } else return;
-            if (isAlive()) {
-                (function () {
-                    var snakes = findSnakesOfColor(index);
-                    if (snakes.length === 0) return;
-                    for (var i = 0; i < snakes.length; i++) {
-                        if (snakes[i].id === activeSnakeId) {
-                            activeSnakeId = snakes[(i + delta + snakes.length) % snakes.length].id;
-                            return;
+    if (!sv) {
+        switch (event.keyCode) {
+            case 37: // left
+                if (modifierMask === 0) { replayString = false; move(0, -1); break; }
+                return;
+            case 38: // up
+                if (modifierMask === 0) { replayString = false; move(-1, 0); break; }
+                return;
+            case 39: // right
+                if (modifierMask === 0) { replayString = false; move(0, 1); break; }
+                return;
+            case 40: // down
+                if (modifierMask === 0) { replayString = false; move(1, 0); break; }
+                return;
+            case 8:  // backspace
+                if (modifierMask === 0) { undo(unmoveStuff); break; }
+                if (modifierMask === SHIFT) { redo(unmoveStuff); break; }
+                return;
+            case 48:   //zero
+                changeCanvasSize(34);
+                return;
+            case 187:   //equals and plus
+                changeCanvasSize(2);
+                return;
+            case 189:   //minus
+                changeCanvasSize(-2);
+                return;
+            case "Q".charCodeAt(0):
+                if (modifierMask === 0) { undo(unmoveStuff); break; }
+                if (modifierMask === SHIFT) { redo(unmoveStuff); break; }
+                return;
+            case "Z".charCodeAt(0):
+                if (modifierMask === 0) { undo(unmoveStuff); break; }
+                if (modifierMask === SHIFT && !replayString) { redo(unmoveStuff); break; }
+                if (modifierMask === SHIFT && replayString) { advance(); break; }
+                if (persistentState.showEditor && modifierMask === CTRL) { undo(uneditStuff); break; }
+                if (persistentState.showEditor && modifierMask === CTRL | SHIFT) { redo(uneditStuff); break; }
+                return;
+            case "Y".charCodeAt(0):
+                if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
+                if (modifierMask === 0 && replayString) { advance(); break; }
+                if (persistentState.showEditor && modifierMask === CTRL) { redo(uneditStuff); break; }
+                return;
+            case "R".charCodeAt(0):
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("resize"); break; }
+                if (modifierMask === 0) { reset(unmoveStuff); break; }
+                if (modifierMask === SHIFT) { unreset(unmoveStuff); break; }
+                return;
+            case 220: // backslash
+                if (modifierMask === 0) {
+                    if (dirtyState != EDITOR_DIRTY) { toggleShowEditor(); break; }
+                    else { alert("Can't hide editor with unsaved changes"); break; }
+                }
+                return;
+            case "A".charCodeAt(0):
+                if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(0, -1); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("select"); break; }
+                if (persistentState.showEditor && modifierMask === CTRL) { selectAll(); break; }
+                return;
+            case "E".charCodeAt(0):
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPACE); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(EXIT); break; }
+                return;
+            case 46: // delete
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPACE); break; }
+                return;
+            case "W".charCodeAt(0):
+                if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(WALL); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(WATER); break; }
+                return;
+            case "S".charCodeAt(0):
+                if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(1, 0); break; }
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPIKE); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(SNAKE); break; }
+                if (persistentState.showEditor && modifierMask === CTRL) { saveLevel(); break; }
+                if (!persistentState.showEditor && modifierMask === CTRL) { saveReplay(); break; }
+                if (modifierMask === (CTRL | SHIFT)) { saveReplay(); break; }
+                return;
+            case "X".charCodeAt(0):
+                if (persistentState.showEditor && modifierMask === CTRL) { cutSelection(); break; }
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOSEDLIFT); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(OPENLIFT); break; }
+                return;
+            case "F".charCodeAt(0):
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(POISON_FRUIT); break; }
+                if (!persistentState.showEditor && modifierMask === 0) { fitCanvas(); break; }
+                return;
+            case "D".charCodeAt(0):
+                if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(0, 1); break; }
+                return;
+            case "B".charCodeAt(0):
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(BLOCK); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(BUBBLE); break; }
+                return;
+            case "P".charCodeAt(0):
+                if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PORTAL); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(PLATFORM); break; }
+                return;
+            case "U".charCodeAt(0):
+                if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
+                return;
+            case "L".charCodeAt(0):
+                if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(LAVA); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(WATER); break; }
+                return;
+            case "G".charCodeAt(0):
+                if (modifierMask === 0) { toggleGrid(); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { toggleGravity(); break; }
+                return;
+            case "C".charCodeAt(0):
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOUD); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { toggleCollision(); break; }
+                if (persistentState.showEditor && modifierMask === CTRL) { copySelection(); break; }
+                return;
+            case "V".charCodeAt(0):
+                if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("paste"); break; }
+            case "H".charCodeAt(0):
+                if (persistentState.showEditor && modifierMask === 0) { toggleHotkeys(); break; }
+            case "T".charCodeAt(0):
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(TRELLIS); break; }
+                if ((!persistentState.showEditor && modifierMask === 0) || (persistentState.showEditor && modifierMask === SHIFT)) { toggleTheme(); break; }
+            case "O".charCodeAt(0):
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode([ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]); break; }
+            case "M".charCodeAt(0):
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
+            // case "K".charCodeAt(0):
+            //     if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK) { splockActive = true; break; }
+            case 192:   //grave accent
+                if (modifierMask === 0) { fitCanvas(); break; }
+            case 191:
+                if (modifierMask === 0) { if (multiDiagrams) { cycle = true; cycleID++; render(); } break; }
+            case 13:
+                if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
+                if (modifierMask === 0 && replayString) { advance(); break; }
+            case 32: // spacebar
+            case 9: // tab
+                if (modifierMask === 0) { switchSnakes(1); break; }
+                if (modifierMask === SHIFT) { switchSnakes(-1); break; }
+                return;
+            case "1".charCodeAt(0):
+            case "2".charCodeAt(0):
+            case "3".charCodeAt(0):
+            case "4".charCodeAt(0):
+                var index = event.keyCode - "1".charCodeAt(0);
+                var delta;
+                if (modifierMask === 0) {
+                    delta = 1;
+                } else if (modifierMask === SHIFT) {
+                    delta = -1;
+                } else return;
+                if (isAlive()) {
+                    (function () {
+                        var snakes = findSnakesOfColor(index);
+                        if (snakes.length === 0) return;
+                        for (var i = 0; i < snakes.length; i++) {
+                            if (snakes[i].id === activeSnakeId) {
+                                activeSnakeId = snakes[(i + delta + snakes.length) % snakes.length].id;
+                                return;
+                            }
                         }
-                    }
-                    activeSnakeId = snakes[0].id;
-                })();
-            }
-            break;
-        case 27: // escape
-            if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(null); break; }
-            return;
-        default: return;
+                        activeSnakeId = snakes[0].id;
+                    })();
+                }
+                break;
+            case 27: // escape
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(null); break; }
+                return;
+            default: return;
+        }
     }
     event.preventDefault();
     render();
@@ -860,7 +865,7 @@ document.getElementById("hideHotkeyButton").addEventListener("click", function (
 document.getElementById("saveProgressButton").addEventListener("click", function () {
     saveReplay();
 });
-document.getElementById("checkSolutionButton").addEventListener("click", function () {
+document.getElementById("copySVButton").addEventListener("click", function () {
     redoAll(unmoveStuff);
 });
 document.getElementById("restartButton").addEventListener("click", function () {
@@ -894,6 +899,9 @@ document.getElementById("replayAnimationSlider").addEventListener("click", funct
 });
 document.getElementById("emptyBox").addEventListener("click", function () {
     toggleEditorLocation();
+});
+document.getElementById("csButton").addEventListener("click", function () {
+    advanceAll();
 });
 function resizeCanvasContainer(cc) {
     cc = document.getElementById("canvasContainer");
@@ -1856,15 +1864,26 @@ function redo(undoStuff) {
 function redoAll(undoStuff) {
     if (dirtyState === EDITOR_DIRTY) return alert("Can't save a replay with unsaved editor changes.");
     // preserve the level in the url bar.
-    var hash = "#level=" + currentSerializedLevel;
+    var hash = "#sv=" + currentSerializedLevel;
     if (dirtyState === REPLAY_DIRTY) {
         // there is a replay to save
         hash += "#replay=" + compressSerialization(stringifyReplay());
     }
 
-    // var sv = "https://jmdiamond3.github.io/Snakefall-Redesign/SolutionVerification.html" + hash;
-    var sv = "http://127.0.0.1:5500/Snakefall/SolutionVerification.html" + hash;
-    copyToClipboard(sv);
+    // var svURL = "https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html" + hash;
+    var svURL = "http://127.0.0.1:5500/Snakefall/Framework.html" + hash;
+    copyToClipboard(svURL);
+}
+function advanceAll() {
+    cs = true;
+    while (cursor < replayString.length) advance();
+    if (checkResult) {
+        cr = true;
+        render();
+    }
+    else {
+        render();
+    }
 }
 function copyToClipboard(text) {
     var dummy = document.createElement("textarea");
@@ -3090,37 +3109,66 @@ function render() {
 
         // banners
         if (countSnakes() === 0 && exitExists) {
-            context.fillStyle = "rgba(0,0,0,.5)";
-            context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+            if (!cs) {
+                context.fillStyle = "rgba(0,0,0,.5)";
+                context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
 
-            context.fillStyle = textStyle[2];
-            context.font = textStyle[0] + textStyle[1];
-            context.shadowOffsetX = 5;
-            context.shadowOffsetY = 5;
-            context.shadowColor = "rgba(0,0,0,0.5)";
-            context.shadowBlur = 4;
-            var textString = "WIN";
-            var textWidth = context.measureText(textString).width;
-            context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
-            checkResult = true;
-            document.getElementById("checkSolutionButton").disabled = false;
+                context.fillStyle = textStyle[2];
+                context.font = textStyle[0] + textStyle[1];
+                context.shadowOffsetX = 5;
+                context.shadowOffsetY = 5;
+                context.shadowColor = "rgba(0,0,0,0.5)";
+                context.shadowBlur = 4;
+                var textString = "WIN";
+                var textWidth = context.measureText(textString).width;
+                context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
+                document.getElementById("copySVButton").disabled = false;
+            }
+            else checkResult = true;
         }
         if (isDead()) {
-            context.fillStyle = "rgba(0,0,0,.5)";
-            context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+            if (!cs) {
+                context.fillStyle = "rgba(0,0,0,.5)";
+                context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
 
-            context.fillStyle = textStyle[3];
-            context.font = textStyle[0] + textStyle[1];
+                context.fillStyle = textStyle[3];
+                context.font = textStyle[0] + textStyle[1];
+                context.shadowOffsetX = 5;
+                context.shadowOffsetY = 5;
+                context.shadowColor = "rgba(0,0,0,0.5)";
+                context.shadowBlur = 4;
+                textString = "LOSE";
+                textWidth = context.measureText(textString).width;
+                context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
+            }
+            else checkResult = false;
+        }
+
+        if (cs && cr) {
+            // drawBackground();
+            // canvas4.clearRect(0, 0, canvas4.width, canvas4.height);
+            context.fillStyle = "green";
+            context.font = textStyle[0] + "px Impact";
             context.shadowOffsetX = 5;
             context.shadowOffsetY = 5;
             context.shadowColor = "rgba(0,0,0,0.5)";
             context.shadowBlur = 4;
-            textString = "LOSE";
-            textWidth = context.measureText(textString).width;
+            var textString = "\u2713";
+            var textWidth = context.measureText(textString).width;
             context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
-            checkResult = false;
         }
-
+        else if (cs && !cr) {
+            // drawBackground();
+            context.fillStyle = "red";
+            context.font = textStyle[0] + "px Impact";
+            context.shadowOffsetX = 5;
+            context.shadowOffsetY = 5;
+            context.shadowColor = "rgba(0,0,0,0.5)";
+            context.shadowBlur = 4;
+            var textString = "\u2716";
+            var textWidth = context.measureText(textString).width;
+            context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
+        }
 
         // editor hover
         if (persistentState.showEditor && paintBrushTileCode != null && hoverLocation != null && hoverLocation < level.map.length) {
@@ -4227,12 +4275,10 @@ function drawTile(context, tileCode, r, c, level, location, rng, isCurve, grass)
 }
 
 function drawBackground(context, canvas) {
-    //solid color background
-    if (!Array.isArray(background)) {
-        context.fillStyle = background;
-        context.fillRect(0, 0, canvas.width, canvas.height);
-    }
-    else {
+    //solid color background or provide color base for other backgrounds
+    context.fillStyle = Array.isArray(background) ? "white" : background;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    if (Array.isArray(background)) {
         //checkerboard background
         if (background[0] == "fade") {
             for (var i = 0; i < level.width; i++) {
@@ -5607,7 +5653,14 @@ function loadFromLocationHash() {
         return [segment.substring(0, equalsIndex), segment.substring(equalsIndex + 1)];
     });
 
-    if (hashPairs[0][0] !== "level") return false;
+    if (hashPairs[0][0] !== "level" && hashPairs[0][0] !== "sv") return false;
+    if (hashPairs[0][0] === "sv") {
+        sv = true;
+        document.getElementById("editorPane").style.display = "none";
+        document.getElementById("bottomEverything").style.display = "none";
+        document.getElementById("csButton").style.display = "block";
+    }
+
     try {
         var level = parseLevel(hashPairs[0][1]);
     } catch (e) {
@@ -5615,6 +5668,7 @@ function loadFromLocationHash() {
         return false;
     }
     loadLevel(level);
+
     if (hashPairs.length > 1) {
         try {
             if (hashPairs[1][0] !== "replay") throw new Error("unexpected hash pair: " + hashPairs[1][0]);
