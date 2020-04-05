@@ -448,7 +448,10 @@ function stringifyReplay() {
 }
 function advance() {
     var expectedPrefix = replayMagicNumber + "&";
-    if (cursor < expectedPrefix.length) cursor = expectedPrefix.length;
+    if (cursor <= expectedPrefix.length) {
+        cursor = expectedPrefix.length;
+        activeSnakeId = 0;
+    }
     var snakeIdStr = "";
     var c = replayString.charAt(cursor);
     cursor++;
@@ -505,7 +508,6 @@ function parseAndLoadReplay(string) {
     if (replayString.substring(0, expectedPrefix.length) !== expectedPrefix) throw new Error("unrecognized replay string");
     cursor = expectedPrefix.length;
     if (!switchSnakesArray.includes(cursor)) switchSnakesArray.push(cursor);
-    activateAnySnakePlease();
     replayLength = 0;
 
     while (cursor < replayString.length) {
