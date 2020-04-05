@@ -47,6 +47,7 @@ var POISON_FRUIT = "p";
 var checkResult = false;
 var cr = false;
 var cs = false;
+var dont = false;
 
 var postPortalSnakeOutline = [];
 var portalConflicts = [];
@@ -1879,9 +1880,11 @@ function advanceAll() {
     while (cursor < replayString.length) advance();
     if (checkResult) {
         cr = true;
+        dont = true;
         render();
     }
     else {
+        dont = true;
         render();
     }
 }
@@ -3041,112 +3044,115 @@ function render() {
 
         var rng = new Math.seedrandom("b");
         var exitExists = false;
-        if (onlyTheseObjects == null) {
-            for (var r = 0; r < level.height; r++) {    //draws wall underside curves and/or grass
-                for (var c = 0; c < level.width; c++) {
-                    var location = getLocation(level, r, c);
-                    var tileCode = level.map[location];
-                    if (persistentState.showEditor || (!persistentState.showEditor && tileCode !== WALL && tileCode !== SPIKE)) drawTile(context, tileCode, r, c, level, location, rng, true, true);
-                    if (tileCode === EXIT) exitExists = true;
+        if (!dont) {
+            if (onlyTheseObjects == null) {
+                for (var r = 0; r < level.height; r++) {    //draws wall underside curves and/or grass
+                    for (var c = 0; c < level.width; c++) {
+                        var location = getLocation(level, r, c);
+                        var tileCode = level.map[location];
+                        if (persistentState.showEditor || (!persistentState.showEditor && tileCode !== WALL && tileCode !== SPIKE)) drawTile(context, tileCode, r, c, level, location, rng, true, true);
+                        if (tileCode === EXIT) exitExists = true;
+                    }
                 }
             }
-        }
 
-        for (var i = 0; i < objects.length; i++) {
-            var object = objects[i];
-            if (object.type === SNAKE) drawObject(object);
-        }
+            for (var i = 0; i < objects.length; i++) {
+                var object = objects[i];
+                if (object.type === SNAKE) drawObject(object);
+            }
 
-        for (var i = 0; i < objects.length; i++) {
-            var object = objects[i];
-            if (object.type === BLOCK) drawObject(object);
-        }
+            for (var i = 0; i < objects.length; i++) {
+                var object = objects[i];
+                if (object.type === BLOCK) drawObject(object);
+            }
 
-        if (persistentState.showEditor && onlyTheseObjects == null) {
-            for (var r = 0; r < level.height; r++) {
-                for (var c = 0; c < level.width; c++) {
-                    var location = getLocation(level, r, c);
-                    var tileCode = level.map[location];
-                    if (tileCode === WATER || tileCode === LAVA) drawTile(context, tileCode, r, c, level, location, rng, false);
+            if (persistentState.showEditor && onlyTheseObjects == null) {
+                for (var r = 0; r < level.height; r++) {
+                    for (var c = 0; c < level.width; c++) {
+                        var location = getLocation(level, r, c);
+                        var tileCode = level.map[location];
+                        if (tileCode === WATER || tileCode === LAVA) drawTile(context, tileCode, r, c, level, location, rng, false);
+                    }
                 }
             }
-        }
 
-        if (persistentState.showEditor && onlyTheseObjects == null) {
-            for (var r = 0; r < level.height; r++) {
-                for (var c = 0; c < level.width; c++) {
-                    location = getLocation(level, r, c);
-                    tileCode = level.map[location];
-                    if (tileCode === WALL) drawTile(context, tileCode, r, c, level, location, rng, false, false);    //draws only walls
+            if (persistentState.showEditor && onlyTheseObjects == null) {
+                for (var r = 0; r < level.height; r++) {
+                    for (var c = 0; c < level.width; c++) {
+                        location = getLocation(level, r, c);
+                        tileCode = level.map[location];
+                        if (tileCode === WALL) drawTile(context, tileCode, r, c, level, location, rng, false, false);    //draws only walls
+                    }
                 }
             }
-        }
 
-        if (!persistentState.showEditor) context = canvas6.getContext("2d");    //slows down game
-        if (onlyTheseObjects == null) {
-            for (var r = 0; r < level.height; r++) {
-                for (var c = 0; c < level.width; c++) {
-                    location = getLocation(level, r, c);
-                    tileCode = level.map[location];
-                    if ((persistentState.showEditor && (tileCode === ONEWAYWALLR || tileCode === ONEWAYWALLL || tileCode === TRELLIS)) || tileCode === CLOUD || tileCode === BUBBLE) drawTile(context, tileCode, r, c, level, location, rng, false);
+            if (!persistentState.showEditor) context = canvas6.getContext("2d");    //slows down game
+            if (onlyTheseObjects == null) {
+                for (var r = 0; r < level.height; r++) {
+                    for (var c = 0; c < level.width; c++) {
+                        location = getLocation(level, r, c);
+                        tileCode = level.map[location];
+                        if ((persistentState.showEditor && (tileCode === ONEWAYWALLR || tileCode === ONEWAYWALLL || tileCode === TRELLIS)) || tileCode === CLOUD || tileCode === BUBBLE) drawTile(context, tileCode, r, c, level, location, rng, false);
+                    }
                 }
             }
-        }
 
-        for (var i = 0; i < objects.length; i++) {
-            var object = objects[i];
-            if (object.type === FRUIT || object.type === POISON_FRUIT) drawObject(object);  //draws fruit
-        }
-
-        if (portalFailure && countSnakes() != 0) {
-            drawSnakeOutline(postPortalSnakeOutline, portalConflicts);   //failed portal diagram
-            if (portalOutOfBounds) {
-                context.strokeStyle = "rgba(255,0,0,.5)";
-                context.lineWidth = tileSize / 2;
-                roundRect(context, 0, 0, canvas4.width, canvas4.height, 0, false, true);
+            for (var i = 0; i < objects.length; i++) {
+                var object = objects[i];
+                if (object.type === FRUIT || object.type === POISON_FRUIT) drawObject(object);  //draws fruit
             }
-        }
 
-        // banners
-        if (countSnakes() === 0 && exitExists) {
-            if (!cs) {
-                context.fillStyle = "rgba(0,0,0,.5)";
-                context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
-
-                context.fillStyle = textStyle[2];
-                context.font = textStyle[0] + textStyle[1];
-                context.shadowOffsetX = 5;
-                context.shadowOffsetY = 5;
-                context.shadowColor = "rgba(0,0,0,0.5)";
-                context.shadowBlur = 4;
-                var textString = "WIN";
-                var textWidth = context.measureText(textString).width;
-                context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
-                document.getElementById("copySVButton").disabled = false;
+            if (portalFailure && countSnakes() != 0) {
+                drawSnakeOutline(postPortalSnakeOutline, portalConflicts);   //failed portal diagram
+                if (portalOutOfBounds) {
+                    context.strokeStyle = "rgba(255,0,0,.5)";
+                    context.lineWidth = tileSize / 2;
+                    roundRect(context, 0, 0, canvas4.width, canvas4.height, 0, false, true);
+                }
             }
-            else checkResult = true;
-        }
-        if (isDead()) {
-            if (!cs) {
-                context.fillStyle = "rgba(0,0,0,.5)";
-                context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
 
-                context.fillStyle = textStyle[3];
-                context.font = textStyle[0] + textStyle[1];
-                context.shadowOffsetX = 5;
-                context.shadowOffsetY = 5;
-                context.shadowColor = "rgba(0,0,0,0.5)";
-                context.shadowBlur = 4;
-                textString = "LOSE";
-                textWidth = context.measureText(textString).width;
-                context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
+
+            // banners
+            if (countSnakes() === 0 && exitExists) {
+                if (!cs) {
+                    context.fillStyle = "rgba(0,0,0,.5)";
+                    context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+
+                    context.fillStyle = textStyle[2];
+                    context.font = textStyle[0] + textStyle[1];
+                    context.shadowOffsetX = 5;
+                    context.shadowOffsetY = 5;
+                    context.shadowColor = "rgba(0,0,0,0.5)";
+                    context.shadowBlur = 4;
+                    var textString = "WIN";
+                    var textWidth = context.measureText(textString).width;
+                    context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
+                    document.getElementById("copySVButton").disabled = false;
+                }
+                else checkResult = true;
             }
-            else checkResult = false;
+            if (isDead()) {
+                if (!cs) {
+                    context.fillStyle = "rgba(0,0,0,.5)";
+                    context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+
+                    context.fillStyle = textStyle[3];
+                    context.font = textStyle[0] + textStyle[1];
+                    context.shadowOffsetX = 5;
+                    context.shadowOffsetY = 5;
+                    context.shadowColor = "rgba(0,0,0,0.5)";
+                    context.shadowBlur = 4;
+                    textString = "LOSE";
+                    textWidth = context.measureText(textString).width;
+                    context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
+                }
+                else checkResult = false;
+            }
         }
 
         if (cs && cr) {
-            // drawBackground();
-            // canvas4.clearRect(0, 0, canvas4.width, canvas4.height);
+            context = canvas6.getContext("2d");
+            drawBackground(context, canvas6);
             context.fillStyle = "green";
             context.font = textStyle[0] + "px Impact";
             context.shadowOffsetX = 5;
@@ -3158,7 +3164,8 @@ function render() {
             context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
         }
         else if (cs && !cr) {
-            // drawBackground();
+            context = canvas6.getContext("2d");
+            drawBackground(context, canvas6);
             context.fillStyle = "red";
             context.font = textStyle[0] + "px Impact";
             context.shadowOffsetX = 5;
