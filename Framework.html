@@ -183,27 +183,34 @@
             <div class="separator"></div>
             <div class="bottomBlockBox">
                 <div class="optionsHeaders">Options</div><br>
-                <div id="levelSize"><div id="fitButton" title="` (Grave Accent, located under Escape Key)">FIT</div>
-                <button id="minus" class="plusMinus" title="Decrease game size">—</button>
-                <div id="levelSizeText" title="Revert to default game size">Level Size</div>
-                <button id="plus" class="plusMinus" title="Increase game size">+</button></div>
 
-                <div class="sliderStack">
-                    <div class="sliderContainer">
-                        <label class="sliderLabel" style="float:left">Animations</label>
-                        <label class="switch">
-                            <input id="animationSlider" type="checkbox">
-                            <span class="slider"></span>
-                        </label>
+                <div id="optionsStack">
+                    <div id="levelSize">
+                        <div id="plusMinusContainer">
+                            <button id="minus" class="plusMinus" title="Decrease game size">—</button>
+                            <button id="plus" class="plusMinus" title="Increase game size">+</button>
+                        </div>
+                        <div id="fitButton" title="` (Grave Accent, located under Escape Key)">Fit Canvas</div>
+                        <div id="levelSizeText" title="Revert to default game size">Fit Controls</div>
                     </div>
-                    <div class="sliderContainer" style="float:left; margin-top: 5px;">
-                        <label class="sliderLabel">Off When Editing</label>
-                        <label class="switch">
-                            <input id="defaultSlider" type="checkbox">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                </div><br>
+
+                    <div class="sliderStack">
+                        <div class="sliderContainer">
+                            <label class="sliderLabel" style="float:left">Animations</label>
+                            <label class="switch">
+                                <input id="animationSlider" type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="sliderContainer" style="float:left; margin-top: 5px;">
+                            <label class="sliderLabel">Off When Editing</label>
+                            <label class="switch">
+                                <input id="defaultSlider" type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div><br>
+                </div>
 
                 <button id="themeButton" class="bottomButton" title="T&#013;Shift + T when editor is open">Theme | <b>Spring</b></button>
                 <button id="showGridButton" class="bottomButton" title="G">Show Grid</button><br>        
