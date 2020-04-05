@@ -60,6 +60,7 @@ var multiDiagrams = false;
 var tileSize = 34;
 var borderRadiusFactor = 3.4;
 var borderRadius = tileSize / borderRadiusFactor;
+var blockRadius = tileSize / 5;
 
 var level;
 var unmoveStuff = { undoStack: [], redoStack: [], spanId: "movesSpan", undoButtonId: "unmoveButton", redoButtonId: "removeButton" };
@@ -111,8 +112,7 @@ function loadLevel(newLevel) {
     updateSwitches();
     drawStaticCanvases(level);
     render();
-    fitCanvas();
-
+    fitCanvas(1);
 }
 
 function drawStaticCanvases(level) {
@@ -632,7 +632,7 @@ document.addEventListener("keydown", function (event) {
                 if (modifierMask === SHIFT) { redo(unmoveStuff); break; }
                 return;
             case 48:   //zero
-                changeCanvasSize(34);
+                fitCanvas(1);
                 return;
             case 187:   //equals and plus
                 changeCanvasSize(2);
@@ -700,7 +700,6 @@ document.addEventListener("keydown", function (event) {
             case "F".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
                 if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(POISON_FRUIT); break; }
-                if (!persistentState.showEditor && modifierMask === 0) { fitCanvas(); break; }
                 return;
             case "D".charCodeAt(0):
                 if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(0, 1); break; }
@@ -745,7 +744,7 @@ document.addEventListener("keydown", function (event) {
             // case "K".charCodeAt(0):
             //     if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK) { splockActive = true; break; }
             case 192:   //grave accent
-                if (modifierMask === 0) { fitCanvas(); break; }
+                if (modifierMask === 0) { fitCanvas(0); break; }
             case 191:
                 if (modifierMask === 0) { if (multiDiagrams) { cycle = true; cycleID++; render(); } break; }
             case 13:
@@ -847,11 +846,11 @@ document.getElementById("plus").addEventListener("click", function () {
     return;
 });
 document.getElementById("levelSizeText").addEventListener("click", function () {
-    changeCanvasSize(34);
+    fitCanvas(1);
     return;
 });
 document.getElementById("fitButton").addEventListener("click", function () {
-    fitCanvas();
+    fitCanvas(0);
     return;
 });
 document.getElementById("bigButtonButton").addEventListener("click", function () {
@@ -921,10 +920,11 @@ function resetCanvases() {
     loadFromLocationHash();
     return;
 }
-function fitCanvas() {
-    var maxW = screen.width / level.width;
-    var maxH = screen.height / level.height;
-    tileSize = Math.round(Math.min(maxW, maxH) * .67);
+function fitCanvas(type) {
+    var offset = type === 0 ? 0 : document.getElementById("bottomBlock").offsetHeight + 20; //add 20 for spaces around tables/divs
+    var maxW = window.innerWidth / level.width;
+    var maxH = (window.innerHeight - offset) / level.height;
+    tileSize = Math.round(Math.min(maxW, maxH) * .98);
     borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
     blockSupportRenderCache = {};
@@ -995,12 +995,12 @@ function toggleHotkeys() {
         else hotkeys[i].style.display = "block";
     }
     for (var i = 0; i < spacers.length; i++) {
-        if (persistentState.hideHotkeys) spacers[i].style.display = "block";
-        else spacers[i].style.display = "none";
+        if (persistentState.hideHotkeys) spacers[i].style.height = "10px";
+        else spacers[i].style.height = "1px";
     }
     for (var i = 0; i < spacers2.length; i++) {
-        if (persistentState.hideHotkeys) spacers2[i].style.display = "none";
-        else spacers2[i].style.display = "block";
+        if (persistentState.hideHotkeys) spacers2[i].style.height = "0";
+        else spacers2[i].style.height = "3px";
     }
     render();
 }
@@ -2216,7 +2216,7 @@ var spikeColors4 = ["#39526b", "#39526b", "#66879f", "#acc5cd"];
 var blockColors1 = ["#de5a6d", "#fa65dd", "#c367e3", "#9c62fa", "#625ff0"];    //must be 6-digit hex colors to satisfy tint function
 var blockColors2 = ["#ffffff", "#999999", "#555555", "#000000"];
 var blockColors3 = ["#de7913", "#7d46a0", "#39868b", "#41ccc2", "#ccc500"];
-var blockColors4 = ["#660050", "#990033", "#b32400", "#e6b800 ", "#008000"];
+var blockColors4 = ["#660050", "#990033", "#b35900", "#e6b800 ", "#008000"];
 var blockColors5 = ["#ffccff", "#ffc2b3", "#ffffcc", "#ccffe6", "#ccffff"];
 var blockColors6 = ["#c65364", "#e9638f", "#9966cc", "#754db3", "#4d6dcb"];
 
@@ -4075,14 +4075,22 @@ function render() {
 
             var complement = 1 - outlineThickness;
             var outlinePixels = outlineThickness * tileSize;
-            if (!isAlsoThisBlock(-1, -1)) context.fillRect((c) * tileSize, (r) * tileSize, outlinePixels, outlinePixels);
-            if (!isAlsoThisBlock(1, -1)) context.fillRect((c + complement) * tileSize, (r) * tileSize, outlinePixels, outlinePixels);
-            if (!isAlsoThisBlock(-1, 1)) context.fillRect((c) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
-            if (!isAlsoThisBlock(1, 1)) context.fillRect((c + complement) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
-            if (!isAlsoThisBlock(0, -1)) context.fillRect((c) * tileSize, (r) * tileSize, tileSize, outlinePixels);
-            if (!isAlsoThisBlock(0, 1)) context.fillRect((c) * tileSize, (r + complement) * tileSize, tileSize, outlinePixels);
-            if (!isAlsoThisBlock(-1, 0)) context.fillRect((c) * tileSize, (r) * tileSize, outlinePixels, tileSize);
-            if (!isAlsoThisBlock(1, 0)) context.fillRect((c + complement) * tileSize, (r) * tileSize, outlinePixels, tileSize);
+
+            var c1, c2, c3, c4;
+            c1 = c2 = c3 = c4 = blockRadius;
+            if (isAlsoThisBlock(-1, 0)) c1 = c3 = 0;
+            if (isAlsoThisBlock(1, 0)) c2 = c4 = 0;
+            if (isAlsoThisBlock(0, -1)) c1 = c2 = 0;
+            if (isAlsoThisBlock(0, 1)) c3 = c4 = 0;
+
+            if (!isAlsoThisBlock(-1, -1)) roundRect(context, (c) * tileSize, (r) * tileSize, outlinePixels, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+            if (!isAlsoThisBlock(1, -1)) roundRect(context, (c + complement) * tileSize, (r) * tileSize, outlinePixels, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+            if (!isAlsoThisBlock(-1, 1)) roundRect(context, (c) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+            if (!isAlsoThisBlock(1, 1)) roundRect(context, (c + complement) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+            if (!isAlsoThisBlock(0, -1)) roundRect(context, (c) * tileSize, (r) * tileSize, tileSize, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+            if (!isAlsoThisBlock(0, 1)) roundRect(context, (c) * tileSize, (r + complement) * tileSize, tileSize, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+            if (!isAlsoThisBlock(-1, 0)) roundRect(context, (c) * tileSize, (r) * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+            if (!isAlsoThisBlock(1, 0)) roundRect(context, (c + complement) * tileSize, (r) * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
 
             function isAlsoThisBlock(dc, dr) {
                 for (var i = 0; i < rowcols.length; i++) {
