@@ -2205,6 +2205,7 @@ function render() {
 
         // banners
         if (countSnakes() === 0 && !cs) {
+            alert("yes");
             context.fillStyle = textStyle[1];
             context.font = textStyle[0];
             context.shadowOffsetX = 5;
