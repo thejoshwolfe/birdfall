@@ -252,8 +252,9 @@ canvas {
     margin-left: 5px;
 }
 
-#plusMinusContainer {
-    margin-bottom: 5px;
+.plusMinusWrapper {
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .plusMinus {
@@ -315,12 +316,15 @@ canvas {
 }
 
 #levelSize {
-    width: fit-content;
     display: inline-block;
     border-radius: 5px;
     background-color: rgba(0, 0, 0, 0.05);
     vertical-align: top;
     padding: 5px 10px 5px 10px;
+}
+
+#levelSizeInsider {
+    display: table;
 }
 
 #levelSizeText {
@@ -358,18 +362,26 @@ canvas {
     left: -300px;
 }
 
-#fitButton {
+#fitButtonContainer {
+    display: inline-block;
+    padding: 0 5px 0 5px;
+}
+
+.fitButton {
     font-size: 8pt;
     border-radius: 2px;
     margin-bottom: 5px;
+    /* trying to get them equal */
+    padding: 2.8px;
 }
 
-#fitButton:hover {
+.fitButton:hover {
     background-color: #1e90ff;
     color: white;
+    cursor: pointer;
 }
 
-#fitButton:active {
+.fitButton:active {
     transform: scale(0.9);
 }
 
