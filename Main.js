@@ -4545,7 +4545,7 @@ function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurf
     else if (!curlySurface && !isOccupied(0, -1)) {
         context.fillRect((c) * tileSize, (r) * tileSize, tileSize, outlinePixels);
     }
-    else if (isOccupied(0, -1) && isOccupied(-1, 0) && !isOccupied(-1, -1) && !wall[6]) {
+    else if (curlySurface && isOccupied(0, -1) && isOccupied(-1, 0) && !isOccupied(-1, -1) && !wall[6]) {
         context.beginPath();
         context.moveTo(c * tileSize, (r - .05) * tileSize);
         context.bezierCurveTo((c + .2) * tileSize, (r + .1) * tileSize, (c + .1) * tileSize, (r + .5) * tileSize, (c - .2) * tileSize, (r + .4) * tileSize);
