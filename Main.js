@@ -845,11 +845,11 @@ document.getElementById("plus").addEventListener("click", function () {
     changeCanvasSize(2);
     return;
 });
-document.getElementById("levelSizeText").addEventListener("click", function () {
+document.getElementById("fitControls").addEventListener("click", function () {
     fitCanvas(1);
     return;
 });
-document.getElementById("fitButton").addEventListener("click", function () {
+document.getElementById("fitCanvas").addEventListener("click", function () {
     fitCanvas(0);
     return;
 });
@@ -969,13 +969,13 @@ function toggleButtonSize() {
     if (persistentState.bigButton) {
         for (var i = 0; i < buttons.length; i++)
             buttons[i].classList.add("bigButton");
-        document.getElementById("fitButton").style.display = "none";
+        document.getElementById("fitCanvas").style.display = "none";
 
     }
     else {
         for (var i = 0; i < buttons.length; i++)
             buttons[i].classList.remove("bigButton");
-        document.getElementById("fitButton").style.display = "block";
+        document.getElementById("fitCanvas").style.display = "block";
     }
     render();
 }
