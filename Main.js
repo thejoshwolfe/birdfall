@@ -3037,7 +3037,7 @@ function render() {
             var r = minR + animationDisplacementRowcol.r;
             var c = minC + animationDisplacementRowcol.c;
             var savedContext2 = context;
-            context = canvas4.getContext("2d");
+            context = canvas2.getContext("2d");
             context.drawImage(image, c * tileSize, r * tileSize);
             context = savedContext2;
         });
