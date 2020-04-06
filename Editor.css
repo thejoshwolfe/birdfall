@@ -631,4 +631,5 @@ input:checked+.slider:before {
     font-family: Trebuchet MS;
     text-align: center;
     padding: 20px;
+    display: none;
 }
