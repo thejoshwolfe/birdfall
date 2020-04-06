@@ -16,6 +16,7 @@ var canvas3 = document.getElementById("canvas3");
 var canvas4 = document.getElementById("canvas4");
 var canvas5 = document.getElementById("canvas5");
 var canvas6 = document.getElementById("canvas6");
+var canvas7 = document.getElementById("canvas7");
 
 var SPACE = "0".charCodeAt(0);
 var WALL = "1".charCodeAt(0);
@@ -106,9 +107,9 @@ function loadLevel(newLevel) {
     undoStuffChanged(uneditStuff);
     blockSupportRenderCache = {};
 
-    if (!persistentState.showEditor) document.getElementById("emptyBox").style.display = "none";
+    if (!persistentState.showEditor) document.getElementById("emptyDiv").style.display = "none";
     // else toggleEditorLocation(localStorage.getItem("editorLocation"));
-    // document.getElementById("emptyBox").style.height = document.getElementById("editorPane").style.height;   //not working
+    // document.getElementById("emptyDiv").style.height = document.getElementById("editorPane").style.height;   //not working
     updateSwitches();
     drawStaticCanvases(level);
     render();
@@ -117,7 +118,7 @@ function loadLevel(newLevel) {
 
 function drawStaticCanvases(level) {
     resizeCanvasContainer();
-    [canvas1, canvas3, canvas5].forEach(function (canvas) {
+    [canvas1, canvas3, canvas5, canvas7].forEach(function (canvas) {
         canvas.width = tileSize * level.width;
         canvas.height = tileSize * level.height;
     });
@@ -899,7 +900,7 @@ document.getElementById("replayAnimationSlider").addEventListener("click", funct
     replayAnimationsOn = document.getElementById("replayAnimationSlider").checked;
     localStorage.setItem("cachedRAO", replayAnimationsOn);
 });
-document.getElementById("emptyBox").addEventListener("click", function () {
+document.getElementById("emptyDiv").addEventListener("click", function () {
     toggleEditorLocation();
 });
 document.getElementById("csButton").addEventListener("click", function () {
@@ -927,7 +928,7 @@ function fitCanvas(type) {
     switch (type) {
         case 0: break;
         case 1: offset = document.getElementById("bottomBlock").offsetHeight + 20; break;
-        case 2: offset = document.getElementById("csButton").offsetHeight + 30; break;
+        case 2: offset = document.getElementById("csButton").offsetHeight + 50; break;
     }
     var maxW = window.innerWidth / level.width;
     var maxH = (window.innerHeight - offset) / level.height;
@@ -952,16 +953,16 @@ function toggleEditorLocation(cached) {
     localStorage.setItem("editorLocation", persistentState.editorLeft);
 
     var levelTable = document.getElementById("levelTable");
-    var emptyBox = document.getElementById("emptyBox");
+    var emptyDiv = document.getElementById("emptyDiv");
     var canvasContainerTD = document.getElementById("canvasContainerTD");
     var editorPane = document.getElementById("editorPane");
 
-    var emptyBoxClone = emptyBox.cloneNode(true);
+    var emptyDivClone = emptyDiv.cloneNode(true);
     var canvasContainerTDClone = canvasContainerTD.cloneNode(true);
     var editorPaneClone = editorPane.cloneNode(true);
 
-    var td1 = persistentState.editorLeft ? editorPaneClone : emptyBoxClone;
-    var td3 = persistentState.editorLeft ? emptyBoxClone : editorPaneClone;
+    var td1 = persistentState.editorLeft ? editorPaneClone : emptyDivClone;
+    var td3 = persistentState.editorLeft ? emptyDivClone : editorPaneClone;
 
     levelTable.deleteRow(0);
     var newRow = levelTable.insertRow(0);
@@ -1879,21 +1880,38 @@ function redoAll(undoStuff) {
     }
 
     var svURL = "https://jmdiamond3.github.io/Snakefall-Redesign/Framework.html" + hash;
-    // var svURL = "http://127.0.0.1:5500/Snakefall/Framework.html" + hash;
     copyToClipboard(svURL);
 }
 function advanceAll() {
-    cs = true;
-    while (cursor < replayString.length) advance();
-    if (checkResult) {
-        cr = true;
-        dont = true;
-        render();
-    }
-    else {
-        dont = true;
-        render();
-    }
+    context = canvas7.getContext("2d");
+    context.fillStyle = "rgba(0,0,0,.5)";
+    context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+
+    context.fillStyle = "orange";
+    context.font = "100px Impact";
+    context.shadowOffsetX = 5;
+    context.shadowOffsetY = 5;
+    context.shadowColor = "rgba(0,0,0,0.5)";
+    context.shadowBlur = 4;
+    var textString = "Loading";
+    var textWidth = context.measureText(textString).width;
+    context.fillText(textString, (canvas7.width / 2) - (textWidth / 2), canvas7.height / 2);
+
+    setTimeout(function () {
+        cs = true;
+        while (cursor < replayString.length) advance();
+        context.clearRect(0, 0, canvas7.width, canvas7.height);
+        if (checkResult) {
+            cr = true;
+            dont = true;
+            render();
+        }
+        else {
+            dont = true;
+            render();
+        }
+    }, 100);
+
 }
 function copyToClipboard(text) {
     var dummy = document.createElement("textarea");
@@ -2268,7 +2286,7 @@ function populateThemeVars() {
 
 function showEditorChanged() {
     document.getElementById("showHideEditor").textContent = (persistentState.showEditor ? "Hide" : "Show") + " Editor";
-    document.getElementById("emptyBox").style.display = persistentState.showEditor ? "block" : "none";
+    document.getElementById("emptyDiv").style.display = persistentState.showEditor ? "block" : "none";
 
     ["editorDiv", "editorPane"].forEach(function (id) {
         document.getElementById(id).style.display = persistentState.showEditor ? "inline-block" : "none";
@@ -5638,6 +5656,7 @@ function loadFromLocationHash() {
     if (hashPairs[0][0] !== "level" && hashPairs[0][0] !== "sv") return false;
     if (hashPairs[0][0] === "sv") {
         sv = true;
+        document.getElementById("emptyDiv").style.display = "none";
         document.getElementById("editorPane").style.display = "none";
         document.getElementById("bottomEverything").style.display = "none";
         document.getElementById("csButton").style.display = "block";
