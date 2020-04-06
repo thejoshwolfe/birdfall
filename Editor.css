@@ -623,3 +623,12 @@ input:checked+.slider:before {
     left: 50%;
     display: none;
 }
+
+#csText {
+    box-sizing: border-box;
+    width: 100%;
+    font-size: 24pt;
+    font-family: Trebuchet MS;
+    text-align: center;
+    padding: 20px;
+}
