@@ -1896,6 +1896,7 @@ function advanceAll() {
     context.shadowColor = "rgba(0,0,0,0.5)";
     context.shadowBlur = 4;
     var textString = "Loading";
+    context.textBaseline = "middle";
     var textWidth = context.measureText(textString).width;
     context.fillText(textString, (canvas7.width / 2) - (textWidth / 2), canvas7.height / 2);
 
@@ -3155,6 +3156,7 @@ function render() {
                     context.shadowBlur = 4;
                     var textString = "WIN";
                     var textWidth = context.measureText(textString).width;
+                    context.textBaseline = "middle";
                     context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
                     document.getElementById("copySVButton").disabled = false;
                 }
@@ -3172,6 +3174,7 @@ function render() {
                     context.shadowColor = "rgba(0,0,0,0.5)";
                     context.shadowBlur = 4;
                     textString = "LOSE";
+                    context.textBaseline = "middle";
                     textWidth = context.measureText(textString).width;
                     context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
                 }
@@ -3189,6 +3192,7 @@ function render() {
             context.shadowColor = "rgba(0,0,0,0.5)";
             context.shadowBlur = 4;
             var textString = "\u2713";
+            context.textBaseline = "middle";
             var textWidth = context.measureText(textString).width;
             context.fillText(textString, (canvas6.width / 2) - (textWidth / 2), canvas6.height / 2);
         }
@@ -3202,6 +3206,7 @@ function render() {
             context.shadowColor = "rgba(0,0,0,0.5)";
             context.shadowBlur = 4;
             var textString = "\u2716";
+            context.textBaseline = "middle";
             var textWidth = context.measureText(textString).width;
             context.fillText(textString, (canvas6.width / 2) - (textWidth / 2), canvas6.height / 2);
         }
