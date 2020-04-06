@@ -4596,8 +4596,8 @@ function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurf
 
     if (curlySurface && !isOccupied(0, -1)) {
         context.beginPath();
-        context.moveTo((c + .95) * tileSize, (r - .05) * tileSize);
-        context.lineTo((c + .05) * tileSize, (r - .05) * tileSize);
+        context.moveTo((c + 1) * tileSize, (r - .05) * tileSize);
+        context.lineTo(c * tileSize, (r - .05) * tileSize);
         context.bezierCurveTo((c - .3) * tileSize, r * tileSize, (c - .15) * tileSize, (r + .6) * tileSize, (c + .1) * tileSize, (r + .3) * tileSize);
         context.bezierCurveTo((c + .15) * tileSize, (r + .4) * tileSize, (c + .3) * tileSize, (r + .5) * tileSize, (c + .45) * tileSize, (r + .3) * tileSize);
         context.bezierCurveTo((c + .6) * tileSize, (r + .5) * tileSize, (c + .7) * tileSize, (r + .45) * tileSize, (c + .8) * tileSize, (r + .3) * tileSize);
