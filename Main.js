@@ -735,6 +735,7 @@ document.addEventListener("keydown", function (event) {
                 return;
             case "V".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("paste"); break; }
+                if (sv) { advanceAll(); break; }
             case "H".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { toggleHotkeys(); break; }
             case "T".charCodeAt(0):
@@ -1910,7 +1911,7 @@ function advanceAll() {
             dont = true;
             render();
         }
-    }, 100);
+    }, 2000);
 
 }
 function copyToClipboard(text) {
