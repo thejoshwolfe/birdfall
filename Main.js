@@ -1910,7 +1910,7 @@ function advanceAll() {
             dont = true;
             render();
         }
-    }, 100);
+    }, 2000);
 
 }
 function copyToClipboard(text) {
@@ -3012,60 +3012,62 @@ function render() {
             }));
         }
         // begin by rendering the background connections for blocks
-        objects.forEach(function (object) {
-            if (object.type !== BLOCK) return;
-            var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
-            var minR = Infinity;
-            var maxR = -Infinity;
-            var minC = Infinity;
-            var maxC = -Infinity;
-            object.locations.forEach(function (location) {
-                var rowcol = getRowcol(level, location);
-                if (rowcol.r < minR) minR = rowcol.r;
-                if (rowcol.r > maxR) maxR = rowcol.r;
-                if (rowcol.c < minC) minC = rowcol.c;
-                if (rowcol.c > maxC) maxC = rowcol.c;
+        if (!dont) {
+            objects.forEach(function (object) {
+                if (object.type !== BLOCK) return;
+                var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
+                var minR = Infinity;
+                var maxR = -Infinity;
+                var minC = Infinity;
+                var maxC = -Infinity;
+                object.locations.forEach(function (location) {
+                    var rowcol = getRowcol(level, location);
+                    if (rowcol.r < minR) minR = rowcol.r;
+                    if (rowcol.r > maxR) maxR = rowcol.r;
+                    if (rowcol.c < minC) minC = rowcol.c;
+                    if (rowcol.c > maxC) maxC = rowcol.c;
+                });
+                var image = blockSupportRenderCache[object.id];
+                if (image == null) {
+                    // render the support beams to a buffer
+                    blockSupportRenderCache[object.id] = image = document.createElement("canvas");
+                    image.width = (maxC - minC + 1) * tileSize;
+                    image.height = (maxR - minR + 1) * tileSize;
+                    var bufferContext = image.getContext("2d");
+                    // Make a stencil that excludes the insides of blocks.
+                    // Then when we render the support beams, we won't see the supports inside the block itself.
+                    bufferContext.beginPath();
+                    // Draw a path around the whole screen in the opposite direction as the rectangle paths below.
+                    // This means that the below rectangles will be removing area from the greater rectangle.
+                    bufferContext.rect(image.width, 0, -image.width, image.height);
+                    for (var i = 0; i < object.locations.length; i++) {
+                        var rowcol = getRowcol(level, object.locations[i]);
+                        var r = rowcol.r - minR;
+                        var c = rowcol.c - minC;
+                        bufferContext.rect(c * tileSize, r * tileSize, tileSize, tileSize);
+                    }
+                    bufferContext.clip();
+                    for (var i = 0; i < object.locations.length - 1; i++) {
+                        var rowcol1 = getRowcol(level, object.locations[i]);
+                        rowcol1.r -= minR;
+                        rowcol1.c -= minC;
+                        var rowcol2 = getRowcol(level, object.locations[i + 1]);
+                        rowcol2.r -= minR;
+                        rowcol2.c -= minC;
+                        var cornerRowcol = { r: rowcol1.r, c: rowcol2.c };
+                        var connectorColor = tint(blockColors[object.id % blockColors.length], .5);
+                        drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
+                        drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
+                    }
+                }
+                var r = minR + animationDisplacementRowcol.r;
+                var c = minC + animationDisplacementRowcol.c;
+                var savedContext2 = context;
+                context = canvas2.getContext("2d");
+                context.drawImage(image, c * tileSize, r * tileSize);
+                context = savedContext2;
             });
-            var image = blockSupportRenderCache[object.id];
-            if (image == null) {
-                // render the support beams to a buffer
-                blockSupportRenderCache[object.id] = image = document.createElement("canvas");
-                image.width = (maxC - minC + 1) * tileSize;
-                image.height = (maxR - minR + 1) * tileSize;
-                var bufferContext = image.getContext("2d");
-                // Make a stencil that excludes the insides of blocks.
-                // Then when we render the support beams, we won't see the supports inside the block itself.
-                bufferContext.beginPath();
-                // Draw a path around the whole screen in the opposite direction as the rectangle paths below.
-                // This means that the below rectangles will be removing area from the greater rectangle.
-                bufferContext.rect(image.width, 0, -image.width, image.height);
-                for (var i = 0; i < object.locations.length; i++) {
-                    var rowcol = getRowcol(level, object.locations[i]);
-                    var r = rowcol.r - minR;
-                    var c = rowcol.c - minC;
-                    bufferContext.rect(c * tileSize, r * tileSize, tileSize, tileSize);
-                }
-                bufferContext.clip();
-                for (var i = 0; i < object.locations.length - 1; i++) {
-                    var rowcol1 = getRowcol(level, object.locations[i]);
-                    rowcol1.r -= minR;
-                    rowcol1.c -= minC;
-                    var rowcol2 = getRowcol(level, object.locations[i + 1]);
-                    rowcol2.r -= minR;
-                    rowcol2.c -= minC;
-                    var cornerRowcol = { r: rowcol1.r, c: rowcol2.c };
-                    var connectorColor = tint(blockColors[object.id % blockColors.length], .5);
-                    drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
-                    drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
-                }
-            }
-            var r = minR + animationDisplacementRowcol.r;
-            var c = minC + animationDisplacementRowcol.c;
-            var savedContext2 = context;
-            context = canvas2.getContext("2d");
-            context.drawImage(image, c * tileSize, r * tileSize);
-            context = savedContext2;
-        });
+        }
 
         var rng = new Math.seedrandom("b");
         var exitExists = false;
