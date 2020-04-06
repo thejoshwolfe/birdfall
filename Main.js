@@ -911,9 +911,6 @@ document.getElementById("replayAnimationSlider").addEventListener("click", funct
 document.getElementById("emptyDiv").addEventListener("click", function () {
     toggleEditorLocation();
 });
-document.getElementById("csButton").addEventListener("click", function () {
-    advanceAll();
-});
 function resizeCanvasContainer(cc) {
     cc = document.getElementById("canvasContainer");
     cc.style.width = tileSize * level.width;
@@ -936,7 +933,7 @@ function fitCanvas(type) {
     switch (type) {
         case 0: break;
         case 1: offset = document.getElementById("bottomBlock").offsetHeight + 20; break;
-        case 2: offset = document.getElementById("csButton").offsetHeight + 50; break;
+        case 2: offset = document.getElementById("csText").offsetHeight + 50; break;
     }
     var maxW = window.innerWidth / level.width;
     var maxH = (window.innerHeight - offset) / level.height;
@@ -1895,7 +1892,6 @@ function redoAll(undoStuff) {
 }
 function advanceAll() {
     cs2 = true;
-    document.getElementById("csButton").disabled = true;
     context = canvas7.getContext("2d");
     context.fillStyle = "rgba(0,0,0,.5)";
     context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
@@ -5679,7 +5675,7 @@ function loadFromLocationHash() {
         document.getElementById("emptyDiv").style.display = "none";
         document.getElementById("editorPane").style.display = "none";
         document.getElementById("bottomEverything").style.display = "none";
-        document.getElementById("csButton").style.display = "block";
+        document.getElementById("csText").style.display = "block";
     }
 
     try {
