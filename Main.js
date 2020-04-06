@@ -789,9 +789,8 @@ document.addEventListener("keydown", function (event) {
             default: return;
         }
     }
-    else {
-        if (event.keyCode == "V".charCodeAt(0) && sv) { advanceAll(); break; }
-    }
+    else advanceAll();
+
     event.preventDefault();
     render();
 });
