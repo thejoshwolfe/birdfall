@@ -1118,12 +1118,10 @@ document.getElementById("themeButton").addEventListener("click", function () {
 function toggleTheme(theme) {
     (themeCounter < themes.length - 1) ? themeCounter++ : themeCounter = 0;
     localStorage.setItem("cachedTheme", themeCounter);
-    if (theme != undefined) {
-        themeCounter = theme;
-        blockSupportRenderCache = [];
-        document.getElementById("themeButton").innerHTML = "Theme: <b>" + themes[themeCounter][0] + "</b>";
-        drawStaticCanvases(getLevel());
-    }
+    if (theme != undefined) themeCounter = theme;
+    blockSupportRenderCache = [];
+    document.getElementById("themeButton").innerHTML = "Theme: <b>" + themes[themeCounter][0] + "</b>";
+    drawStaticCanvases(getLevel());
 }
 function toggleGravity() {
     isGravityEnabled = !isGravityEnabled;
