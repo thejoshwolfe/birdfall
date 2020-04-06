@@ -1910,7 +1910,7 @@ function advanceAll() {
             dont = true;
             render();
         }
-    }, 2000);
+    }, 100);
 
 }
 function copyToClipboard(text) {
