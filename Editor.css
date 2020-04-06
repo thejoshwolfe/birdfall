@@ -488,6 +488,10 @@ canvas {
     z-index: 6;
 }
 
+#canvas7 {
+    z-index: 7;
+}
+
 #progressButtons {
     display: table;
     margin: 0 auto;
@@ -602,13 +606,13 @@ input:checked+.slider:before {
 
 #levelRow {}
 
-#emptyBox {
+#emptyDiv {
     height: 500;
     width: 100px;
     border: 5px solid transparent;
 }
 
-#emptyBox:hover {
+#emptyDiv:hover {
     border: 5px solid red;
 }
 
