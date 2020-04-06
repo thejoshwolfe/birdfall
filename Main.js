@@ -48,6 +48,7 @@ var POISON_FRUIT = "p";
 var checkResult = false;
 var cr = false;
 var cs = false;
+var cs2 = false;
 var dont = false;
 
 var postPortalSnakeOutline = [];
@@ -113,7 +114,12 @@ function loadLevel(newLevel) {
     updateSwitches();
     drawStaticCanvases(level);
     render();
-    sv ? fitCanvas(2) : fitCanvas(1);
+    if (sv) {
+        fitCanvas(2);
+        toggleTheme(0);
+        render();
+    }
+    else fitCanvas(1);
 }
 
 function drawStaticCanvases(level) {
@@ -789,7 +795,7 @@ document.addEventListener("keydown", function (event) {
             default: return;
         }
     }
-    else advanceAll();
+    else if (!cs2) advanceAll();
 
     event.preventDefault();
     render();
@@ -1112,12 +1118,15 @@ document.getElementById("cheatCollisionButton").addEventListener("click", functi
 document.getElementById("themeButton").addEventListener("click", function () {
     toggleTheme();
 });
-function toggleTheme() {
+function toggleTheme(theme) {
     (themeCounter < themes.length - 1) ? themeCounter++ : themeCounter = 0;
-    blockSupportRenderCache = [];
     localStorage.setItem("cachedTheme", themeCounter);
-    document.getElementById("themeButton").innerHTML = "Theme: <b>" + themes[themeCounter][0] + "</b>";
-    drawStaticCanvases(getLevel());
+    if (theme != undefined) {
+        themeCounter = theme;
+        blockSupportRenderCache = [];
+        document.getElementById("themeButton").innerHTML = "Theme: <b>" + themes[themeCounter][0] + "</b>";
+        drawStaticCanvases(getLevel());
+    }
 }
 function toggleGravity() {
     isGravityEnabled = !isGravityEnabled;
@@ -1885,6 +1894,8 @@ function redoAll(undoStuff) {
     copyToClipboard(svURL);
 }
 function advanceAll() {
+    cs2 = true;
+    document.getElementById("csButton").disabled = true;
     context = canvas7.getContext("2d");
     context.fillStyle = "rgba(0,0,0,.5)";
     context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
@@ -2271,7 +2282,7 @@ var themes = [  //name, background, wall, snakeColors, blockColors, spikeColors,
 
 var themeCounter = 0;
 var cachedTheme = localStorage.getItem("cachedTheme");
-if (cachedTheme == null || cachedTheme == "null") themeCounter = 0;
+if (cachedTheme == null) themeCounter = 0;
 else themeCounter = cachedTheme;
 var themeName = themes[themeCounter][0];
 document.getElementById("themeButton").innerHTML = "Theme: <b>" + themeName + "</b>";
