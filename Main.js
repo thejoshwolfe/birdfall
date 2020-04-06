@@ -735,7 +735,6 @@ document.addEventListener("keydown", function (event) {
                 return;
             case "V".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("paste"); break; }
-                if (sv) { advanceAll(); break; }
             case "H".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { toggleHotkeys(); break; }
             case "T".charCodeAt(0):
@@ -789,6 +788,9 @@ document.addEventListener("keydown", function (event) {
                 return;
             default: return;
         }
+    }
+    else {
+        if (event.keyCode == "V".charCodeAt(0) && sv) { advanceAll(); break; }
     }
     event.preventDefault();
     render();
