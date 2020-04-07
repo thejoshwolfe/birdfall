@@ -43,7 +43,7 @@ var OWWCounter = 0;
 var SNAKE = "s";
 var BLOCK = "b";
 var FRUIT = "f";
-var POISON_FRUIT = "p";
+var POISONFRUIT = "p";
 
 var checkResult = false;
 var cr = false;
@@ -96,7 +96,7 @@ function loadLevel(newLevel) {
     level = newLevel;
     currentSerializedLevel = compressSerialization(stringifyLevel(newLevel));
     var string = stringifyLevel(newLevel);
-    var levelString = string.substring(string.indexOf("?") + 1, string.indexOf("/"));
+    var levelString = string.substring(string.indexOf("?") + 1, string.indexOf("/")); //everything before objects
     if (levelString.match(/[a-z]/i)) enhanced = true;
 
     activateAnySnakePlease();
@@ -206,15 +206,15 @@ var testLevel_v0_converted = "HyRr4JK1&5&5?0005*4024005*001000/b0?7&6&15&23/s3?1
 
 function parseLevel(string) {
     // magic number
-    var localCursor = 0;
+    var plCursor = 0;
     skipWhitespace();
-    var versionTag = string.substr(localCursor, magicNumber.length);
+    var versionTag = string.substr(plCursor, magicNumber.length);
     switch (versionTag) {
         case magicNumber_v0:
         case magicNumber: break;
         default: throw new Error("not a snakefall level");
     }
-    localCursor += magicNumber.length;
+    plCursor += magicNumber.length;
     consumeKeyword("&");
 
     var level = {
@@ -256,7 +256,7 @@ function parseLevel(string) {
 
     // objects
     skipWhitespace();
-    while (localCursor < string.length) {
+    while (plCursor < string.length) {
         var object = {
             type: "?",
             id: -1,
@@ -266,12 +266,12 @@ function parseLevel(string) {
         };
 
         // type
-        object.type = string[localCursor];
+        object.type = string[plCursor];
         var locationsLimit;
         if (object.type === SNAKE || object.type === BLOCK) locationsLimit = -1;
-        else if (object.type === FRUIT || object.type === POISON_FRUIT) locationsLimit = 1;
+        else if (object.type === FRUIT || object.type === POISONFRUIT) locationsLimit = 1;
         else throw parserError("expected object type code");
-        localCursor += 1;
+        plCursor += 1;
 
         // id
         object.id = readInt();
@@ -287,6 +287,18 @@ function parseLevel(string) {
             if (!(0 <= location && location < level.map.length)) throw parserError("location out of bounds: " + JSON.stringify(locationString));
             object.locations.push(location);
         });
+
+        // splocks
+        if (object.type === BLOCK && string.substring(plCursor, plCursor + 1) === "?") {
+            var splockData = readRun();
+            var splockStrings = splockData.split("&");
+
+            splockStrings.forEach(function (splockString) {
+                var location = parseInt(splockString);
+                if (!(0 <= location && location < level.map.length)) throw parserError("splock out of bounds: " + JSON.stringify(splockString));
+                object.splocks.push(location);
+            });
+        }
 
         level.objects.push(object);
         skipWhitespace();
@@ -319,34 +331,34 @@ function parseLevel(string) {
     return level;
 
     function skipWhitespace() {
-        while (" \n\t\r".indexOf(string[localCursor]) !== -1) {
-            localCursor += 1;
+        while (" \n\t\r".indexOf(string[plCursor]) !== -1) {
+            plCursor += 1;
         }
     }
     function consumeKeyword(keyword) {
         skipWhitespace();
-        if (string.indexOf(keyword, localCursor) !== localCursor) throw parserError("expected " + JSON.stringify(keyword));
-        localCursor += 1;
+        if (string.indexOf(keyword, plCursor) !== plCursor) throw parserError("expected " + JSON.stringify(keyword));
+        plCursor += 1;
     }
     function readInt() {
         skipWhitespace();
-        for (var i = localCursor; i < string.length; i++) {
+        for (var i = plCursor; i < string.length; i++) {
             if ("0123456789".indexOf(string[i]) === -1) break;
         }
-        var substring = string.substring(localCursor, i);
+        var substring = string.substring(plCursor, i);
         if (substring.length === 0) throw parserError("expected int");
-        localCursor = i;
+        plCursor = i;
         return parseInt(substring, 10);
     }
     function readRun() {
         consumeKeyword("?");
-        var endIndex = string.indexOf("/", localCursor);
-        var substring = string.substring(localCursor, endIndex);
-        localCursor = endIndex + 1;
+        var endIndex = string.indexOf("/", plCursor);
+        var substring = string.substring(plCursor, endIndex);
+        plCursor = endIndex + 1;
         return substring;
     }
     function parserError(message) {
-        return new Error("parse error at position " + localCursor + ": " + message);
+        return new Error("parse error at position " + plCursor + ": " + message);
     }
 }
 
@@ -367,8 +379,8 @@ function stringifyLevel(level) {
     output += serializeObjects(level.objects);
 
     // sanity check
-    var shouldBeTheSame = parseLevel(output);
-    if (!deepEquals(level, shouldBeTheSame)) throw asdf; // serialization/deserialization is broken
+    // var shouldBeTheSame = parseLevel(output);
+    // if (!deepEquals(level, shouldBeTheSame)) throw asdf; // serialization/deserialization is broken
 
     return output;
 }
@@ -377,13 +389,15 @@ function serializeObjects(objects) {
     for (var i = 0; i < objects.length; i++) {
         var object = objects[i];
         output += object.type + object.id + " ";
-        output += "?" + object.locations.join("&") + "/\n";
+        output += "?" + object.locations.join("&");
+        if (object.splocks.length != 0) output += "/?" + object.splocks.join("&");
+        output += "/\n";
     }
     return output;
 }
 function serializeObjectState(object) {
     if (object == null) return [0, []];
-    return [object.dead, copyArray(object.locations)];
+    return [object.dead, copyArray(object.locations), copyArray(object.splocks)];
 }
 
 var base66 = "----0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -542,7 +556,7 @@ function parseAndLoadReplay(string) {
 
 var currentSerializedLevel;
 function saveLevel() {
-    if (isDead()) return alert("Can't save while you're dead!");
+    if (isDead()) return alert("Can't save while a snake is dead");
     var serializedLevel = compressSerialization(stringifyLevel(level));
     currentSerializedLevel = serializedLevel;
     var hash = "#level=" + serializedLevel;
@@ -708,7 +722,7 @@ document.addEventListener("keydown", function (event) {
                 return;
             case "F".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(FRUIT); break; }
-                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(POISON_FRUIT); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(POISONFRUIT); break; }
                 return;
             case "D".charCodeAt(0):
                 if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(0, 1); break; }
@@ -748,10 +762,7 @@ document.addEventListener("keydown", function (event) {
                 if ((!persistentState.showEditor && modifierMask === 0) || (persistentState.showEditor && modifierMask === SHIFT)) { toggleTheme(); break; }
             case "O".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode([ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]); break; }
-            case "M".charCodeAt(0):
-                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PLATFORM); break; }
             // case "K".charCodeAt(0):
-            //     if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK) { splockActive = true; break; }
             case 192:   //grave accent
                 if (modifierMask === 0) { fitCanvas(0); break; }
             case 191:
@@ -760,6 +771,8 @@ document.addEventListener("keydown", function (event) {
                 if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
                 if (modifierMask === 0 && replayString) { advance(); break; }
             case 32: // spacebar
+                if (persistentState.showEditor && paintBrushTileCode === BLOCK && !splockActive) { splockActive = true; changeSplockButtonColor(); break; }
+                if (persistentState.showEditor && paintBrushTileCode === BLOCK && splockActive) { splockActive = false; changeSplockButtonColor(); break; }
             case 9: // tab
                 if (modifierMask === 0) { switchSnakes(1); break; }
                 if (modifierMask === SHIFT) { switchSnakes(-1); break; }
@@ -932,7 +945,7 @@ function fitCanvas(type) {
     var offset = 0;
     switch (type) {
         case 0: break;
-        case 1: offset = document.getElementById("bottomBlock").offsetHeight + 20; break;
+        case 1: offset = document.getElementById("bottomBlock").offsetHeight + 30; break;
         case 2: offset = document.getElementById("csText").offsetHeight + 50; break;
     }
     var maxW = window.innerWidth / level.width;
@@ -1067,8 +1080,6 @@ var paintButtonIdAndTileCodes = [
     ["paintWallButton", WALL],
     ["paintSpikeButton", SPIKE],
     ["paintExitButton", EXIT],
-    ["paintFruitButton", FRUIT],
-    ["paintPoisonFruitButton", POISON_FRUIT],
     ["paintPortalButton", PORTAL],
     ["paintPlatformButton", PLATFORM],
     ["paintTrellisButton", TRELLIS],
@@ -1081,6 +1092,9 @@ var paintButtonIdAndTileCodes = [
     ["paintWaterButton", WATER],
     ["paintSnakeButton", SNAKE],
     ["paintBlockButton", BLOCK],
+    // ["paintSplockButton", SPLOCK],
+    ["paintFruitButton", FRUIT],
+    ["paintPoisonFruitButton", POISONFRUIT],
 ];
 paintButtonIdAndTileCodes.forEach(function (pair) {
     var id = pair[0];
@@ -1188,9 +1202,9 @@ canvas4.addEventListener("dblclick", function (event) {
         } else if (object.type === FRUIT) {
             // edit fruits, i guess
             paintBrushTileCode = FRUIT;
-        } else if (object.type === POISON_FRUIT) {
+        } else if (object.type === POISONFRUIT) {
             // edit poison fruits, i guess
-            paintBrushTileCode = POISON_FRUIT;
+            paintBrushTileCode = POISONFRUIT;
         }
         else throw unreachable();
         paintBrushTileCodeChanged();
@@ -1260,7 +1274,10 @@ function selectAll() {
 }
 
 function setPaintBrushTileCode(tileCode) {
+    splockActive = false;
     document.getElementById("paintSplockButton").disabled = true;
+    changeSplockButtonColor();
+
     if (tileCode === "paste" && clipboardData == null) return;
     if (paintBrushTileCode === "select" && tileCode !== "select" && selectionStart != null && selectionEnd != null) {
         // usually this means to fill in the selection
@@ -1292,7 +1309,7 @@ function setPaintBrushTileCode(tileCode) {
             // cycle through block ids
             blocks.sort(compareId);
             if (paintBrushBlockId != null) {
-                // document.getElementById("paintSplockButton").disabled = false;
+                document.getElementById("paintSplockButton").disabled = false;
                 (function () {
                     for (var i = 0; i < blocks.length; i++) {
                         if (blocks[i].id === paintBrushBlockId) {
@@ -1312,7 +1329,7 @@ function setPaintBrushTileCode(tileCode) {
             } else {
                 // first one
                 paintBrushBlockId = blocks[0].id;
-                // document.getElementById("paintSplockButton").disabled = false;
+                document.getElementById("paintSplockButton").disabled = false;
             }
         } else {
             // new block id
@@ -1370,6 +1387,17 @@ function paintBrushTileCodeChanged() {
     document.getElementById("pasteButton").disabled = clipboardData == null;
 
     render();
+}
+function changeSplockButtonColor() {
+    var button = document.getElementById("paintSplockButton");
+    if (splockActive) {
+        button.style.background = "linear-gradient(#4b91ff, #055ce4)";
+        button.style.color = "white";
+    }
+    else {
+        button.style.background = "";
+        button.style.color = "";
+    }
 }
 
 function cutSelection() {
@@ -1557,13 +1585,13 @@ function newFruit(location) {
     };
 }
 function newPoisonFruit(location) {
-    var fruits = getObjectsOfType(POISON_FRUIT);
+    var fruits = getObjectsOfType(POISONFRUIT);
     fruits.sort(compareId);
     for (var i = 0; i < fruits.length; i++) {
         if (fruits[i].id !== i) break;
     }
     return {
-        type: POISON_FRUIT,
+        type: POISONFRUIT,
         id: i,
         dead: false, // unused
         locations: [location],
@@ -1599,7 +1627,7 @@ function paintAtLocation(location, changeLog) {
                 object.id = newBlock().id;
             } else if (object.type === FRUIT) {
                 object.id = newFruit().id;
-            } else if (object.type === POISON_FRUIT) {
+            } else if (object.type === POISONFRUIT) {
                 object.id = newPoisonFruit().id;
             } else throw unreachable();
             level.objects.push(object);
@@ -1632,7 +1660,7 @@ function paintAtLocation(location, changeLog) {
         }
         changeLog.push([paintBrushObject.type, paintBrushObject.id, oldSnakeSerialization, serializeObjectState(paintBrushObject)]);
     } else if (paintBrushTileCode === BLOCK) {
-        // document.getElementById("paintSplockButton").disabled = false;
+        document.getElementById("paintSplockButton").disabled = false;
         var objectHere = findObjectAtLocation(location);
         if (paintBrushBlockId == null && objectHere != null && objectHere.type === BLOCK) {
             // just start editing this block
@@ -1654,6 +1682,7 @@ function paintAtLocation(location, changeLog) {
                 paintBrushBlockId = thisBlock.id;
             } else {
                 var existingIndex = thisBlock.locations.indexOf(location);
+                var existingSplockIndex = thisBlock.splocks.indexOf(location);
                 if (existingIndex !== -1) {
                     // reclicking part of this object means to delete just part of it.
                     if (thisBlock.locations.length === 1) {
@@ -1662,8 +1691,13 @@ function paintAtLocation(location, changeLog) {
                         paintBrushBlockId = null;
                     } else {
                         thisBlock.locations.splice(existingIndex, 1);
+                        if (splockActive) thisBlock.splocks.push(location);
                     }
-                } else {
+                } else if (existingSplockIndex !== -1) {
+                    thisBlock.splocks.splice(existingIndex, 1);
+                    if (!splockActive) thisBlock.locations.push(location);
+                }
+                else {
                     if (!splockActive) {
                         // add a tile to the block
                         removeAnyObjectAtLocation(location, changeLog);
@@ -1679,7 +1713,7 @@ function paintAtLocation(location, changeLog) {
             changeLog.push([thisBlock.type, thisBlock.id, oldBlockSerialization, serializeObjectState(thisBlock)]);
             delete blockSupportRenderCache[thisBlock.id];
         }
-    } else if (paintBrushTileCode === FRUIT || paintBrushTileCode === POISON_FRUIT) {
+    } else if (paintBrushTileCode === FRUIT || paintBrushTileCode === POISONFRUIT) {
         paintTileAtLocation(location, SPACE, changeLog);
         removeAnyObjectAtLocation(location, changeLog);
         var object = paintBrushTileCode == FRUIT ? newFruit(location) : newPoisonFruit(location);
@@ -1782,7 +1816,7 @@ function reduceChangeLog(changeLog) {
                 changeLog.splice(i, 1);
                 i--;
             }
-        } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === POISON_FRUIT) {
+        } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === POISONFRUIT) {
             for (var j = i + 1; j < changeLog.length; j++) {
                 var otherChange = changeLog[j];
                 if (otherChange[0] === change[0] && otherChange[1] === change[1]) {
@@ -2000,7 +2034,7 @@ function undoChanges(changes, changeLog) {
             if (location >= level.map.length) return "Can't turn " + describe(toTileCode) + " into " + describe(fromTileCode) + " out of bounds";
             if (level.map[location] !== toTileCode) return "Can't turn " + describe(toTileCode) + " into " + describe(fromTileCode) + " because there's " + describe(level.map[location]) + " there now";
             paintTileAtLocation(location, fromTileCode, changeLog);
-        } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === POISON_FRUIT) {
+        } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === FRUIT || change[0] === POISONFRUIT) {
             // change object
             var type = change[0];
             var id = change[1];
@@ -2008,19 +2042,26 @@ function undoChanges(changes, changeLog) {
             var toDead = change[3][0];
             var fromLocations = change[2][1].map(transformLocation);
             var toLocations = change[3][1].map(transformLocation);
+            var fromSplocks = change[2][2].map(transformLocation);
+            var toSplocks = change[3][2].map(transformLocation);
             if (fromLocations.filter(function (location) { return location >= level.map.length; }).length > 0) {
                 return "Can't move " + describe(type, id) + " out of bounds";
             }
+            if (fromSplocks.filter(function (location) { return location >= level.map.length; }).length > 0) {
+                return "Can't move " + describe(type, id) + " out of bounds";
+            }
             var object = findObjectOfTypeAndId(type, id);
-            if (toLocations.length !== 0) {
+            if (toLocations.length !== 0 || toSplocks.length !== 0) {
                 // should exist at this location
-                if (object == null) return "Can't move " + describe(type, id) + " because it doesn't exit";
+                if (object == null) return "Can't move " + describe(type, id) + " because it doesn't exist";
                 if (!deepEquals(object.locations, toLocations)) return "Can't move " + describe(object) + " because it's in the wrong place";
+                if (!deepEquals(object.splocks, toSplocks)) return "Can't move " + describe(object) + " because it's in the wrong place";
                 if (object.dead !== toDead) return "Can't move " + describe(object) + " because it's alive/dead state doesn't match";
                 // doit
-                if (fromLocations.length !== 0) {
+                if (fromLocations.length !== 0 || fromSplocks.length !== 0) {
                     var oldState = serializeObjectState(object);
                     object.locations = fromLocations;
+                    object.splocks = fromSplocks;
                     object.dead = fromDead;
                     changeLog.push([object.type, object.id, oldState, serializeObjectState(object)]);
                 } else {
@@ -2035,7 +2076,7 @@ function undoChanges(changes, changeLog) {
                     id: id,
                     dead: fromDead,
                     locations: fromLocations,
-                    splocks: []
+                    splocks: fromSplocks
                 };
                 level.objects.push(object);
                 changeLog.push([object.type, object.id, [0, []], serializeObjectState(object)]);
@@ -2089,7 +2130,7 @@ function describe(arg1, arg2) {
     if (arg1 === FRUIT) {
         return "Fruit";
     }
-    if (arg1 === POISON_FRUIT) {
+    if (arg1 === POISONFRUIT) {
         return "Poison Fruit";
     }
     if (typeof arg1 === "object") return describe(arg1.type, arg1.id);
@@ -2320,8 +2361,6 @@ function showEditorChanged() {
 }
 
 function move(dr, dc, doAnimations) {
-    // var a = getBlocks();
-    // a[0].splocks = [];
     document.getElementById("cycleDiv").innerHTML = "";
     postPortalSnakeOutline = [];
     portalConflicts = [];
@@ -2369,7 +2408,7 @@ function move(dr, dc, doAnimations) {
                 // eat
                 removeObject(otherObject, changeLog);
                 ate = true;
-            } else if (otherObject.type === POISON_FRUIT) {
+            } else if (otherObject.type === POISONFRUIT) {
                 // eat poison
                 removeObject(otherObject, changeLog);
                 ate_poison = true;
@@ -2377,6 +2416,7 @@ function move(dr, dc, doAnimations) {
                 otherObject = findObjectAtLocation(newLocation);
                 if (otherObject != null) {
                     if (otherObject === activeSnake) return; // can't push yourself
+                    if (otherObject.splocks.includes(newLocation) && !otherObject.locations.includes(newLocation)) return false; // can't push splock
                     // push objects
                     if (!checkMovement(activeSnake, otherObject, dr, dc, pushedObjects)) return false;
                 }
@@ -2494,7 +2534,7 @@ function move(dr, dc, doAnimations) {
         // fall
         var dyingObjects = [];
         var fallingObjects = level.objects.filter(function (object) {
-            if (object.type === FRUIT || object.type === POISON_FRUIT) return; // can't fall
+            if (object.type === FRUIT || object.type === POISONFRUIT) return; // can't fall
             var theseDyingObjects = [];
             if (!checkMovement(null, object, 1, 0, [], theseDyingObjects)) return false;
             // this object can fall. maybe more will fall with it too. we'll check those separately.
@@ -2572,6 +2612,51 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
     var forwardLocations = [];
     for (var i = 0; i < pushedObjects.length; i++) {
         pushedObject = pushedObjects[i];
+
+        //splocks
+        for (var j = 0; j < pushedObject.splocks.length; j++) {
+            var rowcol = getRowcol(level, pushedObject.splocks[j]);
+            var forwardRowcol = { r: rowcol.r + dr, c: rowcol.c + dc };
+            if (!isInBounds(level, forwardRowcol.r, forwardRowcol.c)) {
+                if (dyingObjects == null) {
+                    // can't push things out of bounds
+                    return false;
+                } else {
+                    // this thing is going to fall out of bounds
+                    addIfNotPresent(dyingObjects, pushedObject);
+                    addIfNotPresent(pushedObjects, pushedObject);
+                    continue;
+                }
+            }
+            var forwardLocation = getLocation(level, forwardRowcol.r, forwardRowcol.c);
+            var yetAnotherObject = findObjectAtLocation(forwardLocation);
+            if (yetAnotherObject != null) {
+                if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === POISONFRUIT) {
+                    // not pushable
+                    return false;
+                }
+                if (yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation)) {
+                    var object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
+                    if (object.type === SNAKE) {
+                        addIfNotPresent(dyingObjects, object);
+                        continue;
+                    }
+                }
+                if (yetAnotherObject === pusher) {
+                    // indirect pushing ourselves.
+                    // special check for when we're indirectly pushing the tip of our own tail.
+                    if (forwardLocation === pusher.locations[pusher.locations.length - 1]) {
+                        // for some reason this is ok. ------------ THIS IS THE TAIL GLITCH
+                        continue;
+                    }
+                    return false;
+                }
+                addIfNotPresent(pushedObjects, yetAnotherObject);
+                if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) addIfNotPresent(forwardLocations, forwardLocation);
+            } else addIfNotPresent(forwardLocations, forwardLocation);
+        }
+
+        //locations
         for (var j = 0; j < pushedObject.locations.length; j++) {
             var rowcol = getRowcol(level, pushedObject.locations[j]);
             var forwardRowcol = { r: rowcol.r + dr, c: rowcol.c + dc };
@@ -2595,16 +2680,23 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     if (j > 0) neighborLocations.push(pushedObject.locations[j - 1]);
                     if (j < pushedObject.locations.length - 1) neighborLocations.push(pushedObject.locations[j + 1]);
                 } else if (pushedObject.type === BLOCK) {
-                    neighborLocations = pushedObject.locations;
+                    neighborLocations = pushedObject.locations; //used to concatenate splocks but I don't know what neighborLocations does
                 } else throw asdf;
                 if (neighborLocations.indexOf(forwardLocation) === -1) return false; // flat surface
                 // we slip right past it
             }
             var yetAnotherObject = findObjectAtLocation(forwardLocation);
             if (yetAnotherObject != null) {
-                if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === POISON_FRUIT) {
+                if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === POISONFRUIT) {
                     // not pushable
                     return false;
+                }
+                if (yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation)) {
+                    var object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
+                    if (object.type === SNAKE) {
+                        addIfNotPresent(dyingObjects, object);
+                        continue;
+                    }
                 }
                 if (yetAnotherObject === pusher) {
                     // indirect pushing ourselves.
@@ -2617,18 +2709,18 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                 }
                 addIfNotPresent(pushedObjects, yetAnotherObject);
                 if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) addIfNotPresent(forwardLocations, forwardLocation);
-            } else
-                addIfNotPresent(forwardLocations, forwardLocation);
+            } else addIfNotPresent(forwardLocations, forwardLocation);
         }
     }
+
     // check forward locations
     for (var i = 0; i < forwardLocations.length; i++) {
-        var forwardLocation = forwardLocations[i];
+        forwardLocation = forwardLocations[i];
         // many of these locations can be inside objects,
         // but that means the tile must be air,
         // and we already know pushing that object.
         var tileCode = level.map[forwardLocation];
-        var object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
+        object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
         if (!isTileCodeAir(pusher, object, tileCode, dr, dc)) {
             if (dyingObjects != null) {
                 if (tileCode === SPIKE) {
@@ -2656,7 +2748,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
             return false;
         }
     }
-    // the push is go
+    // I think this means something falls (originally said "the push is go")
     return true;
 }
 
@@ -2779,7 +2871,7 @@ function removeAnimatedObject(object, changeLog) {
 }
 function removeObject(object, changeLog) {
     removeFromArray(level.objects, object);
-    changeLog.push([object.type, object.id, [object.dead, copyArray(object.locations)], [0, []]]);
+    changeLog.push([object.type, object.id, [object.dead, copyArray(object.locations), copyArray(object.splocks)], [0, [], []]]);
     if (object.type === SNAKE && object.id === activeSnakeId) {
         activateAnySnakePlease();
     }
@@ -2829,7 +2921,7 @@ function findObjectAtLocation(location) {
     return null;
 }
 function isUneatenFruit() {
-    return getObjectsOfType(FRUIT).length > 0 || getObjectsOfType(POISON_FRUIT).length > 0;
+    return getObjectsOfType(FRUIT).length > 0 || getObjectsOfType(POISONFRUIT).length > 0;
 }
 function getActivePortalLocations() {
     var portalLocations = getPortalLocations();
@@ -3098,7 +3190,7 @@ function render() {
 
             for (var i = 0; i < objects.length; i++) {
                 var object = objects[i];
-                if (object.type === BLOCK) drawObject(object);
+                if (object.type === BLOCK) drawObject(object, rng);
             }
 
             if (persistentState.showEditor && onlyTheseObjects == null) {
@@ -3134,7 +3226,7 @@ function render() {
 
             for (var i = 0; i < objects.length; i++) {
                 var object = objects[i];
-                if (object.type === FRUIT || object.type === POISON_FRUIT) drawObject(object);  //draws fruit
+                if (object.type === FRUIT || object.type === POISONFRUIT) drawObject(object);  //draws fruit
             }
 
             if (portalFailure && countSnakes() != 0) {
@@ -3236,7 +3328,7 @@ function render() {
                 }
             } else if (paintBrushTileCode === BLOCK) {
                 if (!(objectHere != null && objectHere.type === BLOCK && objectHere.id === paintBrushBlockId) && !splockActive) {
-                    drawObject(newBlock(hoverLocation));
+                    drawObject(newBlock(hoverLocation), rng);
                 }
                 else if (!(objectHere != null && objectHere.type === BLOCK && objectHere.id === paintBrushBlockId) && splockActive && paintBrushBlockId != null) {
                     drawTile(context, SPIKE, hoverRowcol.r, hoverRowcol.c, level, hoverLocation, rng);
@@ -3245,8 +3337,8 @@ function render() {
                 if (!(objectHere != null && objectHere.type === FRUIT)) {
                     drawObject(newFruit(hoverLocation));
                 }
-            } else if (paintBrushTileCode === POISON_FRUIT) {
-                if (!(objectHere != null && objectHere.type === POISON_FRUIT)) {
+            } else if (paintBrushTileCode === POISONFRUIT) {
+                if (!(objectHere != null && objectHere.type === POISONFRUIT)) {
                     drawObject(newPoisonFruit(hoverLocation));
                 }
             } else if (paintBrushTileCode === "resize") {
@@ -3261,7 +3353,7 @@ function render() {
                     var rowcol = getRowcol(level, location);
                     drawTile(context, tileCode, rowcol.r, rowcol.c, pastedData.level, location, rng);
                 });
-                pastedData.selectedObjects.forEach(drawObject);
+                pastedData.selectedObjects.forEach(drawObject, rng);
             } else throw unreachable();
 
             context = savedContext;
@@ -3339,18 +3431,18 @@ function render() {
     //     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     // }
 
-    function drawObject(object) {
+    function drawObject(object, rng) {
         var r, c;
         switch (object.type) {
             case SNAKE:
                 themeName !== "Classic" ? drawNewSnake() : drawOriginalSnake();
                 break;
             case BLOCK:
-                drawBlock(object);
+                drawBlock(object, rng);
                 break;
             case FRUIT:
-            case POISON_FRUIT:
-                var isPoison = object.type == POISON_FRUIT;
+            case POISONFRUIT:
+                var isPoison = object.type == POISONFRUIT;
                 drawFruit(object, isPoison);
                 break;
             default: throw unreachable();
@@ -4009,7 +4101,7 @@ function render() {
     }
 
     function drawFruit(object, isPoison) {
-        var isPoison = object.type == POISON_FRUIT;
+        var isPoison = object.type == POISONFRUIT;
         var rowcol = getRowcol(level, object.locations[0]);
         var c = rowcol.c;
         var r = rowcol.r;
@@ -4075,39 +4167,25 @@ function render() {
         context.fillRect(xLo, yLo, xHi - xLo, yHi - yLo);
     }
 
-    function drawBlock(block) {
+    function drawBlock(block, rng) {
         var animationDisplacementRowcol = findAnimationDisplacementRowcol(block.type, block.id);
-        var rowcols = block.locations.map(function (location) {
+        var blockRowcols = block.locations.map(function (location) {
+            return getRowcol(level, location);
+        });
+        var splockRowcols = block.splocks.map(function (location) {
             return getRowcol(level, location);
         });
 
-        rowcols.forEach(function (rowcol) {
+        var color = blockColors[block.id % blockColors.length];
+        var splocks = block.splocks;
+        for (var i = 0; i < splocks.length; i++) {
+            var newSplock = getRowcol(level, splocks[i]);
+            drawSpikes(context, newSplock.r, newSplock.c, null, rng, blockRowcols, splockRowcols, color);
+        }
+
+        blockRowcols.forEach(function (rowcol) {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
-
-            var color = blockColors[block.id % blockColors.length];
-            var splocks = block.splocks;
-            for (var i = 0; i < splocks.length; i++) {
-                var newSplock = getRowcol(level, splocks[i]);
-                drawSpikes(context, newSplock.r, newSplock.c, getAdjacentTiles(), color);
-                function getAdjacentTiles() {
-                    return [
-                        [getTile(r - 1, c - 1),
-                        getTile(r - 1, c + 0),
-                        getTile(r - 1, c + 1)],
-                        [getTile(r + 0, c - 1),
-                            null,
-                        getTile(r + 0, c + 1)],
-                        [getTile(r + 1, c - 1),
-                        getTile(r + 1, c + 0),
-                        getTile(r + 1, c + 1)],
-                    ];
-                }
-                function getTile(r, c) {
-                    if (!isInBounds(level, r, c)) return null;
-                    return level.map[getLocation(level, r, c)];
-                }
-            }
 
             context.fillStyle = color;
             var outlineThickness = .4;
@@ -4132,8 +4210,8 @@ function render() {
             if (!isAlsoThisBlock(1, 0)) roundRect(context, (c + complement) * tileSize, (r) * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
 
             function isAlsoThisBlock(dc, dr) {
-                for (var i = 0; i < rowcols.length; i++) {
-                    var otherRowcol = rowcols[i];
+                for (var i = 0; i < blockRowcols.length; i++) {
+                    var otherRowcol = blockRowcols[i];
                     if (rowcol.r + dr === otherRowcol.r && rowcol.c + dc === otherRowcol.c) return true;
                 }
                 return false;
@@ -4418,7 +4496,7 @@ function drawCurves2(context, r, c, isOccupied, base) {
 
 function drawWall(context, r, c, adjacentTiles, rng, grass) {
     drawBase(context, r, c, isWall, rng, wall[0]);
-    drawTileOutlines(context, r, c, isWall, .2, wall[3], grass);
+    drawTileOutlines(context, r, c, isWall, .2, wall[3], rng, grass);
     //if (wall[3] && !wall[6]) drawBushes(context, r, c, isWall);
 
     function isWall(dc, dr) {
@@ -4564,7 +4642,7 @@ function drawBase(context, r, c, isOccupied, rng, fillStyle) {
     }
 }
 
-function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurface, grass) {
+function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurface, rng, grass) {
     //if (grass && !isOccupied(0, -1) && wall[4]) { drawGrass(context); return; }
     if (wall[1] != "rainbow") context.fillStyle = wall[1];
     else {
@@ -4595,6 +4673,37 @@ function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurf
     var outlinePixels = outlineThickness * tileSize;
 
     if (curlySurface && !isOccupied(0, -1)) {
+        // if (isOccupied(-1, 0) && !isOccupied(-1, -1)) {          //bushes
+        //     var count = rng() * 100;
+        //     if (count > 90) {
+        //         context.beginPath();
+        //         context.arc(c * tileSize, (r - .25) * tileSize, tileSize / 8, 0, 2 * Math.PI);
+        //         context.closePath();
+        //         context.fill();
+
+        //         for (var i = -.25; i <= .25; i += .125) {
+        //             var j = i===0?.08:Math.abs(i);
+        //             context.beginPath();
+        //             context.arc((c + i) * tileSize, (r - .5 + j) * tileSize, tileSize / 8, 0, 2 * Math.PI);
+        //             context.closePath();
+        //             context.fill();
+        //             context.beginPath();
+        //             context.arc((c + i) * tileSize, (r - j) * tileSize, tileSize / 8, 0, 2 * Math.PI);
+        //             context.closePath();
+        //             context.fill();
+        //         }
+
+        //         context.beginPath();
+        //         context.arc((c - .3) * tileSize, (r - .125) * tileSize, tileSize / 8, 0, 2 * Math.PI);
+        //         context.closePath();
+        //         context.fill();
+        //         context.beginPath();
+        //         context.arc((c + .3) * tileSize, (r - .125) * tileSize, tileSize / 8, 0, 2 * Math.PI);
+        //         context.closePath();
+        //         context.fill();
+        //     }
+        // }
+
         context.beginPath();
         context.moveTo((c + 1) * tileSize, (r - .05) * tileSize);
         context.lineTo(c * tileSize, (r - .05) * tileSize);
@@ -4612,7 +4721,6 @@ function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurf
         context.fill();
     } else if (!curlySurface && !isOccupied(0, -1)) context.fillRect((c) * tileSize, (r) * tileSize, tileSize, outlinePixels);
 
-
     if (!curlySurface && !isOccupied(-1, -1)) context.fillRect((c) * tileSize, (r) * tileSize, outlinePixels, outlinePixels);
     if (!curlySurface && !isOccupied(1, -1)) context.fillRect((c + complement) * tileSize, (r) * tileSize, outlinePixels, outlinePixels);
     if (!curlySurface && !isOccupied(-1, 1)) context.fillRect((c) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
@@ -4621,8 +4729,10 @@ function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurf
     if (!curlySurface && !isOccupied(-1, 0)) context.fillRect((c) * tileSize, (r) * tileSize, outlinePixels, tileSize);
     if (!curlySurface && !isOccupied(1, 0)) context.fillRect((c + complement) * tileSize, (r) * tileSize, outlinePixels, tileSize);
 
+
+
     function drawGrass(context) {
-        var count = Math.floor(rng() * 3 + 10);
+        count = Math.floor(rng() * 3 + 10);
         for (var i = 0; i < count; i++) {
             var bladeStart = rng();
             var bladeHeight = rng() * .1 + .05;
@@ -4684,7 +4794,7 @@ function drawBushes(context, r, c, isOccupied) {
     }
 }
 
-function drawSpikes(context, r, c, adjacentTiles, rng, color) {
+function drawSpikes(context, r, c, adjacentTiles, rng, blockRowcols, splockRowcols, color) {
     var x = c * tileSize;
     var y = r * tileSize;
     if (themeName === "Classic") {
@@ -4712,7 +4822,8 @@ function drawSpikes(context, r, c, adjacentTiles, rng, color) {
     else {
         var spikeWidth = 10 / 9;
         drawSpokes(context, x, y, spikeWidth, color);
-        drawSpikeSupports(context, r, c, x, y, spikeWidth, color, isSpike, isWall, rng);
+        if (color == undefined) drawSpikeSupports(context, r, c, x, y, spikeWidth, isSpike, isWall, rng);
+        else drawSpikeSupports(context, r, c, x, y, spikeWidth, isAlsoThisSplock, isAlsoThisBlock, rng, color);
 
         function isSpike(dc, dr) {
             var tileCode = adjacentTiles[1 + dr][1 + dc];
@@ -4721,6 +4832,20 @@ function drawSpikes(context, r, c, adjacentTiles, rng, color) {
         function isWall(dc, dr) {
             var tileCode = adjacentTiles[1 + dr][1 + dc];
             return tileCode == null || tileCode === WALL;
+        }
+        function isAlsoThisSplock(dc, dr) {
+            for (var i = 0; i < splockRowcols.length; i++) {
+                var otherRowcol = splockRowcols[i];
+                if (r + dr === otherRowcol.r && c + dc === otherRowcol.c) return true;
+            }
+            return false;
+        }
+        function isAlsoThisBlock(dc, dr) {
+            for (var i = 0; i < blockRowcols.length; i++) {
+                var otherRowcol = blockRowcols[i];
+                if (r + dr === otherRowcol.r && c + dc === otherRowcol.c) return true;
+            }
+            return false;
         }
     }
 }
@@ -4768,53 +4893,54 @@ function drawSpokes(context, x, y, spikeWidth, color) {
     context.fill();
 }
 
-function drawSpikeSupports(context, r, c, x, y, spikeWidth, color, isOccupied, canConnect, rng) {
+function drawSpikeSupports(context, r, c, x, y, spikeWidth, isOccupied, canConnect, rng, color) {
     var boltBool = false;
     var splock = false;
     if (color != undefined) splock = true;
     context.fillStyle = splock ? color : spikeColors[1];
-    if (canConnect(0, 1)) {
+    var color2 = splock ? color : spikeColors[0];
+
+    if (canConnect(0, 1) && (!(isOccupied(-1, 0) && isOccupied(1, 0)))) {
         context.fillRect((c + .26) * tileSize, (r + .8) * tileSize, tileSize * .48, tileSize * .4);
         boltBool = true;
     }
-    if (canConnect(0, -1) && !canConnect(0, 1)) {
-        if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(1, -1)) { }
-        else {
-            context.fillRect((c + .26) * tileSize, r * tileSize, tileSize * .48, tileSize * .4);
-            boltBool = true;
+    if (!canConnect(0, 1) || splock) {
+        if (canConnect(0, -1)) {
+            if (!(!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(1, -1)) || splock) {
+                context.fillRect((c + .26) * tileSize, r * tileSize, tileSize * .48, tileSize * .4);
+                boltBool = true;
+            }
+
         }
-    }
-    if (canConnect(-1, 0) && !canConnect(0, 1)) {
-        if (isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(-1, 1)) { }
-        else {
-            context.fillRect(c * tileSize, (r + .26) * tileSize, tileSize * .4, tileSize * .48);
-            boltBool = true;
+        if (canConnect(-1, 0)) {
+            if (!(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(-1, 1)) || splock) {
+                context.fillRect(c * tileSize, (r + .26) * tileSize, tileSize * .4, tileSize * .48);
+                boltBool = true;
+            }
+
         }
-    }
-    if (canConnect(1, 0) && !canConnect(0, 1)) {
-        if (isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(1, -1) && canConnect(1, 1)) { }
-        else {
-            context.fillRect((c + .8) * tileSize, (r + .26) * tileSize, tileSize * .4, tileSize * .48);
-            boltBool = true;
+        if (canConnect(1, 0)) {
+            if (!(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(1, -1) && canConnect(1, 1)) || splock) {
+                context.fillRect((c + .8) * tileSize, (r + .26) * tileSize, tileSize * .4, tileSize * .48);
+                boltBool = true;
+            }
         }
     }
 
     var spikeSize = .2;
-    context.fillStyle = splock ? color : spikeColors[2];
+    context.fillStyle = spikeColors[2];
     if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {                                            //TOUCHING ONE
         roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
         boltBool = true;
     }
     else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {
-        drawCenterSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        context.fillStyle = spikeColors[2];
-        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize, tileSize * .6, 0, true, false);
+        drawCenterSpikes(context, x, y, spikeWidth, color2);
+        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * 1.05, tileSize * .6, 0, true, false);
         boltBool = true;
     }
     else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) {
-        drawMiddleSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        context.fillStyle = spikeColors[2];
-        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
+        drawMiddleSpikes(context, x, y, spikeWidth, color2);
+        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * 1.05, 0, true, false);
         boltBool = true;
     }
     else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) {
@@ -4822,8 +4948,7 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, color, isOccupied, c
         boltBool = true;
     }
     else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {                                         //TOUCHING TWO (CORNERS)
-        drawCenterSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        context.fillStyle = spikeColors[2];
+        drawCenterSpikes(context, x, y, spikeWidth, color2);
         roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
         roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
         if (!canConnect(1, -1)) boltBool = true;
@@ -4834,100 +4959,56 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, color, isOccupied, c
         if (!canConnect(-1, -1)) boltBool = true;
     }
     else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) {
-        drawMiddleSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        drawCenterSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        context.fillStyle = spikeColors[2];
-        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
+        drawMiddleSpikes(context, x, y, spikeWidth, color2);
+        drawCenterSpikes(context, x, y, spikeWidth, color2);
+        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * 1.05, tileSize * .6, 0, true, false);
         roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
         if (!canConnect(1, 1)) boltBool = true;
     }
     else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) {
-        drawMiddleSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        context.fillStyle = spikeColors[2];
+        drawMiddleSpikes(context, x, y, spikeWidth, color2);
         roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
-        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
+        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * 1.05, 0, true, false);
         if (!canConnect(-1, 1)) boltBool = true;
     }
-    /* if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {                                             //TOUCHING ONE
-        roundRect(context, (c+spikeSize)*tileSize, r * tileSize, tileSize * .6, tileSize * .8, { bl: 4, br: 4 }, true, false);
-        boltBool = true;
-    }
-    else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {
-        roundRect(context, (c+spikeSize)*tileSize, (r+spikeSize)*tileSize, tileSize, tileSize * .6, { tl: 4, bl: 4 }, true, false);
-        boltBool = true;
-    }
-    else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) {
-        roundRect(context, (c+spikeSize)*tileSize, (r+spikeSize)*tileSize, tileSize * .6, tileSize * .8, { tl: 4, tr: 4 }, true, false);
-        boltBool = true;
-    }
-    else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) {
-        roundRect(context, c * tileSize, (r+spikeSize)*tileSize, tileSize * .8, tileSize * .6, { tr: 4, br: 4 }, true, false);
-        boltBool = true;
-    }
-    else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {                                         //TOUCHING TWO (CORNERS)
-        roundRect(context, (c+spikeSize)*tileSize, r * tileSize, tileSize * .6, tileSize * .8, { bl: 4 }, true, false);
-        roundRect(context, (c+spikeSize)*tileSize, (r+spikeSize)*tileSize, tileSize * .8, tileSize * .6, { bl: 4 }, true, false);
-        if (!canConnect(1, -1)) boltBool = true;
-    }
-    else if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) {
-        roundRect(context, c * tileSize, (r+spikeSize)*tileSize, tileSize * .8, tileSize * .6, { br: 4 }, true, false);
-        roundRect(context, (c+spikeSize)*tileSize, r * tileSize, tileSize * .6, tileSize * .8, { br: 4 }, true, false);
-        if (!canConnect(-1, -1)) boltBool = true;
-    }
-    else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) {
-        roundRect(context, (c+spikeSize)*tileSize, (r+spikeSize)*tileSize, tileSize * .8, tileSize * .6, { tl: 4 }, true, false);
-        roundRect(context, (c+spikeSize)*tileSize, (r+spikeSize)*tileSize, tileSize * .6, tileSize * .8, { tl: 4 }, true, false);
-        if (!canConnect(1, 1)) boltBool = true;
-    }
-    else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) {
-        roundRect(context, c * tileSize, (r+spikeSize)*tileSize, tileSize * .8, tileSize * .6, { tr: 4 }, true, false);
-        roundRect(context, (c+spikeSize)*tileSize, (r+spikeSize)*tileSize, tileSize * .6, tileSize * .8, { tr: 4 }, true, false);
-        if (!canConnect(-1, 1)) boltBool = true;
-    } */
     else if (isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) {                                         //TOUCHING TWO (OPPOSITES)
-        drawMiddleSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        context.fillStyle = spikeColors[2];
-        roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize, 0, true, false);
+        drawMiddleSpikes(context, x, y, spikeWidth, color2);
+        roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * 1.2, 0, true, false);
     }
     else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) {
-        drawCenterSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        context.fillStyle = spikeColors[2];
-        roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize, tileSize * .6, 0, true, false);
+        drawCenterSpikes(context, x, y, spikeWidth, color2);
+        roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize * 1.2, tileSize * .6, 0, true, false);
     }
     else if (isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) {                                         //TOUCHING THREE
-        drawMiddleSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        drawCenterSpikes(context, x, y, spikeWidth, spikeColors[0]);
+        drawMiddleSpikes(context, x, y, spikeWidth, color2);
+        drawCenterSpikes(context, x, y, spikeWidth, color2);
         context.fillStyle = spikeColors[2];
-        roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize, 0, true, false);
+        roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * 1.1, 0, true, false);
         roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
         boltBool = true;
     }
     else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) {
-        drawCenterSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        context.fillStyle = spikeColors[2];
-        roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize, tileSize * .6, 0, true, false);
+        drawCenterSpikes(context, x, y, spikeWidth, color2);
+        roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize * 1.1, tileSize * .6, 0, true, false);
         roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
         boltBool = true;
     }
     else if (isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) {
-        drawMiddleSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        context.fillStyle = spikeColors[2];
+        drawMiddleSpikes(context, x, y, spikeWidth, color2);
         roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize, 0, true, false);
         roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
         boltBool = true;
     }
     else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) {
-        drawMiddleSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        drawCenterSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        context.fillStyle = spikeColors[2];
-        roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize, tileSize * .6, 0, true, false);
+        drawMiddleSpikes(context, x, y, spikeWidth, color2);
+        drawCenterSpikes(context, x, y, spikeWidth, color2);
+        roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize * 1.1, tileSize * .6, 0, true, false);
         roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
         boltBool = true;
     }
     else if (isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) {                                              //TOUCHING FOUR  
-        drawMiddleSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        drawCenterSpikes(context, x, y, spikeWidth, spikeColors[0]);
-        context.fillStyle = spikeColors[2];
+        drawMiddleSpikes(context, x, y, spikeWidth, color2);
+        drawCenterSpikes(context, x, y, spikeWidth, color2);
         roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize, tileSize * .6, 0, true, false);
         roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize, 0, true, false);
         //boltBool = true;
@@ -4936,10 +5017,12 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, color, isOccupied, c
         roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * .6, 0, true, false);
         boltBool = true;
     }
+    if (canConnect(1, 1) && canConnect(-1, 1) && isOccupied(-1, 0) && isOccupied(1, 0)) boltBool = false;
 
-    if (boltBool) drawBolt(context, r, c, rng);
+    if (boltBool) drawBolt(context, r, c, rng, color);
 
     function drawCenterSpikes(context, x, y, spikeWidth, fillStyle) {
+        context.save();
         context.fillStyle = fillStyle;
         context.beginPath();
         context.moveTo(x + tileSize * .8 * spikeWidth, y + tileSize * 0.3);
@@ -4954,8 +5037,10 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, color, isOccupied, c
         context.lineTo(x + tileSize * 1 * spikeWidth, y + tileSize * 0.7);
         context.closePath();
         context.fill();
+        context.restore();
     }
     function drawMiddleSpikes(context, x, y, spikeWidth, fillStyle) {
+        context.save();
         context.fillStyle = fillStyle;
         context.beginPath();
         context.moveTo(x + tileSize * .3, y + tileSize * .8 * spikeWidth);
@@ -4970,19 +5055,23 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, color, isOccupied, c
         context.lineTo(x + tileSize * .7, y + tileSize * 1 * spikeWidth);
         context.closePath();
         context.fill();
+        context.restore();
     }
 }
 
-function drawBolt(context, r, c, rng) {
+function drawBolt(context, r, c, rng, color) {
+    var splock = false;
+    if (color != undefined) splock = true;
+    context.fillStyle = splock ? color : spikeColors[3];
+    context.strokeStyle = spikeColors[2];
+
     var radius = .2;
-    context.fillStyle = spikeColors[3];
     context.beginPath();
     context.arc((c + .5) * tileSize, (r + .5) * tileSize, radius * tileSize, 0, 2 * Math.PI);
     context.closePath();
     context.fill();
 
     context.lineWidth = tileSize / 17;
-    context.strokeStyle = spikeColors[2];
     var x = rng() * radius + .5 - radius;
     var y = Math.sqrt(Math.pow(radius, 2) - Math.pow(x - .5, 2)) + .5;
     if (Math.floor(rng() * 2) == 0) y = 1 - y;
@@ -5670,6 +5759,7 @@ function loadFromLocationHash() {
     if (hashPairs[0][0] !== "level" && hashPairs[0][0] !== "sv") return false;
     if (hashPairs[0][0] === "sv") {
         sv = true;
+        canvas7.style.display = "block";
         document.getElementById("emptyDiv").style.display = "none";
         document.getElementById("editorPane").style.display = "none";
         document.getElementById("bottomEverything").style.display = "none";
