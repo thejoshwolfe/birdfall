@@ -4905,25 +4905,17 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, isOccupied, canConne
         boltBool = true;
     }
     if (!canConnect(0, 1) || splock) {
-        if (canConnect(0, -1)) {
-            if (!(!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(1, -1)) || splock) {
-                context.fillRect((c + .26) * tileSize, r * tileSize, tileSize * .48, tileSize * .4);
-                boltBool = true;
-            }
-
+        if (canConnect(0, -1) && (!(!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(1, -1)) || splock)) {
+            context.fillRect((c + .26) * tileSize, r * tileSize, tileSize * .48, tileSize * .4);
+            boltBool = true;
         }
-        if (canConnect(-1, 0)) {
-            if (!(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(-1, 1)) || splock) {
-                context.fillRect(c * tileSize, (r + .26) * tileSize, tileSize * .4, tileSize * .48);
-                boltBool = true;
-            }
-
+        if (canConnect(-1, 0) && (!(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(-1, -1) && canConnect(-1, 1)) || splock)) {
+            context.fillRect(c * tileSize, (r + .26) * tileSize, tileSize * .4, tileSize * .48);
+            boltBool = true;
         }
-        if (canConnect(1, 0)) {
-            if (!(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(1, -1) && canConnect(1, 1)) || splock) {
-                context.fillRect((c + .8) * tileSize, (r + .26) * tileSize, tileSize * .4, tileSize * .48);
-                boltBool = true;
-            }
+        if (canConnect(1, 0) && (!(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(1, -1) && canConnect(1, 1)) || splock)) {
+            context.fillRect((c + .8) * tileSize, (r + .26) * tileSize, tileSize * .4, tileSize * .48);
+            boltBool = true;
         }
     }
 
@@ -4950,7 +4942,7 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, isOccupied, canConne
     else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {                                         //TOUCHING TWO (CORNERS)
         drawCenterSpikes(context, x, y, spikeWidth, color2);
         roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
-        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
+        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * 1.05, tileSize * .6, 0, true, false);
         if (!canConnect(1, -1)) boltBool = true;
     }
     else if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) {
@@ -4962,7 +4954,7 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, isOccupied, canConne
         drawMiddleSpikes(context, x, y, spikeWidth, color2);
         drawCenterSpikes(context, x, y, spikeWidth, color2);
         roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * 1.05, tileSize * .6, 0, true, false);
-        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
+        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * 1.05, 0, true, false);
         if (!canConnect(1, 1)) boltBool = true;
     }
     else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) {
@@ -4995,7 +4987,7 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, isOccupied, canConne
     }
     else if (isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) {
         drawMiddleSpikes(context, x, y, spikeWidth, color2);
-        roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize, 0, true, false);
+        roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * 1.1, 0, true, false);
         roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
         boltBool = true;
     }
@@ -5003,7 +4995,7 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, isOccupied, canConne
         drawMiddleSpikes(context, x, y, spikeWidth, color2);
         drawCenterSpikes(context, x, y, spikeWidth, color2);
         roundRect(context, c * tileSize, (r + spikeSize) * tileSize, tileSize * 1.1, tileSize * .6, 0, true, false);
-        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
+        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .6, tileSize * 1.05, 0, true, false);
         boltBool = true;
     }
     else if (isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) {                                              //TOUCHING FOUR  
