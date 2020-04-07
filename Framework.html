@@ -2,7 +2,7 @@
 
 <head>
     <title>Snakefall Redesign</title>
-    <link rel="stylesheet" href="Editor.css" />
+    <link rel="stylesheet" href="/Snakefall/Editor.css" />
     <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee"
         src="//local.adguard.org?ts=1579613273701&amp;type=content-script&amp;dmn=wolfesoftware.com&amp;css=1&amp;js=1&amp;gcss=1&amp;rel=1&amp;rji=1&amp;stealth=1&amp;uag="></script>
     <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee"
@@ -40,7 +40,7 @@
                     <tr class="spacer"><td></td></tr>
                     <tr><td class="buttonHeader controlsHeader">Controls</td></tr>
                     <tr id="controlsRow"><td>
-                        <button class="editorButton" id="resizeButton" title="Shift + R">Resize</button>
+                        <button id="resizeButton" class="editorButton" title="Shift + R">Resize</button>
                         <div id="selectHolder">
                             <button class="editorButton" id="selectButton" title="Shift + A - double click to edit objects">Select</button>
                             <div style="margin-top:5px">
@@ -82,49 +82,49 @@
                     </td></tr>
                     <tr class="spacer standard hotkeySpacer"><td></td></tr>
 
-                    <tr class="spacer experimental"><td></td></tr>
-                    <tr class="experimental header"><td>Enhanced Elements</td></tr>
+                    <tr class="spacer enhanced"><td></td></tr>
+                    <tr class="enhanced header"><td>Enhanced Elements</td></tr>
 
-                    <tr class="experimental"><td class="buttonHeader">Splocks</td></tr>
-                    <tr class="hotkeySpacer2 experimental"><td></td></tr>
-                    <tr class="experimental"><td>
-                        <div class="buttonDiv"><button class="editorButton" id="paintSplockButton" title="K&#013;&#013;Must have focus on block that was previously created" disabled>Add Spike to Block</button><br><span class="hotkey">Feature coming soon</span></div>
+                    <tr class="enhanced"><td class="buttonHeader">Splocks</td></tr>
+                    <tr class="hotkeySpacer2 enhanced"><td></td></tr>
+                    <tr class="enhanced"><td>
+                        <div class="buttonDiv"><button class="editorButton" id="paintSplockButton" title="K&#013;&#013;Must have focus on block that was previously created" disabled>Add Spike to Block</button><br><span class="hotkey">Spacebar<br>(When existing block is in focus)</span></div>
                     </td></tr>
-                    <tr class="spacer experimental hotkeySpacer"><td></td></tr>
+                    <tr class="spacer enhanced hotkeySpacer"><td></td></tr>
 
-                    <tr class="experimental"><td class="buttonHeader">Kinetic</td></tr>
-                    <tr class="hotkeySpacer2 experimental"><td></td></tr>
-                    <tr class="experimental"><td>
+                    <tr class="enhanced"><td class="buttonHeader">Kinetic</td></tr>
+                    <tr class="hotkeySpacer2 enhanced"><td></td></tr>
+                    <tr class="enhanced"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintPoisonFruitButton" title="Shift + F&#013;&#013;Shrinks snake by one segment">Poison</button><br><span class="hotkey"> <span class="small">Shift</span> F</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintCloudButton" title="C&#013;&#013;Unaffected by pushed objects">Cloud</button><br><span class="hotkey">C</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintBubbleButton" title="Shift + B&#013;&#013;Popped by pushed objects">Bubble</button><br><span class="hotkey"> <span class="small">Shift</span> B</span></div>
                     </td></tr>
-                    <tr class="spacer experimental hotkeySpacer"><td></td></tr>
+                    <tr class="spacer enhanced hotkeySpacer"><td></td></tr>
 
-                    <tr class="experimental"><td class="buttonHeader">Platforms</td></tr>
-                    <tr class="hotkeySpacer2 experimental"><td></td></tr>
-                    <tr class="experimental"><td>
+                    <tr class="enhanced"><td class="buttonHeader">Platforms</td></tr>
+                    <tr class="hotkeySpacer2 enhanced"><td></td></tr>
+                    <tr class="enhanced"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintPlatformButton" title="Shift + P">Rainbow</button><br><span class="hotkey"><span class="small">Shift</span> P</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintTrellisButton" title="T">Trellis</button><br><span class="hotkey">T</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintOneWayWallButton" title="O">One-Way Up</button><br><span class="hotkey">O</span></div>
                     </td></tr>
-                    <tr class="spacer experimental hotkeySpacer"><td></td></tr>
+                    <tr class="spacer enhanced hotkeySpacer"><td></td></tr>
 
-                    <tr class="experimental"><td class="buttonHeader">Scissor Lifts</td></tr>
-                    <tr class="hotkeySpacer2 experimental"><td></td></tr>
-                    <tr class="experimental"><td>
+                    <tr class="enhanced"><td class="buttonHeader">Scissor Lifts</td></tr>
+                    <tr class="hotkeySpacer2 enhanced"><td></td></tr>
+                    <tr class="enhanced"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintClosedLiftButton" title="X">Closed</button><br><span class="hotkey">X</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintOpenLiftButton" title="Shift + X">Open</button><br><span class="hotkey"><span class="small">Shift</span> X</span></div>
                     </td></tr>
-                    <tr class="spacer experimental hotkeySpacer"><td></td></tr>
+                    <tr class="spacer enhanced hotkeySpacer"><td></td></tr>
 
-                    <tr class="experimental"><td class="buttonHeader">Liquids</td></tr>
-                    <tr class="hotkeySpacer2 experimental"><td></td></tr>
-                    <tr class="experimental"><td>
+                    <tr class="enhanced"><td class="buttonHeader">Liquids</td></tr>
+                    <tr class="hotkeySpacer2 enhanced"><td></td></tr>
+                    <tr class="enhanced"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintLavaButton" title="L&#013;&#013;Disintegrates blocks and snakes">Lava</button><br><span class="hotkey">L</span></div>
                         <div class="buttonDiv";"><button class="editorButton" id="paintWaterButton" title="Shift + L, Shift + W&#013;&#013;Swallows blocks but buoys snakes">Water</button><br><span class="hotkey"><span class="small">Shift</span> L</span></div>
                     </td></tr>
-                    <tr class="spacer experimental hotkeySpacer"><td></td></tr>
+                    <tr class="spacer enhanced hotkeySpacer"><td></td></tr>
                 </table>
             </div>
 
@@ -148,7 +148,7 @@
             </div>  
             <div class="bottomBlockBox">
                 <div class="optionsHeaders">Game Controls</div><br>
-                <div id="keyboardInstructions">use the arrows<span id="wasdSpan"> or WASD</span> keys on your keyboard to move, or use the buttons below</div>
+                <div id="keyboardInstructions">Use the arrows<span id="wasdSpan"> or WASD</span> keys on your keyboard to move, or use the buttons below</div>
                 <div id="controlButtons">
                     <div style="display: table-cell; vertical-align: middle;"><button id="switchSnakesButton" title="(Shift + ) Spacebar&#013;(Shift + ) Tab&#013;&#013;1, 2, 3, and 4 cycle through like-colored snakes, with each number representing a different color">Switch Snake</button></div>
                     <div id="arrowsHolder">
@@ -164,22 +164,26 @@
             <div class="separator"></div>
             <div class="bottomBlockBox">
                 <div class="optionsHeaders">Progress Tracking</div><br>
-                <div id="progressButtons">
-                    <div id="unmoveButton" class="progressButton" title="Backspace&#013;Z&#013;Q&#013;&#013;Unmove snake" disabled>&#10148;</div>
-                    <span id="movesSpan">0 || 0</span>
-                    <div id="removeButton" class="progressButton" title="Y&#013;Shift + Backspace&#013;Shift + Z&#013;Shift + Q&#013;&#013;Re-move snake" disabled>&#10148;</div>
+                    
+                <div class="sliderStack">
+                    <div class="stackHeader">Moves</div>
+                    <div id="progressButtons">
+                        <div id="unmoveButton" class="progressButton" title="Backspace&#013;Z&#013;Q&#013;&#013;Unmove snake" disabled>&#10148;</div>
+                        <span id="movesSpan">0 || 0</span>
+                        <div id="removeButton" class="progressButton" title="Y&#013;Shift + Backspace&#013;Shift + Z&#013;Shift + Q&#013;&#013;Re-move snake" disabled>&#10148;</div>
+                    </div>
+                    <button id="restartButton" title="R - Unmove completely&#013;&#013;Shift + R - Re-move completely">Restart</button>
+                    <button id="saveProgressButton" title="Ctrl + Shift + S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift + R to restore state.">Save Progress</button><br>
+                    <button id="copySVButton" title="Saves a Solution Verification URL to your clipboard." disabled>Copy Verification Link</button>
                 </div>
 
-                <button id="restartButton" title="R - Unmove completely&#013;&#013;Shift + R - Re-move completely">Restart</button>
-                <button id="saveProgressButton" title="Ctrl + Shift + S - Saves a replay URL to the URL bar of your browser. Use &gt;&gt; Re-move or Shift + R to restore state.">Save Progress</button><br><br>
-                <div class="sliderStack" style="background-color: rgba(0, 0, 0, 0.05); padding: 5px 10px 5px 10px; margin:0 auto">
+                <div class="sliderStack">
                     <label class="sliderLabel">Replay Animations</label>
                     <label class="switch">
                         <input id="replayAnimationSlider" type="checkbox">
                         <span class="slider"></span>
                     </label>
                 </div><br>
-                <button id="copySVButton" title="Saves a Solution Verification URL to your clipboard." disabled>Copy Verification Link</button>
             </div>
             <div class="separator"></div>
             <div class="bottomBlockBox">
@@ -187,19 +191,21 @@
 
                 <div id="optionsStack">
                     <div id="levelSize">
+                        <div class="stackHeader">Level Size</div>
                         <div id="levelSizeInsider">
                             <div class="plusMinusWrapper"><button id="minus" class="plusMinus" title="Decrease game size">—</button></div>
                             <div id="fitButtonContainer">
-                                <div id="fitCanvas" class="fitButton" title="` (Grave Accent, located under Escape Key)&#013;&#013;Fit canvas">[Canvas]</div>
-                                <div id="fitControls" class="fitButton" title="0&#013;&#013;Fit canvas and controls">[Controls]</div>
+                                <div class="fitButtonWrapper"><div id="fitCanvas" class="fitButton" title="` (Grave Accent, located under Escape Key)&#013;&#013;Fit canvas">[Canvas]</div></div>
+                                <div class="fitButtonWrapper"><div id="fitControls" class="fitButton" title="0&#013;&#013;Fit canvas and controls">[Controls]</div></div>
                             </div>
                             <div class="plusMinusWrapper"><button id="plus" class="plusMinus" title="Increase game size">+</button></div>
                         </div>  
                     </div>
 
                     <div class="sliderStack">
+                        <div class="stackHeader">Animations</div>
                         <div class="sliderContainer">
-                            <label class="sliderLabel" style="float:left">Animations</label>
+                            <label class="sliderLabel" style="float:left">Toggle</label>
                             <label class="switch">
                                 <input id="animationSlider" type="checkbox">
                                 <span class="slider"></span>
