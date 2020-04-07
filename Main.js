@@ -4453,23 +4453,27 @@ function render() {
             drawCircle(context, r, c, .6, blockColors[blockColors.length - 1 - mike.id % blockColors.length]);
 
             function drawStar(context, cx, cy, spikes, outerRadius, innerRadius) {
-                var rot = Math.PI / 2 * 3;
+                var rot = 1.5 * Math.PI;
                 var x = cx;
                 var y = cy;
                 var step = Math.PI / spikes;
 
+                context.save();
+                context.translate(x, y);
+                context.rotate(Math.PI / 12);
+                context.translate(-x, -y);
                 context.beginPath();
                 context.moveTo(cx, cy - outerRadius)
                 for (i = 0; i < spikes; i++) {
                     x = cx + Math.cos(rot) * outerRadius;
                     y = cy + Math.sin(rot) * outerRadius;
-                    context.lineTo(x, y)
-                    rot += step
+                    context.lineTo(x, y);
+                    rot += step;
 
                     x = cx + Math.cos(rot) * innerRadius;
                     y = cy + Math.sin(rot) * innerRadius;
-                    context.lineTo(x, y)
-                    rot += step
+                    context.lineTo(x, y);
+                    rot += step;
                 }
                 context.lineTo(cx, cy - outerRadius);
                 context.closePath();
@@ -4478,6 +4482,7 @@ function render() {
                 // context.stroke();
                 context.fillStyle = blockColors[blockColors.length - 1 - mike.id % blockColors.length];
                 context.fill();
+                context.restore();
             }
 
 
