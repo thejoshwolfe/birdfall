@@ -8,6 +8,12 @@
     100% {
         background: linear-gradient(white, #e6e6e6);
     }
+    50% {
+        background: yellow;
+    }
+    0% {
+        background: linear-gradient(white, #e6e6e6);
+    }
 }
 
 @keyframes gradient {
@@ -70,7 +76,148 @@ button:active:enabled {
     color: black;
 }
 
-/* ----------------------------------------------------------------------------------------------------------------- */
+/* CANVAS----------------------------------------------------------------------------------------------------------------- */
+
+#levelTable {
+    margin: 0 auto;
+}
+
+#emptyDiv:hover {
+    border: 5px solid red;
+}
+
+#canvasContainer {
+    position: relative;
+}
+
+canvas {
+    border-radius: 20px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+#canvas1 {
+    z-index: 1;
+}
+
+#canvas2 {
+    z-index: 2;
+}
+
+#canvas3 {
+    z-index: 3;
+}
+
+#canvas4 {
+    z-index: 4;
+}
+
+#canvas5 {
+    z-index: 5;
+}
+
+#canvas6 {
+    z-index: 6;
+}
+
+#canvas7 {
+    display: none;
+    z-index: 7;
+}
+
+/* EDITOR----------------------------------------------------------------------------------------------------------------- */
+
+#emptyDiv {
+    height: 500;
+    width: 100px;
+    border: 5px solid transparent;
+}
+
+#editorPane {
+    display: none;
+    padding-left: 5px;
+}
+
+#controls {
+    background-color: #deb0b0;
+    width: 200px;
+    margin: 0 2px 0 2px;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+#uneditButton {
+    margin-right: 10px;
+}
+
+#reeditButton {
+    margin-left: 10px;
+}
+
+#editsSpan {
+    font-size: 10pt;
+}
+
+.editorButton {
+    margin: -1px;
+}
+
+.buttonHeader {
+    font-size: 10pt;
+    font-weight: 900;
+}
+
+.spacer {
+    height: 10px;
+}
+
+.standard {
+    background-color: #ded2b0;
+}
+
+.enhanced {
+    background-color: #c7deb0;
+}
+
+.hotkeySpacer {
+    height: 1px;
+}
+
+.controlsHeader {
+    line-height: 20px;
+}
+
+.header {
+    font-weight: 900;
+}
+
+#selectHolder {
+    display: inline-block;
+}
+
+#controlsRow button {
+    vertical-align: top;
+}
+
+.hotkey {
+    font-size: 8pt;
+    color: rgba(0, 0, 0, 0.5);
+    font-family: Trebuchet MS;
+}
+
+.buttonDiv {
+    display: inline-block;
+}
+
+#controlButtons {
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: table;
+}
+
+/* BOTTOM CONTROLS----------------------------------------------------------------------------------------------------------------- */
 
 #returnButton {
     display: table;
@@ -111,76 +258,6 @@ button:active:enabled {
     font-size: 12pt;
 }
 
-#levelTable {
-    margin: 0 auto;
-}
-
-#editorPane {
-    display: none;
-    padding-left: 5px;
-}
-
-.editorButton {
-    margin: -1px;
-}
-
-#uneditButton {
-    margin-right: 10px;
-}
-
-#reeditButton {
-    margin-left: 10px;
-}
-
-#editsSpan {
-    font-size: 10pt;
-}
-
-.buttonHeader {
-    font-size: 10pt;
-    font-weight: 900;
-}
-
-.standard {
-    background-color: #ded2b0;
-}
-
-.experimental {
-    background-color: #c7deb0;
-}
-
-.spacer {
-    height: 10px;
-}
-
-.hotkeySpacer {
-    height: 1px;
-}
-
-.controlsHeader {
-    line-height: 20px;
-}
-
-#controls {
-    background-color: #deb0b0;
-    width: 200px;
-    margin: 0 2px 0 2px;
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.header {
-    font-weight: 900;
-}
-
-#selectHolder {
-    display: inline-block;
-}
-
-#controlsRow button {
-    vertical-align: top;
-}
-
 #levelTypeContainer {
     display: flex;
     align-items: center;
@@ -199,27 +276,6 @@ button:active:enabled {
     font-size: 8pt;
     font-weight: 100;
     margin-bottom: 5px;
-}
-
-canvas {
-    border-radius: 20px;
-}
-
-.hotkey {
-    font-size: 8pt;
-    color: rgba(0, 0, 0, 0.5);
-    font-family: Trebuchet MS;
-}
-
-.buttonDiv {
-    display: inline-block;
-}
-
-#controlButtons {
-    margin: 0 auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    display: table;
 }
 
 #switchSnakesButton {
@@ -252,19 +308,6 @@ canvas {
     margin-left: 5px;
 }
 
-.plusMinusWrapper {
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.plusMinus {
-    min-height: 10px;
-    min-width: 10px;
-    font-size: 8pt;
-    font-weight: 900;
-    display: inline-block;
-}
-
 .bigButton {
     font-size: 20pt;
     padding: 10px;
@@ -293,7 +336,7 @@ canvas {
 
 .separator {
     background-color: black;
-    height: 150px;
+    height: 170px;
     width: 1px;
     margin: 0 5px 0 5px;
     display: inline-block;
@@ -313,6 +356,25 @@ canvas {
 
 #optionsStack {
     display: inline-block;
+}
+
+.optionsHeaders {
+    font-weight: 900;
+}
+
+.bottomBlockBox {
+    width: 33%;
+    text-align: center;
+    font-size: 10pt;
+    font-family: Trebuchet MS;
+    display: table-cell;
+    vertical-align: top;
+}
+
+#firstBottomBlock {
+    position: absolute;
+    top: -12px;
+    left: -300px;
 }
 
 #levelSize {
@@ -343,36 +405,25 @@ canvas {
     transform: scale(0.97);
 }
 
-.optionsHeaders {
-    font-weight: 900;
-}
-
-.bottomBlockBox {
-    width: 33%;
-    text-align: center;
-    font-size: 10pt;
-    font-family: Trebuchet MS;
-    display: table-cell;
-    vertical-align: top;
-}
-
-#firstBottomBlock {
-    position: absolute;
-    top: -12px;
-    left: -300px;
-}
-
 #fitButtonContainer {
-    display: inline-block;
+    display: table;
+    vertical-align: middle;
     padding: 0 5px 0 5px;
+    margin: 0 auto;
+    border-collapse: separate;
+}
+
+.fitButtonWrapper {
+    display: table-row;
 }
 
 .fitButton {
+    display: table-cell;
     font-size: 8pt;
     border-radius: 2px;
     margin-bottom: 5px;
     /* trying to get them equal */
-    padding: 2.8px;
+    padding: 5.3px;
 }
 
 .fitButton:hover {
@@ -383,6 +434,18 @@ canvas {
 
 .fitButton:active {
     transform: scale(0.9);
+}
+
+.plusMinusWrapper {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.plusMinus {
+    font-size: 8pt;
+    font-weight: 900;
+    display: inline-block;
+    margin: 0 auto;
 }
 
 #paradoxDiv {
@@ -454,54 +517,15 @@ canvas {
     color: white;
 }
 
-canvas {
-    position: absolute;
-    left: 0;
-    top: 0;
-}
-
-#canvasContainer {
-    position: relative;
-}
-
-#canvas1 {
-    z-index: 1;
-}
-
-#canvas2 {
-    z-index: 2;
-}
-
-#canvas3 {
-    z-index: 3;
-}
-
-#canvas4 {
-    z-index: 4;
-}
-
-#canvas5 {
-    z-index: 5;
-}
-
-#canvas6 {
-    z-index: 6;
-}
-
-#canvas7 {
-    z-index: 7;
-}
-
 #progressButtons {
     display: table;
     margin: 0 auto;
+    margin-bottom: 5px;
 }
 
 #unmoveButton {
     transform: scale(-1, 1);
 }
-
-#removeButton {}
 
 .progressButton {
     font-size: 10pt;
@@ -528,6 +552,7 @@ canvas {
     padding: 5px 10px 5px 10px;
     display: inline-block;
     border-radius: 5px;
+    margin-bottom: 10px;
 }
 
 .sliderContainer {
@@ -604,18 +629,6 @@ input:checked+.slider:before {
     font-size: 6pt;
 }
 
-#levelRow {}
-
-#emptyDiv {
-    height: 500;
-    width: 100px;
-    border: 5px solid transparent;
-}
-
-#emptyDiv:hover {
-    border: 5px solid red;
-}
-
 #csButton {
     margin: 0 auto;
     margin-top: 20px;
@@ -632,4 +645,9 @@ input:checked+.slider:before {
     text-align: center;
     padding: 20px;
     display: none;
+}
+
+.stackHeader {
+    margin-bottom: 10px;
+    font-weight: 900;
 }
