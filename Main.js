@@ -2473,7 +2473,7 @@ function showEditorChanged() {
 }
 
 function move(dr, dc, doAnimations) {
-    spike2Death = "";
+    if (!isDead()) spike2Death = "";
     document.getElementById("cycleDiv").innerHTML = "";
     postPortalSnakeOutline = [];
     portalConflicts = [];
