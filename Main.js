@@ -46,6 +46,8 @@ var MIKE = "x";
 var FRUIT = "f";
 var POISONFRUIT = "p";
 
+var spike2Death = "";
+
 var checkResult = false;
 var cr = false;
 var cs = false;
@@ -949,12 +951,12 @@ function fitCanvas(type) {
     var offset = 0;
     switch (type) {
         case 0: break;
-        case 1: offset = document.getElementById("bottomBlock").offsetHeight + 30; break;
+        case 1: offset = document.getElementById("bottomBlock").offsetHeight + 20; break;
         case 2: offset = document.getElementById("csText").offsetHeight + 50; break;
     }
     var maxW = window.innerWidth / level.width;
     var maxH = (window.innerHeight - offset) / level.height;
-    tileSize = Math.round(Math.min(maxW, maxH) * .98);
+    tileSize = Math.round(Math.min(maxW, maxH) * .97);
     borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
     blockSupportRenderCache = {};
@@ -2471,6 +2473,7 @@ function showEditorChanged() {
 }
 
 function move(dr, dc, doAnimations) {
+    spike2Death = "";
     document.getElementById("cycleDiv").innerHTML = "";
     postPortalSnakeOutline = [];
     portalConflicts = [];
@@ -2746,12 +2749,14 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
             if (yetAnotherObject != null) {
                 if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === POISONFRUIT) return false;
                 if (yetAnotherObject.type === SNAKE) {
+                    spike2Death = [pushedObject.type, pushedObject.id];
                     addIfNotPresent(dyingObjects, yetAnotherObject);
                     continue;
                 }
                 if (yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation)) {
                     var object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
                     if (object.type === SNAKE) {
+                        spike2Death = [pushedObject.type, pushedObject.id];
                         addIfNotPresent(dyingObjects, object);
                         continue;
                     }
@@ -2812,6 +2817,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     return false;
                 }
                 if (yetAnotherObject.type === SNAKE && pushedObject.type === MIKE) {
+                    spike2Death = [pushedObject.type, pushedObject.id];
                     addIfNotPresent(dyingObjects, yetAnotherObject);
                     continue;
                 }
@@ -3317,6 +3323,7 @@ function render() {
                 }
                 var r = minR + animationDisplacementRowcol.r;
                 var c = minC + animationDisplacementRowcol.c;
+                if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === object.id) r += .5;
                 var savedContext2 = context;
                 context = canvas2.getContext("2d");
                 context.drawImage(image, c * tileSize, r * tileSize);
@@ -3365,7 +3372,7 @@ function render() {
                         rowcol2.r -= minR;
                         rowcol2.c -= minC;
                         var cornerRowcol = { r: rowcol1.r, c: rowcol2.c };
-                        var connectorColor = tint(blockColors[object.id % blockColors.length], .5);
+                        var connectorColor = tint(blockColors[blockColors.length - 1 - object.id % blockColors.length], .5);
                         drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                         drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                     }
@@ -3720,7 +3727,7 @@ function render() {
                 var lrc = lastRowcol;
                 var nrc = nextRowcol;
 
-                if (object.dead) {    //if snake dies after moving left or right, head is positioned down
+                if (object.dead && spike2Death == "") {    //if snake dies after moving left or right, head is positioned down
                     rowcol.r += .5;
                     lastRowcol.r += .5;
                     nextRowcol.r += .5;
@@ -4397,12 +4404,14 @@ function render() {
         splockRowcols.forEach(function (rowcol) {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
+            if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === block.id) r += .5;
             drawSpikes(context, r, c, null, rng, blockRowcols, splockRowcols, color);
         });
 
         blockRowcols.forEach(function (rowcol) {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
+            if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === block.id) r += .5;
 
             context.fillStyle = color;
             var outlineThickness = .4;
@@ -4449,8 +4458,20 @@ function render() {
         mikeRowcols.forEach(function (rowcol) {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
-            drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 12, tileSize * .5, tileSize * .3);
-            drawCircle(context, r, c, .6, blockColors[blockColors.length - 1 - mike.id % blockColors.length]);
+            if (isDead() && spike2Death[0] === MIKE && spike2Death[1] === mike.id) r += .5;
+            drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 18, tileSize * .5, tileSize * .4);
+
+            var side = 0;
+            var size = tileSize / 8;
+            var x = (c + .5) * tileSize;
+            var y = (r + .5) * tileSize;
+            context.beginPath();
+            context.moveTo(x + size * Math.cos(0), y + size * Math.sin(0));
+            for (side; side < 7; side++) {
+                context.lineTo((x + size * Math.cos(side * 2 * Math.PI / 6)) * 1, (y + size * Math.sin(side * 2 * Math.PI / 6)) * 1);
+            }
+            context.fillStyle = tint(blockColors[blockColors.length - 1 - mike.id % blockColors.length], .5);
+            context.fill();
 
             function drawStar(context, cx, cy, spikes, outerRadius, innerRadius) {
                 var rot = 1.5 * Math.PI;
@@ -4477,9 +4498,9 @@ function render() {
                 }
                 context.lineTo(cx, cy - outerRadius);
                 context.closePath();
-                context.lineWidth = 5;
-                // context.strokeStyle = 'white';
-                // context.stroke();
+                context.lineWidth = 2;
+                context.strokeStyle = tint(blockColors[blockColors.length - 1 - mike.id % blockColors.length], .95);
+                context.stroke();
                 context.fillStyle = blockColors[blockColors.length - 1 - mike.id % blockColors.length];
                 context.fill();
                 context.restore();
