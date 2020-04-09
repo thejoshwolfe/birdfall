@@ -2555,6 +2555,7 @@ function move(dr, dc, doAnimations) {
             dc,
         ]
     ];
+    // animationQueue.push(slitherAnimations);
 
     // drag your tail forward based on what was/wasn't eaten
     var times = 1;
@@ -2574,12 +2575,17 @@ function move(dr, dc, doAnimations) {
             var oldRowcol = getRowcol(level, activeSnake.locations[i]);
             newRowcol = getRowcol(level, activeSnake.locations[i - 1]); // seems to work but ignores tail movement and doubles middle movement
             if (!size1) {
-                slitherAnimations.push([
-                    SLITHER_TAIL + i,
-                    activeSnake.id,
-                    newRowcol.r - oldRowcol.r,
-                    newRowcol.c - oldRowcol.c,
-                ]);
+                slitherAnimations.push(
+                    // speed,
+                    [
+                        SLITHER_TAIL + i,
+                        activeSnake.id,
+                        newRowcol.r - oldRowcol.r,
+                        newRowcol.c - oldRowcol.c,
+                    ]
+                );
+                // animationQueue.push(slitherAnimations);
+
             }
         }
         activeSnake.locations.pop();
@@ -2601,10 +2607,20 @@ function move(dr, dc, doAnimations) {
     occupiedClosedLift = combineOldAndNewLiftOccupations(occupiedClosedLift);
 
     // gravity loop
+    var stateToAnimationIndex = {};
     if (isGravity()) for (var fallHeight = 1; ; fallHeight++) {
+        var serializedState = serializeObjects(level.objects);
+        var infiniteLoopStartIndex = stateToAnimationIndex[serializedState];
+        if (infiniteLoopStartIndex != null) {
+            // infinite loop
+            animationQueue.push([0, [INFINITE_LOOP, animationQueue.length - infiniteLoopStartIndex]]);
+            break;
+        } else {
+            stateToAnimationIndex[serializedState] = animationQueue.length;
+        }
         // do portals separate from falling logic
         if (portalActivationLocations.length === 1) {
-            var portalAnimations = [300];
+            var portalAnimations = [500];
             var result = activatePortal(portalLocations, portalActivationLocations[0], portalAnimations, changeLog);
             if (result === "works") {
                 portalFailure = false;
@@ -3776,129 +3792,106 @@ function render() {
             if (snakeColors === snakeColors2) altColor = color;
             var headRowcol;
             var orientation = 10;
-            for (var i = 0; i < object.locations.length; i++) {
-                var animation;
-                var origRowcol = getRowcol(level, object.locations[i]);
-                var rowcol = getRowcol(level, object.locations[i]);
-                if (i === 0 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {
-                    rowcol.r += animation[2] * (animationProgress - 1);
-                    rowcol.c += animation[3] * (animationProgress - 1);
-                } else if ((animation = findAnimation([SLITHER_TAIL + i], object.id)) != null) {
-                    rowcol.r += animation[2] * (animationProgress - 1);
-                    rowcol.c += animation[3] * (animationProgress - 1);
-                }
-                oldRowcols[i] = rowcol;
-
-                lastRowcol = getRowcol(level, object.locations[i - 1]); //closer to head
-                nextRowcol = getRowcol(level, object.locations[i + 1]); //closer to tail
-                var rc = rowcol;
-                var lrc = lastRowcol;
-                var nrc = nextRowcol;
-
-                if (object.dead && spike2Death == "") {
-                    rowcol.r += .5;
-                    lastRowcol.r += .5;
-                    nextRowcol.r += .5;
-                    falling = true;
-                }
-                rowcol.r += animationDisplacementRowcol.r;
-                rowcol.c += animationDisplacementRowcol.c;
-                lastRowcol.r += animationDisplacementRowcol.r;
-                lastRowcol.c += animationDisplacementRowcol.c;
-                nextRowcol.r += animationDisplacementRowcol.r;
-                nextRowcol.c += animationDisplacementRowcol.c;
-                origRowcol.r += animationDisplacementRowcol.r;
-                origRowcol.c += animationDisplacementRowcol.c;
-
-
-                var cx = rowcol.c * tileSize;
-                var cy = rowcol.r * tileSize;
-                var cx2 = origRowcol.c * tileSize;
-                var cy2 = origRowcol.r * tileSize;
-
-                if (i === 0) {
-                    context.fillStyle = color;
-                    headRowcol = rowcol;
-
-                    //determines orientation of face
-                    if (!falling) nextRowcol = getRowcol(level, object.locations[1]);
-                    if (nextRowcol.r < rowcol.r) {  //last move down
-                        roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false);  //draw head
-                        if (colorIndex === 0) orientation = 2;
-                        else if (colorIndex === 1) orientation = 6;
-                        else if (colorIndex === 2) orientation = 3;
-                        else if (colorIndex === 3) orientation = 5;
+            for (var stage = 1; stage <= 2; stage++) {
+                for (var i = 0; i < object.locations.length; i++) {
+                    if (stage === 1 && i === 0) continue;
+                    var animation;
+                    var rowcol = getRowcol(level, object.locations[i]);
+                    if (stage === 2) {
+                        if (i === 0 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {
+                            rowcol.r += animation[2] * (animationProgress - 1);
+                            rowcol.c += animation[3] * (animationProgress - 1);
+                        } else if ((animation = findAnimation([SLITHER_TAIL + i], object.id)) != null) {
+                            rowcol.r += animation[2] * (animationProgress - 1);
+                            rowcol.c += animation[3] * (animationProgress - 1);
+                        }
                     }
-                    else if (nextRowcol.r > rowcol.r) {  //last move up
-                        roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false);  //draw head
-                        if (colorIndex === 0) orientation = 0;
-                        else if (colorIndex === 1) orientation = 4;
-                        else if (colorIndex === 2) orientation = 1;
-                        else if (colorIndex === 3) orientation = 7;
+
+                    lastRowcol = getRowcol(level, object.locations[i - 1]); //closer to head
+                    nextRowcol = getRowcol(level, object.locations[i + 1]); //closer to tail
+                    var rc = rowcol;
+                    var lrc = lastRowcol;
+                    var nrc = nextRowcol;
+
+                    if (object.dead && spike2Death == "") {
+                        rowcol.r += .5;
+                        lastRowcol.r += .5;
+                        nextRowcol.r += .5;
+                        falling = true;
                     }
-                    else if (nextRowcol.c < rowcol.c) {  //last move right
-                        roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false);  //draw head
-                        if (colorIndex === 0) orientation = 1;
-                        else if (colorIndex === 1) orientation = 5;
-                        else if (colorIndex === 2) orientation = 2;
-                        else if (colorIndex === 3) orientation = 4;
+                    rowcol.r += animationDisplacementRowcol.r;
+                    rowcol.c += animationDisplacementRowcol.c;
+                    lastRowcol.r += animationDisplacementRowcol.r;
+                    lastRowcol.c += animationDisplacementRowcol.c;
+                    nextRowcol.r += animationDisplacementRowcol.r;
+                    nextRowcol.c += animationDisplacementRowcol.c;
+
+                    var cx = rowcol.c * tileSize;
+                    var cy = rowcol.r * tileSize;
+
+                    if (i === 0) {
+                        context.fillStyle = color;
+                        headRowcol = rowcol;
+
+                        //determines orientation of face
+                        if (!falling) nextRowcol = getRowcol(level, object.locations[1]);
+                        if (nextRowcol.r < rowcol.r) {  //last move down
+                            roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false);  //draw head
+                            if (colorIndex === 0) orientation = 2;
+                            else if (colorIndex === 1) orientation = 6;
+                            else if (colorIndex === 2) orientation = 3;
+                            else if (colorIndex === 3) orientation = 5;
+                        }
+                        else if (nextRowcol.r > rowcol.r) {  //last move up
+                            roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false);  //draw head
+                            if (colorIndex === 0) orientation = 0;
+                            else if (colorIndex === 1) orientation = 4;
+                            else if (colorIndex === 2) orientation = 1;
+                            else if (colorIndex === 3) orientation = 7;
+                        }
+                        else if (nextRowcol.c < rowcol.c) {  //last move right
+                            roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false);  //draw head
+                            if (colorIndex === 0) orientation = 1;
+                            else if (colorIndex === 1) orientation = 5;
+                            else if (colorIndex === 2) orientation = 2;
+                            else if (colorIndex === 3) orientation = 4;
+                        }
+                        else if (nextRowcol.c > rowcol.c) {  //last move left
+                            roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false);  //draw head
+                            if (colorIndex === 0) orientation = 3;
+                            else if (colorIndex === 1) orientation = 7;
+                            else if (colorIndex === 2) orientation = 0;
+                            else if (colorIndex === 3) orientation = 6;
+                        }
+                        else {
+                            roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);  //draw head
+                            orientation = 10;
+                        }
+                    } else {
+                        if (i % 2 == 0) context.fillStyle = color;
+                        else context.fillStyle = altColor;
+
+                        if (i === object.locations.length - 1) {
+                            if (lastRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false); }
+                            else if (lastRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false); }
+                            else if (lastRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false); }
+                            else if (lastRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false); }
+                        }
+                        else if (i < object.locations.length - 1) {
+                            if (lastRowcol.r > rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
+                            else if (lastRowcol.r > rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
+                            else if (lastRowcol.r < rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
+                            else if (lastRowcol.r < rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
+
+                            else if (lastRowcol.c > rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
+                            else if (lastRowcol.c > rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
+                            else if (lastRowcol.c < rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
+                            else if (lastRowcol.c < rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
+
+                            else if (lastRowcol.c < rowcol.c && nextRowcol.c > rowcol.c || lastRowcol.c > rowcol.c && nextRowcol.c < rowcol.c || lastRowcol.r < rowcol.r && nextRowcol.r > rowcol.r || lastRowcol.r > rowcol.r && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, 0, true, false); }
+                        }
+                        else roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);
                     }
-                    else if (nextRowcol.c > rowcol.c) {  //last move left
-                        roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false);  //draw head
-                        if (colorIndex === 0) orientation = 3;
-                        else if (colorIndex === 1) orientation = 7;
-                        else if (colorIndex === 2) orientation = 0;
-                        else if (colorIndex === 3) orientation = 6;
-                    }
-                    else {
-                        roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);  //draw head
-                        orientation = 10;
-                    }
-                } else {
-                    if (i % 2 == 0) context.fillStyle = color;
-                    else context.fillStyle = altColor;
-
-                    if (i === object.locations.length - 1) {
-                        // roundRect(context, cx2, cy2, tileSize, tileSize, 10, true, false);
-
-                        if (lastRowcol.r > origRowcol.r) { roundRect(context, cx2, cy2, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false); }
-                        else if (lastRowcol.r < origRowcol.r) { roundRect(context, cx2, cy2, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false); }
-                        else if (lastRowcol.c < origRowcol.c) { roundRect(context, cx2, cy2, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false); }
-                        else if (lastRowcol.c > origRowcol.c) { roundRect(context, cx2, cy2, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false); }
-
-                        if (lastRowcol.r > origRowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false); }
-                        else if (lastRowcol.r < origRowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false); }
-                        else if (lastRowcol.c < origRowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false); }
-                        else if (lastRowcol.c > origRowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false); }
-                    }
-                    else if (i < object.locations.length - 1) {
-                        // roundRect(context, cx2, cy2, tileSize, tileSize, 10, true, false);
-
-                        if (lastRowcol.r > origRowcol.r && nextRowcol.c < origRowcol.c) { roundRect(context, cx2, cy2, tileSize, tileSize, { tr: borderRadius }, true, false); }
-                        else if (lastRowcol.r > origRowcol.r && nextRowcol.c > origRowcol.c) { roundRect(context, cx2, cy2, tileSize, tileSize, { tl: borderRadius }, true, false); }
-                        else if (lastRowcol.r < origRowcol.r && nextRowcol.c < origRowcol.c) { roundRect(context, cx2, cy2, tileSize, tileSize, { br: borderRadius }, true, false); }
-                        else if (lastRowcol.r < origRowcol.r && nextRowcol.c > origRowcol.c) { roundRect(context, cx2, cy2, tileSize, tileSize, { bl: borderRadius }, true, false); }
-
-                        else if (lastRowcol.c > origRowcol.c && nextRowcol.r < origRowcol.r) { roundRect(context, cx2, cy2, tileSize, tileSize, { bl: borderRadius }, true, false); }
-                        else if (lastRowcol.c > origRowcol.c && nextRowcol.r > origRowcol.r) { roundRect(context, cx2, cy2, tileSize, tileSize, { tl: borderRadius }, true, false); }
-                        else if (lastRowcol.c < origRowcol.c && nextRowcol.r < origRowcol.r) { roundRect(context, cx2, cy2, tileSize, tileSize, { br: borderRadius }, true, false); }
-                        else if (lastRowcol.c < origRowcol.c && nextRowcol.r > origRowcol.r) { roundRect(context, cx2, cy2, tileSize, tileSize, { tr: borderRadius }, true, false); }
-
-                        else if (lastRowcol.c < origRowcol.c && nextRowcol.c > origRowcol.c || lastRowcol.c > origRowcol.c && nextRowcol.c < origRowcol.c || lastRowcol.r < origRowcol.r && nextRowcol.r > origRowcol.r || lastRowcol.r > origRowcol.r && nextRowcol.r < origRowcol.r) { roundRect(context, cx2, cy2, tileSize, tileSize, 0, true, false); }
-
-                        if (lastRowcol.r > rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
-                        else if (lastRowcol.r > rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
-                        else if (lastRowcol.r < rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
-                        else if (lastRowcol.r < rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
-
-                        else if (lastRowcol.c > rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
-                        else if (lastRowcol.c > rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
-                        else if (lastRowcol.c < rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
-                        else if (lastRowcol.c < rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
-
-                        else if (lastRowcol.c < rowcol.c && nextRowcol.c > rowcol.c || lastRowcol.c > rowcol.c && nextRowcol.c < rowcol.c || lastRowcol.r < rowcol.r && nextRowcol.r > rowcol.r || lastRowcol.r > rowcol.r && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, 0, true, false); }
-                    }
-                    else roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);
                 }
             }
             r = headRowcol.r;
@@ -5362,7 +5355,7 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, isOccupied, canConne
         drawCenterSpikes(context, x, y, spikeWidth, color2);
         context.fillStyle = spikeColors[2];
         roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * 1.1, 0, true, false);
-        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * .8, tileSize * .6, 0, true, false);
+        roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * 1.05, tileSize * .6, 0, true, false);
         boltBool = true;
     }
     else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) {
