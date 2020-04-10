@@ -47,6 +47,7 @@ var FRUIT = "f";
 var POISONFRUIT = "p";
 
 var spike2Death = "";
+var dieOnSplock = false;
 
 var checkResult = false;
 var cr = false;
@@ -778,7 +779,7 @@ document.addEventListener("keydown", function (event) {
                 toggleEditorLocation(true);
                 break;
             case 192:   //grave accent
-            // if (modifierMask === 0) { fitCanvas(0); break; }
+                if (modifierMask === 0) { fitCanvas(0); break; }
             case 191:
                 if (modifierMask === 0) { if (multiDiagrams) { cycle = true; cycleID++; render(); } break; }
             case 13:
@@ -2692,8 +2693,11 @@ function move(dr, dc, doAnimations) {
             theseDyingObjects.forEach(function (object) {
                 addIfAbsent(dyingObjects, object);
             });
+            // when falling with splocks, animation doesn't show fall because this code is never reached (works with blocks without splocks)
             return true;
         });
+
+        // this code doesn't work with splocks
         if (dyingObjects.length > 0) {
             var anySnakesDied = false;
             dyingObjects.forEach(function (object) {
@@ -2791,11 +2795,14 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     yetAnotherObject.locations.forEach(function (loc) {
                         var snakeRowcol = getRowcol(level, loc);
                         var snakeForwardRowcol = { r: snakeRowcol.r + dr, c: snakeRowcol.c + dc };
-                        var snakeForwardLocation = getLocation(level, snakeForwardRowcol.r, snakeForwardRowcol.c);
-                        var snakeYetAnotherObject = findObjectAtLocation(snakeForwardLocation);
-                        if (level.map[snakeForwardLocation] !== SPACE || (snakeYetAnotherObject != null && !(snakeYetAnotherObject.type === SNAKE && snakeYetAnotherObject.id === yetAnotherObject.id))) {
-                            spike2Death = [pushedObject.type, pushedObject.id];
-                            addIfAbsent(dyingObjects, yetAnotherObject);
+                        // can't get location using snakeForwardRowcol, screws up code
+                        if (isInBounds(level, snakeForwardRowcol.r, snakeForwardRowcol.c)) {
+                            var snakeForwardLocation = getLocation(level, snakeForwardRowcol.r, snakeForwardRowcol.c);
+                            var snakeYetAnotherObject = findObjectAtLocation(snakeForwardLocation);
+                            if (level.map[snakeForwardLocation] !== SPACE || (snakeYetAnotherObject != null && !(snakeYetAnotherObject.type === SNAKE && snakeYetAnotherObject.id === yetAnotherObject.id))) {
+                                spike2Death = [pushedObject.type, pushedObject.id, yetAnotherObject];
+                                addIfAbsent(dyingObjects, yetAnotherObject);
+                            }
                         }
                     });
                     continue;
@@ -2873,6 +2880,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     continue;
                 }
                 if (yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation) && object.type === SNAKE) {
+                    dieOnSplock = object.id;
                     addIfAbsent(dyingObjects, object);
                     continue;
                 }
@@ -2923,13 +2931,11 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     }
                 }
             }
-            // addIfAbsent(dyingObjects, object);
-            // continue;
             // can't push into something solid
             return false;
         }
     }
-    // I think this means something falls (originally said "the push is go")
+    // the push is go
     return true;
 }
 
@@ -3442,7 +3448,7 @@ function render() {
                 }
                 var r = minR + animationDisplacementRowcol.r;
                 var c = minC + animationDisplacementRowcol.c;
-                if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === object.id) r += .5;
+                if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === object.id && spike2Death[2].dead) r += .5;
                 var savedContext2 = context;
                 context = canvas2.getContext("2d");
                 context.drawImage(image, c * tileSize, r * tileSize);
@@ -3841,7 +3847,7 @@ function render() {
                     var lrc = lastRowcol;
                     var nrc = nextRowcol;
 
-                    if (object.dead && spike2Death == "") {
+                    if (object.dead && (!dieOnSplock || dieOnSplock === object.id) && (spike2Death == "" || (!spike2Death[2].dead && spike2Death[2].id !== object.id))) {
                         rowcol.r += .5;
                         lastRowcol.r += .5;
                         nextRowcol.r += .5;
@@ -4519,14 +4525,14 @@ function render() {
         splockRowcols.forEach(function (rowcol) {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
-            if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === block.id) r += .5;
+            if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === block.id && spike2Death[2].dead) r += .5;
             drawSpikes(context, r, c, null, rng, blockRowcols, splockRowcols, color);
         });
 
         blockRowcols.forEach(function (rowcol) {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
-            if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === block.id) r += .5;
+            if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === block.id && spike2Death[2].dead) r += .5;
 
             context.fillStyle = color;
             var outlineThickness = .4;
