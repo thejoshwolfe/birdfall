@@ -113,9 +113,11 @@ function loadLevel(newLevel) {
     blockSupportRenderCache = {};
     mikeSupportRenderCache = {};
 
-    if (!persistentState.showEditor) document.getElementById("emptyDiv").style.display = "none";
-    // else toggleEditorLocation(localStorage.getItem("editorLocation"));
-    // document.getElementById("emptyDiv").style.height = document.getElementById("editorPane").style.height;   //not working
+    // alert(document.getElementById("editorPane").style.offsetHeight);
+    if (!persistentState.showEditor) document.getElementById("ghostEditorPane").style.display = "none";
+    else toggleEditorLocation(false, localStorage.getItem("editorLocation"));
+    // document.getElementById("ghostEditorPane").style.height = document.getElementById("editorPane").style.offsetHeight;
+
     updateSwitches();
     drawStaticCanvases(level);
     render();
@@ -772,8 +774,11 @@ document.addEventListener("keydown", function (event) {
                 if (persistentState.showEditor && modifierMask === 0 && !blockIsInFocus) { setPaintBrushTileCode(MIKE); break; }
                 if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && !splockIsActive) { splockIsActive = true; changeSpike2ButtonColor(); break; }
                 if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); break; }
+            case 190:
+                toggleEditorLocation(true);
+                break;
             case 192:   //grave accent
-                if (modifierMask === 0) { fitCanvas(0); break; }
+            // if (modifierMask === 0) { fitCanvas(0); break; }
             case 191:
                 if (modifierMask === 0) { if (multiDiagrams) { cycle = true; cycleID++; render(); } break; }
             case 13:
@@ -929,8 +934,10 @@ document.getElementById("replayAnimationSlider").addEventListener("click", funct
     replayAnimationsOn = document.getElementById("replayAnimationSlider").checked;
     localStorage.setItem("cachedRAO", replayAnimationsOn);
 });
-document.getElementById("emptyDiv").addEventListener("click", function () {
-    toggleEditorLocation();
+$(document).ready(function () {
+    $("body").on("click", "#ghostEditorPane", function () {
+        toggleEditorLocation(true);
+    });
 });
 function resizeCanvasContainer(cc) {
     cc = document.getElementById("canvasContainer");
@@ -974,28 +981,39 @@ function toggleShowEditor() {
     // resetCanvases();
     // resizeCanvasContainer();
 }
-function toggleEditorLocation(cached) {
-    persistentState.editorLeft = cached == undefined ? !persistentState.editorLeft : cached;   //sometimes it works and sometimes it doesn't
+function toggleEditorLocation(clicked, cached) {
+    if (clicked) {
+        persistentState.editorLeft = !persistentState.editorLeft;
+        localStorage.setItem("editorLocation", persistentState.editorLeft);
+    } else {
+        if (cached == undefined) false
+        else {
+            if (cached == "true") persistentState.editorLeft = true;
+            else persistentState.editorLeft = false;
+        }
+    }
     savePersistentState();
-    localStorage.setItem("editorLocation", persistentState.editorLeft);
 
-    var levelTable = document.getElementById("levelTable");
-    var emptyDiv = document.getElementById("emptyDiv");
-    var canvasContainerTD = document.getElementById("canvasContainerTD");
+    // get row, editor, and ghost editor
+    var levelRow = document.getElementById("levelRow");
+    var ghostEditorPane = document.getElementById("ghostEditorPane");
     var editorPane = document.getElementById("editorPane");
 
-    var emptyDivClone = emptyDiv.cloneNode(true);
-    var canvasContainerTDClone = canvasContainerTD.cloneNode(true);
+    // clone editor and ghost editor
+    var ghostEditorPaneClone = ghostEditorPane.cloneNode(true);
     var editorPaneClone = editorPane.cloneNode(true);
 
-    var td1 = persistentState.editorLeft ? editorPaneClone : emptyDivClone;
-    var td3 = persistentState.editorLeft ? emptyDivClone : editorPaneClone;
+    // remove original editor and ghost editor
+    document.getElementById("ghostEditorPane").remove();
+    document.getElementById("editorPane").remove();
 
-    levelTable.deleteRow(0);
-    var newRow = levelTable.insertRow(0);
-    newRow.appendChild(td1);
-    newRow.appendChild(canvasContainerTDClone);
-    newRow.appendChild(td3);
+    // determine the order to rearrange them in
+    var td1 = persistentState.editorLeft ? editorPaneClone : ghostEditorPaneClone;
+    var td2 = persistentState.editorLeft ? ghostEditorPaneClone : editorPaneClone;
+
+    // insert
+    levelRow.insertBefore(td1, levelRow.childNodes[0]);
+    levelRow.appendChild(td2);
 }
 function toggleButtonSize() {
     persistentState.bigButton = !persistentState.bigButton;
@@ -2449,7 +2467,7 @@ function populateThemeVars() {
 
 function showEditorChanged() {
     document.getElementById("showHideEditor").textContent = (persistentState.showEditor ? "Hide" : "Show") + " Editor";
-    document.getElementById("emptyDiv").style.display = persistentState.showEditor ? "block" : "none";
+    document.getElementById("ghostEditorPane").style.display = persistentState.showEditor ? "block" : "none";
 
     ["editorDiv", "editorPane"].forEach(function (id) {
         document.getElementById(id).style.display = persistentState.showEditor ? "inline-block" : "none";
@@ -2752,6 +2770,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
         for (var j = 0; j < pushedObject.splocks.length; j++) {
             var rowcol = getRowcol(level, pushedObject.splocks[j]);
             var forwardRowcol = { r: rowcol.r + dr, c: rowcol.c + dc };
+
             if (!isInBounds(level, forwardRowcol.r, forwardRowcol.c)) {
                 if (dyingObjects == null) {
                     // can't push things out of bounds
@@ -2767,9 +2786,18 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
             var yetAnotherObject = findObjectAtLocation(forwardLocation);
             if (yetAnotherObject != null) {
                 if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === POISONFRUIT) return false;
+                // this is the problem - this prevents snakes from carrying splocks but kills them unnecessarily
                 if (yetAnotherObject.type === SNAKE) {
-                    spike2Death = [pushedObject.type, pushedObject.id];
-                    addIfAbsent(dyingObjects, yetAnotherObject);
+                    yetAnotherObject.locations.forEach(function (loc) {
+                        var snakeRowcol = getRowcol(level, loc);
+                        var snakeForwardRowcol = { r: snakeRowcol.r + dr, c: snakeRowcol.c + dc };
+                        var snakeForwardLocation = getLocation(level, snakeForwardRowcol.r, snakeForwardRowcol.c);
+                        var snakeYetAnotherObject = findObjectAtLocation(snakeForwardLocation);
+                        if (level.map[snakeForwardLocation] !== SPACE || (snakeYetAnotherObject != null && !(snakeYetAnotherObject.type === SNAKE && snakeYetAnotherObject.id === yetAnotherObject.id))) {
+                            spike2Death = [pushedObject.type, pushedObject.id];
+                            addIfAbsent(dyingObjects, yetAnotherObject);
+                        }
+                    });
                     continue;
                 }
                 if (yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation)) {
@@ -6131,7 +6159,7 @@ function loadFromLocationHash() {
     if (hashPairs[0][0] === "sv") {
         sv = true;
         canvas7.style.display = "block";
-        document.getElementById("emptyDiv").style.display = "none";
+        document.getElementById("ghostEditorPane").style.display = "none";
         document.getElementById("editorPane").style.display = "none";
         document.getElementById("bottomEverything").style.display = "none";
         document.getElementById("csText").style.display = "block";
