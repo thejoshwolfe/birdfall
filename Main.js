@@ -60,7 +60,7 @@ var portalConflicts = [];
 var portalFailure = false;
 var portalOutOfBounds = false;
 var cycle = false;
-var cycleID = -1;
+var cycleId = -1;
 var multiDiagrams = false;
 
 var tileSize = 34;
@@ -116,7 +116,7 @@ function loadLevel(newLevel) {
 
     // alert(document.getElementById("editorPane").style.offsetHeight);
     if (!persistentState.showEditor) document.getElementById("ghostEditorPane").style.display = "none";
-    else toggleEditorLocation(false, localStorage.getItem("editorLocation"));
+    // else toggleEditorLocation(false, localStorage.getItem("editorLocation"));
     // document.getElementById("ghostEditorPane").style.height = document.getElementById("editorPane").style.offsetHeight;
 
     updateSwitches();
@@ -781,7 +781,7 @@ document.addEventListener("keydown", function (event) {
             case 192:   //grave accent
                 if (modifierMask === 0) { fitCanvas(0); break; }
             case 191:
-                if (modifierMask === 0) { if (multiDiagrams) { cycle = true; cycleID++; render(); } break; }
+                if (modifierMask === 0) { if (multiDiagrams) { cycle = true; cycleId++; render(); } break; }
             case 13:
                 if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
                 if (modifierMask === 0 && replayString) { advance(); break; }
@@ -1309,10 +1309,12 @@ function selectAll() {
 }
 
 function setPaintBrushTileCode(tileCode) {
-    blockIsInFocus = false;
-    splockIsActive = false;
     var spike2 = document.getElementById("paintSpike2Button");
-    spike2.textContent = "Mike";
+    if (tileCode !== MIKE && tileCode !== BLOCK) {
+        blockIsInFocus = false;
+        spike2.textContent = "Mike";
+        splockIsActive = false;
+    }
 
     if (tileCode === "paste" && clipboardData == null) return;
     if (paintBrushTileCode === "select" && tileCode !== "select" && selectionStart != null && selectionEnd != null) {
@@ -1340,69 +1342,81 @@ function setPaintBrushTileCode(tileCode) {
             paintBrushSnakeColorIndex = (paintBrushSnakeColorIndex + 1) % snakeColors.length;
         }
     } else if (tileCode === BLOCK) {
-        var blocks = getBlocks();
-        if (paintBrushTileCode === BLOCK && blocks.length > 0) {
-            spike2.textContent = "Splock";
-            // cycle through block ids
-            blocks.sort(compareId);
-            if (paintBrushBlockId != null) {
-                blockIsInFocus = true;
+        if (!splockIsActive) {
+            var blocks = getBlocks();
+            if (paintBrushTileCode === BLOCK && blocks.length > 0) {
                 spike2.textContent = "Splock";
-                (function () {
-                    for (var i = 0; i < blocks.length; i++) {
-                        if (blocks[i].id === paintBrushBlockId) {
-                            i += 1;
-                            if (i < blocks.length) {
-                                // next block id
-                                paintBrushBlockId = blocks[i].id;
-                            } else {
-                                // new block id
-                                paintBrushBlockId = null;
+                // cycle through block ids
+                blocks.sort(compareId);
+                if (paintBrushBlockId != null) {
+                    blockIsInFocus = true;
+                    spike2.textContent = "Splock";
+                    (function () {
+                        for (var i = 0; i < blocks.length; i++) {
+                            if (blocks[i].id === paintBrushBlockId) {
+                                i += 1;
+                                if (i < blocks.length) {
+                                    // next block id
+                                    paintBrushBlockId = blocks[i].id;
+                                } else {
+                                    // new block id
+                                    paintBrushBlockId = null;
+                                }
+                                return;
                             }
-                            return;
                         }
-                    }
-                    throw unreachable()
-                })();
+                        throw unreachable()
+                    })();
+                } else {
+                    // first one
+                    blockIsInFocus = true;
+                    spike2.textContent = "Splock";
+                    paintBrushBlockId = blocks[0].id;
+                }
             } else {
-                // first one
-                blockIsInFocus = true;
-                spike2.textContent = "Splock";
-                paintBrushBlockId = blocks[0].id;
+                // new block id
+                paintBrushBlockId = null;
             }
-        } else {
-            // new block id
-            paintBrushBlockId = null;
+        }
+        else {
+            splockIsActive = false;
+            changeSpike2ButtonColor();
         }
     } else if (tileCode === MIKE) {
-        var mikes = getMikes();
-        if (paintBrushTileCode === MIKE && mikes.length > 0) {
-            // cycle through mikes ids
-            mikes.sort(compareId);
-            if (paintBrushMikeId != null) {
-                (function () {
-                    for (var i = 0; i < mikes.length; i++) {
-                        if (mikes[i].id === paintBrushMikeId) {
-                            i += 1;
-                            if (i < mikes.length) {
-                                // next mikes id
-                                paintBrushMikeId = mikes[i].id;
-                            } else {
-                                // new mikes id
-                                paintBrushMikeId = null;
+        if (paintBrushBlockId === null) {
+            var mikes = getMikes();
+            if (paintBrushTileCode === MIKE && mikes.length > 0) {
+                // cycle through mikes ids
+                mikes.sort(compareId);
+                if (paintBrushMikeId != null) {
+                    (function () {
+                        for (var i = 0; i < mikes.length; i++) {
+                            if (mikes[i].id === paintBrushMikeId) {
+                                i += 1;
+                                if (i < mikes.length) {
+                                    // next mikes id
+                                    paintBrushMikeId = mikes[i].id;
+                                } else {
+                                    // new mikes id
+                                    paintBrushMikeId = null;
+                                }
+                                return;
                             }
-                            return;
                         }
-                    }
-                    throw unreachable()
-                })();
+                        throw unreachable()
+                    })();
+                } else {
+                    // first one
+                    paintBrushMikeId = mikes[0].id;
+                }
             } else {
-                // first one
-                paintBrushMikeId = mikes[0].id;
+                // new mikes id
+                paintBrushMikeId = null;
             }
-        } else {
-            // new mikes id
-            paintBrushMikeId = null;
+        }
+        else {
+            if (paintBrushTileCode === BLOCK && !splockIsActive) { splockIsActive = true; changeSpike2ButtonColor(); }
+            else if (paintBrushTileCode === BLOCK && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); }
         }
     } else if (Array.isArray(tileCode)) {
         if (paintBrushTileCode === tileCode[OWWCounter]) {
@@ -1422,8 +1436,10 @@ function setPaintBrushTileCode(tileCode) {
             paintBrushMikeId = null;
         }
     }
-    paintBrushTileCode = Array.isArray(tileCode) ? tileCode[OWWCounter] : tileCode;
-    paintBrushTileCodeChanged();
+    if (!(tileCode === MIKE && paintBrushBlockId != null)) {
+        paintBrushTileCode = Array.isArray(tileCode) ? tileCode[OWWCounter] : tileCode;
+        paintBrushTileCodeChanged();
+    }
 }
 function paintBrushTileCodeChanged() {
     paintButtonIdAndTileCodes.forEach(function (pair) {
@@ -2501,7 +2517,7 @@ function move(dr, dc, doAnimations) {
     portalOutOfBounds = false;
     portalFailure = false;
     cycle = false;
-    cycleID = -1;
+    cycleId = -1;
     multiDiagrams = false;
 
     if (!isAlive()) return;
@@ -4671,7 +4687,7 @@ function render() {
         var localContext = buffer.getContext("2d");
 
         for (var i = 0; i < outline.length; i++) {
-            if (!(cycle && outline[i].id != cycleID)) {
+            if (!(cycle && outline[i].id != cycleId)) {
                 localContext.strokeStyle = "white";
                 localContext.lineWidth = tileSize / 6;
                 var c = outline[i].c;
@@ -4718,7 +4734,7 @@ function render() {
             localContext.stroke();
         }
 
-        if (cycleID > maxID) cycleID = 0;
+        if (cycleId > maxID) cycleId = 0;
         context.save();
         context.globalAlpha = 1;
         context.drawImage(buffer, 0, 0);
