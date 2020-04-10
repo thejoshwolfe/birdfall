@@ -48,6 +48,11 @@ var POISONFRUIT = "p";
 
 var spike2Death = "";
 var dieOnSplock = false;
+var rngCorrection = [];
+
+function correctRng() {
+
+}
 
 var checkResult = false;
 var cr = false;
@@ -78,6 +83,7 @@ var oldRowcols = [];
 var animationsOn = true;    //defaults
 var defaultOn = true;
 var replayAnimationsOn = false;
+
 function updateSwitches() {
     if (localStorage.getItem("cachedAO") !== null) animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
     if (localStorage.getItem("cachedDO") !== null) {
@@ -1383,7 +1389,7 @@ function setPaintBrushTileCode(tileCode) {
             changeSpike2ButtonColor();
         }
     } else if (tileCode === MIKE) {
-        if (paintBrushBlockId === null) {
+        if (!blockIsInFocus) {
             var mikes = getMikes();
             if (paintBrushTileCode === MIKE && mikes.length > 0) {
                 // cycle through mikes ids
@@ -1436,7 +1442,7 @@ function setPaintBrushTileCode(tileCode) {
             paintBrushMikeId = null;
         }
     }
-    if (!(tileCode === MIKE && paintBrushBlockId != null)) {
+    if (!(tileCode === MIKE && blockIsInFocus)) {
         paintBrushTileCode = Array.isArray(tileCode) ? tileCode[OWWCounter] : tileCode;
         paintBrushTileCodeChanged();
     }
@@ -2725,6 +2731,7 @@ function move(dr, dc, doAnimations) {
                     anySnakesDied = true;
                 } else if (object.type === BLOCK || object.type === MIKE) {
                     // a box fell off the world
+                    if (object.splocks != null) rngCorrection.push(object.splocks);
                     removeAnimatedObject(object, changeLog);
                     removeFromArray(fallingObjects, object);
                     exitAnimationQueue.push([
@@ -5249,8 +5256,7 @@ function drawSpikes(context, r, c, adjacentTiles, rng, blockRowcols, spike2Rowco
         var spikeWidth = 10 / 9;
         drawSpokes(context, x, y, spikeWidth, color);
         if (color == undefined) drawSpikeSupports(context, r, c, x, y, spikeWidth, isSpike, isWall, rng);
-        else if (color != "yellow") drawSpikeSupports(context, r, c, x, y, spikeWidth, isAlsoThisSpike2, isAlsoThisBlock, rng, color);
-        else drawSpikeSupports(context, r, c, x, y, spikeWidth, isAlsoThisSpike2, isAlsoThisSpike2, rng, color);
+        else drawSpikeSupports(context, r, c, x, y, spikeWidth, isAlsoThisSpike2, isAlsoThisBlock, rng, color);
 
         function isSpike(dc, dr) {
             var tileCode = adjacentTiles[1 + dr][1 + dc];
