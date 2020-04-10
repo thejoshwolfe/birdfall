@@ -1990,6 +1990,7 @@ function reduceChangeLog(changeLog) {
     }
 }
 function undo(undoStuff) {
+    canvas7.style.display = "none";
     if (replayString) {
         var expectedPrefix = replayMagicNumber + "&";
         if (cursor > expectedPrefix.length) cursor--;
@@ -2033,6 +2034,7 @@ function undo(undoStuff) {
     undoStuffChanged(undoStuff);
 }
 function reset(undoStuff) {
+    canvas7.style.display = "none";
     cursor = 0;
     portalFailure = false;
     animationQueue = [];
@@ -2894,6 +2896,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     return false;
                 }
                 if (yetAnotherObject.type === SNAKE && pushedObject.type === MIKE) {
+                    // this is mike falling on snake and it messes up everything (I think it worked before addressing wrong snakes sliding .5)
                     spike2Death = [pushedObject.type, pushedObject.id];
                     addIfAbsent(dyingObjects, yetAnotherObject);
                     continue;
@@ -3578,7 +3581,7 @@ function render() {
                 }
             }
 
-            if (!persistentState.showEditor) context = canvas6.getContext("2d");    //slows down game
+            if (!persistentState.showEditor) context = canvas6.getContext("2d");
             if (onlyTheseObjects == null) {
                 for (var r = 0; r < level.height; r++) {
                     for (var c = 0; c < level.width; c++) {
@@ -3626,19 +3629,43 @@ function render() {
             }
             if (isDead()) {
                 if (!cs) {
+                    canvas7.style.display = "block"
+                    context = canvas7.getContext("2d");
                     context.fillStyle = "rgba(0,0,0,.5)";
+                    context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
                     context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+                    var snakes = getSnakes();
+                    var deadSnakes;
+                    deadSnakes = snakes.filter(function (snake) {
+                        return snake.dead === true;
+                    });
+                    var newRowcols = [];
+                    deadSnakes[0].locations.forEach(function (loc) {
+                        var localRowcol = getRowcol(level, loc);
+                        for (var i = -1; i < 2; i++) {
+                            for (var j = -1; j < 2; j++) {
+                                newRowcols.push({ r: localRowcol.r + i, c: localRowcol.c + j });
+                            }
+                        }
+                        // context.globalCompositeOperation("destination-out");
+                        // context.beginPath();
+                        // context.arc((locRowcol.c + .5) * tileSize, (locRowcol.r + .5) * tileSize, tileSize / 2, 0, 2 * Math.PI);
+                        // context.closePath();
+                    });
+                    for (var i = 0; i < newRowcols.length; i++) {
+                        context.clearRect(newRowcols[i].c * tileSize, newRowcols[i].r * tileSize, tileSize, tileSize);
+                    }
 
-                    context.fillStyle = textStyle[3];
-                    context.font = textStyle[0] + textStyle[1];
-                    context.shadowOffsetX = 5;
-                    context.shadowOffsetY = 5;
-                    context.shadowColor = "rgba(0,0,0,0.5)";
-                    context.shadowBlur = 4;
-                    textString = "LOSE";
-                    context.textBaseline = "middle";
-                    textWidth = context.measureText(textString).width;
-                    context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
+                    // context.fillStyle = textStyle[3];
+                    // context.font = textStyle[0] + textStyle[1];
+                    // context.shadowOffsetX = 5;
+                    // context.shadowOffsetY = 5;
+                    // context.shadowColor = "rgba(0,0,0,0.5)";
+                    // context.shadowBlur = 4;
+                    // textString = "LOSE";
+                    // context.textBaseline = "middle";
+                    // textWidth = context.measureText(textString).width;
+                    // context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
                 }
                 else checkResult = false;
             }
