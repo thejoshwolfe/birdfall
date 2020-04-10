@@ -10,6 +10,7 @@ if (typeof VERSION !== "undefined") {
 // });
 
 var sv = false;
+var didResize = false;
 var canvas1 = document.getElementById("canvas1");
 var canvas2 = document.getElementById("canvas2");
 var canvas3 = document.getElementById("canvas3");
@@ -124,6 +125,7 @@ function loadLevel(newLevel) {
     if (!persistentState.showEditor) document.getElementById("ghostEditorPane").style.display = "none";
     // else toggleEditorLocation(false, localStorage.getItem("editorLocation"));
     // document.getElementById("ghostEditorPane").style.height = document.getElementById("editorPane").style.offsetHeight;
+    document.getElementById("ghostEditorPane").style.height = tileSize * level.height;  // doesn't add up
 
     updateSwitches();
     drawStaticCanvases(level);
@@ -1719,6 +1721,7 @@ function paintAtLocation(location, changeLog) {
         resizeDragAnchorRowcol = toRowcol;
         if (dr !== 0) setHeight(level.height + dr, changeLog);
         if (dc !== 0) setWidth(level.width + dc, changeLog);
+        if (dr !== 0 || dc !== 0) didResize = true;
     } else if (paintBrushTileCode === "select") {
         selectionEnd = location;
     } else if (paintBrushTileCode === "paste") {
@@ -2598,7 +2601,6 @@ function move(dr, dc, doAnimations) {
             dc,
         ]
     ];
-    // animationQueue.push(slitherAnimations);
 
     // drag your tail forward based on what was/wasn't eaten
     var times = 1;
@@ -2627,14 +2629,11 @@ function move(dr, dc, doAnimations) {
                         newRowcol.c - oldRowcol.c,
                     ]
                 );
-                // animationQueue.push(slitherAnimations);
-
             }
         }
         activeSnake.locations.pop();
     }
     activeSnake.locations.unshift(newLocation);
-
     changeLog.push([activeSnake.type, activeSnake.id, activeSnakeOldState, serializeObjectState(activeSnake)]);
 
     // did you just push your face into a portal?
@@ -3274,7 +3273,17 @@ function render() {
         canvas.width = tileSize * level.width;
         canvas.height = tileSize * level.height;
     });
-    var context = canvas4.getContext("2d");
+    var canvasContainer = document.getElementById("canvasContainer");
+    canvasContainer.style.height = tileSize * level.height;
+    canvasContainer.style.width = tileSize * level.width;
+
+    var context;
+    // draw background if resizing occurs
+    if (true) {
+        context = canvas2.getContext("2d");
+        drawBackground(context, canvas2);
+    }
+    context = canvas4.getContext("2d");
 
     themeName = themes[themeCounter][0];
     background = themes[themeCounter][1];
@@ -3606,20 +3615,23 @@ function render() {
                 }
             }
 
-
             // banners
             if (countSnakes() === 0 && exitExists) {
                 if (!cs) {
-                    context.fillStyle = "rgba(0,0,0,.5)";
+                    context.fillStyle = "rgba(0,0,0,.7)";
                     context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+
+                    // context.lineWidth = 10;
+                    // context.strokeStyle = "green";
+                    // roundRect(context, .1 * tileSize, .1 * tileSize, canvas7.width - .2 * tileSize, canvas7.height - .2 * tileSize, 20, false, true);
 
                     context.fillStyle = textStyle[2];
                     context.font = textStyle[0] + textStyle[1];
                     context.shadowOffsetX = 5;
                     context.shadowOffsetY = 5;
-                    context.shadowColor = "rgba(0,0,0,0.5)";
+                    context.shadowColor = "rgba(255,255,255,0.1)";
                     context.shadowBlur = 4;
-                    var textString = "WIN";
+                    var textString = "Well done!";
                     var textWidth = context.measureText(textString).width;
                     context.textBaseline = "middle";
                     context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
@@ -3631,7 +3643,7 @@ function render() {
                 if (!cs) {
                     canvas7.style.display = "block"
                     context = canvas7.getContext("2d");
-                    context.fillStyle = "rgba(0,0,0,.5)";
+                    context.fillStyle = "rgba(0,0,0,.7)";
                     context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
                     context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
                     var snakes = getSnakes();
@@ -3642,10 +3654,11 @@ function render() {
                     var newRowcols = [];
                     deadSnakes[0].locations.forEach(function (loc) {
                         var localRowcol = getRowcol(level, loc);
-                        for (var i = -1; i < 2; i++) {
+                        for (var i = -.5; i <= 1.5; i++) {
                             for (var j = -1; j < 2; j++) {
                                 newRowcols.push({ r: localRowcol.r + i, c: localRowcol.c + j });
                             }
+
                         }
                         // context.globalCompositeOperation("destination-out");
                         // context.beginPath();
@@ -3655,6 +3668,9 @@ function render() {
                     for (var i = 0; i < newRowcols.length; i++) {
                         context.clearRect(newRowcols[i].c * tileSize, newRowcols[i].r * tileSize, tileSize, tileSize);
                     }
+                    context.lineWidth = 10;
+                    context.strokeStyle = "red";
+                    roundRect(context, .1 * tileSize, .1 * tileSize, canvas7.width - .2 * tileSize, canvas7.height - .2 * tileSize, 20, false, true);
 
                     // context.fillStyle = textStyle[3];
                     // context.font = textStyle[0] + textStyle[1];
@@ -3758,6 +3774,7 @@ function render() {
             context.drawImage(buffer, 0, 0);
             context.restore();
         }
+        didResize = false;
     }
 
     function tint(hex, delta) {
