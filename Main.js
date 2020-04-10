@@ -1785,7 +1785,7 @@ function paintAtLocation(location, changeLog) {
                         if (splockIsActive) thisBlock.splocks.push(location);
                     }
                 } else if (existingSplockIndex !== -1) {
-                    thisBlock.splocks.splice(existingIndex, 1);
+                    thisBlock.splocks.splice(existingSplockIndex, 1);
                     if (!splockIsActive) thisBlock.locations.push(location);
                 }
                 else {
@@ -4580,7 +4580,7 @@ function render() {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
             if (isDead() && spike2Death[0] === MIKE && spike2Death[1] === mike.id) r += .5;
-            drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 31, tileSize * .5, tileSize * .4);
+            drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 31, tileSize * .45, tileSize * .36);
 
             var side = 0;
             var size = tileSize / 8;
