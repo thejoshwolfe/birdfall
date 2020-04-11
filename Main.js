@@ -25,7 +25,7 @@ var SPIKE = "2".charCodeAt(0);
 var FRUIT_v0 = "3".charCodeAt(0); //legacy
 var EXIT = "4".charCodeAt(0);
 var PORTAL = "5".charCodeAt(0);
-var RAINBOW = "P".charCodeAt(0);
+var PLATFORM = "P".charCodeAt(0);
 var TRELLIS = "p".charCodeAt(0);
 var ONEWAYWALLU = "u".charCodeAt(0);
 var ONEWAYWALLD = "d".charCodeAt(0);
@@ -37,7 +37,7 @@ var CLOUD = "C".charCodeAt(0);
 var BUBBLE = "b".charCodeAt(0);
 var LAVA = "v".charCodeAt(0);
 var WATER = "w".charCodeAt(0);
-var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, RAINBOW, TRELLIS, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, CLOSEDLIFT, OPENLIFT, CLOUD, BUBBLE, LAVA, WATER];
+var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, TRELLIS, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, CLOSEDLIFT, OPENLIFT, CLOUD, BUBBLE, LAVA, WATER];
 var OWWCounter = 0;
 
 // object types
@@ -72,8 +72,7 @@ var multiDiagrams = false;
 var tileSize = 34;
 var borderRadiusFactor = 3.4;
 var borderRadius = tileSize / borderRadiusFactor;
-var blockRadiusFactor = 5;
-var blockRadius = tileSize / blockRadiusFactor;
+var blockRadius = tileSize / 5;
 
 var level;
 var unmoveStuff = { undoStack: [], redoStack: [], spanId: "movesSpan", undoButtonId: "unmoveButton", redoButtonId: "removeButton" };
@@ -126,10 +125,8 @@ function loadLevel(newLevel) {
     if (!persistentState.showEditor) document.getElementById("ghostEditorPane").style.display = "none";
     // else toggleEditorLocation(false, localStorage.getItem("editorLocation"));
     // document.getElementById("ghostEditorPane").style.height = document.getElementById("editorPane").style.offsetHeight;
-    // document.getElementById("ghostEditorPane").style.height = tileSize * level.height;  // doesn't add up
+    document.getElementById("ghostEditorPane").style.height = tileSize * level.height;  // doesn't add up
 
-    recalculateBorderRadius();
-    recalculateBlockRadius();
     updateSwitches();
     drawStaticCanvases(level);
     render();
@@ -158,7 +155,7 @@ function drawStaticCanvases(level) {
         for (var c = 0; c < level.width; c++) {
             var location = getLocation(level, r, c);
             var tileCode = level.map[location];
-            if (tileCode === SPIKE || tileCode === RAINBOW || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD) drawTile(context, tileCode, r, c, level, location, rng, true, true);
+            if (tileCode === SPIKE || tileCode === PLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD) drawTile(context, tileCode, r, c, level, location, rng, true, true);
         }
     }
     context = canvas5.getContext("2d");
@@ -269,7 +266,7 @@ function parseLevel(string) {
             tileCode = SPACE;
         }
         if (validTileCodes.indexOf(tileCode) === -1) throw parserError("invalid tilecode: " + JSON.stringify(mapData[i]));
-        if (tileCode === RAINBOW || tileCode === TRELLIS || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
+        if (tileCode === PLATFORM || tileCode === TRELLIS || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
         level.map.push(tileCode);
     }
 
@@ -648,13 +645,11 @@ function offsetLocation(location, dr, dc) {
 
 var SHIFT = 1;
 var CTRL = 2;
-var CMD = 3;
 var ALT = 4;
 document.addEventListener("keydown", function (event) {
     var modifierMask = (
         (event.shiftKey ? SHIFT : 0) |
         (event.ctrlKey ? CTRL : 0) |
-        (event.metaKey ? CMD : 0) |
         (event.altKey ? ALT : 0)
     );
     if (!sv) {
@@ -692,17 +687,16 @@ document.addEventListener("keydown", function (event) {
                 if (modifierMask === 0) { undo(unmoveStuff); break; }
                 if (modifierMask === SHIFT && !replayString) { redo(unmoveStuff); break; }
                 if (modifierMask === SHIFT && replayString) { advance(); break; }
-                if (persistentState.showEditor && modifierMask === CTRL | CMD) { undo(uneditStuff); break; }
-                if (persistentState.showEditor && modifierMask === CTRL | CMD | SHIFT) { redo(uneditStuff); break; }
+                if (persistentState.showEditor && modifierMask === CTRL) { undo(uneditStuff); break; }
+                if (persistentState.showEditor && modifierMask === CTRL | SHIFT) { redo(uneditStuff); break; }
                 return;
             case "Y".charCodeAt(0):
                 if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
                 if (modifierMask === 0 && replayString) { advance(); break; }
-                if (persistentState.showEditor && modifierMask === CTRL | CMD) { redo(uneditStuff); break; }
+                if (persistentState.showEditor && modifierMask === CTRL) { redo(uneditStuff); break; }
                 return;
             case "R".charCodeAt(0):
-                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(RAINBOW); break; }
-                if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("resize"); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("resize"); break; }
                 if (modifierMask === 0) { reset(unmoveStuff); break; }
                 if (modifierMask === SHIFT) { unreset(unmoveStuff); break; }
                 return;
@@ -715,7 +709,7 @@ document.addEventListener("keydown", function (event) {
             case "A".charCodeAt(0):
                 if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(0, -1); break; }
                 if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("select"); break; }
-                if (persistentState.showEditor && modifierMask === CTRL | CMD) { selectAll(); break; }
+                if (persistentState.showEditor && modifierMask === CTRL) { selectAll(); break; }
                 return;
             case "E".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPACE); break; }
@@ -733,12 +727,12 @@ document.addEventListener("keydown", function (event) {
                 if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(1, 0); break; }
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPIKE); break; }
                 if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(SNAKE); break; }
-                if (persistentState.showEditor && modifierMask === CTRL | CMD) { saveLevel(); break; }
-                if (!persistentState.showEditor && modifierMask === CTRL | CMD) { saveReplay(); break; }
+                if (persistentState.showEditor && modifierMask === CTRL) { saveLevel(); break; }
+                if (!persistentState.showEditor && modifierMask === CTRL) { saveReplay(); break; }
                 if (modifierMask === (CTRL | SHIFT)) { saveReplay(); break; }
                 return;
             case "X".charCodeAt(0):
-                if (persistentState.showEditor && modifierMask === CTRL | CMD) { cutSelection(); break; }
+                if (persistentState.showEditor && modifierMask === CTRL) { cutSelection(); break; }
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOSEDLIFT); break; }
                 if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(OPENLIFT); break; }
                 return;
@@ -757,6 +751,7 @@ document.addEventListener("keydown", function (event) {
             case "P".charCodeAt(0):
                 if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PORTAL); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(PLATFORM); break; }
                 return;
             case "U".charCodeAt(0):
                 if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
@@ -773,10 +768,10 @@ document.addEventListener("keydown", function (event) {
             case "C".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOUD); break; }
                 if (persistentState.showEditor && modifierMask === SHIFT) { toggleCollision(); break; }
-                if (persistentState.showEditor && modifierMask === CTRL | CMD) { copySelection(); break; }
+                if (persistentState.showEditor && modifierMask === CTRL) { copySelection(); break; }
                 return;
             case "V".charCodeAt(0):
-                if (persistentState.showEditor && modifierMask === CTRL | CMD) { setPaintBrushTileCode("paste"); break; }
+                if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("paste"); break; }
             case "H".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { toggleHotkeys(); break; }
             case "T".charCodeAt(0):
@@ -842,8 +837,7 @@ document.addEventListener("keydown", function (event) {
 function changeCanvasSize(delta) {
     if (delta !== 34) tileSize += delta;
     else tileSize = 34;
-    recalculateBorderRadius();
-    recalculateBlockRadius();
+    borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
     blockSupportRenderCache = {};
     mikeSupportRenderCache = {};
@@ -904,6 +898,9 @@ document.getElementById("fitControls").addEventListener("click", function () {
 document.getElementById("fitCanvas").addEventListener("click", function () {
     fitCanvas(0);
     return;
+});
+document.getElementById("bigButtonButton").addEventListener("click", function () {
+    toggleButtonSize();
 });
 document.getElementById("showGridButton").addEventListener("click", function () {
     toggleGrid();
@@ -978,20 +975,13 @@ function fitCanvas(type) {
     var maxW = window.innerWidth / level.width;
     var maxH = (window.innerHeight - offset) / level.height;
     tileSize = Math.round(Math.min(maxW, maxH) * .97);
-    recalculateBorderRadius();
-    recalculateBlockRadius();
+    borderRadius = tileSize / borderRadiusFactor;
     textStyle[0] = tileSize * 5;
     blockSupportRenderCache = {};
     mikeSupportRenderCache = {};
     drawStaticCanvases(getLevel());
     render();
     // location.reload();  //without this, tiles appear to have borders (comment added before static canvases added)
-}
-function recalculateBorderRadius() {
-    borderRadius = tileSize / borderRadiusFactor;
-}
-function recalculateBlockRadius() {
-    blockRadius = tileSize / blockRadiusFactor;
 }
 function toggleShowEditor() {
     persistentState.showEditor = !persistentState.showEditor;
@@ -1001,13 +991,15 @@ function toggleShowEditor() {
     // resizeCanvasContainer();
 }
 function toggleEditorLocation(clicked, cached) {
-    cached = JSON.parse(cached);
     if (clicked) {
         persistentState.editorLeft = !persistentState.editorLeft;
         localStorage.setItem("editorLocation", persistentState.editorLeft);
     } else {
-        if (cached == undefined) cached = false;
-        else persistentState.editorLeft = cached ? true : false;
+        if (cached == undefined) false
+        else {
+            if (cached == "true") persistentState.editorLeft = true;
+            else persistentState.editorLeft = false;
+        }
     }
     savePersistentState();
 
@@ -1031,6 +1023,23 @@ function toggleEditorLocation(clicked, cached) {
     // insert
     levelRow.insertBefore(td1, levelRow.childNodes[0]);
     levelRow.appendChild(td2);
+}
+function toggleButtonSize() {
+    persistentState.bigButton = !persistentState.bigButton;
+    savePersistentState();
+    var buttons = document.getElementsByClassName("bottomButton");
+    if (persistentState.bigButton) {
+        for (var i = 0; i < buttons.length; i++)
+            buttons[i].classList.add("bigButton");
+        document.getElementById("fitCanvas").style.display = "none";
+
+    }
+    else {
+        for (var i = 0; i < buttons.length; i++)
+            buttons[i].classList.remove("bigButton");
+        document.getElementById("fitCanvas").style.display = "block";
+    }
+    render();
 }
 function toggleGrid() {
     persistentState.showGrid = !persistentState.showGrid;
@@ -1110,7 +1119,7 @@ var paintButtonIdAndTileCodes = [
     ["paintSpikeButton", SPIKE],
     ["paintExitButton", EXIT],
     ["paintPortalButton", PORTAL],
-    ["paintRainbowButton", RAINBOW],
+    ["paintPlatformButton", PLATFORM],
     ["paintTrellisButton", TRELLIS],
     ["paintOneWayWallButton", [ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]],
     ["paintClosedLiftButton", CLOSEDLIFT],
@@ -2245,7 +2254,7 @@ function describe(arg1, arg2) {
             case SPIKE: return "Spikes";
             case EXIT: return "an Exit";
             case PORTAL: return "a Portal";
-            case RAINBOW: return "a Rainbow";
+            case PLATFORM: return "a Platform";
             case TRELLIS: return "a Trellis";
             case ONEWAYWALLU: return "a One Way Wall (facing U)";
             case ONEWAYWALLD: return "a One Way Wall (facing D)";
@@ -2376,6 +2385,7 @@ var persistentState = {
     showEditor: false,
     editorLeft: false,
     showGrid: false,
+    bigButton: false,
     hideHotkeys: false,
 };
 function savePersistentState() {
@@ -2388,6 +2398,7 @@ function loadPersistentState() {
     }
     persistentState.showEditor = !!persistentState.showEditor;
     persistentState.editorLeft = !!persistentState.editorLeft;
+    persistentState.bigButton = !!persistentState.bigButton;
     persistentState.showGrid = !!persistentState.showGrid;
     persistentState.hideHotkeys = !!persistentState.hideHotkeys;
     showEditorChanged();
@@ -2504,7 +2515,6 @@ function showEditorChanged() {
     }
 
     if (persistentState.showEditor && defaultOn) document.getElementById("animationSlider").checked = animationsOn = false;
-    else if (persistentState.showEditor && !defaultOn) document.getElementById("animationSlider").checked = animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
     if (!persistentState.showEditor) document.getElementById("animationSlider").checked = animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
 
     // loadFromLocationHash();
@@ -2865,8 +2875,8 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
             }
 
             var forwardLocation = getLocation(level, forwardRowcol.r, forwardRowcol.c);
-            if (dr === 1 && level.map[forwardLocation] === RAINBOW) {
-                // this rainbow holds us, unless we're going through it
+            if (dr === 1 && level.map[forwardLocation] === PLATFORM) {
+                // this platform holds us, unless we're going through it
                 var neighborLocations;
                 if (pushedObject.type === SNAKE) {
                     neighborLocations = [];
@@ -3055,7 +3065,7 @@ function isTileCodeAir(pusher, pushedObject, tileCode, dr, dc) {
     switch (tileCode) {
         case SPACE: case EXIT: case PORTAL: case CLOSEDLIFT: return true;
         case TRELLIS: case BUBBLE: return pusher != null;
-        case RAINBOW: return dr != 1;
+        case PLATFORM: return dr != 1;
         case ONEWAYWALLU: return dr != 1;
         case ONEWAYWALLD: return dr != -1;
         case ONEWAYWALLL: return dc != 1;
@@ -3337,6 +3347,7 @@ function render() {
     // throw this in there somewhere
     document.getElementById("showGridButton").textContent = (persistentState.showGrid ? "Hide" : "Show") + " Grid";
     document.getElementById("hideHotkeyButton").textContent = (persistentState.hideHotkeys ? "Show" : "Hide") + " Hotkeys";
+    document.getElementById("bigButtonButton").textContent = (persistentState.bigButton ? "Regular" : "Large") + " Buttons";
 
     if (animationProgress < 1.0) requestAnimationFrame(render);
     return; // this is the end of the function proper
@@ -4829,8 +4840,8 @@ function drawTile(context, tileCode, r, c, level, location, rng, isCurve, grass)
         case PORTAL:
             drawPortal(context, r, c, location);
             break;
-        case RAINBOW:
-            drawRainbow(context, r, c, getAdjacentTiles());
+        case PLATFORM:
+            drawPlatform(context, r, c, getAdjacentTiles());
             break;
         case TRELLIS:
             drawTrellis(context, r, c);
@@ -4998,7 +5009,7 @@ function drawBase(context, r, c, isOccupied, rng, fillStyle) {
         if (r === 0 && c === 0) context.fillRect((c - .5) * tileSize, (r - .5) * tileSize, tileSize, tileSize);
         var color = rng === 0 ? 0 : Math.floor(rng() * 4) * 10;
         context.fillStyle = "rgb(" + (color + 50) + "," + (color + 70) + "," + (color + 100) + ")";
-        roundRect(context, x, y, tileSize, tileSize, borderRadius, true, false);
+        roundRect(context, x, y, tileSize, tileSize, 10, true, false);
 
         context.save();
         if (isOccupied(0, 1) && isOccupied(-1, 0) && isOccupied(-1, 1)) {
@@ -5093,15 +5104,15 @@ function drawBase(context, r, c, isOccupied, rng, fillStyle) {
         context.restore();
     }
     else {
-        if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false);
-        else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false);
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false);
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false);
-        else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { bl: borderRadius }, true, false);
-        else if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { br: borderRadius }, true, false);
-        else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: borderRadius }, true, false);
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tr: borderRadius }, true, false);
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, borderRadius, true, false);
+        if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { bl: 10, br: 10 }, true, false);
+        else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: 10, bl: 10 }, true, false);
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: 10, tr: 10 }, true, false);
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tr: 10, br: 10 }, true, false);
+        else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { bl: 10 }, true, false);
+        else if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { br: 10 }, true, false);
+        else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: 10 }, true, false);
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tr: 10 }, true, false);
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, 10, true, false);
         else roundRect(context, x, y, tileSize, tileSize, 0, true, false);
 
         if (wall[5]) {
@@ -5554,40 +5565,31 @@ function drawBolt(context, r, c, rng, color) {
     context.stroke();
 }
 
-function drawRainbow(context, r, c, adjacentTiles) {
-    newRainbow(context, r, c, isRainbow);
+function drawPlatform(context, r, c, adjacentTiles) {
+    newPlatform(context, r, c, isPlatform);
 
-    function isRainbow(dc, dr) {
+    function isPlatform(dc, dr) {
         var tileCode = adjacentTiles[1 + dr][1 + dc];
-        return tileCode == null || tileCode === RAINBOW;
+        return tileCode == null || tileCode === PLATFORM;
     }
 }
 
-function newRainbow(context, r, c, isOccupied) {
+function newPlatform(context, r, c, isOccupied) {
 
     var x1 = (isOccupied(-1, 0)) ? 0 : .05;
     var x2 = (isOccupied(1, 0)) ? 0 : .05;
 
-    var rainbowColors = ["#ffcccc", "#ffe0cc", "#ffffcc", "#e6ffe6", "#e6e6ff"];
-    context.lineWidth = tileSize / 17;
+    var platformColors = ["#ffcccc", "#ffe0cc", "#ffffcc", "#e6ffe6", "#e6e6ff"];
     for (var i = 0; i < 5; i++) {
+        var j = (i != 0) ? i - 1 : 0;
         context.beginPath();
-        // context.moveTo((c + i * .05) * tileSize, (r + .5) * tileSize);
-        context.arc((c + .5) * tileSize, (r + .5) * tileSize, tileSize / 2 - context.lineWidth * (i + 1), Math.PI, 2 * Math.PI);
-        context.strokeStyle = rainbowColors[i];
+        context.moveTo(c * tileSize + tileSize * (i * x1), r * tileSize + tileSize * (.05 + (.1 * i) - (j * .02)));
+        context.strokeStyle = platformColors[i];
+        var lw = tileSize * (.1 - (i * .02));
+        context.lineWidth = lw;
+        context.lineTo(c * tileSize + tileSize * (1 - (i * x2)), r * tileSize + tileSize * (.05 + (.1 * i) - (j * .02)));
         context.stroke();
     }
-
-    // for (var i = 0; i < 5; i++) {
-    //     var j = (i != 0) ? i - 1 : 0;
-    //     context.beginPath();
-    //     context.moveTo(c * tileSize + tileSize * (i * x1), r * tileSize + tileSize * (.05 + (.1 * i) - (j * .02)));
-    //     context.strokeStyle = rainbowColors[i];
-    //     var lw = tileSize * (.1 - (i * .02));
-    //     context.lineWidth = lw;
-    //     context.lineTo(c * tileSize + tileSize * (1 - (i * x2)), r * tileSize + tileSize * (.05 + (.1 * i) - (j * .02)));
-    //     context.stroke();
-    // }
 }
 
 function drawTrellis(context, r, c) {
