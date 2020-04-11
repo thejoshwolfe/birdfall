@@ -2607,7 +2607,7 @@ function move(dr, dc, doAnimations) {
     if (ate) { times--; }
     if (ate_poison) { times++; }
     //if we're going to shrink out of existence, prevent it
-    var snake_length = activeSnake.locations.length - 1;
+    var snake_length = activeSnake.locations.length;
     if (times > snake_length) {
         times = snake_length;
         activeSnake.dead = true;
@@ -4643,59 +4643,69 @@ function render() {
         var mikeRowcols = mike.locations.map(function (location) {
             return getRowcol(level, location);
         });
+        var color = blockColors[blockColors.length - 1 - mike.id % blockColors.length]
         mikeRowcols.forEach(function (rowcol) {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
             if (isDead() && spike2Death[0] === MIKE && spike2Death[1] === mike.id) r += .5;
-            drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 31, tileSize * .45, tileSize * .36);
+            drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 31, tileSize * .45, tileSize * .36, color);
 
             var side = 0;
             var size = tileSize / 8;
             var x = (c + .5) * tileSize;
             var y = (r + .5) * tileSize;
+
+            var rotation = rng() * 2 * Math.PI;
+            context.save();
+            context.translate(x, y);
+            context.rotate(rotation);
+            context.translate(-x, -y);
+
             context.beginPath();
             context.moveTo(x + size * Math.cos(0), y + size * Math.sin(0));
             for (side; side < 7; side++) {
                 context.lineTo((x + size * Math.cos(side * 2 * Math.PI / 6)) * 1, (y + size * Math.sin(side * 2 * Math.PI / 6)) * 1);
             }
-            context.fillStyle = tint(blockColors[blockColors.length - 1 - mike.id % blockColors.length], .5);
+            context.lineWidth = 1.5;
+            context.strokeStyle = "#999";
+            context.stroke();
+            context.fillStyle = tint(color, .5);
             context.fill();
-
-            function drawStar(context, cx, cy, spikes, outerRadius, innerRadius) {
-                var rot = 1.5 * Math.PI;
-                var x = cx;
-                var y = cy;
-                var step = Math.PI / spikes;
-
-                context.save();
-                context.translate(x, y);
-                context.rotate(Math.PI / 12);
-                context.translate(-x, -y);
-                context.beginPath();
-                context.moveTo(cx, cy - outerRadius)
-                for (i = 0; i < spikes; i++) {
-                    x = cx + Math.cos(rot) * outerRadius;
-                    y = cy + Math.sin(rot) * outerRadius;
-                    context.lineTo(x, y);
-                    rot += step;
-
-                    x = cx + Math.cos(rot) * innerRadius;
-                    y = cy + Math.sin(rot) * innerRadius;
-                    context.lineTo(x, y);
-                    rot += step;
-                }
-                context.lineTo(cx, cy - outerRadius);
-                context.closePath();
-                context.lineWidth = 2;
-                context.strokeStyle = tint(blockColors[blockColors.length - 1 - mike.id % blockColors.length], .95);
-                context.stroke();
-                context.fillStyle = blockColors[blockColors.length - 1 - mike.id % blockColors.length];
-                context.fill();
-                context.restore();
-            }
-
-
+            context.restore();
         });
+
+        function drawStar(context, cx, cy, spikes, outerRadius, innerRadius, color) {
+            var rot = 1.5 * Math.PI;
+            var x = cx;
+            var y = cy;
+            var step = Math.PI / spikes;
+
+            context.save();
+            context.translate(x, y);
+            context.rotate(Math.PI / 12);
+            context.translate(-x, -y);
+            context.beginPath();
+            context.moveTo(cx, cy - outerRadius)
+            for (i = 0; i < spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius;
+                y = cy + Math.sin(rot) * outerRadius;
+                context.lineTo(x, y);
+                rot += step;
+
+                x = cx + Math.cos(rot) * innerRadius;
+                y = cy + Math.sin(rot) * innerRadius;
+                context.lineTo(x, y);
+                rot += step;
+            }
+            context.lineTo(cx, cy - outerRadius);
+            context.closePath();
+            context.lineWidth = 2;
+            context.strokeStyle = tint(color, .95);
+            context.stroke();
+            context.fillStyle = color;
+            context.fill();
+            context.restore();
+        }
     }
 
     function drawGrid() {
