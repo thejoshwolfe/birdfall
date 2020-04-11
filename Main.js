@@ -3273,7 +3273,7 @@ function render() {
 
     var context;
     // draw background if resizing occurs
-    if (true) {
+    if (false) {
         context = canvas2.getContext("2d");
         drawBackground(context, canvas2);
     }
