@@ -25,7 +25,7 @@ var SPIKE = "2".charCodeAt(0);
 var FRUIT_v0 = "3".charCodeAt(0); //legacy
 var EXIT = "4".charCodeAt(0);
 var PORTAL = "5".charCodeAt(0);
-var PLATFORM = "P".charCodeAt(0);
+var RAINBOW = "P".charCodeAt(0);
 var TRELLIS = "p".charCodeAt(0);
 var ONEWAYWALLU = "u".charCodeAt(0);
 var ONEWAYWALLD = "d".charCodeAt(0);
@@ -37,7 +37,7 @@ var CLOUD = "C".charCodeAt(0);
 var BUBBLE = "b".charCodeAt(0);
 var LAVA = "v".charCodeAt(0);
 var WATER = "w".charCodeAt(0);
-var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, PLATFORM, TRELLIS, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, CLOSEDLIFT, OPENLIFT, CLOUD, BUBBLE, LAVA, WATER];
+var validTileCodes = [SPACE, WALL, SPIKE, EXIT, PORTAL, RAINBOW, TRELLIS, ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR, CLOSEDLIFT, OPENLIFT, CLOUD, BUBBLE, LAVA, WATER];
 var OWWCounter = 0;
 
 // object types
@@ -72,7 +72,8 @@ var multiDiagrams = false;
 var tileSize = 34;
 var borderRadiusFactor = 3.4;
 var borderRadius = tileSize / borderRadiusFactor;
-var blockRadius = tileSize / 5;
+var blockRadiusFactor = 5;
+var blockRadius = tileSize / blockRadiusFactor;
 
 var level;
 var unmoveStuff = { undoStack: [], redoStack: [], spanId: "movesSpan", undoButtonId: "unmoveButton", redoButtonId: "removeButton" };
@@ -125,8 +126,10 @@ function loadLevel(newLevel) {
     if (!persistentState.showEditor) document.getElementById("ghostEditorPane").style.display = "none";
     // else toggleEditorLocation(false, localStorage.getItem("editorLocation"));
     // document.getElementById("ghostEditorPane").style.height = document.getElementById("editorPane").style.offsetHeight;
-    document.getElementById("ghostEditorPane").style.height = tileSize * level.height;  // doesn't add up
+    // document.getElementById("ghostEditorPane").style.height = tileSize * level.height;  // doesn't add up
 
+    recalculateBorderRadius();
+    recalculateBlockRadius();
     updateSwitches();
     drawStaticCanvases(level);
     render();
@@ -155,7 +158,7 @@ function drawStaticCanvases(level) {
         for (var c = 0; c < level.width; c++) {
             var location = getLocation(level, r, c);
             var tileCode = level.map[location];
-            if (tileCode === SPIKE || tileCode === PLATFORM || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD) drawTile(context, tileCode, r, c, level, location, rng, true, true);
+            if (tileCode === SPIKE || tileCode === RAINBOW || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD) drawTile(context, tileCode, r, c, level, location, rng, true, true);
         }
     }
     context = canvas5.getContext("2d");
@@ -266,7 +269,7 @@ function parseLevel(string) {
             tileCode = SPACE;
         }
         if (validTileCodes.indexOf(tileCode) === -1) throw parserError("invalid tilecode: " + JSON.stringify(mapData[i]));
-        if (tileCode === PLATFORM || tileCode === TRELLIS || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
+        if (tileCode === RAINBOW || tileCode === TRELLIS || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
         level.map.push(tileCode);
     }
 
@@ -645,11 +648,13 @@ function offsetLocation(location, dr, dc) {
 
 var SHIFT = 1;
 var CTRL = 2;
+var CMD = 3;
 var ALT = 4;
 document.addEventListener("keydown", function (event) {
     var modifierMask = (
         (event.shiftKey ? SHIFT : 0) |
         (event.ctrlKey ? CTRL : 0) |
+        (event.metaKey ? CMD : 0) |
         (event.altKey ? ALT : 0)
     );
     if (!sv) {
@@ -687,16 +692,17 @@ document.addEventListener("keydown", function (event) {
                 if (modifierMask === 0) { undo(unmoveStuff); break; }
                 if (modifierMask === SHIFT && !replayString) { redo(unmoveStuff); break; }
                 if (modifierMask === SHIFT && replayString) { advance(); break; }
-                if (persistentState.showEditor && modifierMask === CTRL) { undo(uneditStuff); break; }
-                if (persistentState.showEditor && modifierMask === CTRL | SHIFT) { redo(uneditStuff); break; }
+                if (persistentState.showEditor && modifierMask === (CTRL | CMD)) { undo(uneditStuff); break; }
+                if (persistentState.showEditor && modifierMask === (CTRL | CMD | SHIFT)) { redo(uneditStuff); break; }
                 return;
             case "Y".charCodeAt(0):
                 if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
                 if (modifierMask === 0 && replayString) { advance(); break; }
-                if (persistentState.showEditor && modifierMask === CTRL) { redo(uneditStuff); break; }
+                if (persistentState.showEditor && modifierMask === (CTRL | CMD)) { redo(uneditStuff); break; }
                 return;
             case "R".charCodeAt(0):
-                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("resize"); break; }
+                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(RAINBOW); break; }
+                if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("resize"); break; }
                 if (modifierMask === 0) { reset(unmoveStuff); break; }
                 if (modifierMask === SHIFT) { unreset(unmoveStuff); break; }
                 return;
@@ -709,7 +715,7 @@ document.addEventListener("keydown", function (event) {
             case "A".charCodeAt(0):
                 if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(0, -1); break; }
                 if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode("select"); break; }
-                if (persistentState.showEditor && modifierMask === CTRL) { selectAll(); break; }
+                if (persistentState.showEditor && modifierMask === (CTRL | CMD)) { selectAll(); break; }
                 return;
             case "E".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPACE); break; }
@@ -727,12 +733,12 @@ document.addEventListener("keydown", function (event) {
                 if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(1, 0); break; }
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(SPIKE); break; }
                 if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(SNAKE); break; }
-                if (persistentState.showEditor && modifierMask === CTRL) { saveLevel(); break; }
-                if (!persistentState.showEditor && modifierMask === CTRL) { saveReplay(); break; }
+                if (persistentState.showEditor && modifierMask === (CTRL | CMD)) { saveLevel(); break; }
+                if (!persistentState.showEditor && modifierMask === (CTRL | CMD)) { saveReplay(); break; }
                 if (modifierMask === (CTRL | SHIFT)) { saveReplay(); break; }
                 return;
             case "X".charCodeAt(0):
-                if (persistentState.showEditor && modifierMask === CTRL) { cutSelection(); break; }
+                if (persistentState.showEditor && modifierMask === (CTRL | CMD)) { cutSelection(); break; }
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOSEDLIFT); break; }
                 if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(OPENLIFT); break; }
                 return;
@@ -751,7 +757,6 @@ document.addEventListener("keydown", function (event) {
             case "P".charCodeAt(0):
                 if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(PORTAL); break; }
-                if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(PLATFORM); break; }
                 return;
             case "U".charCodeAt(0):
                 if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
@@ -768,10 +773,10 @@ document.addEventListener("keydown", function (event) {
             case "C".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(CLOUD); break; }
                 if (persistentState.showEditor && modifierMask === SHIFT) { toggleCollision(); break; }
-                if (persistentState.showEditor && modifierMask === CTRL) { copySelection(); break; }
+                if (persistentState.showEditor && modifierMask === (CTRL | CMD)) { copySelection(); break; }
                 return;
             case "V".charCodeAt(0):
-                if (persistentState.showEditor && modifierMask === CTRL) { setPaintBrushTileCode("paste"); break; }
+                if (persistentState.showEditor && modifierMask === (CTRL | CMD)) { setPaintBrushTileCode("paste"); break; }
             case "H".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { toggleHotkeys(); break; }
             case "T".charCodeAt(0):
@@ -786,7 +791,7 @@ document.addEventListener("keydown", function (event) {
             case 190:
                 toggleEditorLocation(true);
                 break;
-            case 192:   //grave accent
+            case 57: // 9
                 if (modifierMask === 0) { fitCanvas(0); break; }
             case 191:
                 if (modifierMask === 0) { if (multiDiagrams) { cycle = true; cycleId++; render(); } break; }
@@ -837,8 +842,9 @@ document.addEventListener("keydown", function (event) {
 function changeCanvasSize(delta) {
     if (delta !== 34) tileSize += delta;
     else tileSize = 34;
-    borderRadius = tileSize / borderRadiusFactor;
-    textStyle[0] = tileSize * 5;
+    recalculateBorderRadius();
+    recalculateBlockRadius();
+    textStyle.fontSize = tileSize * 5;
     blockSupportRenderCache = {};
     mikeSupportRenderCache = {};
 
@@ -898,9 +904,6 @@ document.getElementById("fitControls").addEventListener("click", function () {
 document.getElementById("fitCanvas").addEventListener("click", function () {
     fitCanvas(0);
     return;
-});
-document.getElementById("bigButtonButton").addEventListener("click", function () {
-    toggleButtonSize();
 });
 document.getElementById("showGridButton").addEventListener("click", function () {
     toggleGrid();
@@ -969,19 +972,26 @@ function fitCanvas(type) {
     var offset = 0;
     switch (type) {
         case 0: offset = persistentState.showEditor ? 6 : 0; break;
-        case 1: offset = document.getElementById("bottomBlock").offsetHeight + 20; break;
+        case 1: offset = document.getElementById("bottomBlock").offsetHeight + 10; break;
         case 2: offset = document.getElementById("csText").offsetHeight + 50; break;
     }
     var maxW = window.innerWidth / level.width;
     var maxH = (window.innerHeight - offset) / level.height;
     tileSize = Math.round(Math.min(maxW, maxH) * .97);
-    borderRadius = tileSize / borderRadiusFactor;
-    textStyle[0] = tileSize * 5;
+    recalculateBorderRadius();
+    recalculateBlockRadius();
+    textStyle.fontSize = tileSize * 5;
     blockSupportRenderCache = {};
     mikeSupportRenderCache = {};
     drawStaticCanvases(getLevel());
     render();
     // location.reload();  //without this, tiles appear to have borders (comment added before static canvases added)
+}
+function recalculateBorderRadius() {
+    borderRadius = tileSize / borderRadiusFactor;
+}
+function recalculateBlockRadius() {
+    blockRadius = tileSize / blockRadiusFactor;
 }
 function toggleShowEditor() {
     persistentState.showEditor = !persistentState.showEditor;
@@ -991,15 +1001,13 @@ function toggleShowEditor() {
     // resizeCanvasContainer();
 }
 function toggleEditorLocation(clicked, cached) {
+    cached = JSON.parse(cached);
     if (clicked) {
         persistentState.editorLeft = !persistentState.editorLeft;
         localStorage.setItem("editorLocation", persistentState.editorLeft);
     } else {
-        if (cached == undefined) false
-        else {
-            if (cached == "true") persistentState.editorLeft = true;
-            else persistentState.editorLeft = false;
-        }
+        if (cached == undefined) cached = false;
+        else persistentState.editorLeft = cached ? true : false;
     }
     savePersistentState();
 
@@ -1023,23 +1031,6 @@ function toggleEditorLocation(clicked, cached) {
     // insert
     levelRow.insertBefore(td1, levelRow.childNodes[0]);
     levelRow.appendChild(td2);
-}
-function toggleButtonSize() {
-    persistentState.bigButton = !persistentState.bigButton;
-    savePersistentState();
-    var buttons = document.getElementsByClassName("bottomButton");
-    if (persistentState.bigButton) {
-        for (var i = 0; i < buttons.length; i++)
-            buttons[i].classList.add("bigButton");
-        document.getElementById("fitCanvas").style.display = "none";
-
-    }
-    else {
-        for (var i = 0; i < buttons.length; i++)
-            buttons[i].classList.remove("bigButton");
-        document.getElementById("fitCanvas").style.display = "block";
-    }
-    render();
 }
 function toggleGrid() {
     persistentState.showGrid = !persistentState.showGrid;
@@ -1119,7 +1110,7 @@ var paintButtonIdAndTileCodes = [
     ["paintSpikeButton", SPIKE],
     ["paintExitButton", EXIT],
     ["paintPortalButton", PORTAL],
-    ["paintPlatformButton", PLATFORM],
+    ["paintRainbowButton", RAINBOW],
     ["paintTrellisButton", TRELLIS],
     ["paintOneWayWallButton", [ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]],
     ["paintClosedLiftButton", CLOSEDLIFT],
@@ -2254,7 +2245,7 @@ function describe(arg1, arg2) {
             case SPIKE: return "Spikes";
             case EXIT: return "an Exit";
             case PORTAL: return "a Portal";
-            case PLATFORM: return "a Platform";
+            case RAINBOW: return "a Rainbow";
             case TRELLIS: return "a Trellis";
             case ONEWAYWALLU: return "a One Way Wall (facing U)";
             case ONEWAYWALLD: return "a One Way Wall (facing D)";
@@ -2385,7 +2376,6 @@ var persistentState = {
     showEditor: false,
     editorLeft: false,
     showGrid: false,
-    bigButton: false,
     hideHotkeys: false,
 };
 function savePersistentState() {
@@ -2398,7 +2388,6 @@ function loadPersistentState() {
     }
     persistentState.showEditor = !!persistentState.showEditor;
     persistentState.editorLeft = !!persistentState.editorLeft;
-    persistentState.bigButton = !!persistentState.bigButton;
     persistentState.showGrid = !!persistentState.showGrid;
     persistentState.hideHotkeys = !!persistentState.hideHotkeys;
     showEditorChanged();
@@ -2425,15 +2414,16 @@ var bg3 = ["fade", "rgba(145, 254, 198", "rgba(117, 255, 192"];
 var bg4 = ["fade", "rgba(7, 7, 83", "rgba(0, 0, 70"];
 var bg5 = ["fade", "rgba(140, 190, 190", "rgba(135, 185, 185"];
 
-var wall1 = ["#976537", "#95ff45", true, true, true, true, false];    //base, surface, curvedWalls, curlySurface, grass, baseSpots, randomColors
-var wall2 = ["#30455B", "white", true, true, false, true, false];
-var wall3 = ["#734d26", "#009933", true, true, true, true, false];
-var wall4 = ["#844204", "#282", false, false, false, false, false];
-var wall5 = ["#00aaff", "#ffb3ec", true, true, false, false, false];
-var wall6 = ["black", "rainbow", false, false, false, false, false];
-var wall7 = ["transparent", "green", false, true, true, false, true];
+var wall1 = { base: "#976537", surface: "#95ff45", curvedWalls: true, curlySurface: true, grass: true, baseSpots: true, randomColors: false };
+var wall2 = { base: "#30455B", surface: "white", curvedWalls: true, curlySurface: true, grass: false, baseSpots: true, randomColors: false };
+var wall3 = { base: "#734d26", surface: "#009933", curvedWalls: true, curlySurface: true, grass: true, baseSpots: true, randomColors: false };
+var wall4 = { base: "#844204", surface: "#282", curvedWalls: false, curlySurface: false, grass: false, baseSpots: false, randomColors: false };
+var wall5 = { base: "#00aaff", surface: "#ffb3ec", curvedWalls: true, curlySurface: true, grass: false, baseSpots: false, randomColors: false };
+var wall6 = { base: "black", surface: "rainbow", curvedWalls: false, curlySurface: false, grass: false, baseSpots: false, randomColors: false };
+var wall7 = { base: "transparent", surface: "green", curvedWalls: false, curlySurface: true, grass: true, baseSpots: false, randomColors: true };
 
-var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];    //must be full length to satisfy tint function
+// must be full length to satisfy tint function
+var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];
 var snakeColors2 = ["#ff0000", "#00ff00", "#0000ff", "#ffff00"];
 var snakeColors3 = ["#BA145C", "#E91624", "#F75802", "#FEFE28"];
 var snakeColors4 = ["#000000", "#000000", "#000000", "#000000"];
@@ -2442,24 +2432,25 @@ var fruitColors1 = ["#ff0066", "#ff36a6", "#ff6b1f", "#ff9900", "#ff2600"];
 var fruitColors2 = ["black", "black", "black", "black", "black"];
 var fruitColors3 = ["#00FFFB", "#00FFB2", "#80FF00", "#FA916A"];
 
-var spikeColors1 = ["#999", "#444", "#555", "#777"];    //spokes, supports, box, bolt
-var spikeColors2 = ["#333", "#333", "#111", "#333"];
-var spikeColors3 = ["#333", "#333", "#333", "#777"];
-var spikeColors4 = ["#39526b", "#39526b", "#66879f", "#acc5cd"];
+var spikeColors1 = { spokes: "#999", support: "#444", box: "#555", bolt: "#777" };
+var spikeColors2 = { spokes: "#333", support: "#333", box: "#111", bolt: "#333" };
+var spikeColors3 = { spokes: "#333", support: "#333", box: "#333", bolt: "#777" };
+var spikeColors4 = { spokes: "#39526b", support: "#39526b", box: "#66879f", bolt: "#acc5cd" };
 
-var blockColors1 = ["#de5a6d", "#fa65dd", "#c367e3", "#9c62fa", "#625ff0"];    //must be 6-digit hex colors to satisfy tint function
+// must be 6-digit hex colors to satisfy tint function
+var blockColors1 = ["#de5a6d", "#fa65dd", "#c367e3", "#9c62fa", "#625ff0"];
 var blockColors2 = ["#ffffff", "#999999", "#555555", "#000000"];
 var blockColors3 = ["#de7913", "#7d46a0", "#39868b", "#41ccc2", "#ccc500"];
 var blockColors4 = ["#660050", "#990033", "#b35900", "#e6b800 ", "#008000"];
 var blockColors5 = ["#ffccff", "#ffc2b3", "#ffffcc", "#ccffe6", "#ccffff"];
-var blockColors6 = ["#c65364", "#e9638f", "#9966cc", "#754db3", "#4d6dcb"];
+var blockColors6 = ["#bf4053", "#ec799f", "#a679d2", "#6a45a1", "#4d6dcb"];
 
 var fontSize = tileSize * 5;
-var textStyle1 = [fontSize, "px Impact", "#fdc122", "#fd0c0b"];    //font, Win, Lose
-var textStyle2 = [fontSize, "px Futura", "#400080", "#ff6600"];
-var textStyle3 = [fontSize, "px Impact", "#BA145C", "#F75802"];
-var textStyle4 = [fontSize, "px Arial", "#ff0", "#f00"];
-var textStyle5 = [fontSize, "px Impact", "#80FF00", "#00FFFB"];
+var textStyle1 = { fontSize: fontSize, fontFamily: "Impact", win: "#fdc122", lose: "#fd0c0b" };
+var textStyle2 = { fontSize: fontSize, fontFamily: "Futura", win: "#400080", lose: "#ff6600" };
+var textStyle3 = { fontSize: fontSize, fontFamily: "Impact", win: "#BA145C", lose: "#F75802" };
+var textStyle4 = { fontSize: fontSize, fontFamily: "Arial", win: "#ff0", lose: "#f00" };
+var textStyle5 = { fontSize: fontSize, fontFamily: "Impact", win: "#80FF00", lose: "#00FFFB" };
 
 var experimentalColors1 = ["white", "#ffccff"];
 var experimentalColors2 = ["white", "#FEFE28"];
@@ -2515,6 +2506,7 @@ function showEditorChanged() {
     }
 
     if (persistentState.showEditor && defaultOn) document.getElementById("animationSlider").checked = animationsOn = false;
+    else if (persistentState.showEditor && !defaultOn) document.getElementById("animationSlider").checked = animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
     if (!persistentState.showEditor) document.getElementById("animationSlider").checked = animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
 
     // loadFromLocationHash();
@@ -2875,8 +2867,8 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
             }
 
             var forwardLocation = getLocation(level, forwardRowcol.r, forwardRowcol.c);
-            if (dr === 1 && level.map[forwardLocation] === PLATFORM) {
-                // this platform holds us, unless we're going through it
+            if (dr === 1 && level.map[forwardLocation] === RAINBOW) {
+                // this rainbow holds us, unless we're going through it
                 var neighborLocations;
                 if (pushedObject.type === SNAKE) {
                     neighborLocations = [];
@@ -3065,7 +3057,7 @@ function isTileCodeAir(pusher, pushedObject, tileCode, dr, dc) {
     switch (tileCode) {
         case SPACE: case EXIT: case PORTAL: case CLOSEDLIFT: return true;
         case TRELLIS: case BUBBLE: return pusher != null;
-        case PLATFORM: return dr != 1;
+        case RAINBOW: return dr != 1;
         case ONEWAYWALLU: return dr != 1;
         case ONEWAYWALLD: return dr != -1;
         case ONEWAYWALLL: return dc != 1;
@@ -3347,7 +3339,6 @@ function render() {
     // throw this in there somewhere
     document.getElementById("showGridButton").textContent = (persistentState.showGrid ? "Hide" : "Show") + " Grid";
     document.getElementById("hideHotkeyButton").textContent = (persistentState.hideHotkeys ? "Show" : "Hide") + " Hotkeys";
-    document.getElementById("bigButtonButton").textContent = (persistentState.bigButton ? "Regular" : "Large") + " Buttons";
 
     if (animationProgress < 1.0) requestAnimationFrame(render);
     return; // this is the end of the function proper
@@ -3627,8 +3618,8 @@ function render() {
                     // context.strokeStyle = "green";
                     // roundRect(context, .1 * tileSize, .1 * tileSize, canvas7.width - .2 * tileSize, canvas7.height - .2 * tileSize, 20, false, true);
 
-                    context.fillStyle = textStyle[2];
-                    context.font = textStyle[0] + textStyle[1];
+                    context.fillStyle = textStyle.win;
+                    context.font = textStyle.fontSize + "px " + textStyle.fontFamily;
                     context.shadowOffsetX = 5;
                     context.shadowOffsetY = 5;
                     context.shadowColor = "rgba(255,255,255,0.1)";
@@ -3674,8 +3665,8 @@ function render() {
                     context.strokeStyle = "red";
                     roundRect(context, .1 * tileSize, .1 * tileSize, canvas7.width - .2 * tileSize, canvas7.height - .2 * tileSize, 20, false, true);
 
-                    // context.fillStyle = textStyle[3];
-                    // context.font = textStyle[0] + textStyle[1];
+                    // context.font = textStyle.fontSize + "px " + textStyle.fontFamily;
+                    // context.fillStyle = textStyle.lose;
                     // context.shadowOffsetX = 5;
                     // context.shadowOffsetY = 5;
                     // context.shadowColor = "rgba(0,0,0,0.5)";
@@ -3693,7 +3684,7 @@ function render() {
             context = canvas6.getContext("2d");
             drawBackground(context, canvas6);
             context.fillStyle = "green";
-            context.font = textStyle[0] + "px Impact";
+            context.font = textStyle.fontSize + "px Impact";
             context.shadowOffsetX = 5;
             context.shadowOffsetY = 5;
             context.shadowColor = "rgba(0,0,0,0.5)";
@@ -3707,7 +3698,7 @@ function render() {
             context = canvas6.getContext("2d");
             drawBackground(context, canvas6);
             context.fillStyle = "red";
-            context.font = textStyle[0] + "px Impact";
+            context.font = textStyle.fontSize + "px Impact";
             context.shadowOffsetX = 5;
             context.shadowOffsetY = 5;
             context.shadowColor = "rgba(0,0,0,0.5)";
@@ -4536,7 +4527,7 @@ function render() {
             drawCircle(context, r, c, 1, color);
         }
         else {
-            if (wall[1] == "rainbow") {
+            if (wall.surface == "rainbow") {
                 stemColor = "white";
                 if (!isPoison) context.fillStyle = "black";
                 context.lineWidth = tileSize / 8;
@@ -4551,7 +4542,7 @@ function render() {
             context.bezierCurveTo(startC + resize * .25, startR - resize * .05, startC + resize * .1, startR - resize * .1, startC, startR);
             context.closePath();
             context.fill();
-            if (wall[1] == "rainbow") context.stroke();
+            if (wall.surface == "rainbow") context.stroke();
 
             context.beginPath();
             context.moveTo(startC, startR);
@@ -4605,7 +4596,6 @@ function render() {
 
             context.fillStyle = color;
             var outlineThickness = .4;
-
             var complement = 1 - outlineThickness;
             var outlinePixels = outlineThickness * tileSize;
 
@@ -4616,19 +4606,106 @@ function render() {
             if (isAlsoThisBlock(0, -1)) c1 = c2 = 0;
             if (isAlsoThisBlock(0, 1)) c3 = c4 = 0;
 
+            // draw curves
+            var size = .9;
+            var inverse = 1 - size;
+
+            // top right
+            if (isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(1, -1)) {
+                var y = r;
+                var x = c + 1;
+                context.beginPath();
+                context.moveTo((x + inverse) * tileSize, y * tileSize);
+                context.lineTo(x * tileSize, y * tileSize);
+                context.lineTo(x * tileSize, (y - inverse) * tileSize);
+                context.arc((x + inverse) * tileSize, (y - inverse) * tileSize, inverse * tileSize, Math.PI, .5 * Math.PI, true);
+                context.closePath();
+                context.fill();
+            }
+            // top left
+            else if (isAlsoThisBlock(-1, 0) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(-1, -1)) {
+                var y = r;
+                var x = c - 1;
+                context.beginPath();
+                context.moveTo((x + size) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, (y - inverse) * tileSize);
+                context.arc((x + size) * tileSize, (y - inverse) * tileSize, inverse * tileSize, 0, .5 * Math.PI, false);
+                context.closePath();
+                context.fill();
+            }
+            else if (isAlsoThisBlock(-1, 1) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(-1, 0)) {
+                var y = r + 1;
+                var x = c - 1;
+                context.beginPath();
+                context.moveTo((x + size) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, (y - inverse) * tileSize);
+                context.arc((x + size) * tileSize, (y - inverse) * tileSize, inverse * tileSize, 0, .5 * Math.PI, false);
+                context.closePath();
+                context.fill();
+            }
+            // bottom right
+            else if (isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(1, 1)) {
+                var y = r + 1;
+                var x = c + 1;
+                context.beginPath();
+                context.moveTo((x + inverse) * tileSize, y * tileSize);
+                context.lineTo(x * tileSize, y * tileSize);
+                context.lineTo(x * tileSize, (y + inverse) * tileSize);
+                context.arc((x + inverse) * tileSize, (y + inverse) * tileSize, inverse * tileSize, Math.PI, 1.5 * Math.PI, false);
+                context.closePath();
+                context.fill();
+            }
+            else if (!isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, -1) && isAlsoThisBlock(1, -1)) {
+                var y = r;
+                var x = c + 1;
+                context.beginPath();
+                context.moveTo((x + inverse) * tileSize, y * tileSize);
+                context.lineTo(x * tileSize, y * tileSize);
+                context.lineTo(x * tileSize, (y + inverse) * tileSize);
+                context.arc((x + inverse) * tileSize, (y + inverse) * tileSize, inverse * tileSize, Math.PI, 1.5 * Math.PI, false);
+                context.closePath();
+                context.fill();
+            }
+            // bottom left
+            else if (isAlsoThisBlock(-1, 0) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(-1, 1)) {
+                var y = r + 1;
+                var x = c - 1;
+                context.beginPath();
+                context.moveTo((x + size) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, (y + inverse) * tileSize);
+                context.arc((x + size) * tileSize, (y + inverse) * tileSize, inverse * tileSize, 0, 1.5 * Math.PI, true);
+                context.closePath();
+                context.fill();
+            }
+            // bottom left (why needed?)
+            else if (isAlsoThisBlock(-1, -1) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(-1, 0)) {
+                var y = r;
+                var x = c - 1;
+                context.beginPath();
+                context.moveTo((x + size) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, (y + inverse) * tileSize);
+                context.arc((x + size) * tileSize, (y + inverse) * tileSize, inverse * tileSize, 0, 1.5 * Math.PI, true);
+                context.closePath();
+                context.fill();
+            }
+
             if (!isAlsoThisBlock(-1, -1) && isAlsoThisBlock(0, -1))
-                roundRect(context, (c) * tileSize, (r) * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: 0, bl: 0, br: blockRadius }, true, false);
+                roundRect(context, c * tileSize, r * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: 0, bl: 0, br: blockRadius }, true, false);
             if (!isAlsoThisBlock(1, -1) && isAlsoThisBlock(0, -1))
-                roundRect(context, (c + complement) * tileSize, (r) * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: 0, bl: blockRadius, br: 0 }, true, false);
+                roundRect(context, (c + complement) * tileSize, r * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: 0, bl: blockRadius, br: 0 }, true, false);
             if (!isAlsoThisBlock(-1, 1) && isAlsoThisBlock(0, 1))
-                roundRect(context, (c) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: blockRadius, bl: 0, br: 0 }, true, false);
+                roundRect(context, c * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: blockRadius, bl: 0, br: 0 }, true, false);
             if (!isAlsoThisBlock(1, 1) && isAlsoThisBlock(0, 1))
                 roundRect(context, (c + complement) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels, { tl: blockRadius, tr: 0, bl: 0, br: 0 }, true, false);
 
-            if (!isAlsoThisBlock(0, -1)) roundRect(context, (c) * tileSize, (r) * tileSize, tileSize, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
-            if (!isAlsoThisBlock(0, 1)) roundRect(context, (c) * tileSize, (r + complement) * tileSize, tileSize, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
-            if (!isAlsoThisBlock(-1, 0)) roundRect(context, (c) * tileSize, (r) * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
-            if (!isAlsoThisBlock(1, 0)) roundRect(context, (c + complement) * tileSize, (r) * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+            if (!isAlsoThisBlock(0, -1)) roundRect(context, c * tileSize, r * tileSize, tileSize, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+            if (!isAlsoThisBlock(0, 1)) roundRect(context, c * tileSize, (r + complement) * tileSize, tileSize, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+            if (!isAlsoThisBlock(-1, 0)) roundRect(context, c * tileSize, r * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+            if (!isAlsoThisBlock(1, 0)) roundRect(context, (c + complement) * tileSize, r * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
 
             function isAlsoThisBlock(dc, dr) {
                 for (var i = 0; i < blockRowcols.length; i++) {
@@ -4822,10 +4899,10 @@ function drawTile(context, tileCode, r, c, level, location, rng, isCurve, grass)
         case SPACE:
             break;
         case WALL:
-            if (isCurve && wall[2]) drawCurves(context, r, c, getAdjacentTiles());
-            else if (!isCurve && wall[2]) drawWall(context, r, c, getAdjacentTiles(), rng, false);
+            if (isCurve && wall.curvedWalls) drawCurves(context, r, c, getAdjacentTiles());
+            else if (!isCurve && wall.curvedWalls) drawWall(context, r, c, getAdjacentTiles(), rng, false);
 
-            if (!wall[2]) drawWall(context, r, c, getAdjacentTiles(), rng, grass);
+            if (!wall.curvedWalls) drawWall(context, r, c, getAdjacentTiles(), rng, grass);
             break;
         case SPIKE:
             drawSpikes(context, r, c, getAdjacentTiles(), rng);
@@ -4840,8 +4917,8 @@ function drawTile(context, tileCode, r, c, level, location, rng, isCurve, grass)
         case PORTAL:
             drawPortal(context, r, c, location);
             break;
-        case PLATFORM:
-            drawPlatform(context, r, c, getAdjacentTiles());
+        case RAINBOW:
+            drawRainbow(context, r, c, getAdjacentTiles());
             break;
         case TRELLIS:
             drawTrellis(context, r, c);
@@ -4938,7 +5015,7 @@ function drawBackground(context, canvas) {
 }
 
 function drawCurves(context, r, c, adjacentTiles) {
-    drawCurves2(context, r, c, isWall, wall[0]);
+    drawCurves2(context, r, c, isWall, wall.base);
 
     function isWall(dc, dr) {
         var tileCode = adjacentTiles[1 + dr][1 + dc];
@@ -4950,7 +5027,8 @@ function drawCurves2(context, r, c, isOccupied, base) {
     context.fillStyle = base;
     var size = .6;
     var inverse = 1 - size;
-    if (isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(1, 1) && wall[2]) { //under side right
+    // under side right
+    if (isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(1, 1) && wall.curvedWalls) {
         r = r + 1;
         c = c + 1;
         context.beginPath();
@@ -4961,7 +5039,8 @@ function drawCurves2(context, r, c, isOccupied, base) {
         context.closePath();
         context.fill();
     }
-    else if (isOccupied(-1, 0) && isOccupied(0, 1) && !isOccupied(-1, 1) && wall[2]) { //under side left
+    // under side left
+    else if (isOccupied(-1, 0) && isOccupied(0, 1) && !isOccupied(-1, 1) && wall.curvedWalls) {
         r = r + 1;
         c = c - 1;
         context.beginPath();
@@ -4972,7 +5051,8 @@ function drawCurves2(context, r, c, isOccupied, base) {
         context.closePath();
         context.fill();
     }
-    else if (r != 0 && isOccupied(-1, -1) && isOccupied(0, -1) && !isOccupied(-1, 0) && wall[2]) { //under side left (no idea why this is needed)
+    // under side left (no idea why this is needed)
+    else if (r != 0 && isOccupied(-1, -1) && isOccupied(0, -1) && !isOccupied(-1, 0) && wall.curvedWalls) {
         r = r;
         c = c - 1;
         context.beginPath();
@@ -4986,9 +5066,9 @@ function drawCurves2(context, r, c, isOccupied, base) {
 }
 
 function drawWall(context, r, c, adjacentTiles, rng, grass) {
-    drawBase(context, r, c, isWall, rng, wall[0]);
-    drawTileOutlines(context, r, c, isWall, .2, wall[3], rng, grass);
-    //if (wall[3] && !wall[6]) drawBushes(context, r, c, isWall);
+    drawBase(context, r, c, isWall, rng, wall.base);
+    drawTileOutlines(context, r, c, isWall, .2, wall.curlySurface, rng, grass);
+    //if (wall.curlySurface && !wall.randomColors) drawBushes(context, r, c, isWall);
 
     function isWall(dc, dr) {
         var tileCode = adjacentTiles[1 + dr][1 + dc];
@@ -5001,7 +5081,7 @@ function drawBase(context, r, c, isOccupied, rng, fillStyle) {
     var y = r * tileSize;
 
     context.fillStyle = fillStyle;
-    if (wall[6]) {
+    if (wall.randomColors) {
         context.fillStyle = "rgb(50,70,100)";
         if (isOccupied(0, 1) && isOccupied(1, 0) && isOccupied(1, 1)) context.fillRect((c + .5) * tileSize, (r + .5) * tileSize, tileSize, tileSize);
         if (r === 0 && isOccupied(1, 0)) context.fillRect((c + .5) * tileSize, (r - .5) * tileSize, tileSize, tileSize);
@@ -5009,13 +5089,13 @@ function drawBase(context, r, c, isOccupied, rng, fillStyle) {
         if (r === 0 && c === 0) context.fillRect((c - .5) * tileSize, (r - .5) * tileSize, tileSize, tileSize);
         var color = rng === 0 ? 0 : Math.floor(rng() * 4) * 10;
         context.fillStyle = "rgb(" + (color + 50) + "," + (color + 70) + "," + (color + 100) + ")";
-        roundRect(context, x, y, tileSize, tileSize, 10, true, false);
+        roundRect(context, x, y, tileSize, tileSize, borderRadius, true, false);
 
         context.save();
         if (isOccupied(0, 1) && isOccupied(-1, 0) && isOccupied(-1, 1)) {
             if (rng() > .95) {
                 context.fillStyle = "green";
-                x = (c) * tileSize;
+                x = c * tileSize;
                 y = (r + .9) * tileSize;
                 var width = tileSize * .5;
                 var height = tileSize * .2;
@@ -5104,18 +5184,18 @@ function drawBase(context, r, c, isOccupied, rng, fillStyle) {
         context.restore();
     }
     else {
-        if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { bl: 10, br: 10 }, true, false);
-        else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: 10, bl: 10 }, true, false);
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: 10, tr: 10 }, true, false);
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tr: 10, br: 10 }, true, false);
-        else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { bl: 10 }, true, false);
-        else if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { br: 10 }, true, false);
-        else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: 10 }, true, false);
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tr: 10 }, true, false);
-        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, 10, true, false);
+        if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false);
+        else if (!isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false);
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false);
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false);
+        else if (isOccupied(0, -1) && isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { bl: borderRadius }, true, false);
+        else if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { br: borderRadius }, true, false);
+        else if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tl: borderRadius }, true, false);
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { tr: borderRadius }, true, false);
+        else if (!isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, borderRadius, true, false);
         else roundRect(context, x, y, tileSize, tileSize, 0, true, false);
 
-        if (wall[5]) {
+        if (wall.baseSpots) {
             var color = Math.floor(rng() * 2);
             switch (color) {
                 case 0: context.fillStyle = "rgba(0,0,0,.05)"; break;
@@ -5134,8 +5214,8 @@ function drawBase(context, r, c, isOccupied, rng, fillStyle) {
 }
 
 function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurface, rng, grass) {
-    //if (grass && !isOccupied(0, -1) && wall[4]) { drawGrass(context); return; }
-    if (wall[1] != "rainbow") context.fillStyle = wall[1];
+    //if (grass && !isOccupied(0, -1) && wall.grass) { drawGrass(context); return; }
+    if (wall.surface != "rainbow") context.fillStyle = wall.surface;
     else {
         context.fillStyle = "white";
         var mod = (r + c) % 17;
@@ -5201,7 +5281,7 @@ function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurf
         context.bezierCurveTo((c - .3) * tileSize, r * tileSize, (c - .15) * tileSize, (r + .6) * tileSize, (c + .1) * tileSize, (r + .3) * tileSize);
         context.bezierCurveTo((c + .15) * tileSize, (r + .4) * tileSize, (c + .3) * tileSize, (r + .5) * tileSize, (c + .45) * tileSize, (r + .3) * tileSize);
         context.bezierCurveTo((c + .6) * tileSize, (r + .5) * tileSize, (c + .7) * tileSize, (r + .45) * tileSize, (c + .8) * tileSize, (r + .3) * tileSize);
-        context.bezierCurveTo((c + 1) * tileSize, (r + .6) * tileSize, (c + 1.3) * tileSize, (r) * tileSize, (c + 1) * tileSize, (r - .05) * tileSize);
+        context.bezierCurveTo((c + 1) * tileSize, (r + .6) * tileSize, (c + 1.3) * tileSize, r * tileSize, (c + 1) * tileSize, (r - .05) * tileSize);
         context.closePath();
         context.fill();
     } else if (curlySurface && isOccupied(0, -1) && isOccupied(-1, 0) && !isOccupied(-1, -1)) {
@@ -5210,15 +5290,15 @@ function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurf
         context.bezierCurveTo((c + .2) * tileSize, (r + .38) * tileSize, (c + .25) * tileSize, (r - .05) * tileSize, c * tileSize, (r - .05) * tileSize);
         context.closePath();
         context.fill();
-    } else if (!curlySurface && !isOccupied(0, -1)) context.fillRect((c) * tileSize, (r) * tileSize, tileSize, outlinePixels);
+    } else if (!curlySurface && !isOccupied(0, -1)) context.fillRect(c * tileSize, r * tileSize, tileSize, outlinePixels);
 
-    if (!curlySurface && !isOccupied(-1, -1)) context.fillRect((c) * tileSize, (r) * tileSize, outlinePixels, outlinePixels);
-    if (!curlySurface && !isOccupied(1, -1)) context.fillRect((c + complement) * tileSize, (r) * tileSize, outlinePixels, outlinePixels);
-    if (!curlySurface && !isOccupied(-1, 1)) context.fillRect((c) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
+    if (!curlySurface && !isOccupied(-1, -1)) context.fillRect(c * tileSize, r * tileSize, outlinePixels, outlinePixels);
+    if (!curlySurface && !isOccupied(1, -1)) context.fillRect((c + complement) * tileSize, r * tileSize, outlinePixels, outlinePixels);
+    if (!curlySurface && !isOccupied(-1, 1)) context.fillRect(c * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
     if (!curlySurface && !isOccupied(1, 1)) context.fillRect((c + complement) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
-    if (!curlySurface && !isOccupied(0, 1)) context.fillRect((c) * tileSize, (r + complement) * tileSize, tileSize, outlinePixels);
-    if (!curlySurface && !isOccupied(-1, 0)) context.fillRect((c) * tileSize, (r) * tileSize, outlinePixels, tileSize);
-    if (!curlySurface && !isOccupied(1, 0)) context.fillRect((c + complement) * tileSize, (r) * tileSize, outlinePixels, tileSize);
+    if (!curlySurface && !isOccupied(0, 1)) context.fillRect(c * tileSize, (r + complement) * tileSize, tileSize, outlinePixels);
+    if (!curlySurface && !isOccupied(-1, 0)) context.fillRect(c * tileSize, r * tileSize, outlinePixels, tileSize);
+    if (!curlySurface && !isOccupied(1, 0)) context.fillRect((c + complement) * tileSize, r * tileSize, outlinePixels, tileSize);
 
     function drawGrass(context) {
         count = Math.floor(rng() * 3 + 10);
@@ -5233,7 +5313,7 @@ function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurf
             context.beginPath();
             context.moveTo((c + bladeStart) * tileSize, (r + .1) * tileSize);
             context.bezierCurveTo((c + bladeStart) * tileSize, r * tileSize, (c + bladeStart / 1.2 + curve) * tileSize, (r - bladeHeight) * tileSize, (c + bladeStart / 1.2 + curve * 2) * tileSize, (r - bladeHeight) * tileSize);
-            context.strokeStyle = wall[1];
+            context.strokeStyle = wall.surface;
             context.lineWidth = tileSize / 70;
             context.stroke();
         }
@@ -5340,7 +5420,7 @@ function drawSpikes(context, r, c, adjacentTiles, rng, blockRowcols, spike2Rowco
 }
 
 function drawSpokes(context, x, y, spikeWidth, color) {
-    context.fillStyle = color != undefined ? color : spikeColors[0];
+    context.fillStyle = color != undefined ? color : spikeColors.spokes;
     context.beginPath();
     context.moveTo(x + tileSize * .2 * spikeWidth, y + tileSize * 0.3); //top spikes
     context.lineTo(x + tileSize * .3 * spikeWidth, y + tileSize * 0.0);
@@ -5388,8 +5468,8 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, isOccupied, canConne
     var boltBool = false;
     var splock = false;
     if (color != undefined) splock = true;
-    context.fillStyle = splock ? color : spikeColors[1];
-    var color2 = splock ? color : spikeColors[0];
+    context.fillStyle = splock ? color : spikeColors.support;
+    var color2 = splock ? color : spikeColors.spokes;
 
     if (!skip && canConnect(0, 1) && (!(isOccupied(-1, 0) && isOccupied(1, 0) && (canConnect(1, 1) || canConnect(-1, 1))))) {
         context.fillRect((c + .26) * tileSize, (r + .8) * tileSize, tileSize * .48, tileSize * .4);
@@ -5411,7 +5491,7 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, isOccupied, canConne
     }
 
     var spikeSize = .2;
-    context.fillStyle = spikeColors[2];
+    context.fillStyle = spikeColors.box;
     if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) {                                            //TOUCHING ONE
         roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * .8, 0, true, false);
         boltBool = true;
@@ -5465,7 +5545,7 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, isOccupied, canConne
     else if (isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0)) {                                         //TOUCHING THREE
         drawMiddleSpikes(context, x, y, spikeWidth, color2);
         drawCenterSpikes(context, x, y, spikeWidth, color2);
-        context.fillStyle = spikeColors[2];
+        context.fillStyle = spikeColors.box;
         roundRect(context, (c + spikeSize) * tileSize, r * tileSize, tileSize * .6, tileSize * 1.1, 0, true, false);
         roundRect(context, (c + spikeSize) * tileSize, (r + spikeSize) * tileSize, tileSize * 1.05, tileSize * .6, 0, true, false);
         boltBool = true;
@@ -5545,8 +5625,8 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, isOccupied, canConne
 function drawBolt(context, r, c, rng, color) {
     var splock = false;
     if (color != undefined) splock = true;
-    context.fillStyle = splock ? color : spikeColors[3];
-    context.strokeStyle = spikeColors[2];
+    context.fillStyle = splock ? color : spikeColors.bolt;
+    context.strokeStyle = spikeColors.box;
 
     var radius = .2;
     context.beginPath();
@@ -5565,31 +5645,39 @@ function drawBolt(context, r, c, rng, color) {
     context.stroke();
 }
 
-function drawPlatform(context, r, c, adjacentTiles) {
-    newPlatform(context, r, c, isPlatform);
+function drawRainbow(context, r, c, adjacentTiles) {
+    newRainbow(context, r, c, isRainbow);
 
-    function isPlatform(dc, dr) {
+    function isRainbow(dc, dr) {
         var tileCode = adjacentTiles[1 + dr][1 + dc];
-        return tileCode == null || tileCode === PLATFORM;
+        return tileCode == null || tileCode === RAINBOW;
     }
 }
 
-function newPlatform(context, r, c, isOccupied) {
+function newRainbow(context, r, c, isOccupied) {
 
     var x1 = (isOccupied(-1, 0)) ? 0 : .05;
     var x2 = (isOccupied(1, 0)) ? 0 : .05;
 
-    var platformColors = ["#ffcccc", "#ffe0cc", "#ffffcc", "#e6ffe6", "#e6e6ff"];
+    var rainbowColors = ["#ffcccc", "#ffe0cc", "#ffffcc", "#e6ffe6", "#e6e6ff"];
+    context.lineWidth = tileSize / 17;
     for (var i = 0; i < 5; i++) {
-        var j = (i != 0) ? i - 1 : 0;
         context.beginPath();
-        context.moveTo(c * tileSize + tileSize * (i * x1), r * tileSize + tileSize * (.05 + (.1 * i) - (j * .02)));
-        context.strokeStyle = platformColors[i];
-        var lw = tileSize * (.1 - (i * .02));
-        context.lineWidth = lw;
-        context.lineTo(c * tileSize + tileSize * (1 - (i * x2)), r * tileSize + tileSize * (.05 + (.1 * i) - (j * .02)));
+        context.arc((c + .5) * tileSize, (r + .5) * tileSize, tileSize / 2 - context.lineWidth * (i + .5), Math.PI, 2 * Math.PI);
+        context.strokeStyle = rainbowColors[i];
         context.stroke();
     }
+
+    // for (var i = 0; i < 5; i++) {
+    //     var j = (i != 0) ? i - 1 : 0;
+    //     context.beginPath();
+    //     context.moveTo(c * tileSize + tileSize * (i * x1), r * tileSize + tileSize * (.05 + (.1 * i) - (j * .02)));
+    //     context.strokeStyle = rainbowColors[i];
+    //     var lw = tileSize * (.1 - (i * .02));
+    //     context.lineWidth = lw;
+    //     context.lineTo(c * tileSize + tileSize * (1 - (i * x2)), r * tileSize + tileSize * (.05 + (.1 * i) - (j * .02)));
+    //     context.stroke();
+    // }
 }
 
 function drawTrellis(context, r, c) {
