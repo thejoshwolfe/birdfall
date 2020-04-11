@@ -2376,7 +2376,6 @@ var persistentState = {
     showEditor: false,
     editorLeft: false,
     showGrid: false,
-    bigButton: false,
     hideHotkeys: false,
 };
 function savePersistentState() {
@@ -2389,7 +2388,6 @@ function loadPersistentState() {
     }
     persistentState.showEditor = !!persistentState.showEditor;
     persistentState.editorLeft = !!persistentState.editorLeft;
-    persistentState.bigButton = !!persistentState.bigButton;
     persistentState.showGrid = !!persistentState.showGrid;
     persistentState.hideHotkeys = !!persistentState.hideHotkeys;
     showEditorChanged();
@@ -3339,7 +3337,6 @@ function render() {
     // throw this in there somewhere
     document.getElementById("showGridButton").textContent = (persistentState.showGrid ? "Hide" : "Show") + " Grid";
     document.getElementById("hideHotkeyButton").textContent = (persistentState.hideHotkeys ? "Show" : "Hide") + " Hotkeys";
-    document.getElementById("bigButtonButton").textContent = (persistentState.bigButton ? "Regular" : "Large") + " Buttons";
 
     if (animationProgress < 1.0) requestAnimationFrame(render);
     return; // this is the end of the function proper
