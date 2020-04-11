@@ -2608,11 +2608,13 @@ function move(dr, dc, doAnimations) {
     if (ate_poison) { times++; }
     //if we're going to shrink out of existence, prevent it
     var snake_length = activeSnake.locations.length;
+    var poisonKill = false;
     if (times > snake_length) {
         times = snake_length;
         activeSnake.dead = true;
         //make the snake appear to vanish into non-existence
         activeSnake.locations[0] = { r: -99, c: -99 };
+        poisonKill = true;
     }
     for (var t = 0; t < times; ++t) {
         for (var i = 1; i < activeSnake.locations.length; i++) {
@@ -2631,9 +2633,9 @@ function move(dr, dc, doAnimations) {
                 );
             }
         }
-        activeSnake.locations.pop();
+        if (!poisonKill) activeSnake.locations.pop();
     }
-    activeSnake.locations.unshift(newLocation);
+    if (!poisonKill) activeSnake.locations.unshift(newLocation);
     changeLog.push([activeSnake.type, activeSnake.id, activeSnakeOldState, serializeObjectState(activeSnake)]);
 
     // did you just push your face into a portal?
