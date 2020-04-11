@@ -2,7 +2,7 @@
 
 <head>
     <title>Snakefall Redesign</title>
-    <link rel="stylesheet" href="Editor.css" />
+    <link rel="stylesheet" href="/Editor.css" />
     <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee"
         src="//local.adguard.org?ts=1579613273701&amp;type=content-script&amp;dmn=wolfesoftware.com&amp;css=1&amp;js=1&amp;gcss=1&amp;rel=1&amp;rji=1&amp;stealth=1&amp;uag="></script>
     <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee"
@@ -40,7 +40,7 @@
                     <tr class="spacer"><td></td></tr>
                     <tr><td class="buttonHeader controlsHeader">Controls</td></tr>
                     <tr id="controlsRow"><td>
-                        <button id="resizeButton" class="editorButton" title="Shift + R">Resize</button>
+                        <button id="resizeButton" class="editorButton" title="Ctrl + R">Resize</button>
                         <div id="selectHolder">
                             <button class="editorButton" id="selectButton" title="Shift + A - double click to edit objects">Select</button>
                             <div style="margin-top:5px">
@@ -68,7 +68,7 @@
                     <tr class="standard"><td>
                             <div class="buttonDiv"><button class="editorButton" id="paintWallButton" title="W">Wall</button><br><span class="hotkey">W</span></div>
                             <div class="buttonDiv"><button class="editorButton" id="paintSpikeButton" title="S">Spike</button><br><span class="hotkey">S</span></div>
-                            <div class="buttonDiv"><button class="editorButton" id="paintExitButton" title="Shift + E">Exit</button><br><span class="hotkey"> <span class="small">Shift</span> E</span></div>
+                            <div class="buttonDiv"><button class="editorButton" id="paintExitButton" title="Shift + E">Exit</button><br><span class="hotkey"><span class="small">Shift</span> E</span></div>
                             <div class="buttonDiv"><button class="editorButton" id="paintPortalButton" title="P">Portal</button><br><span class="hotkey">P</span></div>
                     </td></tr>
                     <tr class="spacer standard hotkeySpacer"><td></td></tr>
@@ -104,7 +104,7 @@
                     <tr class="enhanced"><td class="buttonHeader">Platforms</td></tr>
                     <tr class="hotkeySpacer2 enhanced"><td></td></tr>
                     <tr class="enhanced"><td>
-                        <div class="buttonDiv"><button class="editorButton" id="paintPlatformButton" title="Shift + P">Rainbow</button><br><span class="hotkey"><span class="small">Shift</span> P</span></div>
+                        <div class="buttonDiv"><button class="editorButton" id="paintRainbowButton" title="R">Rainbow</button><br><span class="hotkey"><span class="small">Shift</span> R</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintTrellisButton" title="T">Trellis</button><br><span class="hotkey">T</span></div>
                         <div class="buttonDiv"><button class="editorButton" id="paintOneWayWallButton" title="O">One-Way Up</button><br><span class="hotkey">O</span></div>
                     </td></tr>
@@ -122,7 +122,7 @@
                     <tr class="hotkeySpacer2 enhanced"><td></td></tr>
                     <tr class="enhanced"><td>
                         <div class="buttonDiv"><button class="editorButton" id="paintLavaButton" title="L&#10;&#10;Disintegrates blocks and snakes">Lava</button><br><span class="hotkey">L</span></div>
-                        <div class="buttonDiv";"><button class="editorButton" id="paintWaterButton" title="Shift + L, Shift + W&#10;&#10;Swallows blocks but buoys snakes">Water</button><br><span class="hotkey"><span class="small">Shift</span> L</span></div>
+                        <div class="buttonDiv"><button class="editorButton" id="paintWaterButton" title="Shift + L, Shift + W&#10;&#10;Swallows blocks but buoys snakes">Water</button><br><span class="hotkey"><span class="small">Shift</span> L</span></div>
                     </td></tr>
                     <tr class="spacer enhanced hotkeySpacer"><td></td></tr>
                 </table>
@@ -191,14 +191,18 @@
 
                 <div id="optionsStack">
                     <div id="levelSize">
-                        <div class="stackHeader">Level Size</div>
-                        <div id="levelSizeInsider">
-                            <div class="plusMinusWrapper"><button id="minus" class="plusMinus" title="Decrease game size">—</button></div>
+                        <div id="levelSizeText" class="stackHeader"><div id="minus" class="plusMinus" title="Decrease game size">-</div>Level Size<div id="plus" class="plusMinus" title="Increase game size">+</div></div>
+                            <div id="levelSizeInsider">
                             <div id="fitButtonContainer">
-                                <div class="fitButtonWrapper"><div id="fitCanvas" class="fitButton" title="` (Grave Accent, located under Escape Key)&#10;&#10;Fit canvas">[Canvas]</div></div>
-                                <div class="fitButtonWrapper"><div id="fitControls" class="fitButton" title="0&#10;&#10;Fit canvas and controls">[Controls]</div></div>
+                                <div class="fitButtonWrapper">
+                                    <button id="fitCanvas" class="fitButton" title="9&#10;&#10;Fit canvas">Fit Canvas</button>
+                                    <input type="radio" checked></input>
+                                </div>
+                                <div class="fitButtonWrapper">
+                                    <button id="fitControls" class="fitButton" title="0&#10;&#10;Fit canvas and controls">Fit Controls</button>
+                                    <input type="radio"></input>
+                                </div>
                             </div>
-                            <div class="plusMinusWrapper"><button id="plus" class="plusMinus" title="Increase game size">+</button></div>
                         </div>  
                     </div>
 
@@ -225,7 +229,6 @@
                 <button id="showGridButton" class="bottomButton" title="G">Show Grid</button><br>        
                 <button id="showHideEditor" class="bottomButton" title="\">Show Editor Stuff</button>
                 <button id="hideHotkeyButton" class="bottomButton" title="Shift + H">Hide Hotkeys</button>
-                <button id="bigButtonButton">Large Buttons</button>
             </div>
         </div>
 
