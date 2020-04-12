@@ -47,7 +47,8 @@ var MIKE = "x";
 var FRUIT = "f";
 var POISONFRUIT = "p";
 
-var spike2Death = "";
+var spike2Death = [];
+var lowDeath = false;
 var dieOnSplock = false;
 var rngCorrection = [];
 
@@ -2513,7 +2514,9 @@ function showEditorChanged() {
 }
 
 function move(dr, dc, doAnimations) {
-    if (!isDead()) spike2Death = "";
+    if (!isDead()) spike2Death = [];
+    lowDeath = false;
+
     document.getElementById("cycleDiv").innerHTML = "";
     postPortalSnakeOutline = [];
     portalConflicts = [];
@@ -2828,7 +2831,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                 if (yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation)) {
                     var object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
                     if (object.type === SNAKE) {
-                        spike2Death = [pushedObject.type, pushedObject.id];
+                        spike2Death = [pushedObject.type, pushedObject.id, null];
                         addIfAbsent(dyingObjects, object);
                         continue;
                     }
@@ -2890,7 +2893,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                 }
                 if (yetAnotherObject.type === SNAKE && pushedObject.type === MIKE) {
                     // this is mike falling on snake and it messes up everything (I think it worked before addressing wrong snakes sliding .5)
-                    spike2Death = [pushedObject.type, pushedObject.id];
+                    spike2Death = [pushedObject.type, pushedObject.id, null];
                     addIfAbsent(dyingObjects, yetAnotherObject);
                     continue;
                 }
@@ -2920,7 +2923,6 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
 
     // check forward locations
     for (var i = 0; i < forwardLocations.length; i++) {
-        // alert(JSON.stringify(forwardLocations));
         forwardLocation = forwardLocations[i];
         // many of these locations can be inside objects,
         // but that means the tile must be air,
@@ -3646,8 +3648,9 @@ function render() {
                     });
                     var newRowcols = [];
                     deadSnakes[0].locations.forEach(function (loc) {
+                        var start = lowDeath ? -.5 : -1;
                         var localRowcol = getRowcol(level, loc);
-                        for (var i = -.5; i <= 1.5; i++) {
+                        for (var i = start; i <= (start + 2); i++) {
                             for (var j = -1; j < 2; j++) {
                                 newRowcols.push({ r: localRowcol.r + i, c: localRowcol.c + j });
                             }
@@ -3907,7 +3910,11 @@ function render() {
                     var lrc = lastRowcol;
                     var nrc = nextRowcol;
 
-                    if (object.dead && (!dieOnSplock || dieOnSplock === object.id) && (spike2Death == "" || (!spike2Death[2].dead && spike2Death[2].id !== object.id))) {
+                    // alert(JSON.parse(spike2Death));
+                    // if (spike2Death.length > 0) alert(spike2Death);
+
+                    if (object.dead && (!dieOnSplock || dieOnSplock === object.id) && spike2Death.length < 3) {
+                        lowDeath = true;
                         rowcol.r += .5;
                         lastRowcol.r += .5;
                         nextRowcol.r += .5;
@@ -4634,6 +4641,7 @@ function render() {
                 context.closePath();
                 context.fill();
             }
+            // top left
             else if (isAlsoThisBlock(-1, 1) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(-1, 0)) {
                 var y = r + 1;
                 var x = c - 1;
@@ -4657,6 +4665,7 @@ function render() {
                 context.closePath();
                 context.fill();
             }
+            // bottom right
             else if (!isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, -1) && isAlsoThisBlock(1, -1)) {
                 var y = r;
                 var x = c + 1;
@@ -4730,7 +4739,7 @@ function render() {
             drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 31, tileSize * .45, tileSize * .36, color);
 
             var side = 0;
-            var size = tileSize / 8;
+            var size = tileSize / 6;
             var x = (c + .5) * tileSize;
             var y = (r + .5) * tileSize;
 
@@ -4745,10 +4754,11 @@ function render() {
             for (side; side < 7; side++) {
                 context.lineTo((x + size * Math.cos(side * 2 * Math.PI / 6)) * 1, (y + size * Math.sin(side * 2 * Math.PI / 6)) * 1);
             }
-            context.lineWidth = 1.5;
-            context.strokeStyle = "#999";
-            context.stroke();
-            context.fillStyle = tint(color, .5);
+            // context.lineWidth = 1.5;
+            // context.strokeStyle = "#999";
+            // context.stroke();
+            // context.fillStyle = tint(color, .5);
+            context.fillStyle = "#444";
             context.fill();
             context.restore();
         });
