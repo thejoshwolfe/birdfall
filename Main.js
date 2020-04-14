@@ -778,20 +778,26 @@ document.addEventListener("keydown", function (event) {
                 return;
             case "V".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === (CTRL | CMD)) { setPaintBrushTileCode("paste"); break; }
+                return;
             case "H".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { toggleHotkeys(); break; }
+                return;
             case "T".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(TRELLIS); break; }
                 if ((!persistentState.showEditor && modifierMask === 0) || (persistentState.showEditor && modifierMask === SHIFT)) { toggleTheme(); break; }
+                return;
             case "O".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode([ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]); break; }
+                return;
             case "M".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0 && !blockIsInFocus) { setPaintBrushTileCode(MIKE); break; }
                 if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && !splockIsActive) { splockIsActive = true; changeSpike2ButtonColor(); break; }
                 if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); break; }
+                return;
             case 190:
                 toggleEditorLocation(true);
                 break;
+                return;
             case 57: // 9
                 if (modifierMask === 0) { fitCanvas(0); break; }
             case 191:
@@ -2415,7 +2421,7 @@ var bg3 = ["fade", "rgba(145, 254, 198", "rgba(117, 255, 192"];
 var bg4 = ["fade", "rgba(7, 7, 83", "rgba(0, 0, 70"];
 var bg5 = ["fade", "rgba(140, 190, 190", "rgba(135, 185, 185"];
 
-var wall1 = { base: "#976537", surface: "#95ff45", curvedWalls: true, surfaceShape: "grass", grass: true, baseSpots: true, randomColors: false };
+var wall1 = { base: "#976537", surface: "#96fe45", curvedWalls: true, surfaceShape: "grass", grass: true, baseSpots: true, randomColors: false };
 var wall2 = { base: "#30455B", surface: "white", curvedWalls: true, surfaceShape: "snow", grass: false, baseSpots: true, randomColors: false };
 var wall3 = { base: "#734d26", surface: "#009933", curvedWalls: true, surfaceShape: "grass", grass: true, baseSpots: true, randomColors: false };
 var wall4 = { base: "#844204", surface: "#282", curvedWalls: false, surfaceShape: "stripe", grass: false, baseSpots: false, randomColors: false };
@@ -2424,7 +2430,7 @@ var wall6 = { base: "black", surface: "rainbow", curvedWalls: false, surfaceShap
 var wall7 = { base: "transparent", surface: "green", curvedWalls: false, surfaceShape: "algae", grass: true, baseSpots: false, randomColors: true };
 
 // must be full length to satisfy tint function
-var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];
+var snakeColors1 = ["#fd0c0b", "#18d11f", "#004dff", "#fdc122"];
 var snakeColors2 = ["#ff0000", "#00ff00", "#0000ff", "#ffff00"];
 var snakeColors3 = ["#BA145C", "#E91624", "#F75802", "#FEFE28"];
 var snakeColors4 = ["#000000", "#000000", "#000000", "#000000"];
@@ -2459,7 +2465,7 @@ var experimentalColors2 = ["white", "#FEFE28"];
 
 var themes = [  //name, background, wall, snakeColors, blockColors, spikeColors, fruitColors, stemColor, textStyle, experimentalColors
     ["Spring", bg1, wall1, snakeColors1, blockColors6, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
-    ["Winter", bg1, wall2, snakeColors1, blockColors1, spikeColors4, fruitColors1, "green", textStyle1, experimentalColors1],
+    ["Winter", bg1, wall2, snakeColors1, blockColors1, spikeColors3, fruitColors1, "green", textStyle1, experimentalColors1],
     ["Summer", bg2, wall3, snakeColors3, blockColors3, spikeColors4, fruitColors1, "green", textStyle3, experimentalColors2],
     ["Submerged", bg5, wall7, snakeColors1, blockColors2, spikeColors4, fruitColors4, "green", textStyle5, experimentalColors1],
     // ["Dream", bg3, wall5, snakeColors1, blockColors4, spikeColors4, fruitColors2, "white", textStyle2, experimentalColors2],
@@ -4983,7 +4989,7 @@ function drawTile(context, tileCode, r, c, level, location, rng, isCurve, grass)
             drawLift(context, r, c, true);
             break;
         case CLOUD:
-            drawCloud(context, c * tileSize, r * tileSize);
+            drawCloud(context, c * tileSize, r * tileSize, getAdjacentTiles(), rng);
             break;
         case BUBBLE:
             drawBubble(context, r, c);
@@ -5135,8 +5141,8 @@ function drawPlant(context, r, c, isOccupied, rng, fillStyle) {
 
             var basePoint = { c: c * tileSize + startPoint, r: (r + plant + .1) * tileSize };
             for (var i = -2; i <= 2; i++) {
-                var width = tileSize / (rng() * 1 + 4.5);
-                var height = -tileSize * (rng() * .1 + .4);
+                var width = tileSize / (rng() + 5);
+                var height = -tileSize * (rng() * .2 + .3);
                 var angle = Math.PI * (rng() * .08 + .14) * (i - rng() / 2);
 
                 context.save();
@@ -5270,7 +5276,7 @@ function drawTileOutlines(context, r, c, isOccupied, rng) {
                 context.moveTo((c + .6) * tileSize, (r - .05) * tileSize);
                 context.bezierCurveTo((c + .85) * tileSize, (r - .15) * tileSize, (c + .9) * tileSize, (r - .4) * tileSize, (c + .95) * tileSize, (r - .45) * tileSize);
                 context.bezierCurveTo((c + .95) * tileSize, (r - .5) * tileSize, (c + 1.1) * tileSize, (r - .5) * tileSize, (c + 1.1) * tileSize, (r - .4) * tileSize);
-                context.bezierCurveTo((c + 1.1) * tileSize, (r - .3) * tileSize, (c + 1.1) * tileSize, (r - .1) * tileSize, (c + 1.24) * tileSize, (r + .3) * tileSize);
+                context.bezierCurveTo((c + 1.1) * tileSize, (r - .3) * tileSize, (c + 1.1) * tileSize, (r - .1) * tileSize, (c + 1.1) * tileSize, (r + .3) * tileSize);
                 context.closePath();
                 context.fill();
             }
@@ -5930,15 +5936,6 @@ function drawBubble(context, r, c) {
 }
 
 function drawLiquid(context, r, c, type, adjacentTiles) {
-    newLiquid(context, r, c, type, isSameLiquid);
-
-    function isSameLiquid(dc, dr) {
-        var tileCode = adjacentTiles[1 + dr][1 + dc];
-        return tileCode == null || tileCode === type;
-    }
-}
-
-function newLiquid(context, r, c, type, isOccupied) {
     context.save();
     var tubColor;
     var color1;
@@ -5983,21 +5980,26 @@ function newLiquid(context, r, c, type, isOccupied) {
     }
 
     context.fillStyle = color3;
-    if (!isOccupied(-1, 0)) {
-        if (isOccupied(-1, -1)) roundRect(context, (c - .1) * tileSize, r * tileSize, tileSize * .2, tileSize, 0, true, false);
+    if (!isSameLiquid(-1, 0)) {
+        if (isSameLiquid(-1, -1)) roundRect(context, (c - .1) * tileSize, r * tileSize, tileSize * .2, tileSize, 0, true, false);
         else roundRect(context, (c - .1) * tileSize, r * tileSize, tileSize * .2, tileSize, 0, true, false);
     }
-    if (!isOccupied(1, 0)) {
-        if (isOccupied(1, -1)) roundRect(context, (c + .9) * tileSize, r * tileSize, tileSize * .2, tileSize, 0, true, false);
+    if (!isSameLiquid(1, 0)) {
+        if (isSameLiquid(1, -1)) roundRect(context, (c + .9) * tileSize, r * tileSize, tileSize * .2, tileSize, 0, true, false);
         else roundRect(context, (c + .9) * tileSize, r * tileSize, tileSize * .2, tileSize, 0, true, false);
     }
-    if (!isOccupied(0, 1)) {
-        if (isOccupied(-1, 1) && !isOccupied(1, 1)) roundRect(context, (c - .1) * tileSize, (r + .8) * tileSize, tileSize * 1.2, tileSize * .25, 0, true, false);
-        else if (!isOccupied(-1, 1) && isOccupied(1, 1)) roundRect(context, (c - .1) * tileSize, (r + .8) * tileSize, tileSize * 1.2, tileSize * .25, 0, true, false);
-        else if (isOccupied(-1, 1) && isOccupied(1, 1)) roundRect(context, (c - .1) * tileSize, (r + .8) * tileSize, tileSize * 1.2, tileSize * .25, 0, true, false);
+    if (!isSameLiquid(0, 1)) {
+        if (isSameLiquid(-1, 1) && !isSameLiquid(1, 1)) roundRect(context, (c - .1) * tileSize, (r + .8) * tileSize, tileSize * 1.2, tileSize * .25, 0, true, false);
+        else if (!isSameLiquid(-1, 1) && isSameLiquid(1, 1)) roundRect(context, (c - .1) * tileSize, (r + .8) * tileSize, tileSize * 1.2, tileSize * .25, 0, true, false);
+        else if (isSameLiquid(-1, 1) && isSameLiquid(1, 1)) roundRect(context, (c - .1) * tileSize, (r + .8) * tileSize, tileSize * 1.2, tileSize * .25, 0, true, false);
         else roundRect(context, (c - .1) * tileSize, (r + .8) * tileSize, tileSize * 1.2, tileSize * .25, 0, true, false);
     }
     context.restore();
+
+    function isSameLiquid(dc, dr) {
+        var tileCode = adjacentTiles[1 + dr][1 + dc];
+        return tileCode == null || tileCode === type;
+    }
 }
 
 function drawLift(context, r, c, isOpen) {
@@ -6061,13 +6063,12 @@ function drawCircle(context, r, c, radiusFactor, fillStyle) {
     context.fill();
 }
 
-function drawCloud(c, x, y) {
+function drawCloud(c, x, y, adjacentTiles, rng) {
+    c.save();
     c.fillStyle = experimentalColors[0];
-    c.strokeStyle = "gainsboro";
-    /*c.beginPath();
-    c.rect(x, y, tileSize, tileSize);
-    c.fill();
-    c.closePath();*/
+    c.shadowOffsetX = 5;
+    c.shadowOffsetY = 5;
+    c.shadowColor = "rgba(0,0,0, .03)";
 
     c.beginPath();
     c.moveTo(x + tileSize * 0, y + tileSize * 0);
@@ -6084,14 +6085,35 @@ function drawCloud(c, x, y) {
     c.bezierCurveTo(x + tileSize * .67, y + tileSize * 1.15, x + tileSize * .33, y + tileSize * 1.15, x + tileSize * .33, y + tileSize * 1);
     c.bezierCurveTo(x + tileSize * .33, y + tileSize * 1.15, x + tileSize * 0, y + tileSize * 1.15, x + tileSize * 0, y + tileSize * 1);
 
-    c.bezierCurveTo(x - tileSize * .15, y + tileSize * 1, x - tileSize * .15, y + tileSize * .67, x + tileSize * 0, y + tileSize * .67);
-    c.bezierCurveTo(x - tileSize * .15, y + tileSize * .67, x - tileSize * .15, y + tileSize * .33, x + tileSize * 0, y + tileSize * .33);
-    c.bezierCurveTo(x - tileSize * .15, y + tileSize * .33, x - tileSize * .15, y + tileSize * 0, x + tileSize * 0, y + tileSize * 0);
-
     c.closePath();
-    // c.stroke();
     c.fill();
-    //c.stroke();
+    c.restore();
+    c.save();
+
+    if (!isCloud(-1, 0)) {
+        c.fillStyle = experimentalColors[0];
+        c.beginPath();
+        c.moveTo(x + tileSize * 0, y + tileSize * 1);
+        c.bezierCurveTo(x - tileSize * .15, y + tileSize * 1, x - tileSize * .15, y + tileSize * .67, x + tileSize * 0, y + tileSize * .67);
+        c.bezierCurveTo(x - tileSize * .15, y + tileSize * .67, x - tileSize * .15, y + tileSize * .33, x + tileSize * 0, y + tileSize * .33);
+        c.bezierCurveTo(x - tileSize * .15, y + tileSize * .33, x - tileSize * .15, y + tileSize * 0, x + tileSize * 0, y + tileSize * 0);
+        if (isWall(-1, 0)) {
+            c.shadowOffsetX = -2;
+            c.shadowOffsetY = 2;
+            c.shadowColor = "rgba(0,0,0, .03)";
+        }
+        c.fill();
+    }
+    c.restore();
+
+    function isCloud(dc, dr) {
+        var tileCode = adjacentTiles[1 + dr][1 + dc];
+        return tileCode == null || tileCode === CLOUD;
+    }
+    function isWall(dc, dr) {
+        var tileCode = adjacentTiles[1 + dr][1 + dc];
+        return tileCode == null || tileCode === WALL;
+    }
 }
 
 function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
