@@ -2415,13 +2415,13 @@ var bg3 = ["fade", "rgba(145, 254, 198", "rgba(117, 255, 192"];
 var bg4 = ["fade", "rgba(7, 7, 83", "rgba(0, 0, 70"];
 var bg5 = ["fade", "rgba(140, 190, 190", "rgba(135, 185, 185"];
 
-var wall1 = { base: "#976537", surface: "#95ff45", curvedWalls: true, curlySurface: true, grass: true, baseSpots: true, randomColors: false };
-var wall2 = { base: "#30455B", surface: "white", curvedWalls: true, curlySurface: true, grass: false, baseSpots: true, randomColors: false };
-var wall3 = { base: "#734d26", surface: "#009933", curvedWalls: true, curlySurface: true, grass: true, baseSpots: true, randomColors: false };
-var wall4 = { base: "#844204", surface: "#282", curvedWalls: false, curlySurface: false, grass: false, baseSpots: false, randomColors: false };
-var wall5 = { base: "#00aaff", surface: "#ffb3ec", curvedWalls: true, curlySurface: true, grass: false, baseSpots: false, randomColors: false };
-var wall6 = { base: "black", surface: "rainbow", curvedWalls: false, curlySurface: false, grass: false, baseSpots: false, randomColors: false };
-var wall7 = { base: "transparent", surface: "green", curvedWalls: false, curlySurface: true, grass: true, baseSpots: false, randomColors: true };
+var wall1 = { base: "#976537", surface: "#95ff45", curvedWalls: true, surfaceShape: "grass", grass: true, baseSpots: true, randomColors: false };
+var wall2 = { base: "#30455B", surface: "white", curvedWalls: true, surfaceShape: "snow", grass: false, baseSpots: true, randomColors: false };
+var wall3 = { base: "#734d26", surface: "#009933", curvedWalls: true, surfaceShape: "grass", grass: true, baseSpots: true, randomColors: false };
+var wall4 = { base: "#844204", surface: "#282", curvedWalls: false, surfaceShape: "stripe", grass: false, baseSpots: false, randomColors: false };
+var wall5 = { base: "#00aaff", surface: "#ffb3ec", curvedWalls: true, surfaceShape: "grass", grass: false, baseSpots: false, randomColors: false };
+var wall6 = { base: "black", surface: "rainbow", curvedWalls: false, surfaceShape: "stripe", grass: false, baseSpots: false, randomColors: false };
+var wall7 = { base: "transparent", surface: "green", curvedWalls: false, surfaceShape: "algae", grass: true, baseSpots: false, randomColors: true };
 
 // must be full length to satisfy tint function
 var snakeColors1 = ["#fd0c0b", "#18d11f", "#004cff", "#fdc122"];
@@ -2431,24 +2431,25 @@ var snakeColors4 = ["#000000", "#000000", "#000000", "#000000"];
 
 var fruitColors1 = ["#ff0066", "#ff36a6", "#ff6b1f", "#ff9900", "#ff2600"];
 var fruitColors2 = ["black", "black", "black", "black", "black"];
-var fruitColors3 = ["#00FFFB", "#00FFB2", "#80FF00", "#FA916A"];
+var fruitColors3 = ["#ffcc00", "#ffa700", "#ff9380", "#ff5439"];
+var fruitColors4 = ["#9900cc", "#6600cc", "#0033cc", "#0099cc", "#00cccc"];
 
 var spikeColors1 = { spokes: "#999", support: "#444", box: "#555", bolt: "#777" };
 var spikeColors2 = { spokes: "#333", support: "#333", box: "#111", bolt: "#333" };
 var spikeColors3 = { spokes: "#333", support: "#333", box: "#333", bolt: "#777" };
-var spikeColors4 = { spokes: "#39526b", support: "#39526b", box: "#66879f", bolt: "#acc5cd" };
+var spikeColors4 = { spokes: "#595959", support: "#3b2f2b", box: "#3b2f2b", bolt: "#595959" };
 
 // must be 6-digit hex colors to satisfy tint function
 var blockColors1 = ["#de5a6d", "#fa65dd", "#c367e3", "#9c62fa", "#625ff0"];
-var blockColors2 = ["#ffffff", "#999999", "#555555", "#000000"];
+var blockColors2 = ["#00FFFB", "#66ffd9", "#00e673", "#bfff00", "#ecff00"];
 var blockColors3 = ["#de7913", "#7d46a0", "#39868b", "#41ccc2", "#ccc500"];
 var blockColors4 = ["#660050", "#990033", "#b35900", "#e6b800 ", "#008000"];
 var blockColors5 = ["#ffccff", "#ffc2b3", "#ffffcc", "#ccffe6", "#ccffff"];
 var blockColors6 = ["#bf4053", "#ec799f", "#a679d2", "#6a45a1", "#4d6dcb"];
 
 var fontSize = tileSize * 5;
-var textStyle1 = { fontSize: fontSize, fontFamily: "Impact", win: "#fdc122", lose: "#fd0c0b" };
-var textStyle2 = { fontSize: fontSize, fontFamily: "Futura", win: "#400080", lose: "#ff6600" };
+var textStyle1 = { fontSize: fontSize, fontFamily: "Chalkboard SE", win: "#fdc122", lose: "#fd0c0b" };
+var textStyle2 = { fontSize: fontSize, fontFamily: "Chalkboard SE", win: "#400080", lose: "#ff6600" };
 var textStyle3 = { fontSize: fontSize, fontFamily: "Impact", win: "#BA145C", lose: "#F75802" };
 var textStyle4 = { fontSize: fontSize, fontFamily: "Arial", win: "#ff0", lose: "#f00" };
 var textStyle5 = { fontSize: fontSize, fontFamily: "Impact", win: "#80FF00", lose: "#00FFFB" };
@@ -2457,14 +2458,13 @@ var experimentalColors1 = ["white", "#ffccff"];
 var experimentalColors2 = ["white", "#FEFE28"];
 
 var themes = [  //name, background, wall, snakeColors, blockColors, spikeColors, fruitColors, stemColor, textStyle, experimentalColors
-    //["sky",],
     ["Spring", bg1, wall1, snakeColors1, blockColors6, spikeColors1, fruitColors1, "green", textStyle1, experimentalColors1],
     ["Winter", bg1, wall2, snakeColors1, blockColors1, spikeColors4, fruitColors1, "green", textStyle1, experimentalColors1],
     ["Summer", bg2, wall3, snakeColors3, blockColors3, spikeColors4, fruitColors1, "green", textStyle3, experimentalColors2],
-    ["Submerged", bg5, wall7, snakeColors1, blockColors6, spikeColors4, fruitColors3, "green", textStyle5, experimentalColors1],
+    ["Submerged", bg5, wall7, snakeColors1, blockColors2, spikeColors4, fruitColors4, "green", textStyle5, experimentalColors1],
+    // ["Dream", bg3, wall5, snakeColors1, blockColors4, spikeColors4, fruitColors2, "white", textStyle2, experimentalColors2],
+    ["Midnight Rainbow", bg4, wall6, snakeColors1, blockColors5, spikeColors2, "white", "white", textStyle1, experimentalColors1],
     ["Classic", "#8888ff", wall4, snakeColors2, blockColors1, spikeColors3, fruitColors1, "green", textStyle4, experimentalColors1],
-    ["Dream", bg3, wall5, snakeColors1, blockColors4, spikeColors4, fruitColors2, "white", textStyle2, experimentalColors2],
-    ["Midnight Rainbow", bg4, wall6, snakeColors1, blockColors5, spikeColors2, "white", "white", textStyle1, experimentalColors1]
 ];
 
 var themeCounter = 0;
@@ -2545,7 +2545,7 @@ function move(dr, dc, doAnimations) {
     }
 
     var ate = false;
-    var ate_poison = false;
+    var atePoison = false;
     var pushedObjects = [];
 
     //track ClosedLifts that had objects on them
@@ -2567,7 +2567,7 @@ function move(dr, dc, doAnimations) {
             } else if (otherObject.type === POISONFRUIT) {
                 // eat poison
                 removeObject(otherObject, changeLog);
-                ate_poison = true;
+                atePoison = true;
             } else if (isTileCodeAir(activeSnake, null, newTile, dr, dc)) {
                 otherObject = findObjectAtLocation(newLocation);
                 if (otherObject != null) {
@@ -2600,7 +2600,7 @@ function move(dr, dc, doAnimations) {
     // drag your tail forward based on what was/wasn't eaten
     var times = 1;
     if (ate) { times--; }
-    if (ate_poison) { times++; }
+    if (atePoison) { times++; }
     //if we're going to shrink out of existence, prevent it
     var snake_length = activeSnake.locations.length;
     var poisonKill = false;
@@ -2608,7 +2608,7 @@ function move(dr, dc, doAnimations) {
         times = snake_length;
         activeSnake.dead = true;
         //make the snake appear to vanish into non-existence
-        activeSnake.locations[0] = { r: -99, c: -99 };
+        activeSnake.locations.unshift({ r: -99, c: -99 });
         poisonKill = true;
     }
     for (var t = 0; t < times; ++t) {
@@ -2628,7 +2628,7 @@ function move(dr, dc, doAnimations) {
                 );
             }
         }
-        if (!poisonKill) activeSnake.locations.pop();
+        activeSnake.locations.pop();
     }
     if (!poisonKill) activeSnake.locations.unshift(newLocation);
     changeLog.push([activeSnake.type, activeSnake.id, activeSnakeOldState, serializeObjectState(activeSnake)]);
@@ -2831,7 +2831,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                 if (yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation)) {
                     var object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
                     if (object.type === SNAKE) {
-                        spike2Death = [pushedObject.type, pushedObject.id, null];
+                        spike2Death = [pushedObject.type, pushedObject.id];
                         addIfAbsent(dyingObjects, object);
                         continue;
                     }
@@ -2892,8 +2892,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     return false;
                 }
                 if (yetAnotherObject.type === SNAKE && pushedObject.type === MIKE) {
-                    // this is mike falling on snake and it messes up everything (I think it worked before addressing wrong snakes sliding .5)
-                    spike2Death = [pushedObject.type, pushedObject.id, null];
+                    spike2Death = [pushedObject.type, pushedObject.id];
                     addIfAbsent(dyingObjects, yetAnotherObject);
                     continue;
                 }
@@ -3598,7 +3597,7 @@ function render() {
 
             for (var i = 0; i < objects.length; i++) {
                 var object = objects[i];
-                if (object.type === FRUIT || object.type === POISONFRUIT) drawObject(object);  //draws fruit
+                if (object.type === FRUIT || object.type === POISONFRUIT) drawObject(object, rng);  //draws fruit
             }
 
             if (portalFailure && countSnakes() != 0) {
@@ -3664,9 +3663,9 @@ function render() {
                     for (var i = 0; i < newRowcols.length; i++) {
                         context.clearRect(newRowcols[i].c * tileSize, newRowcols[i].r * tileSize, tileSize, tileSize);
                     }
-                    context.lineWidth = 10;
-                    context.strokeStyle = "red";
-                    roundRect(context, .1 * tileSize, .1 * tileSize, canvas7.width - .2 * tileSize, canvas7.height - .2 * tileSize, 20, false, true);
+                    // context.lineWidth = 10;
+                    // context.strokeStyle = "red";
+                    // roundRect(context, .1 * tileSize, .1 * tileSize, canvas7.width - .2 * tileSize, canvas7.height - .2 * tileSize, 20, false, true);
 
                     // context.font = textStyle.fontSize + "px " + textStyle.fontFamily;
                     // context.fillStyle = textStyle.lose;
@@ -3743,11 +3742,11 @@ function render() {
                 }
             } else if (paintBrushTileCode === FRUIT) {
                 if (!(objectHere != null && objectHere.type === FRUIT)) {
-                    drawObject(newFruit(hoverLocation));
+                    drawObject(newFruit(hoverLocation), rng);
                 }
             } else if (paintBrushTileCode === POISONFRUIT) {
                 if (!(objectHere != null && objectHere.type === POISONFRUIT)) {
-                    drawObject(newPoisonFruit(hoverLocation));
+                    drawObject(newPoisonFruit(hoverLocation), rng);
                 }
             } else if (paintBrushTileCode === "resize") {
                 void 0; // do nothing
@@ -3855,7 +3854,7 @@ function render() {
             case FRUIT:
             case POISONFRUIT:
                 var isPoison = object.type == POISONFRUIT;
-                drawFruit(object, isPoison);
+                drawFruit(object, isPoison, rng);
                 break;
             default: throw unreachable();
         }
@@ -3910,10 +3909,10 @@ function render() {
                     var lrc = lastRowcol;
                     var nrc = nextRowcol;
 
-                    // alert(JSON.parse(spike2Death));
-                    // if (spike2Death.length > 0) alert(spike2Death);
-
-                    if (object.dead && (!dieOnSplock || dieOnSplock === object.id) && spike2Death.length < 3) {
+                    if (object.dead && (!dieOnSplock || dieOnSplock === object.id)) {
+                        // if (spike2Death[2] != null) {
+                        //     if (spike2Death[2].type === SNAKE && spike2Death[2].id === object.id)
+                        // }
                         lowDeath = true;
                         rowcol.r += .5;
                         lastRowcol.r += .5;
@@ -4512,7 +4511,7 @@ function render() {
         context.fill();
     }
 
-    function drawFruit(object, isPoison) {
+    function drawFruit(object, isPoison, rng) {
         var isPoison = object.type === POISONFRUIT;
         var rowcol = getRowcol(level, object.locations[0]);
         var c = rowcol.c;
@@ -4527,7 +4526,11 @@ function render() {
             var circle = true;
             color = "#f0f";
         }
-        if (isPoison) { color = "#666600"; stemColor = "black"; }
+        context.save();
+        if (isPoison) {
+            color = "#666600";
+            stemColor = "black";
+        }
 
         context.fillStyle = color;
         if (circle) {
@@ -4535,11 +4538,24 @@ function render() {
         }
         else {
             if (wall.surface == "rainbow") {
-                stemColor = "white";
-                if (!isPoison) context.fillStyle = "black";
-                context.lineWidth = tileSize / 8;
-                context.strokeStyle = "white";
-                resize = tileSize * 1.4;
+                if (isPoison) {
+                    stemColor = "black";
+                    var grd = context.createLinearGradient(c * tileSize, r * tileSize, (c + 1) * tileSize, (r + 1) * tileSize);
+                    grd.addColorStop(0, "black");
+                    grd.addColorStop(1 / 2, "gray");
+                    grd.addColorStop(1, "black");
+                    context.fillStyle = grd;
+                } else {
+                    stemColor = "white";
+                    var grd = context.createLinearGradient(c * tileSize, r * tileSize, (c + 1) * tileSize, (r + 1) * tileSize);
+                    grd.addColorStop(0, "white");
+                    grd.addColorStop(1 / 2, "#888");
+                    grd.addColorStop(1, "white");
+                    context.fillStyle = grd;
+                }
+
+                // context.lineWidth = tileSize / 8;
+                // context.strokeStyle = "white";
             }
             context.beginPath();
             context.moveTo(startC, startR);
@@ -4549,7 +4565,6 @@ function render() {
             context.bezierCurveTo(startC + resize * .25, startR - resize * .05, startC + resize * .1, startR - resize * .1, startC, startR);
             context.closePath();
             context.fill();
-            if (wall.surface == "rainbow") context.stroke();
 
             context.beginPath();
             context.moveTo(startC, startR);
@@ -4558,6 +4573,22 @@ function render() {
             context.fillStyle = stemColor;
             context.fill();
         }
+        if (isPoison) {
+            for (var i = 0; i < 60; i++) {
+                var spotC = rng();
+                var spotR = rng();
+                var mod = i % 2;
+                switch (mod) {
+                    case 0: context.fillStyle = "rgba(20,20,0,.2)"; break;
+                    case 1: context.fillStyle = "rgba(100,200,255,.2)"; break;
+                }
+                context.globalCompositeOperation = "source-atop";
+                context.beginPath();
+                context.arc((c + spotC) * tileSize, (r + spotR) * tileSize, tileSize / 22, 0, 2 * Math.PI);
+                context.fill();
+            }
+        }
+        context.restore();
     }
 
     function drawConnector(context, r1, c1, r2, c2, color) {
@@ -4891,14 +4922,14 @@ function render() {
         context.restore();
     }
 
-    // function fitTextOnCanvas(text, fontface, yPosition) {
-    //     var fontsize = 50;
-    //     do {
-    //         fontsize--;
-    //         context.font = fontsize + "px " + fontface;
-    //     } while (context.measureText(text).width > canvas4.width)
-    //     context.fillText(text, 0, yPosition);
-    // }
+    function fitTextOnCanvas(text, fontface, yPosition) {
+        var fontsize = 100;
+        while (context.measureText(text).width > (canvas7.width / 2) || context.measureText(text).height > (canvas7.height / 2)) {
+            fontsize--;
+            context.font = fontsize + "px " + fontface;
+        }
+        context.fillText(text, 0, yPosition);
+    }
 }
 
 // DRAWING FUNCTIONS
@@ -5077,12 +5108,48 @@ function drawCurves2(context, r, c, isOccupied, base) {
 
 function drawWall(context, r, c, adjacentTiles, rng, grass) {
     drawBase(context, r, c, isWall, rng, wall.base);
-    drawTileOutlines(context, r, c, isWall, .2, wall.curlySurface, rng, grass);
-    //if (wall.curlySurface && !wall.randomColors) drawBushes(context, r, c, isWall);
+    drawTileOutlines(context, r, c, isWall, rng);
+    drawPlant(context, r, c, isWall, rng, wall.surface);
 
     function isWall(dc, dr) {
         var tileCode = adjacentTiles[1 + dr][1 + dc];
         return tileCode == null || tileCode === WALL;
+    }
+}
+
+function drawPlant(context, r, c, isOccupied, rng, fillStyle) {
+    var tileCode = level.map[getLocation(level, r - 1, c)];
+    if ((wall.randomColors && isOccupied(0, 1) && isOccupied(-1, 0) && isOccupied(-1, 1)) || (wall.surfaceShape === "grass" && !isOccupied(0, -1) && tileCode !== CLOSEDLIFT && tileCode !== OPENLIFT)) {
+        var plant = 1;
+        var startPoint = (rng() * .7 - .3) * tileSize;
+        context.fillStyle = fillStyle;
+        if (!isOccupied(0, -1) && tileCode !== CLOSEDLIFT && tileCode !== OPENLIFT) {
+            plant = 0;
+            startPoint = (rng() * .4 + .3) * tileSize;
+        }
+
+        if (rng() > .75) {
+            context.beginPath();
+            context.arc(c * tileSize + startPoint, (r + plant + .1) * tileSize, tileSize / 6, 0, 2 * Math.PI);
+            context.fill();
+
+            var basePoint = { c: c * tileSize + startPoint, r: (r + plant + .1) * tileSize };
+            for (var i = -2; i <= 2; i++) {
+                var width = tileSize / (rng() * 1 + 4.5);
+                var height = -tileSize * (rng() * .1 + .4);
+                var angle = Math.PI * (rng() * .08 + .14) * (i - rng() / 2);
+
+                context.save();
+                context.translate(basePoint.c, basePoint.r);
+                context.rotate(angle);
+                context.translate(-basePoint.c, -basePoint.r);
+                context.fillRect(c * tileSize + startPoint - width / 2, (r + plant) * tileSize, width, height);
+                context.beginPath();
+                context.arc(c * tileSize + startPoint, (r + plant) * tileSize + height, width / 2, 0, 2 * Math.PI);
+                context.fill();
+                context.restore();
+            }
+        }
     }
 }
 
@@ -5095,103 +5162,11 @@ function drawBase(context, r, c, isOccupied, rng, fillStyle) {
         context.fillStyle = "rgb(50,70,100)";
         if (isOccupied(0, 1) && isOccupied(1, 0) && isOccupied(1, 1)) context.fillRect((c + .5) * tileSize, (r + .5) * tileSize, tileSize, tileSize);
         if (r === 0 && isOccupied(1, 0)) context.fillRect((c + .5) * tileSize, (r - .5) * tileSize, tileSize, tileSize);
-        if (c === 0) context.fillRect((c - .5) * tileSize, (r + .5) * tileSize, tileSize, tileSize);
+        if (c === 0) context.fillRect((c - .5) * tileSize, r * tileSize, tileSize, tileSize);
         if (r === 0 && c === 0) context.fillRect((c - .5) * tileSize, (r - .5) * tileSize, tileSize, tileSize);
         var color = rng === 0 ? 0 : Math.floor(rng() * 4) * 10;
         context.fillStyle = "rgb(" + (color + 50) + "," + (color + 70) + "," + (color + 100) + ")";
         roundRect(context, x, y, tileSize, tileSize, borderRadius, true, false);
-
-        context.save();
-        if (isOccupied(0, 1) && isOccupied(-1, 0) && isOccupied(-1, 1)) {
-            if (rng() > .95) {
-                context.fillStyle = "green";
-                x = c * tileSize;
-                y = (r + .9) * tileSize;
-                var width = tileSize * .5;
-                var height = tileSize * .2;
-                var cx = x + width / 2;
-                var cy = y + height / 2;
-
-                context.translate(cx, cy);
-                context.rotate(-.25 * Math.PI);
-                context.translate(-cx, -cy);
-                context.fillRect(x, y, width, height);
-
-                context.beginPath();
-                context.arc((c + .5) * tileSize, (r + 1) * tileSize, height / 2, 0, 2 * Math.PI);
-                context.closePath();
-                context.fill();
-
-                x = (c - .1) * tileSize;
-                y = (r + .75) * tileSize;
-                var width = tileSize * .6;
-                var height = tileSize * .2;
-                var cx = x + width / 2;
-                var cy = y + height / 2;
-
-                context.translate(cx, cy);
-                context.rotate(-.125 * Math.PI);
-                context.translate(-cx, -cy);
-                context.fillRect(x, y, width, height);
-
-                context.beginPath();
-                context.arc((c + .5) * tileSize, (r + .85) * tileSize, height / 2, 0, 2 * Math.PI);
-                context.closePath();
-                context.fill();
-
-                x = (c - .1) * tileSize;
-                y = (r + .6) * tileSize;
-                var width = tileSize * .7;
-                var height = tileSize * .2;
-                var cx = x + width / 2;
-                var cy = y + height / 2;
-
-                context.translate(cx, cy);
-                context.rotate(-.125 * Math.PI);
-                context.translate(-cx, -cy);
-                context.fillRect(x, y, width, height);
-
-                context.beginPath();
-                context.arc((c + .6) * tileSize, (r + .7) * tileSize, height / 2, 0, 2 * Math.PI);
-                context.closePath();
-                context.fill();
-
-                x = (c - .3) * tileSize;
-                y = (r + .5) * tileSize;
-                var width = tileSize * .7;
-                var height = tileSize * .2;
-                var cx = x + width / 2;
-                var cy = y + height / 2;
-
-                context.translate(cx, cy);
-                context.rotate(-.125 * Math.PI);
-                context.translate(-cx, -cy);
-                context.fillRect(x, y, width, height);
-
-                context.beginPath();
-                context.arc((c + .4) * tileSize, (r + .6) * tileSize, height / 2, 0, 2 * Math.PI);
-                context.closePath();
-                context.fill();
-
-                x = (c - .4) * tileSize;
-                y = (r + .5) * tileSize;
-                var width = tileSize * .7;
-                var height = tileSize * .2;
-                var cx = x + width / 2;
-                var cy = y + height / 2;
-
-                context.translate(cx, cy);
-                context.rotate(-.125 * Math.PI);
-                context.translate(-cx, -cy);
-                context.fillRect(x, y, width, height);
-
-                context.beginPath();
-                context.arc((c + .3) * tileSize, (r + .6) * tileSize, height / 2, 0, 2 * Math.PI);
-                context.closePath();
-                context.fill();
-            }
-        }
-        context.restore();
     }
     else {
         if (isOccupied(0, -1) && !isOccupied(1, 0) && !isOccupied(0, 1) && !isOccupied(-1, 0)) roundRect(context, x, y, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false);
@@ -5223,9 +5198,8 @@ function drawBase(context, r, c, isOccupied, rng, fillStyle) {
     }
 }
 
-function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurface, rng, grass) {
-    //if (grass && !isOccupied(0, -1) && wall.grass) { drawGrass(context); return; }
-    if (wall.surface != "rainbow") context.fillStyle = wall.surface;
+function drawTileOutlines(context, r, c, isOccupied, rng) {
+    if (wall.surface !== "rainbow") context.fillStyle = wall.surface;
     else {
         context.fillStyle = "white";
         var mod = (r + c) % 17;
@@ -5250,126 +5224,115 @@ function drawTileOutlines(context, r, c, isOccupied, outlineThickness, curlySurf
         }
     }
 
-    var complement = 1 - outlineThickness;
-    var outlinePixels = outlineThickness * tileSize;
-
-    if (curlySurface && !isOccupied(0, -1)) {
-        // if (isOccupied(-1, 0) && !isOccupied(-1, -1)) {          //bushes
-        //     var count = rng() * 100;
-        //     if (count > 90) {
-        //         context.beginPath();
-        //         context.arc(c * tileSize, (r - .25) * tileSize, tileSize / 8, 0, 2 * Math.PI);
-        //         context.closePath();
-        //         context.fill();
-
-        //         for (var i = -.25; i <= .25; i += .125) {
-        //             var j = i===0?.08:Math.abs(i);
-        //             context.beginPath();
-        //             context.arc((c + i) * tileSize, (r - .5 + j) * tileSize, tileSize / 8, 0, 2 * Math.PI);
-        //             context.closePath();
-        //             context.fill();
-        //             context.beginPath();
-        //             context.arc((c + i) * tileSize, (r - j) * tileSize, tileSize / 8, 0, 2 * Math.PI);
-        //             context.closePath();
-        //             context.fill();
-        //         }
-
-        //         context.beginPath();
-        //         context.arc((c - .3) * tileSize, (r - .125) * tileSize, tileSize / 8, 0, 2 * Math.PI);
-        //         context.closePath();
-        //         context.fill();
-        //         context.beginPath();
-        //         context.arc((c + .3) * tileSize, (r - .125) * tileSize, tileSize / 8, 0, 2 * Math.PI);
-        //         context.closePath();
-        //         context.fill();
-        //     }
-        // }
-
-        context.beginPath();
-        context.moveTo((c + 1) * tileSize, (r - .05) * tileSize);
-        context.lineTo(c * tileSize, (r - .05) * tileSize);
-        context.bezierCurveTo((c - .3) * tileSize, r * tileSize, (c - .15) * tileSize, (r + .6) * tileSize, (c + .1) * tileSize, (r + .3) * tileSize);
-        context.bezierCurveTo((c + .15) * tileSize, (r + .4) * tileSize, (c + .3) * tileSize, (r + .5) * tileSize, (c + .45) * tileSize, (r + .3) * tileSize);
-        context.bezierCurveTo((c + .6) * tileSize, (r + .5) * tileSize, (c + .7) * tileSize, (r + .45) * tileSize, (c + .8) * tileSize, (r + .3) * tileSize);
-        context.bezierCurveTo((c + 1) * tileSize, (r + .6) * tileSize, (c + 1.3) * tileSize, r * tileSize, (c + 1) * tileSize, (r - .05) * tileSize);
-        context.closePath();
-        context.fill();
-    } else if (curlySurface && isOccupied(0, -1) && isOccupied(-1, 0) && !isOccupied(-1, -1)) {
-        context.beginPath();
-        context.moveTo((c - .05) * tileSize, (r + .38) * tileSize);
-        context.bezierCurveTo((c + .2) * tileSize, (r + .38) * tileSize, (c + .25) * tileSize, (r - .05) * tileSize, c * tileSize, (r - .05) * tileSize);
-        context.closePath();
-        context.fill();
-    } else if (!curlySurface && !isOccupied(0, -1)) context.fillRect(c * tileSize, r * tileSize, tileSize, outlinePixels);
-
-    if (!curlySurface && !isOccupied(-1, -1)) context.fillRect(c * tileSize, r * tileSize, outlinePixels, outlinePixels);
-    if (!curlySurface && !isOccupied(1, -1)) context.fillRect((c + complement) * tileSize, r * tileSize, outlinePixels, outlinePixels);
-    if (!curlySurface && !isOccupied(-1, 1)) context.fillRect(c * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
-    if (!curlySurface && !isOccupied(1, 1)) context.fillRect((c + complement) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
-    if (!curlySurface && !isOccupied(0, 1)) context.fillRect(c * tileSize, (r + complement) * tileSize, tileSize, outlinePixels);
-    if (!curlySurface && !isOccupied(-1, 0)) context.fillRect(c * tileSize, r * tileSize, outlinePixels, tileSize);
-    if (!curlySurface && !isOccupied(1, 0)) context.fillRect((c + complement) * tileSize, r * tileSize, outlinePixels, tileSize);
-
-    function drawGrass(context) {
-        count = Math.floor(rng() * 3 + 10);
-        for (var i = 0; i < count; i++) {
-            var bladeStart = rng();
-            var bladeHeight = rng() * .1 + .05;
-            var curve = rng() * .15;
-            if (i % 2 != 0) {
-                bladeStart = bladeStart * (-1) + 1;
-                curve = curve * (-1);
-            }
+    if (wall.surfaceShape === "algae") {
+        if (!isOccupied(0, -1)) {
             context.beginPath();
-            context.moveTo((c + bladeStart) * tileSize, (r + .1) * tileSize);
-            context.bezierCurveTo((c + bladeStart) * tileSize, r * tileSize, (c + bladeStart / 1.2 + curve) * tileSize, (r - bladeHeight) * tileSize, (c + bladeStart / 1.2 + curve * 2) * tileSize, (r - bladeHeight) * tileSize);
-            context.strokeStyle = wall.surface;
-            context.lineWidth = tileSize / 70;
-            context.stroke();
+            context.moveTo(c * tileSize, (r - .05) * tileSize);
+            context.bezierCurveTo((c - .25) * tileSize, (r - .1) * tileSize, (c - .4) * tileSize, (r + .1) * tileSize, (c - .25) * tileSize, (r + .2) * tileSize);
+            context.bezierCurveTo((c - .3) * tileSize, (r + .55) * tileSize, (c - .1) * tileSize, (r + .6) * tileSize, (c + .1) * tileSize, (r + .55) * tileSize);
+            context.bezierCurveTo((c + .3) * tileSize, (r + .7) * tileSize, (c + .7) * tileSize, (r + .6) * tileSize, (c + .65) * tileSize, (r + .5) * tileSize);
+            context.bezierCurveTo((c + 1) * tileSize, (r + .6) * tileSize, (c + 1.3) * tileSize, (r + .6) * tileSize, (c + 1.15) * tileSize, (r + .1) * tileSize);
+            context.bezierCurveTo((c + 1.15) * tileSize, r * tileSize, (c + 1.2) * tileSize, (r - .1) * tileSize, (c + 1) * tileSize, (r - .05) * tileSize);
+            context.bezierCurveTo((c + .8) * tileSize, (r - .1) * tileSize, (c + .7) * tileSize, (r - .15) * tileSize, (c + .6) * tileSize, (r - .05) * tileSize);
+            context.bezierCurveTo((c + .4) * tileSize, (r - .1) * tileSize, (c + .3) * tileSize, (r - .15) * tileSize, (c + .2) * tileSize, (r - .05) * tileSize);
+            context.bezierCurveTo((c + .2) * tileSize, (r - .1) * tileSize, (c + .1) * tileSize, (r - .15) * tileSize, (c + 0) * tileSize, (r - .05) * tileSize);
+            context.fill();
+        } else if (isOccupied(0, -1) && isOccupied(-1, 0) && !isOccupied(-1, -1)) {
+            context.beginPath();
+            context.moveTo((c - .05) * tileSize, (r + .55) * tileSize);
+            context.bezierCurveTo((c + .1) * tileSize, (r + .5) * tileSize, (c + .3) * tileSize, (r + .55) * tileSize, (c + .2) * tileSize, (r + .25) * tileSize);
+            context.bezierCurveTo((c + .25) * tileSize, (r + .2) * tileSize, (c + .35) * tileSize, (r - .05) * tileSize, (c + .05) * tileSize, (r - .05) * tileSize);
+            context.lineTo(c * tileSize, r * tileSize);
+            context.closePath();
+            context.fill();
         }
+    }
+    else if (wall.surfaceShape === "snow") {
+        if (!isOccupied(0, -1)) {
+            context.beginPath();
+            context.moveTo((c + 1) * tileSize, (r - .05) * tileSize);
+            context.lineTo(c * tileSize, (r - .05) * tileSize);
+            context.bezierCurveTo((c - .2) * tileSize, (r - .05) * tileSize, (c - .35) * tileSize, (r + .4) * tileSize, (c + 0) * tileSize, (r + .45) * tileSize);
+            context.bezierCurveTo((c + .1) * tileSize, (r + .55) * tileSize, (c + .45) * tileSize, (r + .6) * tileSize, (c + .6) * tileSize, (r + .45) * tileSize);
+            context.bezierCurveTo((c + .85) * tileSize, (r + .6) * tileSize, (c + 1.3) * tileSize, (r + .3) * tileSize, (c + 1.1) * tileSize, (r - .02) * tileSize);
+            context.fill();
+            if (isOccupied(-1, -1)) {
+                context.beginPath();
+                context.moveTo((c + .4) * tileSize, (r - .05) * tileSize);
+                context.bezierCurveTo((c + .15) * tileSize, (r - .15) * tileSize, (c + .1) * tileSize, (r - .4) * tileSize, (c + .05) * tileSize, (r - .45) * tileSize);
+                context.bezierCurveTo((c + .05) * tileSize, (r - .5) * tileSize, (c - .1) * tileSize, (r - .5) * tileSize, (c - .1) * tileSize, (r - .4) * tileSize);
+                context.bezierCurveTo((c - .1) * tileSize, (r - .3) * tileSize, (c - .1) * tileSize, (r - .1) * tileSize, (c - .18) * tileSize, (r + .1) * tileSize);
+                context.closePath();
+                context.fill();
+            }
+            if (isOccupied(1, -1)) {
+                context.beginPath();
+                context.moveTo((c + .6) * tileSize, (r - .05) * tileSize);
+                context.bezierCurveTo((c + .85) * tileSize, (r - .15) * tileSize, (c + .9) * tileSize, (r - .4) * tileSize, (c + .95) * tileSize, (r - .45) * tileSize);
+                context.bezierCurveTo((c + .95) * tileSize, (r - .5) * tileSize, (c + 1.1) * tileSize, (r - .5) * tileSize, (c + 1.1) * tileSize, (r - .4) * tileSize);
+                context.bezierCurveTo((c + 1.1) * tileSize, (r - .3) * tileSize, (c + 1.1) * tileSize, (r - .1) * tileSize, (c + 1.24) * tileSize, (r + .3) * tileSize);
+                context.closePath();
+                context.fill();
+            }
+        } else if (isOccupied(0, -1) && isOccupied(-1, 0) && !isOccupied(-1, -1)) {
+            context.beginPath();
+            context.moveTo((c - .05) * tileSize, (r + .38) * tileSize);
+            context.bezierCurveTo((c + .1) * tileSize, (r + .53) * tileSize, (c + .3) * tileSize, (r - .05) * tileSize, (c + .05) * tileSize, (r - .05) * tileSize);
+            context.lineTo(c * tileSize, r * tileSize);
+            context.closePath();
+            context.fill();
+        }
+    }
+    else if (wall.surfaceShape === "grass") {
+        if (!isOccupied(0, -1)) {
+            context.beginPath();
+            context.moveTo((c + 1) * tileSize, (r - .05) * tileSize);
+            context.lineTo(c * tileSize, (r - .05) * tileSize);
+            context.bezierCurveTo((c - .3) * tileSize, r * tileSize, (c - .15) * tileSize, (r + .6) * tileSize, (c + .1) * tileSize, (r + .3) * tileSize);
+            context.bezierCurveTo((c + .15) * tileSize, (r + .4) * tileSize, (c + .3) * tileSize, (r + .5) * tileSize, (c + .45) * tileSize, (r + .3) * tileSize);
+            context.bezierCurveTo((c + .6) * tileSize, (r + .5) * tileSize, (c + .7) * tileSize, (r + .45) * tileSize, (c + .8) * tileSize, (r + .3) * tileSize);
+            context.bezierCurveTo((c + 1) * tileSize, (r + .6) * tileSize, (c + 1.3) * tileSize, r * tileSize, (c + 1) * tileSize, (r - .05) * tileSize);
+            context.closePath();
+            context.fill();
+        } else if (isOccupied(0, -1) && isOccupied(-1, 0) && !isOccupied(-1, -1)) {
+            context.beginPath();
+            context.moveTo((c - .05) * tileSize, (r + .38) * tileSize);
+            context.bezierCurveTo((c + .2) * tileSize, (r + .38) * tileSize, (c + .25) * tileSize, (r - .05) * tileSize, c * tileSize, (r - .05) * tileSize);
+            context.closePath();
+            context.fill();
+        }
+    }
+    else if (wall.surfaceShape === "stripe") {
+        var outlineThickness = .2;
+        var complement = 1 - outlineThickness;
+        var outlinePixels = outlineThickness * tileSize;
+        if (!isOccupied(0, -1)) context.fillRect(c * tileSize, r * tileSize, tileSize, outlinePixels);
+        if (!isOccupied(-1, -1)) context.fillRect(c * tileSize, r * tileSize, outlinePixels, outlinePixels);
+        if (!isOccupied(1, -1)) context.fillRect((c + complement) * tileSize, r * tileSize, outlinePixels, outlinePixels);
+        if (!isOccupied(-1, 1)) context.fillRect(c * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
+        if (!isOccupied(1, 1)) context.fillRect((c + complement) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels);
+        if (!isOccupied(0, 1)) context.fillRect(c * tileSize, (r + complement) * tileSize, tileSize, outlinePixels);
+        if (!isOccupied(-1, 0)) context.fillRect(c * tileSize, r * tileSize, outlinePixels, tileSize);
+        if (!isOccupied(1, 0)) context.fillRect((c + complement) * tileSize, r * tileSize, outlinePixels, tileSize);
     }
 }
 
-function drawBushes(context, r, c, isOccupied) {
-    if (!isOccupied(0, -1) && isOccupied(1, 0) && isOccupied(1, -1)) {
+function drawGrass(context, r, c) {
+    count = Math.floor(rng() * 3 + 10);
+    for (var i = 0; i < count; i++) {
+        var bladeStart = rng();
+        var bladeHeight = rng() * .1 + .05;
+        var curve = rng() * .15;
+        if (i % 2 != 0) {
+            bladeStart = bladeStart * (-1) + 1;
+            curve = curve * (-1);
+        }
         context.beginPath();
-        context.moveTo((c + 1) * tileSize, r * tileSize);
-        context.lineTo((c + 1) * tileSize, (r - .4) * tileSize);
-        context.bezierCurveTo((c + .9) * tileSize, (r - .4) * tileSize, (c + 1) * tileSize - tileSize * .2, (r - .4) * tileSize, (c + 1) * tileSize - tileSize * .2, (r - .2) * tileSize);
-        context.bezierCurveTo((c + 1) * tileSize - tileSize * .3, (r - .2) * tileSize, (c + 1) * tileSize - tileSize * .4, (r - .1) * tileSize, (c + 1) * tileSize - tileSize * .3, r * tileSize);
-        context.lineTo((c + 1) * tileSize, r * tileSize);
-        context.closePath();
-        context.fill();
-
-        context.beginPath();
-        context.moveTo((c + 1) * tileSize, (r - .4) * tileSize);
-        context.bezierCurveTo((c + .9) * tileSize, (r - .4) * tileSize, (c + 1) * tileSize - tileSize * .2, (r - .4) * tileSize, (c + 1) * tileSize - tileSize * .2, (r - .2) * tileSize);
-        context.bezierCurveTo((c + 1) * tileSize - tileSize * .3, (r - .2) * tileSize, (c + 1) * tileSize - tileSize * .4, (r - .1) * tileSize, (c + 1) * tileSize - tileSize * .3, r * tileSize);
-    }
-
-    if (!isOccupied(0, -1) && isOccupied(-1, 0) && isOccupied(-1, -1)) {
-        /*context.shadowColor = "#666";
-        context.shadowOffsetX = .5;
-        context.shadowOffsetY = -.5;
-        context.shadowBlur = 1;*/
-
-        context.beginPath();
-        context.moveTo(c * tileSize, r * tileSize);
-        context.lineTo(c * tileSize, (r - .4) * tileSize);
-        context.bezierCurveTo((c + .1) * tileSize, (r - .4) * tileSize, (c + .2) * tileSize, (r - .4) * tileSize, (c + .2) * tileSize, (r - .2) * tileSize);
-        context.bezierCurveTo((c + .3) * tileSize, (r - .2) * tileSize, (c + .4) * tileSize, (r - .1) * tileSize, (c + .3) * tileSize, r * tileSize);
-        context.lineTo(c * tileSize, r * tileSize);
-        context.closePath();
-        context.fill();
-
-        context.restore();
-
-        context.beginPath();
-        context.moveTo(c * tileSize, (r - .4) * tileSize);
-        context.bezierCurveTo((c + .1) * tileSize, (r - .4) * tileSize, (c + .2) * tileSize, (r - .4) * tileSize, (c + .2) * tileSize, (r - .2) * tileSize);
-        context.bezierCurveTo((c + .3) * tileSize, (r - .2) * tileSize, (c + .4) * tileSize, (r - .1) * tileSize, (c + .3) * tileSize, r * tileSize);
-        /*context.strokeStyle = "#7dff1a";
-        context.stroke();*/
+        context.moveTo((c + bladeStart) * tileSize, (r + .1) * tileSize);
+        context.bezierCurveTo((c + bladeStart) * tileSize, r * tileSize, (c + bladeStart / 1.2 + curve) * tileSize, (r - bladeHeight) * tileSize, (c + bladeStart / 1.2 + curve * 2) * tileSize, (r - bladeHeight) * tileSize);
+        context.strokeStyle = wall.surface;
+        context.lineWidth = tileSize / 70;
+        context.stroke();
     }
 }
 
@@ -5482,7 +5445,7 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, isOccupied, canConne
     var color2 = splock ? color : spikeColors.spokes;
 
     if (!skip && canConnect(0, 1) && (!(isOccupied(-1, 0) && isOccupied(1, 0) && (canConnect(1, 1) || canConnect(-1, 1))))) {
-        context.fillRect((c + .26) * tileSize, (r + .8) * tileSize, tileSize * .48, tileSize * .4);
+        context.fillRect((c + .26) * tileSize, (r + .7) * tileSize, tileSize * .48, tileSize * .4);
         boltBool = true;
     }
     if (!skip && !canConnect(0, 1) || splock) {
@@ -5495,7 +5458,7 @@ function drawSpikeSupports(context, r, c, x, y, spikeWidth, isOccupied, canConne
             boltBool = true;
         }
         if (canConnect(1, 0) && (!(isOccupied(0, -1) && !isOccupied(1, 0) && isOccupied(0, 1) && !isOccupied(-1, 0) && canConnect(1, -1) && canConnect(1, 1)) || splock)) {
-            context.fillRect((c + .8) * tileSize, (r + .26) * tileSize, tileSize * .4, tileSize * .48);
+            context.fillRect((c + .7) * tileSize, (r + .26) * tileSize, tileSize * .4, tileSize * .48);
             boltBool = true;
         }
     }
@@ -5825,10 +5788,10 @@ function drawOneWayWall(context, r, c, dr, dc) {
     context.stroke();
     context.lineWidth = 0;
 
-    if (dr == -1) roundRect(context, (c - 1 / 15) * tileSize, (r - 1 / 15) * tileSize, tileSize + 2 * tileSize / 15, tileSize / 4 + 2 * tileSize / 15, 2, true, false);
-    else if (dr == 1) roundRect(context, (c - 1 / 15) * tileSize, (r + 1 - 1 / 15 - 1 / 4) * tileSize, tileSize + 2 * tileSize / 15, tileSize / 4 + 2 * tileSize / 15, 2, true, false);
-    else if (dc == -1) roundRect(context, (c - 1 / 15) * tileSize, r * tileSize - tileSize / 15, tileSize / 4 + 2 * tileSize / 15, tileSize + 2 * tileSize / 15, 2, true, false);
-    else if (dc == 1) roundRect(context, (c + 1 - 1 / 15 - 1 / 4) * tileSize, r * tileSize - tileSize / 15, tileSize / 4 + 2 * tileSize / 15, tileSize + 2 * tileSize / 15, 2, true, false);
+    if (dr == -1) roundRect(context, (c - 1 / 15) * tileSize, (r - 1 / 15) * tileSize, tileSize + 2 * tileSize / 15, tileSize / 4 + 2 * tileSize / 15, tileSize / 17, true, false);
+    else if (dr == 1) roundRect(context, (c - 1 / 15) * tileSize, (r + 1 - 1 / 15 - 1 / 4) * tileSize, tileSize + 2 * tileSize / 15, tileSize / 4 + 2 * tileSize / 15, tileSize / 17, true, false);
+    else if (dc == -1) roundRect(context, (c - 1 / 15) * tileSize, r * tileSize - tileSize / 15, tileSize / 4 + 2 * tileSize / 15, tileSize + 2 * tileSize / 15, tileSize / 17, true, false);
+    else if (dc == 1) roundRect(context, (c + 1 - 1 / 15 - 1 / 4) * tileSize, r * tileSize - tileSize / 15, tileSize / 4 + 2 * tileSize / 15, tileSize + 2 * tileSize / 15, tileSize / 17, true, false);
 }
 
 /* var grd = context.createLinearGradient(c * tileSize, r * tileSize, (c + 1) * tileSize, (r + 1) * tileSize);
@@ -5957,16 +5920,13 @@ function drawBubble(context, r, c) {
     bubbleX = c * tileSize;
     var grd = context.createRadialGradient(bubbleX, r * tileSize, 0, bubbleX, r * tileSize, tileSize);
     grd.addColorStop(0, "rgba(255,255,255,1)");
-    grd.addColorStop(.5, "rgba(220,255,255,.2)");
-    grd.addColorStop(1, "rgba(0,100,255,.05)");
+    grd.addColorStop(.5, "rgba(220,255,255,.3)");
+    grd.addColorStop(1, "rgba(0,100,255,.12)");
     context.fillStyle = grd;
-    context.lineWidth = 1;
-    context.strokeStyle = "rgba(255,255,255,.05)";
 
     context.beginPath();
     context.arc((c + .5) * tileSize, (r + .5) * tileSize, tileSize / 1.8, 0, 2 * Math.PI);
     context.fill();
-    context.stroke();
 }
 
 function drawLiquid(context, r, c, type, adjacentTiles) {
