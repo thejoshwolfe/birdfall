@@ -5118,7 +5118,7 @@ function drawWall(context, r, c, adjacentTiles, rng, grass) {
 }
 
 function drawPlant(context, r, c, isOccupied, rng, fillStyle) {
-    var tileCode = level.map[getLocation(level, r - 1, c)];
+    var tileCode = r === 0 ? 0 : level.map[getLocation(level, r - 1, c)];
     if ((wall.randomColors && isOccupied(0, 1) && isOccupied(-1, 0) && isOccupied(-1, 1)) || (wall.surfaceShape === "grass" && !isOccupied(0, -1) && tileCode !== CLOSEDLIFT && tileCode !== OPENLIFT)) {
         var plant = 1;
         var startPoint = (rng() * .7 - .3) * tileSize;
