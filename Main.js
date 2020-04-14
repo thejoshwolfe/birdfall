@@ -791,8 +791,6 @@ document.addEventListener("keydown", function (event) {
                 return;
             case "M".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0 && !blockIsInFocus) { setPaintBrushTileCode(MIKE); break; }
-                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && !splockIsActive) { splockIsActive = true; changeSpike2ButtonColor(); break; }
-                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); break; }
                 return;
             case 190:
                 toggleEditorLocation(true);
@@ -806,6 +804,11 @@ document.addEventListener("keydown", function (event) {
                 if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
                 if (modifierMask === 0 && replayString) { advance(); break; }
             case 32: // spacebar
+                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && !splockIsActive) { splockIsActive = true; changeSpike2ButtonColor(); break; }
+                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); break; }
+                if (modifierMask === 0) { switchSnakes(1); break; }
+                if (modifierMask === SHIFT) { switchSnakes(-1); break; }
+                return;
             case 9: // tab
                 if (modifierMask === 0) { switchSnakes(1); break; }
                 if (modifierMask === SHIFT) { switchSnakes(-1); break; }
@@ -1128,7 +1131,7 @@ var paintButtonIdAndTileCodes = [
     ["paintWaterButton", WATER],
     ["paintSnakeButton", SNAKE],
     ["paintBlockButton", BLOCK],
-    ["paintSpike2Button", MIKE],
+    ["paintMikeButton", MIKE],
     ["paintFruitButton", FRUIT],
     ["paintPoisonFruitButton", POISONFRUIT],
 ];
@@ -1315,7 +1318,7 @@ function selectAll() {
 }
 
 function setPaintBrushTileCode(tileCode) {
-    var spike2 = document.getElementById("paintSpike2Button");
+    var spike2 = document.getElementById("paintSplockButton");
     if (tileCode !== MIKE && tileCode !== BLOCK) {
         blockIsInFocus = false;
         spike2.textContent = "Mike";
@@ -1485,15 +1488,15 @@ function paintBrushTileCodeChanged() {
     render();
 }
 function changeSpike2ButtonColor() {
-    var button = document.getElementById("paintSpike2Button");
-    if (splockIsActive) {
-        button.style.background = "linear-gradient(#4b91ff, #055ce4)";
-        button.style.color = "white";
-    }
-    else {
-        button.style.background = "";
-        button.style.color = "";
-    }
+    var button = document.getElementById("paintSplockButton");
+    // if (splockIsActive) {
+    //     button.style.background = "linear-gradient(#4b91ff, #055ce4)";
+    //     button.style.color = "white";
+    // }
+    // else {
+    //     button.style.background = "";
+    //     button.style.color = "";
+    // }
 }
 
 function cutSelection() {
@@ -1774,7 +1777,6 @@ function paintAtLocation(location, changeLog) {
         changeLog.push([paintBrushObject.type, paintBrushObject.id, oldSnakeSerialization, serializeObjectState(paintBrushObject)]);
     } else if (paintBrushTileCode === BLOCK) {
         blockIsInFocus = true;
-        document.getElementById("paintSpike2Button").textContent = "Splock";
         var objectHere = findObjectAtLocation(location);
         if (paintBrushBlockId == null && objectHere != null && objectHere.type === BLOCK) {
             // just start editing this block
@@ -2421,13 +2423,13 @@ var bg3 = ["fade", "rgba(145, 254, 198", "rgba(117, 255, 192"];
 var bg4 = ["fade", "rgba(7, 7, 83", "rgba(0, 0, 70"];
 var bg5 = ["fade", "rgba(140, 190, 190", "rgba(135, 185, 185"];
 
-var wall1 = { base: "#976537", surface: "#96fe45", curvedWalls: true, surfaceShape: "grass", grass: true, baseSpots: true, randomColors: false };
-var wall2 = { base: "#30455B", surface: "white", curvedWalls: true, surfaceShape: "snow", grass: false, baseSpots: true, randomColors: false };
-var wall3 = { base: "#734d26", surface: "#009933", curvedWalls: true, surfaceShape: "grass", grass: true, baseSpots: true, randomColors: false };
-var wall4 = { base: "#844204", surface: "#282", curvedWalls: false, surfaceShape: "stripe", grass: false, baseSpots: false, randomColors: false };
-var wall5 = { base: "#00aaff", surface: "#ffb3ec", curvedWalls: true, surfaceShape: "grass", grass: false, baseSpots: false, randomColors: false };
-var wall6 = { base: "black", surface: "rainbow", curvedWalls: false, surfaceShape: "stripe", grass: false, baseSpots: false, randomColors: false };
-var wall7 = { base: "transparent", surface: "green", curvedWalls: false, surfaceShape: "algae", grass: true, baseSpots: false, randomColors: true };
+var wall1 = { base: "#976537", surface: "#96fe45", curvedWalls: true, surfaceShape: "grass", grass: true, flowers: true, baseSpots: true, randomColors: false };
+var wall2 = { base: "#30455B", surface: "white", curvedWalls: true, surfaceShape: "snow", grass: false, flowers: false, baseSpots: true, randomColors: false };
+var wall3 = { base: "#734d26", surface: "#009933", curvedWalls: true, surfaceShape: "grass", grass: true, flowers: true, baseSpots: true, randomColors: false };
+var wall4 = { base: "#844204", surface: "#282", curvedWalls: false, surfaceShape: "stripe", grass: false, flowers: false, baseSpots: false, randomColors: false };
+var wall5 = { base: "#00aaff", surface: "#ffb3ec", curvedWalls: true, surfaceShape: "grass", grass: false, flowers: false, baseSpots: false, randomColors: false };
+var wall6 = { base: "black", surface: "rainbow", curvedWalls: false, surfaceShape: "stripe", grass: false, flowers: false, baseSpots: false, randomColors: false };
+var wall7 = { base: "transparent", surface: "green", curvedWalls: false, surfaceShape: "algae", grass: true, flowers: false, baseSpots: false, randomColors: true };
 
 // must be full length to satisfy tint function
 var snakeColors1 = ["#fd0c0b", "#18d11f", "#004dff", "#fdc122"];
@@ -2454,11 +2456,11 @@ var blockColors5 = ["#ffccff", "#ffc2b3", "#ffffcc", "#ccffe6", "#ccffff"];
 var blockColors6 = ["#bf4053", "#ec799f", "#a679d2", "#6a45a1", "#4d6dcb"];
 
 var fontSize = tileSize * 5;
-var textStyle1 = { fontSize: fontSize, fontFamily: "Chalkboard SE", win: "#fdc122", lose: "#fd0c0b" };
-var textStyle2 = { fontSize: fontSize, fontFamily: "Chalkboard SE", win: "#400080", lose: "#ff6600" };
-var textStyle3 = { fontSize: fontSize, fontFamily: "Impact", win: "#BA145C", lose: "#F75802" };
+var textStyle1 = { fontSize: fontSize, fontFamily: "American Typewriter", win: "#fdc122", lose: "#fd0c0b" };
+var textStyle2 = { fontSize: fontSize, fontFamily: "American Typewriter", win: "#400080", lose: "#ff6600" };
+var textStyle3 = { fontSize: fontSize, fontFamily: "American Typewriter", win: "#BA145C", lose: "#F75802" };
 var textStyle4 = { fontSize: fontSize, fontFamily: "Arial", win: "#ff0", lose: "#f00" };
-var textStyle5 = { fontSize: fontSize, fontFamily: "Impact", win: "#80FF00", lose: "#00FFFB" };
+var textStyle5 = { fontSize: fontSize, fontFamily: "American Typewriter", win: "#80FF00", lose: "#00FFFB" };
 
 var experimentalColors1 = ["white", "#ffccff"];
 var experimentalColors2 = ["white", "#FEFE28"];
@@ -2493,7 +2495,7 @@ function populateThemeVars() {
 
 function showEditorChanged() {
     document.getElementById("showHideEditor").textContent = (persistentState.showEditor ? "Hide" : "Show") + " Editor";
-    document.getElementById("ghostEditorPane").style.display = persistentState.showEditor ? "block" : "none";
+    document.getElementById("ghostEditorPane").style.display = persistentState.showEditor ? "inline-block" : "none";
 
     ["editorDiv", "editorPane"].forEach(function (id) {
         document.getElementById(id).style.display = persistentState.showEditor ? "inline-block" : "none";
@@ -2621,10 +2623,9 @@ function move(dr, dc, doAnimations) {
         for (var i = 1; i < activeSnake.locations.length; i++) {
             // drag your tail forward
             var oldRowcol = getRowcol(level, activeSnake.locations[i]);
-            newRowcol = getRowcol(level, activeSnake.locations[i - 1]); // seems to work but ignores tail movement and doubles middle movement
+            newRowcol = getRowcol(level, activeSnake.locations[i - 1]);
             if (!size1) {
                 slitherAnimations.push(
-                    // speed,
                     [
                         SLITHER_TAIL + i,
                         activeSnake.id,
@@ -3621,20 +3622,14 @@ function render() {
                     context.fillStyle = "rgba(0,0,0,.7)";
                     context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
 
-                    // context.lineWidth = 10;
-                    // context.strokeStyle = "green";
-                    // roundRect(context, .1 * tileSize, .1 * tileSize, canvas7.width - .2 * tileSize, canvas7.height - .2 * tileSize, 20, false, true);
-
                     context.fillStyle = textStyle.win;
                     context.font = textStyle.fontSize + "px " + textStyle.fontFamily;
                     context.shadowOffsetX = 5;
                     context.shadowOffsetY = 5;
                     context.shadowColor = "rgba(255,255,255,0.1)";
                     context.shadowBlur = 4;
-                    var textString = "Well done!";
-                    var textWidth = context.measureText(textString).width;
                     context.textBaseline = "middle";
-                    context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
+                    fitTextOnCanvas(context, "Well done!", textStyle.fontFamily);
                     document.getElementById("copySVButton").disabled = false;
                 }
                 else checkResult = true;
@@ -3669,20 +3664,6 @@ function render() {
                     for (var i = 0; i < newRowcols.length; i++) {
                         context.clearRect(newRowcols[i].c * tileSize, newRowcols[i].r * tileSize, tileSize, tileSize);
                     }
-                    // context.lineWidth = 10;
-                    // context.strokeStyle = "red";
-                    // roundRect(context, .1 * tileSize, .1 * tileSize, canvas7.width - .2 * tileSize, canvas7.height - .2 * tileSize, 20, false, true);
-
-                    // context.font = textStyle.fontSize + "px " + textStyle.fontFamily;
-                    // context.fillStyle = textStyle.lose;
-                    // context.shadowOffsetX = 5;
-                    // context.shadowOffsetY = 5;
-                    // context.shadowColor = "rgba(0,0,0,0.5)";
-                    // context.shadowBlur = 4;
-                    // textString = "LOSE";
-                    // context.textBaseline = "middle";
-                    // textWidth = context.measureText(textString).width;
-                    // context.fillText(textString, (canvas4.width / 2) - (textWidth / 2), canvas4.height / 2);
                 }
                 else checkResult = false;
             }
@@ -4928,13 +4909,14 @@ function render() {
         context.restore();
     }
 
-    function fitTextOnCanvas(text, fontface, yPosition) {
-        var fontsize = 100;
-        while (context.measureText(text).width > (canvas7.width / 2) || context.measureText(text).height > (canvas7.height / 2)) {
+    function fitTextOnCanvas(context, text, fontface) {
+        var fontsize = 1000;
+        while (context.measureText(text).width > (canvas7.width / 1.2) || context.measureText(text).height > (canvas7.height / 1.2)) {
             fontsize--;
             context.font = fontsize + "px " + fontface;
         }
-        context.fillText(text, 0, yPosition);
+        var textWidth = context.measureText(text).width;
+        context.fillText(text, (canvas7.width / 2) - (textWidth / 2), canvas7.height / 2);
     }
 }
 
@@ -5116,10 +5098,56 @@ function drawWall(context, r, c, adjacentTiles, rng, grass) {
     drawBase(context, r, c, isWall, rng, wall.base);
     drawTileOutlines(context, r, c, isWall, rng);
     drawPlant(context, r, c, isWall, rng, wall.surface);
+    drawFlower(context, r, c, isWall, rng);
 
     function isWall(dc, dr) {
         var tileCode = adjacentTiles[1 + dr][1 + dc];
         return tileCode == null || tileCode === WALL;
+    }
+}
+
+function drawFlower(context, r, c, isOccupied, rng) {
+    if (wall.flowers && !isOccupied(-1, -1) && isOccupied(-1, 0) && rng() > .3) {
+        c = c - 1;
+        var offset = rng();
+        context.save();
+        context.transform(1, 0, 0, 1, offset * tileSize, 0);
+
+        context.fillStyle = "#0066cc";
+        context.beginPath();
+        context.arc((c) * tileSize, (r) * tileSize, tileSize / 12, 0, 2 * Math.PI);
+        context.fill();
+
+        context.beginPath();
+        context.arc((c - .15) * tileSize, (r + .1) * tileSize, tileSize / 12, 0, 2 * Math.PI);
+        context.fill();
+
+        context.beginPath();
+        context.arc((c - .15) * tileSize, (r + .2) * tileSize, tileSize / 12, 0, 2 * Math.PI);
+        context.fill();
+
+        context.beginPath();
+        context.arc((c) * tileSize, (r + .3) * tileSize, tileSize / 12, 0, 2 * Math.PI);
+        context.fill();
+
+        context.beginPath();
+        context.arc((c + .15) * tileSize, (r + .2) * tileSize, tileSize / 12, 0, 2 * Math.PI);
+        context.fill();
+
+        context.beginPath();
+        context.arc((c + .15) * tileSize, (r + .1) * tileSize, tileSize / 12, 0, 2 * Math.PI);
+        context.fill();
+
+        context.beginPath();
+        context.arc((c) * tileSize, (r + .15) * tileSize, tileSize / 5.5, 0, 2 * Math.PI);
+        context.fillStyle = "#0066cc";
+        context.fill();
+
+        context.beginPath();
+        context.arc((c) * tileSize, (r + .15) * tileSize, tileSize / 12, 0, 2 * Math.PI);
+        context.fillStyle = "yellow";
+        context.fill();
+        context.restore();
     }
 }
 
@@ -5276,14 +5304,14 @@ function drawTileOutlines(context, r, c, isOccupied, rng) {
                 context.moveTo((c + .6) * tileSize, (r - .05) * tileSize);
                 context.bezierCurveTo((c + .85) * tileSize, (r - .15) * tileSize, (c + .9) * tileSize, (r - .4) * tileSize, (c + .95) * tileSize, (r - .45) * tileSize);
                 context.bezierCurveTo((c + .95) * tileSize, (r - .5) * tileSize, (c + 1.1) * tileSize, (r - .5) * tileSize, (c + 1.1) * tileSize, (r - .4) * tileSize);
-                context.bezierCurveTo((c + 1.1) * tileSize, (r - .3) * tileSize, (c + 1.1) * tileSize, (r - .1) * tileSize, (c + 1.1) * tileSize, (r + .3) * tileSize);
+                context.bezierCurveTo((c + 1.1) * tileSize, (r - .3) * tileSize, (c + 1.2) * tileSize, (r - .1) * tileSize, (c + 1.15) * tileSize, (r + .3) * tileSize);
                 context.closePath();
                 context.fill();
             }
         } else if (isOccupied(0, -1) && isOccupied(-1, 0) && !isOccupied(-1, -1)) {
             context.beginPath();
             context.moveTo((c - .05) * tileSize, (r + .38) * tileSize);
-            context.bezierCurveTo((c + .1) * tileSize, (r + .53) * tileSize, (c + .3) * tileSize, (r - .05) * tileSize, (c + .05) * tileSize, (r - .05) * tileSize);
+            context.bezierCurveTo((c + .1) * tileSize, (r + .53) * tileSize, (c + .3) * tileSize, (r - .15) * tileSize, (c + .05) * tileSize, (r - .05) * tileSize);
             context.lineTo(c * tileSize, r * tileSize);
             context.closePath();
             context.fill();
