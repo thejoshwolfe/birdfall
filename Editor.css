@@ -126,7 +126,7 @@ canvas {
 
 #ghostEditorPane {
     height: 500px;
-    width: 100px;
+    width: 100%;
     border-radius: 20px;
     border: 5px solid transparent;
 }
@@ -416,6 +416,7 @@ input[type=radio] {
 
 .plusMinus {
     font-size: 12pt;
+    line-height: 12pt;
     font-weight: 900;
     border-radius: 3px;
     width: 15px;
