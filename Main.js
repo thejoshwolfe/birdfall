@@ -88,6 +88,12 @@ var defaultOn = true;
 var replayAnimationsOn = false;
 
 function updateSwitches() {
+    var fitDefault = "";
+    if ((fitDefault = localStorage.getItem("cachedFitDefault")) !== null) {
+        if (fitDefault === "fitCanvas") document.getElementById("fitCanvasDefault").checked = true;
+        else if (fitDefault === "fitControls") document.getElementById("fitControlsDefault").checked = true;
+    }
+
     if (localStorage.getItem("cachedAO") !== null) animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
     if (localStorage.getItem("cachedDO") !== null) {
         defaultOn = JSON.parse(localStorage.getItem("cachedDO"));
@@ -139,7 +145,12 @@ function loadLevel(newLevel) {
         toggleTheme(0);
         render();
     }
-    else fitCanvas(1);
+    else {
+        var fitDefault = localStorage.getItem("cachedFitDefault") !== null ? localStorage.getItem("cachedFitDefault") : fitDefault = "";
+        if (fitDefault == "" || fitDefault === "fitControls") { fitCanvas(1); fitDefault = "fitControls" }
+        else { fitCanvas(0); fitDefault === "fitCanvas" }
+        localStorage.setItem("cachedFitDefault", fitDefault);
+    }
 }
 
 function drawStaticCanvases(level) {
@@ -914,6 +925,14 @@ document.getElementById("fitControls").addEventListener("click", function () {
 document.getElementById("fitCanvas").addEventListener("click", function () {
     fitCanvas(0);
     return;
+});
+document.getElementById("fitControlsDefault").addEventListener("click", function () {
+    document.getElementById("fitCanvasDefault").checked = false;
+    localStorage.setItem("cachedFitDefault", "fitControls");
+});
+document.getElementById("fitCanvasDefault").addEventListener("click", function () {
+    document.getElementById("fitControlsDefault").checked = false;
+    localStorage.setItem("cachedFitDefault", "fitCanvas");
 });
 document.getElementById("showGridButton").addEventListener("click", function () {
     toggleGrid();
