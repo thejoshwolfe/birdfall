@@ -405,13 +405,17 @@ canvas {
 }
 
 input[type=radio] {
-    margin-top: 6.5px;
+    margin-top: 7px;
     float: right;
 }
 
 .fitButton {
     float: left;
     margin-right: 5px;
+}
+
+#fitCanvas {
+    margin-bottom: 2.5px;
 }
 
 .plusMinus {
