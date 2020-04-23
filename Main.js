@@ -1150,7 +1150,7 @@ var paintButtonIdAndTileCodes = [
     ["paintWaterButton", WATER],
     ["paintSnakeButton", SNAKE],
     ["paintBlockButton", BLOCK],
-    // ["paintMikeButton", MIKE],
+    ["paintMikeButton", MIKE],
     ["paintFruitButton", FRUIT],
     ["paintPoisonFruitButton", POISONFRUIT],
 ];
@@ -1340,7 +1340,6 @@ function setPaintBrushTileCode(tileCode) {
     var spike2 = document.getElementById("paintSplockButton");
     if (tileCode !== MIKE && tileCode !== BLOCK) {
         blockIsInFocus = false;
-        spike2.textContent = "Mike";
         splockIsActive = false;
     }
 
@@ -2462,7 +2461,7 @@ var fruitColors3 = ["#ffcc00", "#ffa700", "#ff9380", "#ff5439"];
 var fruitColors4 = ["#9900cc", "#6600cc", "#0033cc", "#0099cc", "#00cccc"];
 
 var spikeColors1 = { spokes: "#999", support: "#444", box: "#555", bolt: "#777" };
-var spikeColors2 = { spokes: "white", support: "white", box: "white", bolt: "black" };
+var spikeColors2 = { spokes: "#888", support: "#111", box: "#333", bolt: "#111" };
 var spikeColors3 = { spokes: "#333", support: "#333", box: "#333", bolt: "#777" };
 var spikeColors4 = { spokes: "#595959", support: "#3b2f2b", box: "#3b2f2b", bolt: "#595959" };
 
