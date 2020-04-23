@@ -784,13 +784,13 @@ document.addEventListener("keydown", function (event) {
                 return;
             case "T".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(TRELLIS); break; }
-                if ((!persistentState.showEditor && modifierMask === 0) || (persistentState.showEditor && modifierMask === SHIFT)) { toggleTheme(); break; }
+                if ((!persistentState.showEditor) || (persistentState.showEditor && modifierMask === SHIFT)) { toggleTheme(); break; }
                 return;
             case "O".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode([ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]); break; }
                 return;
             case "M".charCodeAt(0):
-                if (persistentState.showEditor && modifierMask === 0 && !blockIsInFocus) { setPaintBrushTileCode(MIKE); break; }
+                // if (persistentState.showEditor && modifierMask === 0 && !blockIsInFocus) { setPaintBrushTileCode(MIKE); break; }
                 return;
             case 190:
                 toggleEditorLocation(true);
@@ -804,8 +804,8 @@ document.addEventListener("keydown", function (event) {
                 if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
                 if (modifierMask === 0 && replayString) { advance(); break; }
             case 32: // spacebar
-                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && !splockIsActive) { splockIsActive = true; changeSpike2ButtonColor(); break; }
-                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); break; }
+                // if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && !splockIsActive) { splockIsActive = true; changeSpike2ButtonColor(); break; }
+                // if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); break; }
                 if (modifierMask === 0) { switchSnakes(1); break; }
                 if (modifierMask === SHIFT) { switchSnakes(-1); break; }
                 return;
@@ -1131,7 +1131,7 @@ var paintButtonIdAndTileCodes = [
     ["paintWaterButton", WATER],
     ["paintSnakeButton", SNAKE],
     ["paintBlockButton", BLOCK],
-    ["paintMikeButton", MIKE],
+    // ["paintMikeButton", MIKE],
     ["paintFruitButton", FRUIT],
     ["paintPoisonFruitButton", POISONFRUIT],
 ];
@@ -2443,7 +2443,7 @@ var fruitColors3 = ["#ffcc00", "#ffa700", "#ff9380", "#ff5439"];
 var fruitColors4 = ["#9900cc", "#6600cc", "#0033cc", "#0099cc", "#00cccc"];
 
 var spikeColors1 = { spokes: "#999", support: "#444", box: "#555", bolt: "#777" };
-var spikeColors2 = { spokes: "#333", support: "#333", box: "#111", bolt: "#333" };
+var spikeColors2 = { spokes: "white", support: "white", box: "white", bolt: "black" };
 var spikeColors3 = { spokes: "#333", support: "#333", box: "#333", bolt: "#777" };
 var spikeColors4 = { spokes: "#595959", support: "#3b2f2b", box: "#3b2f2b", bolt: "#595959" };
 
@@ -2471,7 +2471,7 @@ var themes = [  //name, background, wall, snakeColors, blockColors, spikeColors,
     ["Summer", bg2, wall3, snakeColors3, blockColors3, spikeColors4, fruitColors1, "green", textStyle3, experimentalColors2],
     ["Submerged", bg5, wall7, snakeColors1, blockColors2, spikeColors4, fruitColors4, "green", textStyle5, experimentalColors1],
     // ["Dream", bg3, wall5, snakeColors1, blockColors4, spikeColors4, fruitColors2, "white", textStyle2, experimentalColors2],
-    ["Midnight Rainbow", bg4, wall6, snakeColors1, blockColors5, spikeColors2, "white", "white", textStyle1, experimentalColors1],
+    ["Midnight Rainbow", bg4, wall6, snakeColors1, blockColors1, spikeColors2, "white", "white", textStyle1, experimentalColors1],
     ["Classic", "#8888ff", wall4, snakeColors2, blockColors1, spikeColors3, fruitColors1, "green", textStyle4, experimentalColors1],
 ];
 
@@ -2797,7 +2797,6 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
     var forwardLocations = [];
     for (var i = 0; i < pushedObjects.length; i++) {
         pushedObject = pushedObjects[i];
-
         //splocks
         for (var j = 0; j < pushedObject.splocks.length; j++) {
             var rowcol = getRowcol(level, pushedObject.splocks[j]);
@@ -2907,6 +2906,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     addIfAbsent(dyingObjects, object);
                     continue;
                 }
+                //prevents snakes lifting up splocks
                 if (yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation) && object.type === SNAKE) {
                     dieOnSplock = object.id;
                     addIfAbsent(dyingObjects, object);
@@ -3654,7 +3654,6 @@ function render() {
                             for (var j = -1; j < 2; j++) {
                                 newRowcols.push({ r: localRowcol.r + i, c: localRowcol.c + j });
                             }
-
                         }
                         // context.globalCompositeOperation("destination-out");
                         // context.beginPath();
@@ -4516,7 +4515,7 @@ function render() {
         context.save();
         if (isPoison) {
             color = "#666600";
-            stemColor = "black";
+            stemColor = "#805500";
         }
 
         context.fillStyle = color;
@@ -4544,6 +4543,7 @@ function render() {
                 // context.lineWidth = tileSize / 8;
                 // context.strokeStyle = "white";
             }
+            // context.transform(.8, 0, 0, .8, 100, 100);
             context.beginPath();
             context.moveTo(startC, startR);
             context.bezierCurveTo(startC - resize * .1, startR - resize * .05, startC - resize * .25, startR - resize * .1, startC - resize * .3, startR + resize * .05);
@@ -4572,6 +4572,19 @@ function render() {
                 context.globalCompositeOperation = "source-atop";
                 context.beginPath();
                 context.arc((c + spotC) * tileSize, (r + spotR) * tileSize, tileSize / 22, 0, 2 * Math.PI);
+                context.fill();
+            }
+            for (var i = 0; i < 10; i++) {
+                var spotC = rng();
+                var spotR = rng();
+                var mod = i % 2;
+                switch (mod) {
+                    case 0: context.fillStyle = "rgba(20,20,0,.2)"; break;
+                    case 1: context.fillStyle = "rgba(100,200,255,.1)"; break;
+                }
+                context.globalCompositeOperation = "source-atop";
+                context.beginPath();
+                context.arc((c + spotC) * tileSize, (r + spotR) * tileSize, tileSize / 10, 0, 2 * Math.PI);
                 context.fill();
             }
         }
@@ -5113,17 +5126,17 @@ function drawFlower(context, r, c, isOccupied, rng) {
         context.save();
         context.transform(1, 0, 0, 1, offset * tileSize, 0);
 
-        context.fillStyle = "#0066cc";
+        context.fillStyle = "#6666ff";
         context.beginPath();
         context.arc((c) * tileSize, (r) * tileSize, tileSize / 12, 0, 2 * Math.PI);
         context.fill();
 
         context.beginPath();
-        context.arc((c - .15) * tileSize, (r + .1) * tileSize, tileSize / 12, 0, 2 * Math.PI);
+        context.arc((c - .13) * tileSize, (r + .08) * tileSize, tileSize / 12, 0, 2 * Math.PI);
         context.fill();
 
         context.beginPath();
-        context.arc((c - .15) * tileSize, (r + .2) * tileSize, tileSize / 12, 0, 2 * Math.PI);
+        context.arc((c - .13) * tileSize, (r + .22) * tileSize, tileSize / 12, 0, 2 * Math.PI);
         context.fill();
 
         context.beginPath();
@@ -5131,16 +5144,15 @@ function drawFlower(context, r, c, isOccupied, rng) {
         context.fill();
 
         context.beginPath();
-        context.arc((c + .15) * tileSize, (r + .2) * tileSize, tileSize / 12, 0, 2 * Math.PI);
+        context.arc((c + .13) * tileSize, (r + .22) * tileSize, tileSize / 12, 0, 2 * Math.PI);
         context.fill();
 
         context.beginPath();
-        context.arc((c + .15) * tileSize, (r + .1) * tileSize, tileSize / 12, 0, 2 * Math.PI);
+        context.arc((c + .13) * tileSize, (r + .08) * tileSize, tileSize / 12, 0, 2 * Math.PI);
         context.fill();
 
         context.beginPath();
         context.arc((c) * tileSize, (r + .15) * tileSize, tileSize / 5.5, 0, 2 * Math.PI);
-        context.fillStyle = "#0066cc";
         context.fill();
 
         context.beginPath();
