@@ -3953,19 +3953,18 @@ function render() {
 
                     lastRowcol = getRowcol(level, object.locations[i - 1]); //closer to head
                     nextRowcol = getRowcol(level, object.locations[i + 1]); //closer to tail
-                    var rc = rowcol;
-                    var lrc = lastRowcol;
-                    var nrc = nextRowcol;
 
                     if (object.dead && (!dieOnSplock || dieOnSplock === object.id)) {
-                        // if (spike2Death[2] != null) {
-                        //     if (spike2Death[2].type === SNAKE && spike2Death[2].id === object.id)
-                        // }
-                        lowDeath = true;
-                        rowcol.r += .5;
-                        lastRowcol.r += .5;
-                        nextRowcol.r += .5;
-                        falling = true;
+                        if (spike2Death[2] != null && spike2Death[2].type === SNAKE && spike2Death[2].id === object.id) {
+                            lowDeath = false;
+                        }
+                        else {
+                            lowDeath = true;
+                            rowcol.r += .5;
+                            lastRowcol.r += .5;
+                            nextRowcol.r += .5;
+                            falling = true;
+                        }
                     }
                     rowcol.r += animationDisplacementRowcol.r;
                     rowcol.c += animationDisplacementRowcol.c;
