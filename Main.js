@@ -51,6 +51,7 @@ var spike2Death = [];
 var lowDeath = false;
 var dieOnSplock = false;
 var rngCorrection = [];
+var infiniteDeath = false;
 
 function correctRng() {
 
@@ -801,11 +802,10 @@ document.addEventListener("keydown", function (event) {
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode([ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]); break; }
                 return;
             case "M".charCodeAt(0):
-                // if (persistentState.showEditor && modifierMask === 0 && !blockIsInFocus) { setPaintBrushTileCode(MIKE); break; }
+                if (persistentState.showEditor && modifierMask === 0 && !blockIsInFocus) { setPaintBrushTileCode(MIKE); break; }
                 return;
             case 190:
                 toggleEditorLocation(true);
-                break;
                 return;
             case 57: // 9
                 if (modifierMask === 0) { fitCanvas(0); break; }
@@ -815,8 +815,8 @@ document.addEventListener("keydown", function (event) {
                 if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
                 if (modifierMask === 0 && replayString) { advance(); break; }
             case 32: // spacebar
-                // if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && !splockIsActive) { splockIsActive = true; changeSpike2ButtonColor(); break; }
-                // if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); break; }
+                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && !splockIsActive) { splockIsActive = true; changeSpike2ButtonColor(); break; }
+                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); break; }
                 if (modifierMask === 0) { switchSnakes(1); break; }
                 if (modifierMask === SHIFT) { switchSnakes(-1); break; }
                 return;
@@ -2011,6 +2011,7 @@ function reduceChangeLog(changeLog) {
     }
 }
 function undo(undoStuff) {
+    infiniteDeath = false;
     canvas7.style.display = "none";
     if (replayString) {
         var expectedPrefix = replayMagicNumber + "&";
@@ -2678,6 +2679,7 @@ function move(dr, dc, doAnimations) {
         if (infiniteLoopStartIndex != null) {
             // infinite loop
             animationQueue.push([0, [INFINITE_LOOP, animationQueue.length - infiniteLoopStartIndex]]);
+            infiniteDeath = true;
             break;
         } else {
             stateToAnimationIndex[serializedState] = animationQueue.length;
@@ -2733,7 +2735,8 @@ function move(dr, dc, doAnimations) {
         var fallingObjects = level.objects.filter(function (object) {
             if (object.type === FRUIT || object.type === POISONFRUIT) return; // can't fall
             var theseDyingObjects = [];
-            if (!checkMovement(null, object, 1, 0, [], theseDyingObjects)) return false;
+            var dyingLocations = [];
+            if (!checkMovement(null, object, 1, 0, [], theseDyingObjects, dyingLocations)) return false;
             // this object can fall. maybe more will fall with it too. we'll check those separately.
             theseDyingObjects.forEach(function (object) {
                 addIfAbsent(dyingObjects, object);
@@ -2806,7 +2809,7 @@ function getSetSubtract(array1, array2) {
     return array1.filter(function (x) { return array2.indexOf(x) == -1; });
 }
 
-function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects) {
+function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects, dyinglocations) {
     // pusher can be null (for gravity)
     // pushedObjects include snake itself when making any move
     // gravity pushes every object on every move
@@ -2819,6 +2822,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
         for (var j = 0; j < pushedObject.splocks.length; j++) {
             var rowcol = getRowcol(level, pushedObject.splocks[j]);
             var forwardRowcol = { r: rowcol.r + dr, c: rowcol.c + dc };
+            var forwardLocation = getLocation(level, forwardRowcol.r, forwardRowcol.c);
 
             if (!isInBounds(level, forwardRowcol.r, forwardRowcol.c)) {
                 if (dyingObjects == null) {
@@ -2828,35 +2832,54 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     // this thing is going to fall out of bounds
                     addIfAbsent(dyingObjects, pushedObject);
                     addIfAbsent(pushedObjects, pushedObject);
+                    // addIfAbsent(dyinglocations, forwardLocation);
                     continue;
                 }
             }
-            var forwardLocation = getLocation(level, forwardRowcol.r, forwardRowcol.c);
             var yetAnotherObject = findObjectAtLocation(forwardLocation);
             if (yetAnotherObject != null) {
                 if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === POISONFRUIT) return false;
-                // this is the problem - this prevents snakes from carrying splocks but kills them unnecessarily
                 if (yetAnotherObject.type === SNAKE) {
-                    yetAnotherObject.locations.forEach(function (loc) {
-                        var snakeRowcol = getRowcol(level, loc);
-                        var snakeForwardRowcol = { r: snakeRowcol.r + dr, c: snakeRowcol.c + dc };
-                        // can't get location using snakeForwardRowcol, screws up code
-                        if (isInBounds(level, snakeForwardRowcol.r, snakeForwardRowcol.c)) {
-                            var snakeForwardLocation = getLocation(level, snakeForwardRowcol.r, snakeForwardRowcol.c);
-                            var snakeYetAnotherObject = findObjectAtLocation(snakeForwardLocation);
-                            if (level.map[snakeForwardLocation] !== SPACE || (snakeYetAnotherObject != null && !(snakeYetAnotherObject.type === SNAKE && snakeYetAnotherObject.id === yetAnotherObject.id))) {
-                                spike2Death = [pushedObject.type, pushedObject.id, yetAnotherObject];
-                                addIfAbsent(dyingObjects, yetAnotherObject);
+                    var counter = 0;
+                    pushedObject.locations.forEach(function (loc) {
+                        var blockRowcol = getRowcol(level, loc);
+                        var blockForwardRowcol = { r: blockRowcol.r + dr, c: blockRowcol.c + dc };
+                        if (isInBounds(level, blockForwardRowcol.r, blockForwardRowcol.c)) {
+                            var blockForwardLocation = getLocation(level, blockForwardRowcol.r, blockForwardRowcol.c);
+                            var blockYetAnotherObject = findObjectAtLocation(blockForwardLocation);
+                            if (blockYetAnotherObject != null) {
+                                if (blockYetAnotherObject.type === SNAKE && blockYetAnotherObject.id === yetAnotherObject.id) counter++;
                             }
                         }
                     });
-                    continue;
+                    if (counter === 0) {
+                        spike2Death = [pushedObject.type, pushedObject.id, yetAnotherObject];
+                        addIfAbsent(dyingObjects, yetAnotherObject);
+                        continue;
+                    }
+                    // yetAnotherObject.locations.forEach(function (loc) {
+                    //     var snakeRowcol = getRowcol(level, loc);
+                    //     var snakeForwardRowcol = { r: snakeRowcol.r + dr, c: snakeRowcol.c + dc };
+                    //     if (isInBounds(level, snakeForwardRowcol.r, snakeForwardRowcol.c)) {
+                    //         var snakeForwardLocation = getLocation(level, snakeForwardRowcol.r, snakeForwardRowcol.c);
+                    //         var snakeYetAnotherObject = findObjectAtLocation(snakeForwardLocation);
+
+                    //         // this is the reason snakes can't fall under splocks even if they support them on the block part
+                    //         // need to determine if part of block is resting on snake safely
+                    //         if (level.map[snakeForwardLocation] !== SPACE || (snakeYetAnotherObject != null && !(snakeYetAnotherObject.type === SNAKE && snakeYetAnotherObject.id === yetAnotherObject.id))) {
+                    //             spike2Death = [pushedObject.type, pushedObject.id, yetAnotherObject];
+                    //             addIfAbsent(dyingObjects, yetAnotherObject);
+                    //             // addIfAbsent(dyinglocations, forwardLocation);
+                    //         }
+                    //     }
+                    // });
                 }
                 if (yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation)) {
                     var object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
                     if (object.type === SNAKE) {
                         spike2Death = [pushedObject.type, pushedObject.id];
                         addIfAbsent(dyingObjects, object);
+                        // addIfAbsent(dyinglocations, forwardLocation);
                         continue;
                     }
                 }
@@ -2869,12 +2892,19 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     }
                     return false;
                 }
-                // for (var k = 0; k < pushedObject.locations.length; k++) {
+                // for (var k = 0; k < pushedObject.locations.length; k++) {   // check
                 // var rowcol = getRowcol(level, pushedObject.locations[k]);
                 addIfAbsent(pushedObjects, yetAnotherObject);
+                // addIfAbsent(dyinglocations, forwardLocation);
                 // }
-                if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) addIfAbsent(forwardLocations, forwardLocation);
-            } else addIfAbsent(forwardLocations, forwardLocation);
+                if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) {
+                    addIfAbsent(forwardLocations, forwardLocation);
+                    // addIfAbsent(dyinglocations, forwardLocation);
+                }
+            } else {
+                addIfAbsent(forwardLocations, forwardLocation);
+                // addIfAbsent(dyinglocations, forwardLocation);
+            }
         }
 
         //locations
@@ -2889,6 +2919,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     // this thing is going to fall out of bounds
                     addIfAbsent(dyingObjects, pushedObject);
                     addIfAbsent(pushedObjects, pushedObject);
+                    // addIfAbsent(dyinglocations, forwardLocation);
                     continue;
                 }
             }
@@ -2918,16 +2949,19 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                 if (yetAnotherObject.type === SNAKE && pushedObject.type === MIKE) {
                     spike2Death = [pushedObject.type, pushedObject.id];
                     addIfAbsent(dyingObjects, yetAnotherObject);
+                    // addIfAbsent(dyinglocations, forwardLocation);
                     continue;
                 }
                 if (yetAnotherObject.type === MIKE && object.type === SNAKE) {
                     addIfAbsent(dyingObjects, object);
+                    // addIfAbsent(dyinglocations, forwardLocation);
                     continue;
                 }
-                //prevents snakes lifting up splocks
-                if (yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation) && object.type === SNAKE) {
+                // adding pusher == null allows snakes to lift up splocks in certain instances
+                if (pusher == null && yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation) && object.type === SNAKE) {
                     dieOnSplock = object.id;
                     addIfAbsent(dyingObjects, object);
+                    // addIfAbsent(dyinglocations, forwardLocation);
                     continue;
                 }
                 if (yetAnotherObject === pusher) {
@@ -2940,8 +2974,15 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     return false;
                 }
                 addIfAbsent(pushedObjects, yetAnotherObject);
-                if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) addIfAbsent(forwardLocations, forwardLocation);
-            } else addIfAbsent(forwardLocations, forwardLocation);
+                // addIfAbsent(dyinglocations, forwardLocation);
+                if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) {
+                    addIfAbsent(forwardLocations, forwardLocation);
+                    // addIfAbsent(dyinglocations, forwardLocation);
+                }
+            } else {
+                addIfAbsent(forwardLocations, forwardLocation);
+                // addIfAbsent(dyinglocations, forwardLocation);
+            }
         }
     }
 
@@ -2960,18 +3001,21 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     if (object.type === SNAKE) {
                         // ouch!
                         addIfAbsent(dyingObjects, object);
+                        // addIfAbsent(dyinglocations, forwardLocation);
                         continue;
                     }
                 }
                 else if (tileCode === LAVA) {
                     if (object.type === SNAKE || object.type === BLOCK || object.type === MIKE) {
                         addIfAbsent(dyingObjects, object);
+                        // addIfAbsent(dyinglocations, forwardLocation);
                         continue;
                     }
                 }
                 else if (tileCode === WATER) {
                     if (object.type === BLOCK || object.type === MIKE) {
                         addIfAbsent(dyingObjects, object);
+                        // addIfAbsent(dyinglocations, forwardLocation);
                         continue;
                     }
                 }
@@ -3653,7 +3697,7 @@ function render() {
                 else checkResult = true;
             }
             if (isDead()) {
-                if (!cs) {
+                if (!cs && !infiniteDeath) {
                     canvas7.style.display = "block"
                     context = canvas7.getContext("2d");
                     context.fillStyle = "rgba(0,0,0,.7)";
