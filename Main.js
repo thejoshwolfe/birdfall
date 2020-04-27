@@ -50,8 +50,9 @@ var POISONFRUIT = "p";
 var spike2Death = [];
 var lowDeath = false;
 var dieOnSplock = false;
-var rngCorrection = [];
+var theseDyingLocations = [];
 var infiniteDeath = false;
+var rngCorrection = [];
 
 function correctRng() {
 
@@ -2543,6 +2544,7 @@ function showEditorChanged() {
 function move(dr, dc, doAnimations) {
     if (!isDead()) spike2Death = [];
     lowDeath = false;
+    theseDyingLocations = [];
 
     document.getElementById("cycleDiv").innerHTML = "";
     postPortalSnakeOutline = [];
@@ -2602,7 +2604,7 @@ function move(dr, dc, doAnimations) {
                     if (otherObject.splocks.includes(newLocation) && !otherObject.locations.includes(newLocation)) return false; // can't push splock
                     if (otherObject.type === MIKE && otherObject.locations.includes(newLocation)) return false; // can't push mike
                     // push objects
-                    if (!checkMovement(activeSnake, otherObject, dr, dc, pushedObjects)) return false;
+                    if (!checkMovement(activeSnake, otherObject, dr, dc, pushedObjects, theseDyingLocations)) return false;
                 }
             } else return; // can't go through that tile
         }
@@ -2735,8 +2737,8 @@ function move(dr, dc, doAnimations) {
         var fallingObjects = level.objects.filter(function (object) {
             if (object.type === FRUIT || object.type === POISONFRUIT) return; // can't fall
             var theseDyingObjects = [];
-            var dyingLocations = [];
-            if (!checkMovement(null, object, 1, 0, [], theseDyingObjects, dyingLocations)) return false;
+            if (!checkMovement(null, object, 1, 0, [], theseDyingObjects, theseDyingLocations)) return false;
+            // alert(JSON.stringify(theseDyingLocations));
             // this object can fall. maybe more will fall with it too. we'll check those separately.
             theseDyingObjects.forEach(function (object) {
                 addIfAbsent(dyingObjects, object);
@@ -2809,7 +2811,7 @@ function getSetSubtract(array1, array2) {
     return array1.filter(function (x) { return array2.indexOf(x) == -1; });
 }
 
-function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects, dyinglocations) {
+function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects, dyingLocations) {
     // pusher can be null (for gravity)
     // pushedObjects include snake itself when making any move
     // gravity pushes every object on every move
@@ -2832,7 +2834,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     // this thing is going to fall out of bounds
                     addIfAbsent(dyingObjects, pushedObject);
                     addIfAbsent(pushedObjects, pushedObject);
-                    // addIfAbsent(dyinglocations, forwardLocation);
+                    if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                     continue;
                 }
             }
@@ -2855,31 +2857,16 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     if (counter === 0) {
                         spike2Death = [pushedObject.type, pushedObject.id, yetAnotherObject];
                         addIfAbsent(dyingObjects, yetAnotherObject);
+                        if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                         continue;
                     }
-                    // yetAnotherObject.locations.forEach(function (loc) {
-                    //     var snakeRowcol = getRowcol(level, loc);
-                    //     var snakeForwardRowcol = { r: snakeRowcol.r + dr, c: snakeRowcol.c + dc };
-                    //     if (isInBounds(level, snakeForwardRowcol.r, snakeForwardRowcol.c)) {
-                    //         var snakeForwardLocation = getLocation(level, snakeForwardRowcol.r, snakeForwardRowcol.c);
-                    //         var snakeYetAnotherObject = findObjectAtLocation(snakeForwardLocation);
-
-                    //         // this is the reason snakes can't fall under splocks even if they support them on the block part
-                    //         // need to determine if part of block is resting on snake safely
-                    //         if (level.map[snakeForwardLocation] !== SPACE || (snakeYetAnotherObject != null && !(snakeYetAnotherObject.type === SNAKE && snakeYetAnotherObject.id === yetAnotherObject.id))) {
-                    //             spike2Death = [pushedObject.type, pushedObject.id, yetAnotherObject];
-                    //             addIfAbsent(dyingObjects, yetAnotherObject);
-                    //             // addIfAbsent(dyinglocations, forwardLocation);
-                    //         }
-                    //     }
-                    // });
                 }
                 if (yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation)) {
                     var object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
                     if (object.type === SNAKE) {
                         spike2Death = [pushedObject.type, pushedObject.id];
                         addIfAbsent(dyingObjects, object);
-                        // addIfAbsent(dyinglocations, forwardLocation);
+                        if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                         continue;
                     }
                 }
@@ -2895,22 +2882,18 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                 // for (var k = 0; k < pushedObject.locations.length; k++) {   // check
                 // var rowcol = getRowcol(level, pushedObject.locations[k]);
                 addIfAbsent(pushedObjects, yetAnotherObject);
-                // addIfAbsent(dyinglocations, forwardLocation);
                 // }
                 if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) {
                     addIfAbsent(forwardLocations, forwardLocation);
-                    // addIfAbsent(dyinglocations, forwardLocation);
                 }
-            } else {
-                addIfAbsent(forwardLocations, forwardLocation);
-                // addIfAbsent(dyinglocations, forwardLocation);
-            }
+            } else addIfAbsent(forwardLocations, forwardLocation);
         }
 
         //locations
         for (var j = 0; j < pushedObject.locations.length; j++) {
             var rowcol = getRowcol(level, pushedObject.locations[j]);
             var forwardRowcol = { r: rowcol.r + dr, c: rowcol.c + dc };
+
             if (!isInBounds(level, forwardRowcol.r, forwardRowcol.c)) {
                 if (dyingObjects == null) {
                     // can't push things out of bounds
@@ -2919,7 +2902,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     // this thing is going to fall out of bounds
                     addIfAbsent(dyingObjects, pushedObject);
                     addIfAbsent(pushedObjects, pushedObject);
-                    // addIfAbsent(dyinglocations, forwardLocation);
+                    if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                     continue;
                 }
             }
@@ -2947,21 +2930,22 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     return false;
                 }
                 if (yetAnotherObject.type === SNAKE && pushedObject.type === MIKE) {
-                    spike2Death = [pushedObject.type, pushedObject.id];
+                    spike2Death = [pushedObject.type, pushedObject.id, yetAnotherObject];
                     addIfAbsent(dyingObjects, yetAnotherObject);
-                    // addIfAbsent(dyinglocations, forwardLocation);
+                    if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                     continue;
                 }
                 if (yetAnotherObject.type === MIKE && object.type === SNAKE) {
+                    // spike2Death = [yetAnotherObject.type, yetAnotherObject.id];
                     addIfAbsent(dyingObjects, object);
-                    // addIfAbsent(dyinglocations, forwardLocation);
+                    if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                     continue;
                 }
                 // adding pusher == null allows snakes to lift up splocks in certain instances
                 if (pusher == null && yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation) && object.type === SNAKE) {
                     dieOnSplock = object.id;
                     addIfAbsent(dyingObjects, object);
-                    // addIfAbsent(dyinglocations, forwardLocation);
+                    if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                     continue;
                 }
                 if (yetAnotherObject === pusher) {
@@ -2974,15 +2958,8 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     return false;
                 }
                 addIfAbsent(pushedObjects, yetAnotherObject);
-                // addIfAbsent(dyinglocations, forwardLocation);
-                if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) {
-                    addIfAbsent(forwardLocations, forwardLocation);
-                    // addIfAbsent(dyinglocations, forwardLocation);
-                }
-            } else {
-                addIfAbsent(forwardLocations, forwardLocation);
-                // addIfAbsent(dyinglocations, forwardLocation);
-            }
+                if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) addIfAbsent(forwardLocations, forwardLocation);
+            } else addIfAbsent(forwardLocations, forwardLocation);
         }
     }
 
@@ -2994,6 +2971,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
         // and we already know pushing that object.
         var tileCode = level.map[forwardLocation];
         object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
+        deadObject = offsetLocation(forwardLocation, -dr, -dc);
         if (!isTileCodeAir(pusher, object, tileCode, dr, dc)) {
             if (dyingObjects != null) {
                 if (tileCode === SPIKE) {
@@ -3001,21 +2979,21 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     if (object.type === SNAKE) {
                         // ouch!
                         addIfAbsent(dyingObjects, object);
-                        // addIfAbsent(dyinglocations, forwardLocation);
+                        if (dyingLocations != undefined) addIfAbsent(dyingLocations, deadObject);
                         continue;
                     }
                 }
                 else if (tileCode === LAVA) {
                     if (object.type === SNAKE || object.type === BLOCK || object.type === MIKE) {
                         addIfAbsent(dyingObjects, object);
-                        // addIfAbsent(dyinglocations, forwardLocation);
+                        if (dyingLocations != undefined) addIfAbsent(dyingLocations, deadObject);
                         continue;
                     }
                 }
                 else if (tileCode === WATER) {
                     if (object.type === BLOCK || object.type === MIKE) {
                         addIfAbsent(dyingObjects, object);
-                        // addIfAbsent(dyinglocations, forwardLocation);
+                        if (dyingLocations != undefined) addIfAbsent(dyingLocations, deadObject);
                         continue;
                     }
                 }
@@ -3703,28 +3681,10 @@ function render() {
                     context.fillStyle = "rgba(0,0,0,.7)";
                     context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
                     context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
-                    var snakes = getSnakes();
-                    var deadSnakes;
-                    deadSnakes = snakes.filter(function (snake) {
-                        return snake.dead === true;
-                    });
-                    var newRowcols = [];
-                    deadSnakes[0].locations.forEach(function (loc) {
-                        var start = lowDeath ? -.5 : -1;
+                    theseDyingLocations.forEach(function (loc) {
                         var localRowcol = getRowcol(level, loc);
-                        for (var i = start; i <= (start + 2); i++) {
-                            for (var j = -1; j < 2; j++) {
-                                newRowcols.push({ r: localRowcol.r + i, c: localRowcol.c + j });
-                            }
-                        }
-                        // context.globalCompositeOperation("destination-out");
-                        // context.beginPath();
-                        // context.arc((locRowcol.c + .5) * tileSize, (locRowcol.r + .5) * tileSize, tileSize / 2, 0, 2 * Math.PI);
-                        // context.closePath();
+                        context.clearRect(localRowcol.c * tileSize, (localRowcol.r + .5) * tileSize, tileSize, tileSize);
                     });
-                    for (var i = 0; i < newRowcols.length; i++) {
-                        context.clearRect(newRowcols[i].c * tileSize, newRowcols[i].r * tileSize, tileSize, tileSize);
-                    }
                 }
                 else checkResult = false;
             }
@@ -3955,9 +3915,7 @@ function render() {
                     nextRowcol = getRowcol(level, object.locations[i + 1]); //closer to tail
 
                     if (object.dead && (!dieOnSplock || dieOnSplock === object.id)) {
-                        if (spike2Death[2] != null && spike2Death[2].type === SNAKE && spike2Death[2].id === object.id) {
-                            lowDeath = false;
-                        }
+                        if (spike2Death[2] != null && spike2Death[2].type === SNAKE && spike2Death[2].id === object.id) lowDeath = false;
                         else {
                             lowDeath = true;
                             rowcol.r += .5;
