@@ -2544,7 +2544,7 @@ function showEditorChanged() {
 function move(dr, dc, doAnimations) {
     if (!isDead()) spike2Death = [];
     lowDeath = false;
-    theseDyingLocations = [];
+    if (!isDead()) theseDyingLocations = [];
 
     document.getElementById("cycleDiv").innerHTML = "";
     postPortalSnakeOutline = [];
@@ -3679,12 +3679,41 @@ function render() {
                     canvas7.style.display = "block"
                     context = canvas7.getContext("2d");
                     context.fillStyle = "rgba(0,0,0,.7)";
+                    context.globalCompositeOperation = "source-out";
                     context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
                     context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
                     theseDyingLocations.forEach(function (loc) {
                         var localRowcol = getRowcol(level, loc);
-                        context.clearRect(localRowcol.c * tileSize, (localRowcol.r + .5) * tileSize, tileSize, tileSize);
+                        context.globalCompositeOperation = "destination-out";
+                        context.fillStyle = "red";
+                        context.beginPath();
+                        context.arc((localRowcol.c + .5) * tileSize, (localRowcol.r + 1) * tileSize, tileSize * 2, 0, 2 * Math.PI);
+                        context.fill();
+                        // context.clearRect(localRowcol.c * tileSize, (localRowcol.r + .5) * tileSize, tileSize, tileSize);
                     });
+                } else if (!cs && infiniteDeath) {
+                    canvas7.style.display = "block"
+                    context = canvas7.getContext("2d");
+                    context.fillStyle = "rgba(0,0,0,.7)";
+                    context.globalCompositeOperation = "source-out";
+                    context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
+                    context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+
+                    // doesn't work if done as forEach
+                    var portalLocations = getPortalLocations();
+                    var localRowcol = getRowcol(level, portalLocations[0]);
+                    context.globalCompositeOperation = "destination-out";
+                    context.fillStyle = "red";
+                    context.beginPath();
+                    context.arc((localRowcol.c + .5) * tileSize, (localRowcol.r + .5) * tileSize, tileSize * 2, 0, 2 * Math.PI);
+                    context.fill();
+
+                    localRowcol = getRowcol(level, portalLocations[1]);
+                    context.globalCompositeOperation = "destination-out";
+                    context.fillStyle = "red";
+                    context.beginPath();
+                    context.arc((localRowcol.c + .5) * tileSize, (localRowcol.r + .5) * tileSize, tileSize * 2, 0, 2 * Math.PI);
+                    context.fill();
                 }
                 else checkResult = false;
             }
