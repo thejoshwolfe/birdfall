@@ -766,7 +766,7 @@ document.addEventListener("keydown", function (event) {
             case "B".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0 && !splockIsActive) { setPaintBrushTileCode(BLOCK); break; }
                 if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(BUBBLE); break; }
-                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); break; }
+                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { toggleSplockButton(); break; }
                 return;
             case "P".charCodeAt(0):
                 if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
@@ -816,8 +816,7 @@ document.addEventListener("keydown", function (event) {
                 if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
                 if (modifierMask === 0 && replayString) { advance(); break; }
             case 32: // spacebar
-                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && !splockIsActive) { splockIsActive = true; changeSpike2ButtonColor(); break; }
-                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); break; }
+                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus) { toggleSplockButton(); break; }
                 if (modifierMask === 0) { switchSnakes(1); break; }
                 if (modifierMask === SHIFT) { switchSnakes(-1); break; }
                 return;
@@ -935,6 +934,9 @@ document.getElementById("fitCanvasDefault").addEventListener("click", function (
     document.getElementById("fitControlsDefault").checked = false;
     localStorage.setItem("cachedFitDefault", "fitCanvas");
 });
+document.getElementById("paintSplockButton").addEventListener("click", function () {
+    toggleSplockButton();
+});
 document.getElementById("showGridButton").addEventListener("click", function () {
     toggleGrid();
 });
@@ -1016,6 +1018,19 @@ function fitCanvas(type) {
     drawStaticCanvases(getLevel());
     render();
     // location.reload();  //without this, tiles appear to have borders (comment added before static canvases added)
+}
+function toggleSplockButton() {
+    splockIsActive = !splockIsActive;
+    var button = document.getElementById("paintSplockButton");
+    button.disabled = splockIsActive ? false : true;
+    if (splockIsActive) {
+        button.style.background = "linear-gradient(#4b91ff, #055ce4)";
+        button.style.color = "white";
+    }
+    else {
+        button.style.background = "";
+        button.style.color = "";
+    }
 }
 function recalculateBorderRadius() {
     borderRadius = tileSize / borderRadiusFactor;
@@ -1408,43 +1423,37 @@ function setPaintBrushTileCode(tileCode) {
         }
         else {
             splockIsActive = false;
-            changeSpike2ButtonColor();
+            toggleSplockButton();
         }
     } else if (tileCode === MIKE) {
-        if (!blockIsInFocus) {
-            var mikes = getMikes();
-            if (paintBrushTileCode === MIKE && mikes.length > 0) {
-                // cycle through mikes ids
-                mikes.sort(compareId);
-                if (paintBrushMikeId != null) {
-                    (function () {
-                        for (var i = 0; i < mikes.length; i++) {
-                            if (mikes[i].id === paintBrushMikeId) {
-                                i += 1;
-                                if (i < mikes.length) {
-                                    // next mikes id
-                                    paintBrushMikeId = mikes[i].id;
-                                } else {
-                                    // new mikes id
-                                    paintBrushMikeId = null;
-                                }
-                                return;
+        var mikes = getMikes();
+        if (paintBrushTileCode === MIKE && mikes.length > 0) {
+            // cycle through mikes ids
+            mikes.sort(compareId);
+            if (paintBrushMikeId != null) {
+                (function () {
+                    for (var i = 0; i < mikes.length; i++) {
+                        if (mikes[i].id === paintBrushMikeId) {
+                            i += 1;
+                            if (i < mikes.length) {
+                                // next mikes id
+                                paintBrushMikeId = mikes[i].id;
+                            } else {
+                                // new mikes id
+                                paintBrushMikeId = null;
                             }
+                            return;
                         }
-                        throw unreachable()
-                    })();
-                } else {
-                    // first one
-                    paintBrushMikeId = mikes[0].id;
-                }
+                    }
+                    throw unreachable()
+                })();
             } else {
-                // new mikes id
-                paintBrushMikeId = null;
+                // first one
+                paintBrushMikeId = mikes[0].id;
             }
-        }
-        else {
-            if (paintBrushTileCode === BLOCK && !splockIsActive) { splockIsActive = true; changeSpike2ButtonColor(); }
-            else if (paintBrushTileCode === BLOCK && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); }
+        } else {
+            // new mikes id
+            paintBrushMikeId = null;
         }
     } else if (Array.isArray(tileCode)) {
         if (paintBrushTileCode === tileCode[OWWCounter]) {
@@ -1506,18 +1515,6 @@ function paintBrushTileCodeChanged() {
 
     render();
 }
-function changeSpike2ButtonColor() {
-    var button = document.getElementById("paintSplockButton");
-    // if (splockIsActive) {
-    //     button.style.background = "linear-gradient(#4b91ff, #055ce4)";
-    //     button.style.color = "white";
-    // }
-    // else {
-    //     button.style.background = "";
-    //     button.style.color = "";
-    // }
-}
-
 function cutSelection() {
     copySelection();
     fillSelection(SPACE);
@@ -2526,13 +2523,7 @@ function showEditorChanged() {
     });
 
     document.getElementById("wasdSpan").textContent = persistentState.showEditor ? "" : " or WASD";
-
-    if (!persistentState.showEditor) {
-        document.getElementById("hideHotkeyButton").disabled = true;
-    }
-    else {
-        document.getElementById("hideHotkeyButton").disabled = false;
-    }
+    document.getElementById("hideHotkeyButton").disabled = persistentState.showEditor ? false : true;
 
     if (persistentState.showEditor && defaultOn) document.getElementById("animationSlider").checked = animationsOn = false;
     else if (persistentState.showEditor && !defaultOn) document.getElementById("animationSlider").checked = animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
@@ -2604,7 +2595,7 @@ function move(dr, dc, doAnimations) {
                     if (otherObject.splocks.includes(newLocation) && !otherObject.locations.includes(newLocation)) return false; // can't push splock
                     if (otherObject.type === MIKE && otherObject.locations.includes(newLocation)) return false; // can't push mike
                     // push objects
-                    if (!checkMovement(activeSnake, otherObject, dr, dc, pushedObjects, theseDyingLocations)) return false;
+                    if (!checkMovement(activeSnake, otherObject, dr, dc, pushedObjects)) return false;
                 }
             } else return; // can't go through that tile
         }
@@ -2883,9 +2874,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                 // var rowcol = getRowcol(level, pushedObject.locations[k]);
                 addIfAbsent(pushedObjects, yetAnotherObject);
                 // }
-                if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) {
-                    addIfAbsent(forwardLocations, forwardLocation);
-                }
+                if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) addIfAbsent(forwardLocations, forwardLocation);
             } else addIfAbsent(forwardLocations, forwardLocation);
         }
 
@@ -2975,9 +2964,8 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
         if (!isTileCodeAir(pusher, object, tileCode, dr, dc)) {
             if (dyingObjects != null) {
                 if (tileCode === SPIKE) {
-                    // uh... which object was this again?
                     if (object.type === SNAKE) {
-                        // ouch!
+                        alert("yes");
                         addIfAbsent(dyingObjects, object);
                         if (dyingLocations != undefined) addIfAbsent(dyingLocations, deadObject);
                         continue;
@@ -3002,7 +2990,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
             return false;
         }
     }
-    // the push is go
+    // the push is a go
     return true;
 }
 
@@ -4060,7 +4048,13 @@ function render() {
                 } else {
                     rowcol = getRowcol(level, object.locations[i]);
                 }
-                if (object.dead) rowcol.r += 0.5;
+                if (object.dead && (!dieOnSplock || dieOnSplock === object.id)) {
+                    if (spike2Death[2] != null && spike2Death[2].type === SNAKE && spike2Death[2].id === object.id) lowDeath = false;
+                    else {
+                        lowDeath = true;
+                        rowcol.r += .5;
+                    }
+                }
                 rowcol.r += animationDisplacementRowcol.r;
                 rowcol.c += animationDisplacementRowcol.c;
                 if (i === 0) {
@@ -4815,10 +4809,10 @@ function render() {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
             if (isDead() && spike2Death[0] === MIKE && spike2Death[1] === mike.id) r += .5;
-            drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 31, tileSize * .45, tileSize * .36, color);
+            drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 31, tileSize * .48, tileSize * .36, color);
 
             var side = 0;
-            var size = tileSize / 6;
+            var size = tileSize / 8;
             var x = (c + .5) * tileSize;
             var y = (r + .5) * tileSize;
 
@@ -4833,11 +4827,11 @@ function render() {
             for (side; side < 7; side++) {
                 context.lineTo((x + size * Math.cos(side * 2 * Math.PI / 6)) * 1, (y + size * Math.sin(side * 2 * Math.PI / 6)) * 1);
             }
-            // context.lineWidth = 1.5;
-            // context.strokeStyle = "#999";
-            // context.stroke();
-            // context.fillStyle = tint(color, .5);
-            context.fillStyle = "#444";
+            context.lineWidth = 1.5;
+            context.strokeStyle = "#999";
+            context.stroke();
+            context.fillStyle = tint(color, .5);
+            context.fillStyle = "#888";
             context.fill();
             context.restore();
         });
@@ -5784,7 +5778,7 @@ function drawPortal(context, r, c, location) {
         context.fill();
         context.stroke();
     }
-    else drawCircle(context, r, c, 1, "#999");
+    else drawCircle(context, r, c, 1, "#777");
     context.restore();
 }
 
