@@ -2965,7 +2965,6 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
             if (dyingObjects != null) {
                 if (tileCode === SPIKE) {
                     if (object.type === SNAKE) {
-                        alert("yes");
                         addIfAbsent(dyingObjects, object);
                         if (dyingLocations != undefined) addIfAbsent(dyingLocations, deadObject);
                         continue;
