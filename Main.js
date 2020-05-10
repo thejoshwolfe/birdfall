@@ -47,16 +47,11 @@ var MIKE = "x";
 var FRUIT = "f";
 var POISONFRUIT = "p";
 
-var spike2Death = [];
+var newSpikeDeath = [];
 var lowDeath = false;
 var dieOnSplock = false;
 var theseDyingLocations = [];
 var infiniteDeath = false;
-var rngCorrection = [];
-
-function correctRng() {
-
-}
 
 var checkResult = false;
 var cr = false;
@@ -128,8 +123,8 @@ function loadLevel(newLevel) {
     uneditStuff.undoStack = [];
     uneditStuff.redoStack = [];
     undoStuffChanged(uneditStuff);
-    blockSupportRenderCache = {};
-    mikeSupportRenderCache = {};
+    blockRenderCache = {};
+    mikeRenderCache = {};
 
     // alert(document.getElementById("editorPane").style.offsetHeight);
     if (!persistentState.showEditor) document.getElementById("ghostEditorPane").style.display = "none";
@@ -866,8 +861,8 @@ function changeCanvasSize(delta) {
     recalculateBorderRadius();
     recalculateBlockRadius();
     textStyle.fontSize = tileSize * 5;
-    blockSupportRenderCache = {};
-    mikeSupportRenderCache = {};
+    blockRenderCache = {};
+    mikeRenderCache = {};
 
     drawStaticCanvases(getLevel());
     resizeCanvasContainer();
@@ -1013,8 +1008,8 @@ function fitCanvas(type) {
     recalculateBorderRadius();
     recalculateBlockRadius();
     textStyle.fontSize = tileSize * 5;
-    blockSupportRenderCache = {};
-    mikeSupportRenderCache = {};
+    blockRenderCache = {};
+    mikeRenderCache = {};
     drawStaticCanvases(getLevel());
     render();
     // location.reload();  //without this, tiles appear to have borders (comment added before static canvases added)
@@ -1207,8 +1202,8 @@ function toggleTheme(theme) {
     (themeCounter < themes.length - 1) ? themeCounter++ : themeCounter = 0;
     localStorage.setItem("cachedTheme", themeCounter);
     if (theme != undefined) themeCounter = theme;
-    blockSupportRenderCache = [];
-    mikeSupportRenderCache = [];
+    blockRenderCache = [];
+    mikeRenderCache = [];
     document.getElementById("themeButton").innerHTML = "Theme: <b>" + themes[themeCounter][0] + "</b>";
     drawStaticCanvases(getLevel());
 }
@@ -1353,7 +1348,6 @@ function selectAll() {
 }
 
 function setPaintBrushTileCode(tileCode) {
-    var spike2 = document.getElementById("paintSplockButton");
     if (tileCode !== MIKE && tileCode !== BLOCK) {
         blockIsInFocus = false;
         splockIsActive = false;
@@ -1388,12 +1382,10 @@ function setPaintBrushTileCode(tileCode) {
         if (!splockIsActive) {
             var blocks = getBlocks();
             if (paintBrushTileCode === BLOCK && blocks.length > 0) {
-                spike2.textContent = "Splock";
                 // cycle through block ids
                 blocks.sort(compareId);
                 if (paintBrushBlockId != null) {
                     blockIsInFocus = true;
-                    spike2.textContent = "Splock";
                     (function () {
                         for (var i = 0; i < blocks.length; i++) {
                             if (blocks[i].id === paintBrushBlockId) {
@@ -1413,7 +1405,6 @@ function setPaintBrushTileCode(tileCode) {
                 } else {
                     // first one
                     blockIsInFocus = true;
-                    spike2.textContent = "Splock";
                     paintBrushBlockId = blocks[0].id;
                 }
             } else {
@@ -1843,7 +1834,7 @@ function paintAtLocation(location, changeLog) {
                 }
             }
             changeLog.push([thisBlock.type, thisBlock.id, oldBlockSerialization, serializeObjectState(thisBlock)]);
-            delete blockSupportRenderCache[thisBlock.id];
+            delete blockRenderCache[thisBlock.id];
         }
     } else if (paintBrushTileCode === MIKE) {
         var objectHere = findObjectAtLocation(location);
@@ -1883,7 +1874,7 @@ function paintAtLocation(location, changeLog) {
                 }
             }
             changeLog.push([thisMike.type, thisMike.id, oldMikeSerialization, serializeObjectState(thisMike)]);
-            delete mikeSupportRenderCache[thisMike.id];
+            delete mikeRenderCache[thisMike.id];
         }
     } else if (paintBrushTileCode === FRUIT || paintBrushTileCode === POISONFRUIT) {
         paintTileAtLocation(location, SPACE, changeLog);
@@ -2533,7 +2524,7 @@ function showEditorChanged() {
 }
 
 function move(dr, dc, doAnimations) {
-    if (!isDead()) spike2Death = [];
+    if (!isDead()) newSpikeDeath = [];
     lowDeath = false;
     if (!isDead()) theseDyingLocations = [];
 
@@ -2750,7 +2741,6 @@ function move(dr, dc, doAnimations) {
                     anySnakesDied = true;
                 } else if (object.type === BLOCK || object.type === MIKE) {
                     // a box fell off the world
-                    if (object.splocks != null) rngCorrection.push(object.splocks);
                     removeAnimatedObject(object, changeLog);
                     removeFromArray(fallingObjects, object);
                     exitAnimationQueue.push([
@@ -2815,7 +2805,6 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
         for (var j = 0; j < pushedObject.splocks.length; j++) {
             var rowcol = getRowcol(level, pushedObject.splocks[j]);
             var forwardRowcol = { r: rowcol.r + dr, c: rowcol.c + dc };
-            var forwardLocation = getLocation(level, forwardRowcol.r, forwardRowcol.c);
 
             if (!isInBounds(level, forwardRowcol.r, forwardRowcol.c)) {
                 if (dyingObjects == null) {
@@ -2829,6 +2818,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     continue;
                 }
             }
+            var forwardLocation = getLocation(level, forwardRowcol.r, forwardRowcol.c);
             var yetAnotherObject = findObjectAtLocation(forwardLocation);
             if (yetAnotherObject != null) {
                 if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === POISONFRUIT) return false;
@@ -2846,7 +2836,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                         }
                     });
                     if (counter === 0) {
-                        spike2Death = [pushedObject.type, pushedObject.id, yetAnotherObject];
+                        newSpikeDeath = [pushedObject.type, pushedObject.id, yetAnotherObject];
                         addIfAbsent(dyingObjects, yetAnotherObject);
                         if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                         continue;
@@ -2855,7 +2845,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                 if (yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation)) {
                     var object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
                     if (object.type === SNAKE) {
-                        spike2Death = [pushedObject.type, pushedObject.id];
+                        newSpikeDeath = [pushedObject.type, pushedObject.id];
                         addIfAbsent(dyingObjects, object);
                         if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                         continue;
@@ -2919,13 +2909,13 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     return false;
                 }
                 if (yetAnotherObject.type === SNAKE && pushedObject.type === MIKE) {
-                    spike2Death = [pushedObject.type, pushedObject.id, yetAnotherObject];
+                    newSpikeDeath = [pushedObject.type, pushedObject.id, yetAnotherObject];
                     addIfAbsent(dyingObjects, yetAnotherObject);
                     if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                     continue;
                 }
                 if (yetAnotherObject.type === MIKE && object.type === SNAKE) {
-                    // spike2Death = [yetAnotherObject.type, yetAnotherObject.id];
+                    // newSpikeDeath = [yetAnotherObject.type, yetAnotherObject.id];
                     addIfAbsent(dyingObjects, object);
                     if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                     continue;
@@ -3127,12 +3117,13 @@ function removeObject(object, changeLog) {
         // no longer editing an object that doesn't exist
         paintBrushMikeId = null;
     }
-    if (object.type === BLOCK) {
-        delete blockSupportRenderCache[object.id];
-    }
-    if (object.type === MIKE) {
-        delete mikeSupportRenderCache[object.id];
-    }
+    // below caused blocks to render as just supports
+    // if (object.type === BLOCK) {
+    //     delete blockRenderCache[object.id];
+    // }
+    // if (object.type === MIKE) {
+    //     delete mikeRenderCache[object.id];
+    // }
 }
 function removeFromArray(array, element) {
     var index = array.indexOf(element);
@@ -3271,11 +3262,11 @@ var freshlyRemovedAnimatedObjects = [];
 
 // render the support beams for blocks into a temporary buffer, and remember it.
 // this is due to stencil buffers causing slowdown on some platforms. see #25.
-var blockSupportRenderCache = {
+var blockRenderCache = {
     // id: canvas4,
     // "0": document.createElement("canvas"),
 };
-var mikeSupportRenderCache = {
+var mikeRenderCache = {
     // id: canvas4,
     // "0": document.createElement("canvas"),
 };
@@ -3337,14 +3328,14 @@ function render() {
 
     if (persistentState.showEditor) {
         if (paintBrushTileCode === BLOCK && paintBrushBlockId != null) {
-            // fade everything else away
+            // darken background
             context.fillStyle = "rgba(0, 0, 0, 0.8)";
             context.fillRect(0, 0, canvas4.width, canvas4.height);
             // and render just this object in focus
             var activeBlock = findBlockById(paintBrushBlockId);
             renderLevel([activeBlock]);
         } else if (paintBrushTileCode === MIKE && paintBrushMikeId != null) {
-            // fade everything else away
+            // darken background
             context.fillStyle = "rgba(0, 0, 0, 0.8)";
             context.fillRect(0, 0, canvas4.width, canvas4.height);
             // and render just this object in focus
@@ -3379,6 +3370,7 @@ function render() {
     return; // this is the end of the function proper
 
     function renderLevel(onlyTheseObjects) {
+        var rng = new Math.seedrandom("b");
         var objects = level.objects;
         if (onlyTheseObjects != null) {
             objects = onlyTheseObjects;
@@ -3405,62 +3397,60 @@ function render() {
 
                 //combine locations and splocks because they're treated the same
                 var locations = object.locations.concat(object.splocks);
-                var minDistance = Infinity;
-                var connected = [];
-                var connectedPoints = [];
-                for (var i = 0; i < locations.length; i++) {
-                    var rowcol = getRowcol(level, locations[i]);
-                    for (var j = 0; j < locations.length; j++) {
-                        if (j != i) {
-                            var rowcolComparison = getRowcol(level, locations[j]);
-                            var distance = Math.abs(rowcol.r - rowcolComparison.r) + Math.abs(rowcol.c - rowcolComparison.c);
-                            if (distance < minDistance) {
-                                minDistance = distance;
-                                connected = [i, j];
-                                connectedPoints = [rowcol, rowcolComparison];
-                            }
-                        }
-                    }
-                }
-                // new array omitting blocks that are already connected
-                var remainingLocations = locations;
-                remainingLocations.splice(connected[0], 1);
-                remainingLocations.splice(connected[1], 1);
+                // var minDistance = Infinity;
+                // var connected = [];
+                // var connectedPoints = [];
+                // for (var i = 0; i < locations.length; i++) {
+                //     var rowcol = getRowcol(level, locations[i]);
+                //     for (var j = 0; j < locations.length; j++) {
+                //         if (j != i) {
+                //             var rowcolComparison = getRowcol(level, locations[j]);
+                //             var distance = Math.abs(rowcol.r - rowcolComparison.r) + Math.abs(rowcol.c - rowcolComparison.c);
+                //             if (distance < minDistance) {
+                //                 minDistance = distance;
+                //                 connected = [i, j];
+                //                 connectedPoints = [rowcol, rowcolComparison];
+                //             }
+                //         }
+                //     }
+                // }
+                // // new array omitting blocks that are already connected
+                // // somehow this ruins locations for the bottom section
+                // var remainingLocations = locations;
+                // remainingLocations.splice(connected[0], 1);
+                // remainingLocations.splice(connected[1], 1);
 
-                connectedPoints.forEach(function (rowcol) {
-                    if (rowcol.r < minR) minR = rowcol.r;
-                    if (rowcol.r > maxR) maxR = rowcol.r;
-                    if (rowcol.c < minC) minC = rowcol.c;
-                    if (rowcol.c > maxC) maxC = rowcol.c;
-                });
+                // connectedPoints.forEach(function (rowcol) {
+                //     if (rowcol.r < minR) minR = rowcol.r;
+                //     if (rowcol.r > maxR) maxR = rowcol.r;
+                //     if (rowcol.c < minC) minC = rowcol.c;
+                //     if (rowcol.c > maxC) maxC = rowcol.c;
+                // });
 
-                // add the horizontal connector locations to the connected blocks array
-                for (var i = 0; i < maxC - minC; i++) {
-                    var connectorRowcol = { r: minR, c: maxC - i };
-                    addIfAbsent(connectedPoints, connectorRowcol);
-                }
+                // // add the horizontal connector locations to the connected blocks array
+                // for (var i = 0; i < maxC - minC; i++) {
+                //     var connectorRowcol = { r: minR, c: maxC - i };
+                //     addIfAbsent(connectedPoints, connectorRowcol);
+                // }
 
-                // add the vertical connector locations to the connected blocks array
-                for (var i = 1; i < maxR - minR; i++) {
-                    var connectorRowcol = { r: maxR - i, c: maxC };
-                    addIfAbsent(connectedPoints, connectorRowcol);
-                }
+                // // add the vertical connector locations to the connected blocks array
+                // for (var i = 1; i < maxR - minR; i++) {
+                //     var connectorRowcol = { r: maxR - i, c: maxC };
+                //     addIfAbsent(connectedPoints, connectorRowcol);
+                // }
 
-                // find the next closest blocks and the point to which it's closest
-                minDistance = Infinity;
-                for (var i = 0; i < remainingLocations.length; i++) {
-                    var rowcol = getRowcol(level, remainingLocations[i]);
-                    for (var j = 0; j < connectedPoints.length; j++) {
-                        var distance = Math.abs(rowcol.r - connectedPoints.r) + Math.abs(rowcol.c - connectedPoints.c);
-                        if (distance < minDistance) {
-                            minDistance = distance;
-                            connected = [i, j];
-                        }
-                    }
-                }
-
-
-
+                // // find the next closest blocks and the point to which it's closest
+                // minDistance = Infinity;
+                // for (var i = 0; i < remainingLocations.length; i++) {
+                //     var rowcol = getRowcol(level, remainingLocations[i]);
+                //     for (var j = 0; j < connectedPoints.length; j++) {
+                //         var distance = Math.abs(rowcol.r - connectedPoints.r) + Math.abs(rowcol.c - connectedPoints.c);
+                //         if (distance < minDistance) {
+                //             minDistance = distance;
+                //             connected = [i, j];
+                //         }
+                //     }
+                // }
 
 
 
@@ -3468,7 +3458,9 @@ function render() {
 
 
 
-                object.locations.forEach(function (location) {
+
+
+                locations.forEach(function (location) {
                     var rowcol = getRowcol(level, location);
                     if (rowcol.r < minR) minR = rowcol.r;
                     if (rowcol.r > maxR) maxR = rowcol.r;
@@ -3476,10 +3468,10 @@ function render() {
                     if (rowcol.c > maxC) maxC = rowcol.c;
                 });
 
-                var image = blockSupportRenderCache[object.id];
+                var image = blockRenderCache[object.id];
                 if (image == null) {
                     // render the support beams to a buffer
-                    blockSupportRenderCache[object.id] = image = document.createElement("canvas");
+                    blockRenderCache[object.id] = image = document.createElement("canvas");
                     image.width = (maxC - minC + 1) * tileSize;
                     image.height = (maxR - minR + 1) * tileSize;
                     var bufferContext = image.getContext("2d");
@@ -3489,6 +3481,7 @@ function render() {
                     // Draw a path around the whole screen in the opposite direction as the rectangle paths below.
                     // This means that the below rectangles will be removing area from the greater rectangle.
                     bufferContext.rect(image.width, 0, -image.width, image.height);
+
                     for (var i = 0; i < object.locations.length; i++) {
                         var rowcol = getRowcol(level, object.locations[i]);
                         var r = rowcol.r - minR;
@@ -3508,10 +3501,11 @@ function render() {
                         drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                         drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                     }
+                    drawBlock(bufferContext, object, minR, minC, rng);
                 }
                 var r = minR + animationDisplacementRowcol.r;
                 var c = minC + animationDisplacementRowcol.c;
-                if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === object.id && spike2Death[2].dead) r += .5;
+                if (isDead() && newSpikeDeath[0] === BLOCK && newSpikeDeath[1] === object.id && newSpikeDeath[2].dead) r += .5;
                 var savedContext2 = context;
                 context = canvas2.getContext("2d");
                 context.drawImage(image, c * tileSize, r * tileSize);
@@ -3532,10 +3526,10 @@ function render() {
                     if (rowcol.c < minC) minC = rowcol.c;
                     if (rowcol.c > maxC) maxC = rowcol.c;
                 });
-                var image = mikeSupportRenderCache[object.id];
+                var image = mikeRenderCache[object.id];
                 if (image == null) {
                     // render the support beams to a buffer
-                    mikeSupportRenderCache[object.id] = image = document.createElement("canvas");
+                    mikeRenderCache[object.id] = image = document.createElement("canvas");
                     image.width = (maxC - minC + 1) * tileSize;
                     image.height = (maxR - minR + 1) * tileSize;
                     var bufferContext = image.getContext("2d");
@@ -3564,6 +3558,7 @@ function render() {
                         drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                         drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                     }
+                    drawMike(bufferContext, object, minR, minC, rng);
                 }
                 var r = minR + animationDisplacementRowcol.r;
                 var c = minC + animationDisplacementRowcol.c;
@@ -3574,7 +3569,6 @@ function render() {
             });
         }
 
-        var rng = new Math.seedrandom("b");
         var exitExists = false;
         if (!dont) {
             if (onlyTheseObjects == null) {
@@ -3588,14 +3582,16 @@ function render() {
                 }
             }
 
-            for (var i = 0; i < objects.length; i++) {
-                var object = objects[i];
-                if (object.type === BLOCK || object.type === MIKE) drawObject(object, rng);
+            if (onlyTheseObjects != null) {
+                for (var i = 0; i < objects.length; i++) {
+                    var object = objects[i];
+                    if (object.type === BLOCK || object.type === MIKE) drawObject(context, object, rng);
+                }
             }
 
             for (var i = 0; i < objects.length; i++) {
                 var object = objects[i];
-                if (object.type === SNAKE) drawObject(object);
+                if (object.type === SNAKE) drawObject(context, object);
             }
 
             if (persistentState.showEditor && onlyTheseObjects == null) {
@@ -3631,7 +3627,7 @@ function render() {
 
             for (var i = 0; i < objects.length; i++) {
                 var object = objects[i];
-                if (object.type === FRUIT || object.type === POISONFRUIT) drawObject(object, rng);  //draws fruit
+                if (object.type === FRUIT || object.type === POISONFRUIT) drawObject(context, object, rng);  //draws fruit
             }
 
             if (portalFailure && countSnakes() != 0) {
@@ -3751,26 +3747,26 @@ function render() {
                 }
             } else if (paintBrushTileCode === SNAKE) {
                 if (!(objectHere != null && objectHere.type === SNAKE && objectHere.id === paintBrushSnakeColorIndex)) {
-                    drawObject(newSnake(paintBrushSnakeColorIndex, hoverLocation));
+                    drawObject(context, newSnake(paintBrushSnakeColorIndex, hoverLocation));
                 }
             } else if (paintBrushTileCode === BLOCK) {
                 if (!(objectHere != null && objectHere.type === BLOCK && objectHere.id === paintBrushBlockId) && !splockIsActive) {
-                    drawObject(newBlock(hoverLocation), rng);
+                    drawObject(context, newBlock(hoverLocation), rng);
                 }
                 else if (!(objectHere != null && objectHere.type === BLOCK && objectHere.id === paintBrushBlockId) && splockIsActive && paintBrushBlockId != null) {
                     drawTile(context, SPIKE, hoverRowcol.r, hoverRowcol.c, level, hoverLocation, rng);
                 }
             } else if (paintBrushTileCode === MIKE) {
                 if (!(objectHere != null && objectHere.type === MIKE && objectHere.id === paintBrushMikeId)) {
-                    drawObject(newMike(hoverLocation), rng);
+                    drawObject(context, newMike(hoverLocation), rng);
                 }
             } else if (paintBrushTileCode === FRUIT) {
                 if (!(objectHere != null && objectHere.type === FRUIT)) {
-                    drawObject(newFruit(hoverLocation), rng);
+                    drawObject(context, newFruit(hoverLocation), rng);
                 }
             } else if (paintBrushTileCode === POISONFRUIT) {
                 if (!(objectHere != null && objectHere.type === POISONFRUIT)) {
-                    drawObject(newPoisonFruit(hoverLocation), rng);
+                    drawObject(context, newPoisonFruit(hoverLocation), rng);
                 }
             } else if (paintBrushTileCode === "resize") {
                 void 0; // do nothing
@@ -3863,17 +3859,17 @@ function render() {
     //     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     // }
 
-    function drawObject(object, rng) {
+    function drawObject(context, object, rng) {
         var r, c;
         switch (object.type) {
             case SNAKE:
                 themeName !== "Classic" ? drawNewSnake() : drawOriginalSnake();
                 break;
             case BLOCK:
-                drawBlock(object, rng);
+                drawBlock(context, object, 0, 0, rng);
                 break;
             case MIKE:
-                drawMike(object, rng);
+                drawMike(context, object, 0, 0, rng);
                 break;
             case FRUIT:
             case POISONFRUIT:
@@ -3931,7 +3927,7 @@ function render() {
                     nextRowcol = getRowcol(level, object.locations[i + 1]); //closer to tail
 
                     if (object.dead && (!dieOnSplock || dieOnSplock === object.id)) {
-                        if (spike2Death[2] != null && spike2Death[2].type === SNAKE && spike2Death[2].id === object.id) lowDeath = false;
+                        if (newSpikeDeath[2] != null && newSpikeDeath[2].type === SNAKE && newSpikeDeath[2].id === object.id) lowDeath = false;
                         else {
                             lowDeath = true;
                             rowcol.r += .5;
@@ -4048,7 +4044,7 @@ function render() {
                     rowcol = getRowcol(level, object.locations[i]);
                 }
                 if (object.dead && (!dieOnSplock || dieOnSplock === object.id)) {
-                    if (spike2Death[2] != null && spike2Death[2].type === SNAKE && spike2Death[2].id === object.id) lowDeath = false;
+                    if (newSpikeDeath[2] != null && newSpikeDeath[2].type === SNAKE && newSpikeDeath[2].id === object.id) lowDeath = false;
                     else {
                         lowDeath = true;
                         rowcol.r += .5;
@@ -4651,27 +4647,33 @@ function render() {
         context.fillRect(xLo, yLo, xHi - xLo, yHi - yLo);
     }
 
-    function drawBlock(block, rng) {
+    function drawBlock(context, block, minR, minC, rng) {
         var animationDisplacementRowcol = findAnimationDisplacementRowcol(block.type, block.id);
         var blockRowcols = block.locations.map(function (location) {
-            return getRowcol(level, location);
+            var rowcol = getRowcol(level, location);
+            rowcol.r -= minR;
+            rowcol.c -= minC;
+            return rowcol;
         });
         var splockRowcols = block.splocks.map(function (location) {
-            return getRowcol(level, location);
+            var rowcol = getRowcol(level, location);
+            rowcol.r -= minR;
+            rowcol.c -= minC;
+            return rowcol;
         });
 
         var color = blockColors[block.id % blockColors.length];
         splockRowcols.forEach(function (rowcol) {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
-            if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === block.id && spike2Death[2].dead) r += .5;
+            if (isDead() && newSpikeDeath[0] === BLOCK && newSpikeDeath[1] === block.id && newSpikeDeath[2].dead) r += .5;
             drawSpikes(context, r, c, null, rng, blockRowcols, splockRowcols, color);
         });
 
         blockRowcols.forEach(function (rowcol) {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
-            if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === block.id && spike2Death[2].dead) r += .5;
+            if (isDead() && newSpikeDeath[0] === BLOCK && newSpikeDeath[1] === block.id && newSpikeDeath[2].dead) r += .5;
 
             context.fillStyle = color;
             var outlineThickness = .4;
@@ -4788,6 +4790,8 @@ function render() {
             if (!isAlsoThisBlock(-1, 0)) roundRect(context, c * tileSize, r * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
             if (!isAlsoThisBlock(1, 0)) roundRect(context, (c + complement) * tileSize, r * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
 
+            // drawCircle(context, r, c, 1, "yellow");
+
             function isAlsoThisBlock(dc, dr) {
                 for (var i = 0; i < blockRowcols.length; i++) {
                     var otherRowcol = blockRowcols[i];
@@ -4798,16 +4802,19 @@ function render() {
         });
     }
 
-    function drawMike(mike, rng) {
+    function drawMike(context, mike, minR, minC, rng) {
         var animationDisplacementRowcol = findAnimationDisplacementRowcol(mike.type, mike.id);
         var mikeRowcols = mike.locations.map(function (location) {
-            return getRowcol(level, location);
+            var rowcol = getRowcol(level, location);
+            rowcol.r -= minR;
+            rowcol.c -= minC;
+            return rowcol;
         });
         var color = blockColors[blockColors.length - 1 - mike.id % blockColors.length]
         mikeRowcols.forEach(function (rowcol) {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
-            if (isDead() && spike2Death[0] === MIKE && spike2Death[1] === mike.id) r += .5;
+            if (isDead() && newSpikeDeath[0] === MIKE && newSpikeDeath[1] === mike.id) r += .5;
             drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 31, tileSize * .48, tileSize * .36, color);
 
             var side = 0;
@@ -5423,7 +5430,7 @@ function drawGrass(context, r, c) {
     }
 }
 
-function drawSpikes(context, r, c, adjacentTiles, rng, blockRowcols, spike2Rowcols, color) {
+function drawSpikes(context, r, c, adjacentTiles, rng, blockRowcols, splockRowcols, color) {
     var x = c * tileSize;
     var y = r * tileSize;
     if (themeName === "Classic") {
@@ -5452,7 +5459,7 @@ function drawSpikes(context, r, c, adjacentTiles, rng, blockRowcols, spike2Rowco
         var spikeWidth = 10 / 9;
         drawSpokes(context, x, y, spikeWidth, color);
         if (color == undefined) drawSpikeSupports(context, r, c, x, y, spikeWidth, isSpike, isWall, rng);
-        else drawSpikeSupports(context, r, c, x, y, spikeWidth, isAlsoThisSpike2, isAlsoThisBlock, rng, color);
+        else drawSpikeSupports(context, r, c, x, y, spikeWidth, isAlsoThisSplock, isAlsoThisBlock, rng, color);
 
         function isSpike(dc, dr) {
             var tileCode = adjacentTiles[1 + dr][1 + dc];
@@ -5462,9 +5469,9 @@ function drawSpikes(context, r, c, adjacentTiles, rng, blockRowcols, spike2Rowco
             var tileCode = adjacentTiles[1 + dr][1 + dc];
             return tileCode == null || tileCode === WALL;
         }
-        function isAlsoThisSpike2(dc, dr) {
-            for (var i = 0; i < spike2Rowcols.length; i++) {
-                var otherRowcol = spike2Rowcols[i];
+        function isAlsoThisSplock(dc, dr) {
+            for (var i = 0; i < splockRowcols.length; i++) {
+                var otherRowcol = splockRowcols[i];
                 if (r + dr === otherRowcol.r && c + dc === otherRowcol.c) return true;
             }
             return false;
