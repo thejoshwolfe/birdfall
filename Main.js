@@ -998,7 +998,7 @@ function resetCanvases() {
 function fitCanvas(type) {
     var offset = 0;
     switch (type) {
-        case 0: offset = persistentState.showEditor ? 6 : 0; break;
+        case 0: offset = 0; break;
         case 1: offset = document.getElementById("bottomBlock").offsetHeight + 10; break;
         case 2: offset = document.getElementById("csText").offsetHeight + 50; break;
     }
