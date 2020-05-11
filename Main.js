@@ -424,7 +424,7 @@ function serializeObjects(objects) {
     return output;
 }
 function serializeObjectState(object) {
-    if (object == null) return [0, []];
+    if (object == null) return [0, [], []];
     return [object.dead, copyArray(object.locations), copyArray(object.splocks)];
 }
 
@@ -1754,7 +1754,7 @@ function paintAtLocation(location, changeLog) {
                 object.id = newPoisonFruit().id;
             } else throw unreachable();
             level.objects.push(object);
-            changeLog.push([object.type, object.id, [0, []], serializeObjectState(object)]);
+            changeLog.push([object.type, object.id, [0, [], []], serializeObjectState(object)]);
         });
     } else if (paintBrushTileCode === SNAKE) {
         var oldSnakeSerialization = serializeObjectState(paintBrushObject);
@@ -2163,7 +2163,7 @@ function undoChanges(changes, changeLog) {
         var paradoxDescription = undoChange(changes[i]);
         if (paradoxDescription != null) paradoxes.push(paradoxDescription);
     }
-
+    // can't get to here
     var lastChange = changes[changes.length - 1];
     if (lastChange[0] === "i") {
         // replay animation
@@ -2201,13 +2201,15 @@ function undoChanges(changes, changeLog) {
             paintTileAtLocation(location, fromTileCode, changeLog);
         } else if (change[0] === SNAKE || change[0] === BLOCK || change[0] === MIKE || change[0] === FRUIT || change[0] === POISONFRUIT) {
             // change object
+            blockRenderCache = {};
             var type = change[0];
             var id = change[1];
             var fromDead = change[2][0];
             var toDead = change[3][0];
             var fromLocations = change[2][1].map(transformLocation);
             var toLocations = change[3][1].map(transformLocation);
-            var fromSplocks = change[2][2].map(transformLocation);
+            // alert(JSON.stringify(change));
+            var fromSplocks = change[2][2].map(transformLocation);  // this is the error
             var toSplocks = change[3][2].map(transformLocation);
             if (fromLocations.filter(function (location) { return location >= level.map.length; }).length > 0) {
                 return "Can't move " + describe(type, id) + " out of bounds";
@@ -2244,7 +2246,7 @@ function undoChanges(changes, changeLog) {
                     splocks: fromSplocks
                 };
                 level.objects.push(object);
-                changeLog.push([object.type, object.id, [0, []], serializeObjectState(object)]);
+                changeLog.push([object.type, object.id, [0, [], []], serializeObjectState(object)]);
             }
         } else throw unreachable();
     }
