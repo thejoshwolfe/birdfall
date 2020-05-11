@@ -47,11 +47,16 @@ var MIKE = "x";
 var FRUIT = "f";
 var POISONFRUIT = "p";
 
-var newSpikeDeath = [];
+var spike2Death = [];
 var lowDeath = false;
 var dieOnSplock = false;
 var theseDyingLocations = [];
 var infiniteDeath = false;
+var rngCorrection = [];
+
+function correctRng() {
+
+}
 
 var checkResult = false;
 var cr = false;
@@ -123,8 +128,8 @@ function loadLevel(newLevel) {
     uneditStuff.undoStack = [];
     uneditStuff.redoStack = [];
     undoStuffChanged(uneditStuff);
-    blockRenderCache = {};
-    mikeRenderCache = {};
+    blockSupportRenderCache = {};
+    mikeSupportRenderCache = {};
 
     // alert(document.getElementById("editorPane").style.offsetHeight);
     if (!persistentState.showEditor) document.getElementById("ghostEditorPane").style.display = "none";
@@ -761,7 +766,7 @@ document.addEventListener("keydown", function (event) {
             case "B".charCodeAt(0):
                 if (persistentState.showEditor && modifierMask === 0 && !splockIsActive) { setPaintBrushTileCode(BLOCK); break; }
                 if (persistentState.showEditor && modifierMask === SHIFT) { setPaintBrushTileCode(BUBBLE); break; }
-                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { toggleSplockButton(); break; }
+                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); break; }
                 return;
             case "P".charCodeAt(0):
                 if (!persistentState.showEditor && modifierMask === 0) { replayString = false; move(-1, 0); break; }
@@ -811,7 +816,8 @@ document.addEventListener("keydown", function (event) {
                 if (modifierMask === 0 && !replayString) { redo(unmoveStuff); break; }
                 if (modifierMask === 0 && replayString) { advance(); break; }
             case 32: // spacebar
-                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus) { toggleSplockButton(); break; }
+                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && !splockIsActive) { splockIsActive = true; changeSpike2ButtonColor(); break; }
+                if (persistentState.showEditor && modifierMask === 0 && paintBrushTileCode === BLOCK && blockIsInFocus && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); break; }
                 if (modifierMask === 0) { switchSnakes(1); break; }
                 if (modifierMask === SHIFT) { switchSnakes(-1); break; }
                 return;
@@ -861,8 +867,8 @@ function changeCanvasSize(delta) {
     recalculateBorderRadius();
     recalculateBlockRadius();
     textStyle.fontSize = tileSize * 5;
-    blockRenderCache = {};
-    mikeRenderCache = {};
+    blockSupportRenderCache = {};
+    mikeSupportRenderCache = {};
 
     drawStaticCanvases(getLevel());
     resizeCanvasContainer();
@@ -928,9 +934,6 @@ document.getElementById("fitControlsDefault").addEventListener("click", function
 document.getElementById("fitCanvasDefault").addEventListener("click", function () {
     document.getElementById("fitControlsDefault").checked = false;
     localStorage.setItem("cachedFitDefault", "fitCanvas");
-});
-document.getElementById("paintSplockButton").addEventListener("click", function () {
-    toggleSplockButton();
 });
 document.getElementById("showGridButton").addEventListener("click", function () {
     toggleGrid();
@@ -998,7 +1001,7 @@ function resetCanvases() {
 function fitCanvas(type) {
     var offset = 0;
     switch (type) {
-        case 0: offset = 0; break;
+        case 0: offset = persistentState.showEditor ? 6 : 0; break;
         case 1: offset = document.getElementById("bottomBlock").offsetHeight + 10; break;
         case 2: offset = document.getElementById("csText").offsetHeight + 50; break;
     }
@@ -1008,24 +1011,11 @@ function fitCanvas(type) {
     recalculateBorderRadius();
     recalculateBlockRadius();
     textStyle.fontSize = tileSize * 5;
-    blockRenderCache = {};
-    mikeRenderCache = {};
+    blockSupportRenderCache = {};
+    mikeSupportRenderCache = {};
     drawStaticCanvases(getLevel());
     render();
     // location.reload();  //without this, tiles appear to have borders (comment added before static canvases added)
-}
-function toggleSplockButton() {
-    splockIsActive = !splockIsActive;
-    var button = document.getElementById("paintSplockButton");
-    button.disabled = splockIsActive ? false : true;
-    if (splockIsActive) {
-        button.style.background = "linear-gradient(#4b91ff, #055ce4)";
-        button.style.color = "white";
-    }
-    else {
-        button.style.background = "";
-        button.style.color = "";
-    }
 }
 function recalculateBorderRadius() {
     borderRadius = tileSize / borderRadiusFactor;
@@ -1202,8 +1192,8 @@ function toggleTheme(theme) {
     (themeCounter < themes.length - 1) ? themeCounter++ : themeCounter = 0;
     localStorage.setItem("cachedTheme", themeCounter);
     if (theme != undefined) themeCounter = theme;
-    blockRenderCache = [];
-    mikeRenderCache = [];
+    blockSupportRenderCache = [];
+    mikeSupportRenderCache = [];
     document.getElementById("themeButton").innerHTML = "Theme: <b>" + themes[themeCounter][0] + "</b>";
     drawStaticCanvases(getLevel());
 }
@@ -1348,6 +1338,7 @@ function selectAll() {
 }
 
 function setPaintBrushTileCode(tileCode) {
+    var spike2 = document.getElementById("paintSplockButton");
     if (tileCode !== MIKE && tileCode !== BLOCK) {
         blockIsInFocus = false;
         splockIsActive = false;
@@ -1382,10 +1373,12 @@ function setPaintBrushTileCode(tileCode) {
         if (!splockIsActive) {
             var blocks = getBlocks();
             if (paintBrushTileCode === BLOCK && blocks.length > 0) {
+                spike2.textContent = "Splock";
                 // cycle through block ids
                 blocks.sort(compareId);
                 if (paintBrushBlockId != null) {
                     blockIsInFocus = true;
+                    spike2.textContent = "Splock";
                     (function () {
                         for (var i = 0; i < blocks.length; i++) {
                             if (blocks[i].id === paintBrushBlockId) {
@@ -1405,6 +1398,7 @@ function setPaintBrushTileCode(tileCode) {
                 } else {
                     // first one
                     blockIsInFocus = true;
+                    spike2.textContent = "Splock";
                     paintBrushBlockId = blocks[0].id;
                 }
             } else {
@@ -1414,37 +1408,43 @@ function setPaintBrushTileCode(tileCode) {
         }
         else {
             splockIsActive = false;
-            toggleSplockButton();
+            changeSpike2ButtonColor();
         }
     } else if (tileCode === MIKE) {
-        var mikes = getMikes();
-        if (paintBrushTileCode === MIKE && mikes.length > 0) {
-            // cycle through mikes ids
-            mikes.sort(compareId);
-            if (paintBrushMikeId != null) {
-                (function () {
-                    for (var i = 0; i < mikes.length; i++) {
-                        if (mikes[i].id === paintBrushMikeId) {
-                            i += 1;
-                            if (i < mikes.length) {
-                                // next mikes id
-                                paintBrushMikeId = mikes[i].id;
-                            } else {
-                                // new mikes id
-                                paintBrushMikeId = null;
+        if (!blockIsInFocus) {
+            var mikes = getMikes();
+            if (paintBrushTileCode === MIKE && mikes.length > 0) {
+                // cycle through mikes ids
+                mikes.sort(compareId);
+                if (paintBrushMikeId != null) {
+                    (function () {
+                        for (var i = 0; i < mikes.length; i++) {
+                            if (mikes[i].id === paintBrushMikeId) {
+                                i += 1;
+                                if (i < mikes.length) {
+                                    // next mikes id
+                                    paintBrushMikeId = mikes[i].id;
+                                } else {
+                                    // new mikes id
+                                    paintBrushMikeId = null;
+                                }
+                                return;
                             }
-                            return;
                         }
-                    }
-                    throw unreachable()
-                })();
+                        throw unreachable()
+                    })();
+                } else {
+                    // first one
+                    paintBrushMikeId = mikes[0].id;
+                }
             } else {
-                // first one
-                paintBrushMikeId = mikes[0].id;
+                // new mikes id
+                paintBrushMikeId = null;
             }
-        } else {
-            // new mikes id
-            paintBrushMikeId = null;
+        }
+        else {
+            if (paintBrushTileCode === BLOCK && !splockIsActive) { splockIsActive = true; changeSpike2ButtonColor(); }
+            else if (paintBrushTileCode === BLOCK && splockIsActive) { splockIsActive = false; changeSpike2ButtonColor(); }
         }
     } else if (Array.isArray(tileCode)) {
         if (paintBrushTileCode === tileCode[OWWCounter]) {
@@ -1506,6 +1506,18 @@ function paintBrushTileCodeChanged() {
 
     render();
 }
+function changeSpike2ButtonColor() {
+    var button = document.getElementById("paintSplockButton");
+    // if (splockIsActive) {
+    //     button.style.background = "linear-gradient(#4b91ff, #055ce4)";
+    //     button.style.color = "white";
+    // }
+    // else {
+    //     button.style.background = "";
+    //     button.style.color = "";
+    // }
+}
+
 function cutSelection() {
     copySelection();
     fillSelection(SPACE);
@@ -1834,7 +1846,7 @@ function paintAtLocation(location, changeLog) {
                 }
             }
             changeLog.push([thisBlock.type, thisBlock.id, oldBlockSerialization, serializeObjectState(thisBlock)]);
-            delete blockRenderCache[thisBlock.id];
+            delete blockSupportRenderCache[thisBlock.id];
         }
     } else if (paintBrushTileCode === MIKE) {
         var objectHere = findObjectAtLocation(location);
@@ -1874,7 +1886,7 @@ function paintAtLocation(location, changeLog) {
                 }
             }
             changeLog.push([thisMike.type, thisMike.id, oldMikeSerialization, serializeObjectState(thisMike)]);
-            delete mikeRenderCache[thisMike.id];
+            delete mikeSupportRenderCache[thisMike.id];
         }
     } else if (paintBrushTileCode === FRUIT || paintBrushTileCode === POISONFRUIT) {
         paintTileAtLocation(location, SPACE, changeLog);
@@ -2514,7 +2526,13 @@ function showEditorChanged() {
     });
 
     document.getElementById("wasdSpan").textContent = persistentState.showEditor ? "" : " or WASD";
-    document.getElementById("hideHotkeyButton").disabled = persistentState.showEditor ? false : true;
+
+    if (!persistentState.showEditor) {
+        document.getElementById("hideHotkeyButton").disabled = true;
+    }
+    else {
+        document.getElementById("hideHotkeyButton").disabled = false;
+    }
 
     if (persistentState.showEditor && defaultOn) document.getElementById("animationSlider").checked = animationsOn = false;
     else if (persistentState.showEditor && !defaultOn) document.getElementById("animationSlider").checked = animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
@@ -2524,7 +2542,7 @@ function showEditorChanged() {
 }
 
 function move(dr, dc, doAnimations) {
-    if (!isDead()) newSpikeDeath = [];
+    if (!isDead()) spike2Death = [];
     lowDeath = false;
     if (!isDead()) theseDyingLocations = [];
 
@@ -2586,7 +2604,7 @@ function move(dr, dc, doAnimations) {
                     if (otherObject.splocks.includes(newLocation) && !otherObject.locations.includes(newLocation)) return false; // can't push splock
                     if (otherObject.type === MIKE && otherObject.locations.includes(newLocation)) return false; // can't push mike
                     // push objects
-                    if (!checkMovement(activeSnake, otherObject, dr, dc, pushedObjects)) return false;
+                    if (!checkMovement(activeSnake, otherObject, dr, dc, pushedObjects, theseDyingLocations)) return false;
                 }
             } else return; // can't go through that tile
         }
@@ -2741,6 +2759,7 @@ function move(dr, dc, doAnimations) {
                     anySnakesDied = true;
                 } else if (object.type === BLOCK || object.type === MIKE) {
                     // a box fell off the world
+                    if (object.splocks != null) rngCorrection.push(object.splocks);
                     removeAnimatedObject(object, changeLog);
                     removeFromArray(fallingObjects, object);
                     exitAnimationQueue.push([
@@ -2805,6 +2824,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
         for (var j = 0; j < pushedObject.splocks.length; j++) {
             var rowcol = getRowcol(level, pushedObject.splocks[j]);
             var forwardRowcol = { r: rowcol.r + dr, c: rowcol.c + dc };
+            var forwardLocation = getLocation(level, forwardRowcol.r, forwardRowcol.c);
 
             if (!isInBounds(level, forwardRowcol.r, forwardRowcol.c)) {
                 if (dyingObjects == null) {
@@ -2818,7 +2838,6 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     continue;
                 }
             }
-            var forwardLocation = getLocation(level, forwardRowcol.r, forwardRowcol.c);
             var yetAnotherObject = findObjectAtLocation(forwardLocation);
             if (yetAnotherObject != null) {
                 if (yetAnotherObject.type === FRUIT || yetAnotherObject.type === POISONFRUIT) return false;
@@ -2836,7 +2855,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                         }
                     });
                     if (counter === 0) {
-                        newSpikeDeath = [pushedObject.type, pushedObject.id, yetAnotherObject];
+                        spike2Death = [pushedObject.type, pushedObject.id, yetAnotherObject];
                         addIfAbsent(dyingObjects, yetAnotherObject);
                         if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                         continue;
@@ -2845,7 +2864,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                 if (yetAnotherObject.type === BLOCK && yetAnotherObject.splocks.includes(forwardLocation)) {
                     var object = findObjectAtLocation(offsetLocation(forwardLocation, -dr, -dc));
                     if (object.type === SNAKE) {
-                        newSpikeDeath = [pushedObject.type, pushedObject.id];
+                        spike2Death = [pushedObject.type, pushedObject.id];
                         addIfAbsent(dyingObjects, object);
                         if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                         continue;
@@ -2864,7 +2883,9 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                 // var rowcol = getRowcol(level, pushedObject.locations[k]);
                 addIfAbsent(pushedObjects, yetAnotherObject);
                 // }
-                if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) addIfAbsent(forwardLocations, forwardLocation);
+                if (level.map[forwardLocation] === TRELLIS || level.map[forwardLocation] === ONEWAYWALLU) {
+                    addIfAbsent(forwardLocations, forwardLocation);
+                }
             } else addIfAbsent(forwardLocations, forwardLocation);
         }
 
@@ -2909,13 +2930,13 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
                     return false;
                 }
                 if (yetAnotherObject.type === SNAKE && pushedObject.type === MIKE) {
-                    newSpikeDeath = [pushedObject.type, pushedObject.id, yetAnotherObject];
+                    spike2Death = [pushedObject.type, pushedObject.id, yetAnotherObject];
                     addIfAbsent(dyingObjects, yetAnotherObject);
                     if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                     continue;
                 }
                 if (yetAnotherObject.type === MIKE && object.type === SNAKE) {
-                    // newSpikeDeath = [yetAnotherObject.type, yetAnotherObject.id];
+                    // spike2Death = [yetAnotherObject.type, yetAnotherObject.id];
                     addIfAbsent(dyingObjects, object);
                     if (dyingLocations != undefined) addIfAbsent(dyingLocations, getLocation(level, rowcol.r, rowcol.c));
                     continue;
@@ -2954,7 +2975,9 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
         if (!isTileCodeAir(pusher, object, tileCode, dr, dc)) {
             if (dyingObjects != null) {
                 if (tileCode === SPIKE) {
+                    // uh... which object was this again?
                     if (object.type === SNAKE) {
+                        // ouch!
                         addIfAbsent(dyingObjects, object);
                         if (dyingLocations != undefined) addIfAbsent(dyingLocations, deadObject);
                         continue;
@@ -2979,7 +3002,7 @@ function checkMovement(pusher, pushedObject, dr, dc, pushedObjects, dyingObjects
             return false;
         }
     }
-    // the push is a go
+    // the push is go
     return true;
 }
 
@@ -3117,13 +3140,12 @@ function removeObject(object, changeLog) {
         // no longer editing an object that doesn't exist
         paintBrushMikeId = null;
     }
-    // below caused blocks to render as just supports
-    // if (object.type === BLOCK) {
-    //     delete blockRenderCache[object.id];
-    // }
-    // if (object.type === MIKE) {
-    //     delete mikeRenderCache[object.id];
-    // }
+    if (object.type === BLOCK) {
+        delete blockSupportRenderCache[object.id];
+    }
+    if (object.type === MIKE) {
+        delete mikeSupportRenderCache[object.id];
+    }
 }
 function removeFromArray(array, element) {
     var index = array.indexOf(element);
@@ -3262,11 +3284,11 @@ var freshlyRemovedAnimatedObjects = [];
 
 // render the support beams for blocks into a temporary buffer, and remember it.
 // this is due to stencil buffers causing slowdown on some platforms. see #25.
-var blockRenderCache = {
+var blockSupportRenderCache = {
     // id: canvas4,
     // "0": document.createElement("canvas"),
 };
-var mikeRenderCache = {
+var mikeSupportRenderCache = {
     // id: canvas4,
     // "0": document.createElement("canvas"),
 };
@@ -3328,14 +3350,14 @@ function render() {
 
     if (persistentState.showEditor) {
         if (paintBrushTileCode === BLOCK && paintBrushBlockId != null) {
-            // darken background
+            // fade everything else away
             context.fillStyle = "rgba(0, 0, 0, 0.8)";
             context.fillRect(0, 0, canvas4.width, canvas4.height);
             // and render just this object in focus
             var activeBlock = findBlockById(paintBrushBlockId);
             renderLevel([activeBlock]);
         } else if (paintBrushTileCode === MIKE && paintBrushMikeId != null) {
-            // darken background
+            // fade everything else away
             context.fillStyle = "rgba(0, 0, 0, 0.8)";
             context.fillRect(0, 0, canvas4.width, canvas4.height);
             // and render just this object in focus
@@ -3370,7 +3392,6 @@ function render() {
     return; // this is the end of the function proper
 
     function renderLevel(onlyTheseObjects) {
-        var rng = new Math.seedrandom("b");
         var objects = level.objects;
         if (onlyTheseObjects != null) {
             objects = onlyTheseObjects;
@@ -3397,61 +3418,59 @@ function render() {
 
                 //combine locations and splocks because they're treated the same
                 var locations = object.locations.concat(object.splocks);
-                // var minDistance = Infinity;
-                // var connected = [];
-                // var connectedPoints = [];
-                // for (var i = 0; i < locations.length; i++) {
-                //     var rowcol = getRowcol(level, locations[i]);
-                //     for (var j = 0; j < locations.length; j++) {
-                //         if (j != i) {
-                //             var rowcolComparison = getRowcol(level, locations[j]);
-                //             var distance = Math.abs(rowcol.r - rowcolComparison.r) + Math.abs(rowcol.c - rowcolComparison.c);
-                //             if (distance < minDistance) {
-                //                 minDistance = distance;
-                //                 connected = [i, j];
-                //                 connectedPoints = [rowcol, rowcolComparison];
-                //             }
-                //         }
-                //     }
-                // }
-                // // new array omitting blocks that are already connected
-                // // somehow this ruins locations for the bottom section
-                // var remainingLocations = locations;
-                // remainingLocations.splice(connected[0], 1);
-                // remainingLocations.splice(connected[1], 1);
+                var minDistance = Infinity;
+                var connected = [];
+                var connectedPoints = [];
+                for (var i = 0; i < locations.length; i++) {
+                    var rowcol = getRowcol(level, locations[i]);
+                    for (var j = 0; j < locations.length; j++) {
+                        if (j != i) {
+                            var rowcolComparison = getRowcol(level, locations[j]);
+                            var distance = Math.abs(rowcol.r - rowcolComparison.r) + Math.abs(rowcol.c - rowcolComparison.c);
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                connected = [i, j];
+                                connectedPoints = [rowcol, rowcolComparison];
+                            }
+                        }
+                    }
+                }
+                // new array omitting blocks that are already connected
+                var remainingLocations = locations;
+                remainingLocations.splice(connected[0], 1);
+                remainingLocations.splice(connected[1], 1);
 
-                // connectedPoints.forEach(function (rowcol) {
-                //     if (rowcol.r < minR) minR = rowcol.r;
-                //     if (rowcol.r > maxR) maxR = rowcol.r;
-                //     if (rowcol.c < minC) minC = rowcol.c;
-                //     if (rowcol.c > maxC) maxC = rowcol.c;
-                // });
+                connectedPoints.forEach(function (rowcol) {
+                    if (rowcol.r < minR) minR = rowcol.r;
+                    if (rowcol.r > maxR) maxR = rowcol.r;
+                    if (rowcol.c < minC) minC = rowcol.c;
+                    if (rowcol.c > maxC) maxC = rowcol.c;
+                });
 
-                // // add the horizontal connector locations to the connected blocks array
-                // for (var i = 0; i < maxC - minC; i++) {
-                //     var connectorRowcol = { r: minR, c: maxC - i };
-                //     addIfAbsent(connectedPoints, connectorRowcol);
-                // }
+                // add the horizontal connector locations to the connected blocks array
+                for (var i = 0; i < maxC - minC; i++) {
+                    var connectorRowcol = { r: minR, c: maxC - i };
+                    addIfAbsent(connectedPoints, connectorRowcol);
+                }
 
-                // // add the vertical connector locations to the connected blocks array
-                // for (var i = 1; i < maxR - minR; i++) {
-                //     var connectorRowcol = { r: maxR - i, c: maxC };
-                //     addIfAbsent(connectedPoints, connectorRowcol);
-                // }
+                // add the vertical connector locations to the connected blocks array
+                for (var i = 1; i < maxR - minR; i++) {
+                    var connectorRowcol = { r: maxR - i, c: maxC };
+                    addIfAbsent(connectedPoints, connectorRowcol);
+                }
 
-                // // find the next closest blocks and the point to which it's closest
-                // minDistance = Infinity;
-                // for (var i = 0; i < remainingLocations.length; i++) {
-                //     var rowcol = getRowcol(level, remainingLocations[i]);
-                //     for (var j = 0; j < connectedPoints.length; j++) {
-                //         var distance = Math.abs(rowcol.r - connectedPoints.r) + Math.abs(rowcol.c - connectedPoints.c);
-                //         if (distance < minDistance) {
-                //             minDistance = distance;
-                //             connected = [i, j];
-                //         }
-                //     }
-                // }
-
+                // find the next closest blocks and the point to which it's closest
+                minDistance = Infinity;
+                for (var i = 0; i < remainingLocations.length; i++) {
+                    var rowcol = getRowcol(level, remainingLocations[i]);
+                    for (var j = 0; j < connectedPoints.length; j++) {
+                        var distance = Math.abs(rowcol.r - connectedPoints.r) + Math.abs(rowcol.c - connectedPoints.c);
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            connected = [i, j];
+                        }
+                    }
+                }
 
 
 
@@ -3460,7 +3479,9 @@ function render() {
 
 
 
-                locations.forEach(function (location) {
+
+
+                object.locations.forEach(function (location) {
                     var rowcol = getRowcol(level, location);
                     if (rowcol.r < minR) minR = rowcol.r;
                     if (rowcol.r > maxR) maxR = rowcol.r;
@@ -3468,10 +3489,10 @@ function render() {
                     if (rowcol.c > maxC) maxC = rowcol.c;
                 });
 
-                var image = blockRenderCache[object.id];
+                var image = blockSupportRenderCache[object.id];
                 if (image == null) {
                     // render the support beams to a buffer
-                    blockRenderCache[object.id] = image = document.createElement("canvas");
+                    blockSupportRenderCache[object.id] = image = document.createElement("canvas");
                     image.width = (maxC - minC + 1) * tileSize;
                     image.height = (maxR - minR + 1) * tileSize;
                     var bufferContext = image.getContext("2d");
@@ -3481,7 +3502,6 @@ function render() {
                     // Draw a path around the whole screen in the opposite direction as the rectangle paths below.
                     // This means that the below rectangles will be removing area from the greater rectangle.
                     bufferContext.rect(image.width, 0, -image.width, image.height);
-
                     for (var i = 0; i < object.locations.length; i++) {
                         var rowcol = getRowcol(level, object.locations[i]);
                         var r = rowcol.r - minR;
@@ -3501,11 +3521,10 @@ function render() {
                         drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                         drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                     }
-                    drawBlock(bufferContext, object, minR, minC, rng);
                 }
                 var r = minR + animationDisplacementRowcol.r;
                 var c = minC + animationDisplacementRowcol.c;
-                if (isDead() && newSpikeDeath[0] === BLOCK && newSpikeDeath[1] === object.id && newSpikeDeath[2].dead) r += .5;
+                if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === object.id && spike2Death[2].dead) r += .5;
                 var savedContext2 = context;
                 context = canvas2.getContext("2d");
                 context.drawImage(image, c * tileSize, r * tileSize);
@@ -3526,10 +3545,10 @@ function render() {
                     if (rowcol.c < minC) minC = rowcol.c;
                     if (rowcol.c > maxC) maxC = rowcol.c;
                 });
-                var image = mikeRenderCache[object.id];
+                var image = mikeSupportRenderCache[object.id];
                 if (image == null) {
                     // render the support beams to a buffer
-                    mikeRenderCache[object.id] = image = document.createElement("canvas");
+                    mikeSupportRenderCache[object.id] = image = document.createElement("canvas");
                     image.width = (maxC - minC + 1) * tileSize;
                     image.height = (maxR - minR + 1) * tileSize;
                     var bufferContext = image.getContext("2d");
@@ -3558,7 +3577,6 @@ function render() {
                         drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                         drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                     }
-                    drawMike(bufferContext, object, minR, minC, rng);
                 }
                 var r = minR + animationDisplacementRowcol.r;
                 var c = minC + animationDisplacementRowcol.c;
@@ -3569,6 +3587,7 @@ function render() {
             });
         }
 
+        var rng = new Math.seedrandom("b");
         var exitExists = false;
         if (!dont) {
             if (onlyTheseObjects == null) {
@@ -3582,16 +3601,14 @@ function render() {
                 }
             }
 
-            if (onlyTheseObjects != null) {
-                for (var i = 0; i < objects.length; i++) {
-                    var object = objects[i];
-                    if (object.type === BLOCK || object.type === MIKE) drawObject(context, object, rng);
-                }
+            for (var i = 0; i < objects.length; i++) {
+                var object = objects[i];
+                if (object.type === BLOCK || object.type === MIKE) drawObject(object, rng);
             }
 
             for (var i = 0; i < objects.length; i++) {
                 var object = objects[i];
-                if (object.type === SNAKE) drawObject(context, object);
+                if (object.type === SNAKE) drawObject(object);
             }
 
             if (persistentState.showEditor && onlyTheseObjects == null) {
@@ -3627,7 +3644,7 @@ function render() {
 
             for (var i = 0; i < objects.length; i++) {
                 var object = objects[i];
-                if (object.type === FRUIT || object.type === POISONFRUIT) drawObject(context, object, rng);  //draws fruit
+                if (object.type === FRUIT || object.type === POISONFRUIT) drawObject(object, rng);  //draws fruit
             }
 
             if (portalFailure && countSnakes() != 0) {
@@ -3747,26 +3764,26 @@ function render() {
                 }
             } else if (paintBrushTileCode === SNAKE) {
                 if (!(objectHere != null && objectHere.type === SNAKE && objectHere.id === paintBrushSnakeColorIndex)) {
-                    drawObject(context, newSnake(paintBrushSnakeColorIndex, hoverLocation));
+                    drawObject(newSnake(paintBrushSnakeColorIndex, hoverLocation));
                 }
             } else if (paintBrushTileCode === BLOCK) {
                 if (!(objectHere != null && objectHere.type === BLOCK && objectHere.id === paintBrushBlockId) && !splockIsActive) {
-                    drawObject(context, newBlock(hoverLocation), rng);
+                    drawObject(newBlock(hoverLocation), rng);
                 }
                 else if (!(objectHere != null && objectHere.type === BLOCK && objectHere.id === paintBrushBlockId) && splockIsActive && paintBrushBlockId != null) {
                     drawTile(context, SPIKE, hoverRowcol.r, hoverRowcol.c, level, hoverLocation, rng);
                 }
             } else if (paintBrushTileCode === MIKE) {
                 if (!(objectHere != null && objectHere.type === MIKE && objectHere.id === paintBrushMikeId)) {
-                    drawObject(context, newMike(hoverLocation), rng);
+                    drawObject(newMike(hoverLocation), rng);
                 }
             } else if (paintBrushTileCode === FRUIT) {
                 if (!(objectHere != null && objectHere.type === FRUIT)) {
-                    drawObject(context, newFruit(hoverLocation), rng);
+                    drawObject(newFruit(hoverLocation), rng);
                 }
             } else if (paintBrushTileCode === POISONFRUIT) {
                 if (!(objectHere != null && objectHere.type === POISONFRUIT)) {
-                    drawObject(context, newPoisonFruit(hoverLocation), rng);
+                    drawObject(newPoisonFruit(hoverLocation), rng);
                 }
             } else if (paintBrushTileCode === "resize") {
                 void 0; // do nothing
@@ -3859,17 +3876,17 @@ function render() {
     //     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     // }
 
-    function drawObject(context, object, rng) {
+    function drawObject(object, rng) {
         var r, c;
         switch (object.type) {
             case SNAKE:
                 themeName !== "Classic" ? drawNewSnake() : drawOriginalSnake();
                 break;
             case BLOCK:
-                drawBlock(context, object, 0, 0, rng);
+                drawBlock(object, rng);
                 break;
             case MIKE:
-                drawMike(context, object, 0, 0, rng);
+                drawMike(object, rng);
                 break;
             case FRUIT:
             case POISONFRUIT:
@@ -3927,7 +3944,7 @@ function render() {
                     nextRowcol = getRowcol(level, object.locations[i + 1]); //closer to tail
 
                     if (object.dead && (!dieOnSplock || dieOnSplock === object.id)) {
-                        if (newSpikeDeath[2] != null && newSpikeDeath[2].type === SNAKE && newSpikeDeath[2].id === object.id) lowDeath = false;
+                        if (spike2Death[2] != null && spike2Death[2].type === SNAKE && spike2Death[2].id === object.id) lowDeath = false;
                         else {
                             lowDeath = true;
                             rowcol.r += .5;
@@ -4043,13 +4060,7 @@ function render() {
                 } else {
                     rowcol = getRowcol(level, object.locations[i]);
                 }
-                if (object.dead && (!dieOnSplock || dieOnSplock === object.id)) {
-                    if (newSpikeDeath[2] != null && newSpikeDeath[2].type === SNAKE && newSpikeDeath[2].id === object.id) lowDeath = false;
-                    else {
-                        lowDeath = true;
-                        rowcol.r += .5;
-                    }
-                }
+                if (object.dead) rowcol.r += 0.5;
                 rowcol.r += animationDisplacementRowcol.r;
                 rowcol.c += animationDisplacementRowcol.c;
                 if (i === 0) {
@@ -4647,33 +4658,27 @@ function render() {
         context.fillRect(xLo, yLo, xHi - xLo, yHi - yLo);
     }
 
-    function drawBlock(context, block, minR, minC, rng) {
+    function drawBlock(block, rng) {
         var animationDisplacementRowcol = findAnimationDisplacementRowcol(block.type, block.id);
         var blockRowcols = block.locations.map(function (location) {
-            var rowcol = getRowcol(level, location);
-            rowcol.r -= minR;
-            rowcol.c -= minC;
-            return rowcol;
+            return getRowcol(level, location);
         });
         var splockRowcols = block.splocks.map(function (location) {
-            var rowcol = getRowcol(level, location);
-            rowcol.r -= minR;
-            rowcol.c -= minC;
-            return rowcol;
+            return getRowcol(level, location);
         });
 
         var color = blockColors[block.id % blockColors.length];
         splockRowcols.forEach(function (rowcol) {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
-            if (isDead() && newSpikeDeath[0] === BLOCK && newSpikeDeath[1] === block.id && newSpikeDeath[2].dead) r += .5;
+            if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === block.id && spike2Death[2].dead) r += .5;
             drawSpikes(context, r, c, null, rng, blockRowcols, splockRowcols, color);
         });
 
         blockRowcols.forEach(function (rowcol) {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
-            if (isDead() && newSpikeDeath[0] === BLOCK && newSpikeDeath[1] === block.id && newSpikeDeath[2].dead) r += .5;
+            if (isDead() && spike2Death[0] === BLOCK && spike2Death[1] === block.id && spike2Death[2].dead) r += .5;
 
             context.fillStyle = color;
             var outlineThickness = .4;
@@ -4790,8 +4795,6 @@ function render() {
             if (!isAlsoThisBlock(-1, 0)) roundRect(context, c * tileSize, r * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
             if (!isAlsoThisBlock(1, 0)) roundRect(context, (c + complement) * tileSize, r * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
 
-            // drawCircle(context, r, c, 1, "yellow");
-
             function isAlsoThisBlock(dc, dr) {
                 for (var i = 0; i < blockRowcols.length; i++) {
                     var otherRowcol = blockRowcols[i];
@@ -4802,23 +4805,20 @@ function render() {
         });
     }
 
-    function drawMike(context, mike, minR, minC, rng) {
+    function drawMike(mike, rng) {
         var animationDisplacementRowcol = findAnimationDisplacementRowcol(mike.type, mike.id);
         var mikeRowcols = mike.locations.map(function (location) {
-            var rowcol = getRowcol(level, location);
-            rowcol.r -= minR;
-            rowcol.c -= minC;
-            return rowcol;
+            return getRowcol(level, location);
         });
         var color = blockColors[blockColors.length - 1 - mike.id % blockColors.length]
         mikeRowcols.forEach(function (rowcol) {
             var r = rowcol.r + animationDisplacementRowcol.r;
             var c = rowcol.c + animationDisplacementRowcol.c;
-            if (isDead() && newSpikeDeath[0] === MIKE && newSpikeDeath[1] === mike.id) r += .5;
-            drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 31, tileSize * .48, tileSize * .36, color);
+            if (isDead() && spike2Death[0] === MIKE && spike2Death[1] === mike.id) r += .5;
+            drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 31, tileSize * .45, tileSize * .36, color);
 
             var side = 0;
-            var size = tileSize / 8;
+            var size = tileSize / 6;
             var x = (c + .5) * tileSize;
             var y = (r + .5) * tileSize;
 
@@ -4833,11 +4833,11 @@ function render() {
             for (side; side < 7; side++) {
                 context.lineTo((x + size * Math.cos(side * 2 * Math.PI / 6)) * 1, (y + size * Math.sin(side * 2 * Math.PI / 6)) * 1);
             }
-            context.lineWidth = 1.5;
-            context.strokeStyle = "#999";
-            context.stroke();
-            context.fillStyle = tint(color, .5);
-            context.fillStyle = "#888";
+            // context.lineWidth = 1.5;
+            // context.strokeStyle = "#999";
+            // context.stroke();
+            // context.fillStyle = tint(color, .5);
+            context.fillStyle = "#444";
             context.fill();
             context.restore();
         });
@@ -5430,7 +5430,7 @@ function drawGrass(context, r, c) {
     }
 }
 
-function drawSpikes(context, r, c, adjacentTiles, rng, blockRowcols, splockRowcols, color) {
+function drawSpikes(context, r, c, adjacentTiles, rng, blockRowcols, spike2Rowcols, color) {
     var x = c * tileSize;
     var y = r * tileSize;
     if (themeName === "Classic") {
@@ -5459,7 +5459,7 @@ function drawSpikes(context, r, c, adjacentTiles, rng, blockRowcols, splockRowco
         var spikeWidth = 10 / 9;
         drawSpokes(context, x, y, spikeWidth, color);
         if (color == undefined) drawSpikeSupports(context, r, c, x, y, spikeWidth, isSpike, isWall, rng);
-        else drawSpikeSupports(context, r, c, x, y, spikeWidth, isAlsoThisSplock, isAlsoThisBlock, rng, color);
+        else drawSpikeSupports(context, r, c, x, y, spikeWidth, isAlsoThisSpike2, isAlsoThisBlock, rng, color);
 
         function isSpike(dc, dr) {
             var tileCode = adjacentTiles[1 + dr][1 + dc];
@@ -5469,9 +5469,9 @@ function drawSpikes(context, r, c, adjacentTiles, rng, blockRowcols, splockRowco
             var tileCode = adjacentTiles[1 + dr][1 + dc];
             return tileCode == null || tileCode === WALL;
         }
-        function isAlsoThisSplock(dc, dr) {
-            for (var i = 0; i < splockRowcols.length; i++) {
-                var otherRowcol = splockRowcols[i];
+        function isAlsoThisSpike2(dc, dr) {
+            for (var i = 0; i < spike2Rowcols.length; i++) {
+                var otherRowcol = spike2Rowcols[i];
                 if (r + dr === otherRowcol.r && c + dc === otherRowcol.c) return true;
             }
             return false;
@@ -5784,7 +5784,7 @@ function drawPortal(context, r, c, location) {
         context.fill();
         context.stroke();
     }
-    else drawCircle(context, r, c, 1, "#777");
+    else drawCircle(context, r, c, 1, "#999");
     context.restore();
 }
 
