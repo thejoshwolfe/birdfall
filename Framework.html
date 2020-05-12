@@ -226,10 +226,25 @@
                     </div><br>
                 </div>
 
-                <button id="themeButton" class="bottomButton" title="T&#10;Shift + T when editor is open">Theme | <b>Spring</b></button>
-                <button id="showGridButton" class="bottomButton" title="G">Show Grid</button><br>        
-                <button id="showHideEditor" class="bottomButton" title="\">Show Editor Stuff</button>
-                <button id="hideHotkeyButton" class="bottomButton" title="Shift + H">Hide Hotkeys</button>
+                <div id="optionsStack">
+                    <div id="highlighters">
+                        <div id="levelSizeText" class="stackHeader">Highlighters</div>
+                            <div id="levelSizeInsider">
+                            <div id="fitButtonContainer">
+                                <button id="highlightSnakesButton" class="fitButton" title="8&#10;&#10;Highlight remaining snakes">Snakes</button><br>
+                                <button id="highlightFruitsButton" class="fitButton" title="7&#10;&#10;Highlight and number remaining fruits">Fruits</button><br>
+                                <button id="clearHighlightsButton" class="fitButton" title="6&#10;&#10;Clear all highlights">Clear</button>
+                            </div>
+                        </div>  
+                    </div>
+
+                    <div style="display: inline-block">
+                        <button id="themeButton" class="bottomButton" title="T&#10;Shift + T when editor is open">Theme | <b>Spring</b></button>
+                        <button id="showGridButton" class="bottomButton" title="G">Show Grid</button><br>      
+                        <button id="showHideEditor" class="bottomButton" title="\">Show Editor Stuff</button>
+                        <button id="hideHotkeyButton" class="bottomButton" title="Shift + H">Hide Hotkeys</button>
+                    </div>
+                </div>
             </div>
         </div>
 
