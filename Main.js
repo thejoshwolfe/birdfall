@@ -803,6 +803,12 @@ document.addEventListener("keydown", function (event) {
             case 190:
                 toggleEditorLocation(true);
                 return;
+            case 54: // 6
+                if (modifierMask === 0) { clearHighlights(); break; }
+            case 55: // 7
+                if (modifierMask === 0) { highlightFruits(); break; }
+            case 56: // 8
+                if (modifierMask === 0) { highlightSnakes(); break; }
             case 57: // 9
                 if (modifierMask === 0) { fitCanvas(0); break; }
             case 191:
@@ -932,6 +938,15 @@ document.getElementById("fitCanvasDefault").addEventListener("click", function (
 document.getElementById("paintSplockButton").addEventListener("click", function () {
     toggleSplockButton();
 });
+document.getElementById("highlightSnakesButton").addEventListener("click", function () {
+    highlightSnakes();
+});
+document.getElementById("highlightFruitsButton").addEventListener("click", function () {
+    highlightFruits();
+});
+document.getElementById("clearHighlightsButton").addEventListener("click", function () {
+    clearHighlights();
+});
 document.getElementById("showGridButton").addEventListener("click", function () {
     toggleGrid();
 });
@@ -995,11 +1010,76 @@ function resetCanvases() {
     loadFromLocationHash();
     return;
 }
+function highlightSnakes() {
+    persistentState.highlightSnakes = !persistentState.highlightSnakes;
+    var context = canvas7.getContext("2d");
+    if (persistentState.highlightSnakes) {
+        if (!persistentState.highlightFruits) {
+            canvas7.style.display = "block";
+            context.fillStyle = "rgba(0,0,0,.8)";
+            context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+        }
+
+        var snakes = getSnakes();
+        snakes.forEach(function (snake) {
+            drawObject(context, snake);
+        });
+    }
+    else {
+        context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
+        canvas7.style.display = "none";
+        if (persistentState.highlightFruits) {
+            persistentState.highlightFruits = !persistentState.highlightFruits;
+            highlightFruits();
+        }
+    }
+}
+function highlightFruits() {
+    persistentState.highlightFruits = !persistentState.highlightFruits;
+    var context = canvas7.getContext("2d");
+    if (persistentState.highlightFruits) {
+        if (!persistentState.highlightSnakes) {
+            canvas7.style.display = "block";
+            context.fillStyle = "rgba(0,0,0,.8)";
+            context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+        }
+
+        var fruits = getObjectsOfType(FRUIT);
+        fruits.sort(compareLocations);
+        var counter = 0;
+
+        fruits.forEach(function (fruit) {
+            drawObject(context, fruit);
+
+            counter++;
+            var rowcol = getRowcol(level, fruit.locations[0]);
+            var fontSize = tileSize / 2;
+            context.font = fontSize + "px Arial";
+            context.fillStyle = "black";
+            context.textAlign = "center";
+            context.textBaseline = "middle";
+            context.fillText(counter, rowcol.c * tileSize + tileSize / 2, rowcol.r * tileSize + tileSize / 2.1);
+        });
+    }
+    else {
+        context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
+        canvas7.style.display = "none";
+        if (persistentState.highlightSnakes) {
+            persistentState.highlightSnakes = !persistentState.highlightSnakes;
+            highlightSnakes();
+        }
+    }
+}
+function clearHighlights() {
+    var context = canvas7.getContext("2d");
+    context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
+    canvas7.style.display = "none";
+}
 function fitCanvas(type) {
     var offset = 0;
     switch (type) {
         case 0: offset = 0; break;
-        case 1: offset = document.getElementById("bottomBlock").offsetHeight + 10; break;
+        case 1: offset = document.getElementById("bottomBlock").offsetHeight + 12; break;
         case 2: offset = document.getElementById("csText").offsetHeight + 50; break;
     }
     var maxW = window.innerWidth / level.width;
@@ -2208,8 +2288,7 @@ function undoChanges(changes, changeLog) {
             var toDead = change[3][0];
             var fromLocations = change[2][1].map(transformLocation);
             var toLocations = change[3][1].map(transformLocation);
-            // alert(JSON.stringify(change));
-            var fromSplocks = change[2][2].map(transformLocation);  // this is the error
+            var fromSplocks = change[2][2].map(transformLocation);
             var toSplocks = change[3][2].map(transformLocation);
             if (fromLocations.filter(function (location) { return location >= level.map.length; }).length > 0) {
                 return "Can't move " + describe(type, id) + " out of bounds";
@@ -2396,6 +2475,8 @@ var persistentState = {
     editorLeft: false,
     showGrid: false,
     hideHotkeys: false,
+    highlightSnakes: false,
+    highlightFruits: false
 };
 function savePersistentState() {
     localStorage.snakefall = JSON.stringify(persistentState);
@@ -2409,6 +2490,7 @@ function loadPersistentState() {
     persistentState.editorLeft = !!persistentState.editorLeft;
     persistentState.showGrid = !!persistentState.showGrid;
     persistentState.hideHotkeys = !!persistentState.hideHotkeys;
+    persistentState.highlightFruits = !!persistentState.highlightFruits;
     showEditorChanged();
 }
 var isGravityEnabled = true;
@@ -2526,6 +2608,8 @@ function showEditorChanged() {
 }
 
 function move(dr, dc, doAnimations) {
+    if (persistentState.highlightSnakes) highlightSnakes(); // do this on every keypress but 8
+    if (persistentState.highlightFruits) highlightFruits(); // do this on every keypress but 7
     if (!isDead()) newSpikeDeath = [];
     lowDeath = false;
     if (!isDead()) theseDyingLocations = [];
@@ -2596,14 +2680,15 @@ function move(dr, dc, doAnimations) {
 
     // slither forward
     var activeSnakeOldState = serializeObjectState(activeSnake);
-    var size1 = activeSnake.locations.length === 1;
+    var snakeLength = activeSnake.locations.length;
+    var size1 = snakeLength === 1;
     doAnimations = doAnimations == undefined && animationsOn ? true : false;
     var speed = doAnimations ? 70 : 1;
     var slitherAnimations = [
         speed,
         [
             // size-1 snakes really do more of a move than a slither
-            size1 ? MOVE_SNAKE : SLITHER_HEAD,
+            size1 ? MOVE_SNAKE : SLITHER,
             activeSnake.id,
             dr,
             dc,
@@ -2615,24 +2700,23 @@ function move(dr, dc, doAnimations) {
     if (ate) { times--; }
     if (atePoison) { times++; }
     //if we're going to shrink out of existence, prevent it
-    var snake_length = activeSnake.locations.length;
     var poisonKill = false;
-    if (times > snake_length) {
-        times = snake_length;
+    if (times > snakeLength) {
+        times = snakeLength;
         activeSnake.dead = true;
         //make the snake appear to vanish into non-existence
         activeSnake.locations.unshift({ r: -99, c: -99 });
         poisonKill = true;
     }
     for (var t = 0; t < times; ++t) {
-        for (var i = 1; i < activeSnake.locations.length; i++) {
+        for (var i = 1; i < snakeLength; i++) {
             // drag your tail forward
             var oldRowcol = getRowcol(level, activeSnake.locations[i]);
             newRowcol = getRowcol(level, activeSnake.locations[i - 1]);
             if (!size1) {
                 slitherAnimations.push(
                     [
-                        SLITHER_TAIL + i,
+                        SLITHER + i,
                         activeSnake.id,
                         newRowcol.r - oldRowcol.r,
                         newRowcol.c - oldRowcol.c,
@@ -2692,6 +2776,7 @@ function move(dr, dc, doAnimations) {
         }
         // now do falling logic
         var didAnything = false;
+        var snakeExited = false;
         var fallingAnimations = [
             70 / Math.sqrt(fallHeight),
         ];
@@ -2703,12 +2788,36 @@ function move(dr, dc, doAnimations) {
             for (var i = 0; i < snakes.length; i++) {
                 var snake = snakes[i];
                 if (level.map[snake.locations[0]] === EXIT) {
+                    snakeExited = true;
+                    var exitedSnake = snake;
                     // (one of) you made it!
-                    removeAnimatedObject(snake, changeLog);
-                    exitAnimationQueue.push([
-                        200,
-                        [EXIT_SNAKE, snake.id, 0, 0],
-                    ]);
+
+                    // var snakeLength = snakeLength;
+                    // var shrinkingSnake = snake;
+                    // for (var t = 0; t < snakeLength; t++) {
+                    //     for (var i = 1; i < shrinkingSnake.locations.length; i++) {
+                    //         var oldRowcol = getRowcol(level, shrinkingSnake.locations[i]);
+                    //         newRowcol = getRowcol(level, shrinkingSnake.locations[i - 1]);
+                    //         if (!size1) {
+                    //             slitherAnimations.push(
+                    //                 [
+                    //                     SLITHER + i,
+                    //                     snake.id,
+                    //                     newRowcol.r - oldRowcol.r,
+                    //                     newRowcol.c - oldRowcol.c,
+                    //                 ]
+                    //             );
+                    //         }
+                    //     }
+                    //     shrinkingSnake.locations.pop();
+                    // }
+                    // alert(JSON.stringify(slitherAnimations));
+
+                    // removeAnimatedObject(snake, changeLog);
+                    // exitAnimationQueue.push([
+                    //     200,
+                    //     [EXIT_SNAKE, snake.id, 0, 0],
+                    // ]);
                     didAnything = true;
                 }
             }
@@ -2768,6 +2877,12 @@ function move(dr, dc, doAnimations) {
         if (!didAnything) break;
         Array.prototype.push.apply(animationQueue, exitAnimationQueue);
         if (fallingAnimations.length > 1) animationQueue.push(fallingAnimations);
+
+        if (snakeExited) {
+            if (exitedSnake.length > 0) move(dr, dc);
+            // else removeAnimatedObject(exitedSnake, changeLog);
+            exitedSnake.locations.pop();
+        }
     }
 
     pushUndo(unmoveStuff, changeLog);
@@ -3229,8 +3344,7 @@ function isAlive() {
 
 var activeSnakeId = null;
 
-var SLITHER_HEAD = "sh";
-var SLITHER_TAIL = "st";
+var SLITHER = "ss";
 var MOVE_SNAKE = "ms";
 var MOVE_BLOCK = "mb";
 var TELEPORT_SNAKE = "ts";
@@ -3482,7 +3596,7 @@ function render() {
                     bufferContext.beginPath();
                     // Draw a path around the whole screen in the opposite direction as the rectangle paths below.
                     // This means that the below rectangles will be removing area from the greater rectangle.
-                    bufferContext.rect(image.width, 0, -image.width, image.height);
+                    // bufferContext.rect(image.width, 0, -image.width, image.height);
 
                     for (var i = 0; i < object.locations.length; i++) {
                         var rowcol = getRowcol(level, object.locations[i]);
@@ -3490,7 +3604,7 @@ function render() {
                         var c = rowcol.c - minC;
                         bufferContext.rect(c * tileSize, r * tileSize, tileSize, tileSize);
                     }
-                    bufferContext.clip();
+                    // bufferContext.clip();
                     for (var i = 0; i < object.locations.length - 1; i++) {
                         var rowcol1 = getRowcol(level, object.locations[i]);
                         rowcol1.r -= minR;
@@ -3540,14 +3654,14 @@ function render() {
                     bufferContext.beginPath();
                     // Draw a path around the whole screen in the opposite direction as the rectangle paths below.
                     // This means that the below rectangles will be removing area from the greater rectangle.
-                    bufferContext.rect(image.width, 0, -image.width, image.height);
+                    // bufferContext.rect(image.width, 0, -image.width, image.height);
                     for (var i = 0; i < object.locations.length; i++) {
                         var rowcol = getRowcol(level, object.locations[i]);
                         var r = rowcol.r - minR;
                         var c = rowcol.c - minC;
                         bufferContext.rect(c * tileSize, r * tileSize, tileSize, tileSize);
                     }
-                    bufferContext.clip();
+                    // bufferContext.clip();
                     for (var i = 0; i < object.locations.length - 1; i++) {
                         var rowcol1 = getRowcol(level, object.locations[i]);
                         rowcol1.r -= minR;
@@ -3644,7 +3758,7 @@ function render() {
             // banners
             if (countSnakes() === 0 && exitExists) {
                 if (!cs) {
-                    context.fillStyle = "rgba(0,0,0,.7)";
+                    context.fillStyle = "rgba(0,0,0,.8)";
                     context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
 
                     context.fillStyle = textStyle.win;
@@ -3663,7 +3777,7 @@ function render() {
                 if (!cs && !infiniteDeath) {
                     canvas7.style.display = "block"
                     context = canvas7.getContext("2d");
-                    context.fillStyle = "rgba(0,0,0,.7)";
+                    context.fillStyle = "rgba(0,0,0,.8)";
                     context.globalCompositeOperation = "source-out";
                     context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
                     context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
@@ -3674,12 +3788,11 @@ function render() {
                         context.beginPath();
                         context.arc((localRowcol.c + .5) * tileSize, (localRowcol.r + 1) * tileSize, tileSize * 2, 0, 2 * Math.PI);
                         context.fill();
-                        // context.clearRect(localRowcol.c * tileSize, (localRowcol.r + .5) * tileSize, tileSize, tileSize);
                     });
                 } else if (!cs && infiniteDeath) {
                     canvas7.style.display = "block"
                     context = canvas7.getContext("2d");
-                    context.fillStyle = "rgba(0,0,0,.7)";
+                    context.fillStyle = "rgba(0,0,0,.8)";
                     context.globalCompositeOperation = "source-out";
                     context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
                     context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
@@ -3794,39 +3907,6 @@ function render() {
         didResize = false;
     }
 
-    function tint(hex, delta) {
-        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-
-        var r = parseInt(result[1], 16);
-        var g = parseInt(result[2], 16);
-        var b = parseInt(result[3], 16);
-
-        r /= 255, g /= 255, b /= 255;
-        var max = Math.max(r, g, b), min = Math.min(r, g, b);
-        var h, s, l = (max + min) / 2;
-
-        if (max == min) {
-            h = s = 0; // achromatic
-        } else {
-            var d = max - min;
-            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-            switch (max) {
-                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                case g: h = (b - r) / d + 2; break;
-                case b: h = (r - g) / d + 4; break;
-            }
-            h /= 6;
-        }
-
-        s = s * 100;
-        s = Math.round(s);
-        l = l * 100 * delta;
-        l = Math.round(l);
-        h = Math.round(360 * h);
-
-        return 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
-    }
-
     function hexToRgb(hex) {
         var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? {
@@ -3860,1023 +3940,6 @@ function render() {
 
     //     return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     // }
-
-    function drawObject(context, object, rng) {
-        var r, c;
-        switch (object.type) {
-            case SNAKE:
-                themeName !== "Classic" ? drawNewSnake() : drawOriginalSnake();
-                break;
-            case BLOCK:
-                drawBlock(context, object, 0, 0, rng);
-                break;
-            case MIKE:
-                drawMike(context, object, 0, 0, rng);
-                break;
-            case FRUIT:
-            case POISONFRUIT:
-                var isPoison = object.type == POISONFRUIT;
-                drawFruit(object, isPoison, rng);
-                break;
-            default: throw unreachable();
-        }
-        function getAdjacentTiles() {
-            return [
-                [getTile(r - 1, c - 1),
-                getTile(r - 1, c + 0),
-                getTile(r - 1, c + 1)],
-                [getTile(r + 0, c - 1),
-                    null,
-                getTile(r + 0, c + 1)],
-                [getTile(r + 1, c - 1),
-                getTile(r + 1, c + 0),
-                getTile(r + 1, c + 1)],
-            ];
-        }
-        function getTile(r, c) {
-            if (!isInBounds(level, r, c)) return null;
-            return level.map[getLocation(level, r, c)];
-        }
-
-        function drawNewSnake() {
-            var falling = false;
-            var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
-            if (animationDisplacementRowcol.r != 0) falling = true;
-            var lastRowcol = null
-            var nextRowcol = null
-            var color = snakeColors[object.id % snakeColors.length];
-            var colorIndex = object.id % snakeColors.length;
-            var altColor = tint(color, 1.2);
-            if (snakeColors === snakeColors2) altColor = color;
-            var headRowcol;
-            var orientation = 10;
-            for (var stage = 1; stage <= 2; stage++) {
-                for (var i = 0; i < object.locations.length; i++) {
-                    if (stage === 1 && i === 0) continue;
-                    var animation;
-                    var rowcol = getRowcol(level, object.locations[i]);
-                    if (stage === 2) {
-                        if (i === 0 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {
-                            rowcol.r += animation[2] * (animationProgress - 1);
-                            rowcol.c += animation[3] * (animationProgress - 1);
-                        } else if ((animation = findAnimation([SLITHER_TAIL + i], object.id)) != null) {
-                            rowcol.r += animation[2] * (animationProgress - 1);
-                            rowcol.c += animation[3] * (animationProgress - 1);
-                        }
-                    }
-
-                    lastRowcol = getRowcol(level, object.locations[i - 1]); //closer to head
-                    nextRowcol = getRowcol(level, object.locations[i + 1]); //closer to tail
-
-                    if (object.dead && (!dieOnSplock || dieOnSplock === object.id)) {
-                        if (newSpikeDeath[2] != null && newSpikeDeath[2].type === SNAKE && newSpikeDeath[2].id === object.id) lowDeath = false;
-                        else {
-                            lowDeath = true;
-                            rowcol.r += .5;
-                            lastRowcol.r += .5;
-                            nextRowcol.r += .5;
-                            falling = true;
-                        }
-                    }
-                    rowcol.r += animationDisplacementRowcol.r;
-                    rowcol.c += animationDisplacementRowcol.c;
-                    lastRowcol.r += animationDisplacementRowcol.r;
-                    lastRowcol.c += animationDisplacementRowcol.c;
-                    nextRowcol.r += animationDisplacementRowcol.r;
-                    nextRowcol.c += animationDisplacementRowcol.c;
-
-                    var cx = rowcol.c * tileSize;
-                    var cy = rowcol.r * tileSize;
-
-                    if (i === 0) {
-                        context.fillStyle = color;
-                        headRowcol = rowcol;
-
-                        //determines orientation of face
-                        if (!falling) nextRowcol = getRowcol(level, object.locations[1]);
-                        if (nextRowcol.r < rowcol.r) {  //last move down
-                            roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false);  //draw head
-                            if (colorIndex === 0) orientation = 2;
-                            else if (colorIndex === 1) orientation = 6;
-                            else if (colorIndex === 2) orientation = 3;
-                            else if (colorIndex === 3) orientation = 5;
-                        }
-                        else if (nextRowcol.r > rowcol.r) {  //last move up
-                            roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false);  //draw head
-                            if (colorIndex === 0) orientation = 0;
-                            else if (colorIndex === 1) orientation = 4;
-                            else if (colorIndex === 2) orientation = 1;
-                            else if (colorIndex === 3) orientation = 7;
-                        }
-                        else if (nextRowcol.c < rowcol.c) {  //last move right
-                            roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false);  //draw head
-                            if (colorIndex === 0) orientation = 1;
-                            else if (colorIndex === 1) orientation = 5;
-                            else if (colorIndex === 2) orientation = 2;
-                            else if (colorIndex === 3) orientation = 4;
-                        }
-                        else if (nextRowcol.c > rowcol.c) {  //last move left
-                            roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false);  //draw head
-                            if (colorIndex === 0) orientation = 3;
-                            else if (colorIndex === 1) orientation = 7;
-                            else if (colorIndex === 2) orientation = 0;
-                            else if (colorIndex === 3) orientation = 6;
-                        }
-                        else {
-                            roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);  //draw head
-                            orientation = 10;
-                        }
-                    } else {
-                        if (i % 2 == 0) context.fillStyle = color;
-                        else context.fillStyle = altColor;
-
-                        if (i === object.locations.length - 1) {
-                            if (lastRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false); }
-                            else if (lastRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false); }
-                            else if (lastRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false); }
-                            else if (lastRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false); }
-                        }
-                        else if (i < object.locations.length - 1) {
-                            if (lastRowcol.r > rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
-                            else if (lastRowcol.r > rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
-                            else if (lastRowcol.r < rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
-                            else if (lastRowcol.r < rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
-
-                            else if (lastRowcol.c > rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
-                            else if (lastRowcol.c > rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
-                            else if (lastRowcol.c < rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
-                            else if (lastRowcol.c < rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
-
-                            else if (lastRowcol.c < rowcol.c && nextRowcol.c > rowcol.c || lastRowcol.c > rowcol.c && nextRowcol.c < rowcol.c || lastRowcol.r < rowcol.r && nextRowcol.r > rowcol.r || lastRowcol.r > rowcol.r && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, 0, true, false); }
-                        }
-                        else roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);
-                    }
-                }
-            }
-            r = headRowcol.r;
-            c = headRowcol.c;
-            drawFace(object.id, c, r, orientation, getAdjacentTiles());
-        }
-
-        function drawOriginalSnake() {
-            var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
-            var lastRowcol = null
-            var color = snakeColors[object.id % snakeColors.length];
-            var headRowcol;
-            for (var i = 0; i <= object.locations.length; i++) {
-                var animation;
-                var rowcol;
-                if (i === 0 && (animation = findAnimation([SLITHER_HEAD], object.id)) != null) {
-                    // animate head slithering forward
-                    rowcol = getRowcol(level, object.locations[i]);
-                    rowcol.r += animation[2] * (animationProgress - 1);
-                    rowcol.c += animation[3] * (animationProgress - 1);
-                } else if (i === object.locations.length) {
-                    // animated tail?
-                    if ((animation = findAnimation([SLITHER_TAIL], object.id)) != null) {
-                        // animate tail slithering to catch up
-                        rowcol = getRowcol(level, object.locations[i - 1]);
-                        rowcol.r += animation[2] * (animationProgress - 1);
-                        rowcol.c += animation[3] * (animationProgress - 1);
-                    } else {
-                        // no animated tail needed
-                        break;
-                    }
-                } else {
-                    rowcol = getRowcol(level, object.locations[i]);
-                }
-                if (object.dead && (!dieOnSplock || dieOnSplock === object.id)) {
-                    if (newSpikeDeath[2] != null && newSpikeDeath[2].type === SNAKE && newSpikeDeath[2].id === object.id) lowDeath = false;
-                    else {
-                        lowDeath = true;
-                        rowcol.r += .5;
-                    }
-                }
-                rowcol.r += animationDisplacementRowcol.r;
-                rowcol.c += animationDisplacementRowcol.c;
-                if (i === 0) {
-                    // head
-                    headRowcol = rowcol;
-                    drawDiamond(rowcol.r, rowcol.c, color);
-                } else {
-                    // middle
-                    var cx = (rowcol.c + 0.5) * tileSize;
-                    var cy = (rowcol.r + 0.5) * tileSize;
-                    context.fillStyle = color;
-                    var orientation;
-                    if (lastRowcol.r < rowcol.r) {
-                        orientation = 0;
-                        context.beginPath();
-                        context.moveTo((lastRowcol.c + 0) * tileSize, (lastRowcol.r + 0.5) * tileSize);
-                        context.lineTo((lastRowcol.c + 1) * tileSize, (lastRowcol.r + 0.5) * tileSize);
-                        context.arc(cx, cy, tileSize / 2, 0, Math.PI);
-                        context.fill();
-                    } else if (lastRowcol.r > rowcol.r) {
-                        orientation = 2;
-                        context.beginPath();
-                        context.moveTo((lastRowcol.c + 1) * tileSize, (lastRowcol.r + 0.5) * tileSize);
-                        context.lineTo((lastRowcol.c + 0) * tileSize, (lastRowcol.r + 0.5) * tileSize);
-                        context.arc(cx, cy, tileSize / 2, Math.PI, 0);
-                        context.fill();
-                    } else if (lastRowcol.c < rowcol.c) {
-                        orientation = 3;
-                        context.beginPath();
-                        context.moveTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 1) * tileSize);
-                        context.lineTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 0) * tileSize);
-                        context.arc(cx, cy, tileSize / 2, 1.5 * Math.PI, 2.5 * Math.PI);
-                        context.fill();
-                    } else if (lastRowcol.c > rowcol.c) {
-                        orientation = 1;
-                        context.beginPath();
-                        context.moveTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 0) * tileSize);
-                        context.lineTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 1) * tileSize);
-                        context.arc(cx, cy, tileSize / 2, 2.5 * Math.PI, 1.5 * Math.PI);
-                        context.fill();
-                    }
-                }
-                lastRowcol = rowcol;
-            }
-            // eye
-            if (object.id === activeSnakeId) {
-                drawCircle(context, headRowcol.r, headRowcol.c, 0.5, "#fff");
-                drawCircle(context, headRowcol.r, headRowcol.c, 0.2, "#000");
-            }
-
-            function drawDiamond(r, c, fillStyle) {
-                var x = c * tileSize;
-                var y = r * tileSize;
-                context.fillStyle = fillStyle;
-                context.beginPath();
-                context.moveTo(x + tileSize / 2, y);
-                context.lineTo(x + tileSize, y + tileSize / 2);
-                context.lineTo(x + tileSize / 2, y + tileSize);
-                context.lineTo(x, y + tileSize / 2);
-                context.lineTo(x + tileSize / 2, y);
-                context.fill();
-            }
-        }
-    }
-
-    function drawFace(snake, headCol, headRow, orientation, adjacentTiles) {
-        drawFace2(snake, headCol, headRow, orientation, isNotSpace);
-        function isNotSpace(dr, dc) {
-            var tileCode = adjacentTiles[1 + dr][1 + dc];
-            var result = tileCode === WALL || tileCode === SPIKE || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER;
-            if (dr == 1 || dr == -1) return result || tileCode === OPENLIFT;
-            else return result;
-        }
-    }
-
-    function drawFace2(snake, headCol, headRow, orientation, isOccupied) {
-        var forwardLocation;
-        var forwardObject = null;
-        var straight;
-
-        var x = headCol * tileSize;
-        var y = headRow * tileSize;
-
-        var scaleFactor = 1.5;
-        var scale1;
-        var scale2;
-        var eye1 = tileSize * .8;
-        var eye2 = tileSize * .4;
-
-        var eyeSize = tileSize / 5;
-        var eyeRotation = 2;
-        var z1, z2, z3, z4, z5, z6, z7, z8;
-        var a1, a2, a3, a4, a5, a6, a7, a8;
-        var b1, b2, b3, b4, b5, b6, b7, b8, b9, b10;
-        var beakRotation = 1.5;
-        var arcDirection = false;
-
-        switch (orientation) {
-            case 0:    //red up and blue left
-                z1 = eye2;
-                z2 = tileSize - eye1;
-                z3 = eye2;
-                z4 = tileSize - eye2;
-                z5 = eye2;
-                z6 = tileSize - eye1;
-                z7 = eye2;
-                z8 = tileSize - eye2
-                eyeRotation = 1.5;
-                scale1 = scaleFactor;
-                scale2 = 1;
-
-                if (1 <= headRow && headRow < level.height - 1) {
-                    forwardLocation = getLocation(level, headRow - 1, headCol);
-                    forwardObject = findObjectAtLocation(forwardLocation);
-                }
-                if (isOccupied(-1, 0) || (forwardObject != null && forwardObject.type !== FRUIT)) {
-                    straight = false;
-                    b1 = tileSize * .6;
-                    b2 = tileSize * .05;
-                    b3 = tileSize * .7;
-                    b4 = -tileSize * .05;
-                    b5 = tileSize;
-                    b6 = tileSize * .1;
-                    b7 = tileSize * .2;
-                    b8 = tileSize * .1;
-                }
-                else straight = true;
-
-                a1 = tileSize * .7;
-                a2 = tileSize * .3;
-                a3 = tileSize * .7;
-                a4 = -tileSize * .3;
-                a5 = tileSize * .7;
-                a6 = tileSize * .3;
-                a7 = tileSize / 6;
-                a8 = 0;
-                beakRotation = 1;
-                arcDirection = false;
-                break;
-            case 1:    //red right and blue up
-            case 10:
-                z1 = eye1;
-                z2 = eye2;
-                z3 = eye2;
-                z4 = eye2;
-                z5 = eye1;
-                z6 = eye2;
-                z7 = eye2;
-                z8 = eye2;
-                eyeRotation = 2;
-                scale1 = 1;
-                scale2 = scaleFactor;
-
-                if (1 <= headCol && headCol < level.width - 1) {
-                    forwardLocation = getLocation(level, headRow, headCol + 1);
-                    forwardObject = findObjectAtLocation(forwardLocation);
-                }
-                if (isOccupied(0, 1) || (forwardObject != null && forwardObject.type !== FRUIT)) {
-                    straight = false;
-                    b1 = tileSize * .95;
-                    b2 = tileSize * .6;
-                    b3 = tileSize * 1.05;
-                    b4 = tileSize * .7;
-                    b5 = tileSize * .9;
-                    b6 = tileSize;
-                    b7 = -tileSize * .1;
-                    b8 = tileSize * .2;
-                }
-                else straight = true;
-
-                a1 = tileSize * .7;
-                a2 = tileSize * .7;
-                a3 = tileSize * 1.3;
-                a4 = tileSize * .7;
-                a5 = tileSize * .7;
-                a6 = tileSize * .7;
-                a7 = 0;
-                a8 = tileSize / 6;
-                beakRotation = 1.5;
-                arcDirection = false;
-                break;
-            case 2:    //red down and blue right
-                z1 = tileSize - eye2;
-                z2 = eye1;
-                z3 = tileSize - eye2;
-                z4 = eye2;
-                z5 = tileSize - eye2;
-                z6 = eye1;
-                z7 = tileSize - eye2;
-                z8 = eye2;
-                eyeRotation = 2.5;
-                scale1 = scaleFactor;
-                scale2 = 1;
-
-                if (1 <= headRow && headRow < level.height - 1) {
-                    forwardLocation = getLocation(level, headRow + 1, headCol);
-                    forwardObject = findObjectAtLocation(forwardLocation);
-                }
-                if (isOccupied(1, 0) || (forwardObject != null && forwardObject.type !== FRUIT)) {
-                    straight = false;
-                    b1 = tileSize * .4;
-                    b2 = tileSize * .95;
-                    b3 = tileSize * .3;
-                    b4 = tileSize * 1.05;
-                    b5 = 0;
-                    b6 = tileSize * .9;
-                    b7 = -tileSize * .2;
-                    b8 = -tileSize * .1;
-                }
-                else straight = true;
-
-                a1 = tileSize * .3;
-                a2 = tileSize * .7;
-                a3 = tileSize * .3;
-                a4 = tileSize * 1.3;
-                a5 = tileSize * .3;
-                a6 = tileSize * .7;
-                a7 = tileSize / 6;
-                a8 = 0;
-                beakRotation = 2;
-                arcDirection = false;
-                break;
-            case 3:    //red left and blue down
-                z1 = tileSize - eye1;
-                z2 = tileSize - eye2;
-                z3 = tileSize - eye2;
-                z4 = tileSize - eye2;
-                z5 = tileSize - eye1;
-                z6 = tileSize - eye2;
-                z7 = tileSize - eye2;
-                z8 = tileSize - eye2;
-                eyeRotation = 3;
-                scale1 = 1;
-                scale2 = scaleFactor;
-
-                if (1 <= headCol && headCol < level.width - 1) {
-                    forwardLocation = getLocation(level, headRow, headCol - 1);
-                    forwardObject = findObjectAtLocation(forwardLocation);
-                }
-                if (isOccupied(0, -1) || (forwardObject != null && forwardObject.type !== FRUIT)) {
-                    straight = false;
-                    b1 = tileSize * .05;
-                    b2 = tileSize * .4;
-                    b3 = -tileSize * .05;
-                    b4 = tileSize * .3;
-                    b5 = tileSize * .1;
-                    b6 = 0;
-                    b7 = tileSize * .1;
-                    b8 = -tileSize * .2;
-                }
-                else straight = true;
-
-                a1 = tileSize * .3;
-                a2 = tileSize * .3;
-                a3 = tileSize - tileSize * 1.3;
-                a4 = tileSize * .3;
-                a5 = tileSize * .3;
-                a6 = tileSize * .3;
-                a7 = 0;
-                a8 = tileSize / 6;
-                beakRotation = 2.5;
-                arcDirection = false;
-                break;
-            case 4:    //green up and yellow right
-                z1 = tileSize - eye2;
-                z2 = tileSize - eye1;
-                z3 = tileSize - eye2;
-                z4 = tileSize - eye2;
-                z5 = tileSize - eye2;
-                z6 = tileSize - eye1;
-                z7 = tileSize - eye2;
-                z8 = tileSize - eye2
-                eyeRotation = 2.5;
-                scale1 = scaleFactor;
-                scale2 = 1;
-
-                if (1 <= headRow && headRow < level.height - 1) {
-                    forwardLocation = getLocation(level, headRow - 1, headCol);
-                    forwardObject = findObjectAtLocation(forwardLocation);
-                }
-                if (isOccupied(-1, 0) || (forwardObject != null && forwardObject.type !== FRUIT)) {
-                    straight = false;
-                    b1 = tileSize * .4;
-                    b2 = tileSize * .05;
-                    b3 = tileSize * .3;
-                    b4 = -tileSize * .05;
-                    b5 = 0;
-                    b6 = tileSize * .1;
-                    b7 = -tileSize * .2;
-                    b8 = tileSize * .1;
-                }
-                else straight = true;
-
-                a1 = tileSize * .3;
-                a2 = tileSize * .3;
-                a3 = tileSize * .3;
-                a4 = -tileSize * .3;
-                a5 = tileSize * .3;
-                a6 = tileSize * .3;
-                a7 = tileSize / 6;
-                a8 = 0;
-                beakRotation = 2;
-                arcDirection = true;
-                break;
-            case 5:    //green right and yellow down
-                z1 = eye1;
-                z2 = tileSize - eye2;
-                z3 = eye2;
-                z4 = tileSize - eye2;
-                z5 = eye1;
-                z6 = tileSize - eye2;
-                z7 = eye2;
-                z8 = tileSize - eye2;
-                eyeRotation = 3;
-                scale1 = 1;
-                scale2 = scaleFactor;
-
-                if (1 <= headCol && headCol < level.width - 1) {
-                    forwardLocation = getLocation(level, headRow, headCol + 1);
-                    forwardObject = findObjectAtLocation(forwardLocation);
-                }
-                if (isOccupied(0, 1) || (forwardObject != null && forwardObject.type !== FRUIT)) {
-                    straight = false;
-                    b1 = tileSize * .95;
-                    b2 = tileSize * .4;
-                    b3 = tileSize * 1.05;
-                    b4 = tileSize * .3;
-                    b5 = tileSize * .9;
-                    b6 = 0;
-                    b7 = -tileSize * .1;
-                    b8 = -tileSize * .2;
-                }
-                else straight = true;
-
-                a1 = tileSize * .7;
-                a2 = tileSize * .3;
-                a3 = tileSize * 1.3;
-                a4 = tileSize * .3;
-                a5 = tileSize * .7;
-                a6 = tileSize * .3;
-                a7 = 0;
-                a8 = tileSize / 6;
-                beakRotation = .5;
-                arcDirection = true;
-                break;
-            case 6:    //green down and yellow left
-                z1 = eye2;
-                z2 = eye1;
-                z3 = eye2;
-                z4 = eye2;
-                z5 = eye2;
-                z6 = eye1;
-                z7 = eye2;
-                z8 = eye2;
-                eyeRotation = 1.5;
-                scale1 = scaleFactor;
-                scale2 = 1;
-
-                if (1 <= headRow && headRow < level.height - 1) {
-                    forwardLocation = getLocation(level, headRow + 1, headCol);
-                    forwardObject = findObjectAtLocation(forwardLocation);
-                }
-                if (isOccupied(1, 0) || (forwardObject != null && forwardObject.type !== FRUIT)) {
-                    straight = false;
-                    b1 = tileSize * .6;
-                    b2 = tileSize * .95;
-                    b3 = tileSize * .7;
-                    b4 = tileSize * 1.05;
-                    b5 = tileSize;
-                    b6 = tileSize * .9;
-                    b7 = tileSize * .2;
-                    b8 = -tileSize * .1;
-                }
-                else straight = true;
-
-                a1 = tileSize * .7;
-                a2 = tileSize * .7;
-                a3 = tileSize * .7;
-                a4 = tileSize * 1.3;
-                a5 = tileSize * .7;
-                a6 = tileSize * .7;
-                a7 = tileSize / 6;
-                a8 = 0;
-                beakRotation = 1;
-                arcDirection = true;
-                break;
-            case 7:    //green left and yellow up
-                z1 = tileSize - eye1;
-                z2 = eye2;
-                z3 = tileSize - eye2;
-                z4 = eye2;
-                z5 = tileSize - eye1;
-                z6 = eye2;
-                z7 = tileSize - eye2;
-                z8 = eye2;
-                eyeRotation = 2;
-                scale1 = 1;
-                scale2 = scaleFactor;
-
-                if (1 <= headCol && headCol < level.width - 1) {
-                    forwardLocation = getLocation(level, headRow, headCol - 1);
-                    forwardObject = findObjectAtLocation(forwardLocation);
-                }
-                if (isOccupied(0, -1) || (forwardObject != null && forwardObject.type !== FRUIT)) {
-                    straight = false;
-                    b1 = tileSize * .05;
-                    b2 = tileSize * .6;
-                    b3 = -tileSize * .05;
-                    b4 = tileSize * .7;
-                    b5 = tileSize * .1;
-                    b6 = tileSize;
-                    b7 = tileSize * .1;
-                    b8 = tileSize * .2;
-                }
-                else straight = true;
-
-                a1 = tileSize * .3;
-                a2 = tileSize * .7;
-                a3 = tileSize - tileSize * 1.3;
-                a4 = tileSize * .7;
-                a5 = tileSize * .3;
-                a6 = tileSize * .7;
-                a7 = 0;
-                a8 = tileSize / 6;
-                beakRotation = 1.5;
-                arcDirection = true;
-                break;
-        }
-
-        if (snake === activeSnakeId) {     //draw eyes for active snake only    
-            context.fillStyle = "white";
-            context.save();
-            context.scale(scale1, scale2);
-            context.beginPath();
-            context.arc((x + z1) / scale1, (y + z2) / scale2, eyeSize, (eyeRotation - 1) * Math.PI, eyeRotation * Math.PI, true);
-            context.closePath();
-            context.restore();
-            context.fill();
-
-            context.fillStyle = "white";
-            context.save();
-            context.scale(scale1, scale2);
-            context.beginPath();
-            context.arc((x + z3) / scale1, (y + z4) / scale2, eyeSize, (eyeRotation - 1) * Math.PI, eyeRotation * Math.PI, true);
-            context.closePath();
-            context.restore();
-            context.fill();
-
-            context.fillStyle = "black";
-            context.save();
-            context.scale(scale1, scale2);
-            context.beginPath();
-            context.arc((x + z5) / scale1, (y + z6) / scale2, eyeSize / 2, (eyeRotation - 1) * Math.PI, eyeRotation * Math.PI, true);
-            context.closePath();
-            context.restore();
-            context.fill();
-
-            context.fillStyle = "black";
-            context.save();
-            context.scale(scale1, scale2);
-            context.beginPath();
-            context.arc((x + z7) / scale1, (y + z8) / scale2, eyeSize / 2, (eyeRotation - 1) * Math.PI, eyeRotation * Math.PI, true);
-            context.closePath();
-            context.restore();
-            context.fill();
-        }
-
-        //beak
-        context.fillStyle = "#F9921C";
-        context.strokeStyle = "#f98806";
-        context.lineWidth = tileSize / 24;
-        context.beginPath();
-        context.arc(x + a1, y + a2, tileSize / 6, (beakRotation - 1) * Math.PI, beakRotation * Math.PI, arcDirection);
-        if (straight) context.lineTo(x + a3, y + a4);
-        else {
-            context.lineTo(x + b1, y + b2);
-            context.bezierCurveTo(x + b1, y + b2, x + b3, y + b4, x + b5, y + b6);
-            context.lineTo(x + b1 + b7, y + b2 + b8);
-        }
-        context.closePath();
-        context.stroke();
-        context.fill();
-    }
-
-    function drawFruit(object, isPoison, rng) {
-        var isPoison = object.type === POISONFRUIT;
-        var rowcol = getRowcol(level, object.locations[0]);
-        var c = rowcol.c;
-        var r = rowcol.r;
-        var startC = c * tileSize + tileSize / 2;
-        var startR = (r + .08) * tileSize;
-        var resize = tileSize * 1.7;
-
-        var color = fruitColors[object.id % fruitColors.length];
-        var stemColor = themes[themeCounter][7];
-        if (themeName === "Classic") {
-            var circle = true;
-            color = "#f0f";
-        }
-        context.save();
-        if (isPoison) {
-            color = "#666600";
-            stemColor = "#805500";
-        }
-
-        context.fillStyle = color;
-        if (circle) {
-            drawCircle(context, r, c, 1, color);
-        }
-        else {
-            if (wall.surface == "rainbow") {
-                if (isPoison) {
-                    stemColor = "black";
-                    var grd = context.createLinearGradient(c * tileSize, r * tileSize, (c + 1) * tileSize, (r + 1) * tileSize);
-                    grd.addColorStop(0, "black");
-                    grd.addColorStop(1 / 2, "gray");
-                    grd.addColorStop(1, "black");
-                    context.fillStyle = grd;
-                } else {
-                    stemColor = "white";
-                    var grd = context.createLinearGradient(c * tileSize, r * tileSize, (c + 1) * tileSize, (r + 1) * tileSize);
-                    grd.addColorStop(0, "white");
-                    grd.addColorStop(1 / 2, "#888");
-                    grd.addColorStop(1, "white");
-                    context.fillStyle = grd;
-                }
-
-                // context.lineWidth = tileSize / 8;
-                // context.strokeStyle = "white";
-            }
-            // context.transform(.8, 0, 0, .8, 100, 100);
-            context.beginPath();
-            context.moveTo(startC, startR);
-            context.bezierCurveTo(startC - resize * .1, startR - resize * .05, startC - resize * .25, startR - resize * .1, startC - resize * .3, startR + resize * .05);
-            context.bezierCurveTo(startC - resize * .35, startR + resize * .15, startC - resize * .3, startR + resize * .6, startC, startR + resize * .5);
-            context.bezierCurveTo(startC + resize * .3, startR + resize * .6, startC + resize * .35, startR + resize * .15, startC + resize * .3, startR + resize * .05);
-            context.bezierCurveTo(startC + resize * .25, startR - resize * .05, startC + resize * .1, startR - resize * .1, startC, startR);
-            context.closePath();
-            context.fill();
-
-            context.beginPath();
-            context.moveTo(startC, startR);
-            context.bezierCurveTo(startC - resize * .1, startR - resize * .05, startC, startR - resize * .1, startC - resize * .1, startR - resize * .15);
-            context.bezierCurveTo(startC, startR - resize * .1, startC + resize * .05, startR - resize * .1, startC, startR);
-            context.fillStyle = stemColor;
-            context.fill();
-        }
-        if (isPoison) {
-            for (var i = 0; i < 60; i++) {
-                var spotC = rng();
-                var spotR = rng();
-                var mod = i % 2;
-                switch (mod) {
-                    case 0: context.fillStyle = "rgba(20,20,0,.2)"; break;
-                    case 1: context.fillStyle = "rgba(100,200,255,.2)"; break;
-                }
-                context.globalCompositeOperation = "source-atop";
-                context.beginPath();
-                context.arc((c + spotC) * tileSize, (r + spotR) * tileSize, tileSize / 22, 0, 2 * Math.PI);
-                context.fill();
-            }
-            for (var i = 0; i < 10; i++) {
-                var spotC = rng();
-                var spotR = rng();
-                var mod = i % 2;
-                switch (mod) {
-                    case 0: context.fillStyle = "rgba(20,20,0,.2)"; break;
-                    case 1: context.fillStyle = "rgba(100,200,255,.1)"; break;
-                }
-                context.globalCompositeOperation = "source-atop";
-                context.beginPath();
-                context.arc((c + spotC) * tileSize, (r + spotR) * tileSize, tileSize / 10, 0, 2 * Math.PI);
-                context.fill();
-            }
-        }
-        context.restore();
-    }
-
-    function drawConnector(context, r1, c1, r2, c2, color) {
-        // either r1 and r2 or c1 and c2 must be equal
-        if (r1 > r2 || c1 > c2) {
-            var rTmp = r1;
-            var cTmp = c1;
-            r1 = r2;
-            c1 = c2;
-            r2 = rTmp;
-            c2 = cTmp;
-        }
-        var connectorSize = .38;
-        var xLo = (c1 + connectorSize) * tileSize;
-        var yLo = (r1 + connectorSize) * tileSize;
-        var xHi = (c2 + 1 - connectorSize) * tileSize;
-        var yHi = (r2 + 1 - connectorSize) * tileSize;
-        context.fillStyle = color;
-        context.fillRect(xLo, yLo, xHi - xLo, yHi - yLo);
-    }
-
-    function drawBlock(context, block, minR, minC, rng) {
-        var animationDisplacementRowcol = findAnimationDisplacementRowcol(block.type, block.id);
-        var blockRowcols = block.locations.map(function (location) {
-            var rowcol = getRowcol(level, location);
-            rowcol.r -= minR;
-            rowcol.c -= minC;
-            return rowcol;
-        });
-        var splockRowcols = block.splocks.map(function (location) {
-            var rowcol = getRowcol(level, location);
-            rowcol.r -= minR;
-            rowcol.c -= minC;
-            return rowcol;
-        });
-
-        var color = blockColors[block.id % blockColors.length];
-        splockRowcols.forEach(function (rowcol) {
-            var r = rowcol.r + animationDisplacementRowcol.r;
-            var c = rowcol.c + animationDisplacementRowcol.c;
-            if (isDead() && newSpikeDeath[0] === BLOCK && newSpikeDeath[1] === block.id && newSpikeDeath[2].dead) r += .5;
-            drawSpikes(context, r, c, null, rng, blockRowcols, splockRowcols, color);
-        });
-
-        blockRowcols.forEach(function (rowcol) {
-            var r = rowcol.r + animationDisplacementRowcol.r;
-            var c = rowcol.c + animationDisplacementRowcol.c;
-            if (isDead() && newSpikeDeath[0] === BLOCK && newSpikeDeath[1] === block.id && newSpikeDeath[2].dead) r += .5;
-
-            context.fillStyle = color;
-            var outlineThickness = .4;
-            var complement = 1 - outlineThickness;
-            var outlinePixels = outlineThickness * tileSize;
-
-            var c1, c2, c3, c4;
-            c1 = c2 = c3 = c4 = blockRadius;
-            if (isAlsoThisBlock(-1, 0)) c1 = c3 = 0;
-            if (isAlsoThisBlock(1, 0)) c2 = c4 = 0;
-            if (isAlsoThisBlock(0, -1)) c1 = c2 = 0;
-            if (isAlsoThisBlock(0, 1)) c3 = c4 = 0;
-
-            // draw curves
-            var size = .9;
-            var inverse = 1 - size;
-
-            // top right
-            if (isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(1, -1)) {
-                var y = r;
-                var x = c + 1;
-                context.beginPath();
-                context.moveTo((x + inverse) * tileSize, y * tileSize);
-                context.lineTo(x * tileSize, y * tileSize);
-                context.lineTo(x * tileSize, (y - inverse) * tileSize);
-                context.arc((x + inverse) * tileSize, (y - inverse) * tileSize, inverse * tileSize, Math.PI, .5 * Math.PI, true);
-                context.closePath();
-                context.fill();
-            }
-            // top left
-            else if (isAlsoThisBlock(-1, 0) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(-1, -1)) {
-                var y = r;
-                var x = c - 1;
-                context.beginPath();
-                context.moveTo((x + size) * tileSize, y * tileSize);
-                context.lineTo((x + 1) * tileSize, y * tileSize);
-                context.lineTo((x + 1) * tileSize, (y - inverse) * tileSize);
-                context.arc((x + size) * tileSize, (y - inverse) * tileSize, inverse * tileSize, 0, .5 * Math.PI, false);
-                context.closePath();
-                context.fill();
-            }
-            // top left
-            else if (isAlsoThisBlock(-1, 1) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(-1, 0)) {
-                var y = r + 1;
-                var x = c - 1;
-                context.beginPath();
-                context.moveTo((x + size) * tileSize, y * tileSize);
-                context.lineTo((x + 1) * tileSize, y * tileSize);
-                context.lineTo((x + 1) * tileSize, (y - inverse) * tileSize);
-                context.arc((x + size) * tileSize, (y - inverse) * tileSize, inverse * tileSize, 0, .5 * Math.PI, false);
-                context.closePath();
-                context.fill();
-            }
-            // bottom right
-            else if (isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(1, 1)) {
-                var y = r + 1;
-                var x = c + 1;
-                context.beginPath();
-                context.moveTo((x + inverse) * tileSize, y * tileSize);
-                context.lineTo(x * tileSize, y * tileSize);
-                context.lineTo(x * tileSize, (y + inverse) * tileSize);
-                context.arc((x + inverse) * tileSize, (y + inverse) * tileSize, inverse * tileSize, Math.PI, 1.5 * Math.PI, false);
-                context.closePath();
-                context.fill();
-            }
-            // bottom right
-            else if (!isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, -1) && isAlsoThisBlock(1, -1)) {
-                var y = r;
-                var x = c + 1;
-                context.beginPath();
-                context.moveTo((x + inverse) * tileSize, y * tileSize);
-                context.lineTo(x * tileSize, y * tileSize);
-                context.lineTo(x * tileSize, (y + inverse) * tileSize);
-                context.arc((x + inverse) * tileSize, (y + inverse) * tileSize, inverse * tileSize, Math.PI, 1.5 * Math.PI, false);
-                context.closePath();
-                context.fill();
-            }
-            // bottom left
-            else if (isAlsoThisBlock(-1, 0) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(-1, 1)) {
-                var y = r + 1;
-                var x = c - 1;
-                context.beginPath();
-                context.moveTo((x + size) * tileSize, y * tileSize);
-                context.lineTo((x + 1) * tileSize, y * tileSize);
-                context.lineTo((x + 1) * tileSize, (y + inverse) * tileSize);
-                context.arc((x + size) * tileSize, (y + inverse) * tileSize, inverse * tileSize, 0, 1.5 * Math.PI, true);
-                context.closePath();
-                context.fill();
-            }
-            // bottom left (why needed?)
-            else if (isAlsoThisBlock(-1, -1) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(-1, 0)) {
-                var y = r;
-                var x = c - 1;
-                context.beginPath();
-                context.moveTo((x + size) * tileSize, y * tileSize);
-                context.lineTo((x + 1) * tileSize, y * tileSize);
-                context.lineTo((x + 1) * tileSize, (y + inverse) * tileSize);
-                context.arc((x + size) * tileSize, (y + inverse) * tileSize, inverse * tileSize, 0, 1.5 * Math.PI, true);
-                context.closePath();
-                context.fill();
-            }
-
-            if (!isAlsoThisBlock(-1, -1) && isAlsoThisBlock(0, -1))
-                roundRect(context, c * tileSize, r * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: 0, bl: 0, br: blockRadius }, true, false);
-            if (!isAlsoThisBlock(1, -1) && isAlsoThisBlock(0, -1))
-                roundRect(context, (c + complement) * tileSize, r * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: 0, bl: blockRadius, br: 0 }, true, false);
-            if (!isAlsoThisBlock(-1, 1) && isAlsoThisBlock(0, 1))
-                roundRect(context, c * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: blockRadius, bl: 0, br: 0 }, true, false);
-            if (!isAlsoThisBlock(1, 1) && isAlsoThisBlock(0, 1))
-                roundRect(context, (c + complement) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels, { tl: blockRadius, tr: 0, bl: 0, br: 0 }, true, false);
-
-            if (!isAlsoThisBlock(0, -1)) roundRect(context, c * tileSize, r * tileSize, tileSize, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
-            if (!isAlsoThisBlock(0, 1)) roundRect(context, c * tileSize, (r + complement) * tileSize, tileSize, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
-            if (!isAlsoThisBlock(-1, 0)) roundRect(context, c * tileSize, r * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
-            if (!isAlsoThisBlock(1, 0)) roundRect(context, (c + complement) * tileSize, r * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
-
-            // drawCircle(context, r, c, 1, "yellow");
-
-            function isAlsoThisBlock(dc, dr) {
-                for (var i = 0; i < blockRowcols.length; i++) {
-                    var otherRowcol = blockRowcols[i];
-                    if (rowcol.r + dr === otherRowcol.r && rowcol.c + dc === otherRowcol.c) return true;
-                }
-                return false;
-            }
-        });
-    }
-
-    function drawMike(context, mike, minR, minC, rng) {
-        var animationDisplacementRowcol = findAnimationDisplacementRowcol(mike.type, mike.id);
-        var mikeRowcols = mike.locations.map(function (location) {
-            var rowcol = getRowcol(level, location);
-            rowcol.r -= minR;
-            rowcol.c -= minC;
-            return rowcol;
-        });
-        var color = blockColors[blockColors.length - 1 - mike.id % blockColors.length]
-        mikeRowcols.forEach(function (rowcol) {
-            var r = rowcol.r + animationDisplacementRowcol.r;
-            var c = rowcol.c + animationDisplacementRowcol.c;
-            if (isDead() && newSpikeDeath[0] === MIKE && newSpikeDeath[1] === mike.id) r += .5;
-            drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 31, tileSize * .48, tileSize * .36, color);
-
-            var side = 0;
-            var size = tileSize / 8;
-            var x = (c + .5) * tileSize;
-            var y = (r + .5) * tileSize;
-
-            var rotation = rng() * 2 * Math.PI;
-            context.save();
-            context.translate(x, y);
-            context.rotate(rotation);
-            context.translate(-x, -y);
-
-            context.beginPath();
-            context.moveTo(x + size * Math.cos(0), y + size * Math.sin(0));
-            for (side; side < 7; side++) {
-                context.lineTo((x + size * Math.cos(side * 2 * Math.PI / 6)) * 1, (y + size * Math.sin(side * 2 * Math.PI / 6)) * 1);
-            }
-            context.lineWidth = 1.5;
-            context.strokeStyle = "#999";
-            context.stroke();
-            context.fillStyle = tint(color, .5);
-            context.fillStyle = "#888";
-            context.fill();
-            context.restore();
-        });
-
-        function drawStar(context, cx, cy, spikes, outerRadius, innerRadius, color) {
-            var rot = 1.5 * Math.PI;
-            var x = cx;
-            var y = cy;
-            var step = Math.PI / spikes;
-
-            context.save();
-            context.translate(x, y);
-            context.rotate(Math.PI / 12);
-            context.translate(-x, -y);
-            context.beginPath();
-            context.moveTo(cx, cy - outerRadius)
-            for (i = 0; i < spikes; i++) {
-                x = cx + Math.cos(rot) * outerRadius;
-                y = cy + Math.sin(rot) * outerRadius;
-                context.lineTo(x, y);
-                rot += step;
-
-                x = cx + Math.cos(rot) * innerRadius;
-                y = cy + Math.sin(rot) * innerRadius;
-                context.lineTo(x, y);
-                rot += step;
-            }
-            context.lineTo(cx, cy - outerRadius);
-            context.closePath();
-            context.lineWidth = 2;
-            context.strokeStyle = tint(color, .95);
-            context.stroke();
-            context.fillStyle = color;
-            context.fill();
-            context.restore();
-        }
-    }
 
     function drawGrid() {
         var buffer = document.createElement("canvas");
@@ -4985,6 +4048,1054 @@ function render() {
 
 // DRAWING FUNCTIONS
 // -----------------------------------------------------------------------------------------------------------------------------
+
+function tint(hex, delta) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+    var r = parseInt(result[1], 16);
+    var g = parseInt(result[2], 16);
+    var b = parseInt(result[3], 16);
+
+    r /= 255, g /= 255, b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+
+    if (max == min) {
+        h = s = 0; // achromatic
+    } else {
+        var d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+
+    s = s * 100;
+    s = Math.round(s);
+    l = l * 100 * delta;
+    l = Math.round(l);
+    h = Math.round(360 * h);
+
+    return 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
+}
+
+function drawObject(context, object, rng) {
+    var r, c;
+    switch (object.type) {
+        case SNAKE:
+            themeName !== "Classic" ? drawNewSnake(context) : drawOriginalSnake(context);
+            break;
+        case BLOCK:
+            drawBlock(context, object, 0, 0, rng);
+            break;
+        case MIKE:
+            drawMike(context, object, 0, 0, rng);
+            break;
+        case FRUIT:
+        case POISONFRUIT:
+            var isPoison = object.type == POISONFRUIT;
+            drawFruit(context, object, isPoison, rng);
+            break;
+        default: throw unreachable();
+    }
+    function getAdjacentTiles() {
+        return [
+            [getTile(r - 1, c - 1),
+            getTile(r - 1, c + 0),
+            getTile(r - 1, c + 1)],
+            [getTile(r + 0, c - 1),
+                null,
+            getTile(r + 0, c + 1)],
+            [getTile(r + 1, c - 1),
+            getTile(r + 1, c + 0),
+            getTile(r + 1, c + 1)],
+        ];
+    }
+    function getTile(r, c) {
+        if (!isInBounds(level, r, c)) return null;
+        return level.map[getLocation(level, r, c)];
+    }
+
+    function drawNewSnake(context) {
+        var falling = false;
+        var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
+        if (animationDisplacementRowcol.r != 0) falling = true;
+        var lastRowcol = null
+        var nextRowcol = null
+        var color = snakeColors[object.id % snakeColors.length];
+        var colorIndex = object.id % snakeColors.length;
+        var altColor = tint(color, 1.2);
+        if (snakeColors === snakeColors2) altColor = color;
+        var headRowcol;
+        var orientation = 10;
+        for (var stage = 1; stage <= 2; stage++) {
+            for (var i = 0; i < object.locations.length; i++) {
+                if (stage === 1 && i === 0) continue;
+                var animation;
+                var rowcol = getRowcol(level, object.locations[i]);
+                if (stage === 2) {
+                    if (i === 0 && (animation = findAnimation([SLITHER], object.id)) != null) {
+                        rowcol.r += animation[2] * (animationProgress - 1);
+                        rowcol.c += animation[3] * (animationProgress - 1);
+                    } else if ((animation = findAnimation([SLITHER + i], object.id)) != null) {
+                        rowcol.r += animation[2] * (animationProgress - 1);
+                        rowcol.c += animation[3] * (animationProgress - 1);
+                    }
+                }
+
+                lastRowcol = getRowcol(level, object.locations[i - 1]); //closer to head
+                nextRowcol = getRowcol(level, object.locations[i + 1]); //closer to tail
+
+                if (object.dead && (!dieOnSplock || dieOnSplock === object.id)) {
+                    if (newSpikeDeath[2] != null && newSpikeDeath[2].type === SNAKE && newSpikeDeath[2].id === object.id) lowDeath = false;
+                    else {
+                        lowDeath = true;
+                        rowcol.r += .5;
+                        lastRowcol.r += .5;
+                        nextRowcol.r += .5;
+                        falling = true;
+                    }
+                }
+                rowcol.r += animationDisplacementRowcol.r;
+                rowcol.c += animationDisplacementRowcol.c;
+                lastRowcol.r += animationDisplacementRowcol.r;
+                lastRowcol.c += animationDisplacementRowcol.c;
+                nextRowcol.r += animationDisplacementRowcol.r;
+                nextRowcol.c += animationDisplacementRowcol.c;
+
+                var cx = rowcol.c * tileSize;
+                var cy = rowcol.r * tileSize;
+
+                if (i === 0) {
+                    context.fillStyle = color;
+                    headRowcol = rowcol;
+
+                    //determines orientation of face
+                    if (!falling) nextRowcol = getRowcol(level, object.locations[1]);
+                    if (nextRowcol.r < rowcol.r) {  //last move down
+                        roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false);  //draw head
+                        if (colorIndex === 0) orientation = 2;
+                        else if (colorIndex === 1) orientation = 6;
+                        else if (colorIndex === 2) orientation = 3;
+                        else if (colorIndex === 3) orientation = 5;
+                    }
+                    else if (nextRowcol.r > rowcol.r) {  //last move up
+                        roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false);  //draw head
+                        if (colorIndex === 0) orientation = 0;
+                        else if (colorIndex === 1) orientation = 4;
+                        else if (colorIndex === 2) orientation = 1;
+                        else if (colorIndex === 3) orientation = 7;
+                    }
+                    else if (nextRowcol.c < rowcol.c) {  //last move right
+                        roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false);  //draw head
+                        if (colorIndex === 0) orientation = 1;
+                        else if (colorIndex === 1) orientation = 5;
+                        else if (colorIndex === 2) orientation = 2;
+                        else if (colorIndex === 3) orientation = 4;
+                    }
+                    else if (nextRowcol.c > rowcol.c) {  //last move left
+                        roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false);  //draw head
+                        if (colorIndex === 0) orientation = 3;
+                        else if (colorIndex === 1) orientation = 7;
+                        else if (colorIndex === 2) orientation = 0;
+                        else if (colorIndex === 3) orientation = 6;
+                    }
+                    else {
+                        roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);  //draw head
+                        orientation = 10;
+                    }
+                } else {
+                    if (i % 2 == 0) context.fillStyle = color;
+                    else context.fillStyle = altColor;
+
+                    if (i === object.locations.length - 1) {
+                        if (lastRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false); }
+                        else if (lastRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false); }
+                        else if (lastRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false); }
+                        else if (lastRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false); }
+                    }
+                    else if (i < object.locations.length - 1) {
+                        if (lastRowcol.r > rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
+                        else if (lastRowcol.r > rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
+                        else if (lastRowcol.r < rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
+                        else if (lastRowcol.r < rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
+
+                        else if (lastRowcol.c > rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
+                        else if (lastRowcol.c > rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
+                        else if (lastRowcol.c < rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
+                        else if (lastRowcol.c < rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
+
+                        else if (lastRowcol.c < rowcol.c && nextRowcol.c > rowcol.c || lastRowcol.c > rowcol.c && nextRowcol.c < rowcol.c || lastRowcol.r < rowcol.r && nextRowcol.r > rowcol.r || lastRowcol.r > rowcol.r && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, 0, true, false); }
+                    }
+                    else roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);
+                }
+            }
+        }
+        r = headRowcol.r;
+        c = headRowcol.c;
+        drawFace(context, object.id, c, r, orientation, getAdjacentTiles());
+    }
+
+    function drawOriginalSnake(context) {
+        var animationDisplacementRowcol = findAnimationDisplacementRowcol(object.type, object.id);
+        var lastRowcol = null
+        var color = snakeColors[object.id % snakeColors.length];
+        var headRowcol;
+        for (var i = 0; i <= object.locations.length; i++) {
+            var animation;
+            var rowcol;
+            if (i === 0 && (animation = findAnimation([SLITHER], object.id)) != null) {
+                // animate head slithering forward
+                rowcol = getRowcol(level, object.locations[i]);
+                rowcol.r += animation[2] * (animationProgress - 1);
+                rowcol.c += animation[3] * (animationProgress - 1);
+            } else if (i === object.locations.length) {
+                // animated tail?
+                if ((animation = findAnimation([SLITHER], object.id)) != null) {
+                    // animate tail slithering to catch up
+                    rowcol = getRowcol(level, object.locations[i - 1]);
+                    rowcol.r += animation[2] * (animationProgress - 1);
+                    rowcol.c += animation[3] * (animationProgress - 1);
+                } else {
+                    // no animated tail needed
+                    break;
+                }
+            } else {
+                rowcol = getRowcol(level, object.locations[i]);
+            }
+            if (object.dead && (!dieOnSplock || dieOnSplock === object.id)) {
+                if (newSpikeDeath[2] != null && newSpikeDeath[2].type === SNAKE && newSpikeDeath[2].id === object.id) lowDeath = false;
+                else {
+                    lowDeath = true;
+                    rowcol.r += .5;
+                }
+            }
+            rowcol.r += animationDisplacementRowcol.r;
+            rowcol.c += animationDisplacementRowcol.c;
+            if (i === 0) {
+                // head
+                headRowcol = rowcol;
+                drawDiamond(rowcol.r, rowcol.c, color);
+            } else {
+                // middle
+                var cx = (rowcol.c + 0.5) * tileSize;
+                var cy = (rowcol.r + 0.5) * tileSize;
+                context.fillStyle = color;
+                var orientation;
+                if (lastRowcol.r < rowcol.r) {
+                    orientation = 0;
+                    context.beginPath();
+                    context.moveTo((lastRowcol.c + 0) * tileSize, (lastRowcol.r + 0.5) * tileSize);
+                    context.lineTo((lastRowcol.c + 1) * tileSize, (lastRowcol.r + 0.5) * tileSize);
+                    context.arc(cx, cy, tileSize / 2, 0, Math.PI);
+                    context.fill();
+                } else if (lastRowcol.r > rowcol.r) {
+                    orientation = 2;
+                    context.beginPath();
+                    context.moveTo((lastRowcol.c + 1) * tileSize, (lastRowcol.r + 0.5) * tileSize);
+                    context.lineTo((lastRowcol.c + 0) * tileSize, (lastRowcol.r + 0.5) * tileSize);
+                    context.arc(cx, cy, tileSize / 2, Math.PI, 0);
+                    context.fill();
+                } else if (lastRowcol.c < rowcol.c) {
+                    orientation = 3;
+                    context.beginPath();
+                    context.moveTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 1) * tileSize);
+                    context.lineTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 0) * tileSize);
+                    context.arc(cx, cy, tileSize / 2, 1.5 * Math.PI, 2.5 * Math.PI);
+                    context.fill();
+                } else if (lastRowcol.c > rowcol.c) {
+                    orientation = 1;
+                    context.beginPath();
+                    context.moveTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 0) * tileSize);
+                    context.lineTo((lastRowcol.c + 0.5) * tileSize, (lastRowcol.r + 1) * tileSize);
+                    context.arc(cx, cy, tileSize / 2, 2.5 * Math.PI, 1.5 * Math.PI);
+                    context.fill();
+                }
+            }
+            lastRowcol = rowcol;
+        }
+        // eye
+        if (object.id === activeSnakeId) {
+            drawCircle(context, headRowcol.r, headRowcol.c, 0.5, "#fff");
+            drawCircle(context, headRowcol.r, headRowcol.c, 0.2, "#000");
+        }
+
+        function drawDiamond(r, c, fillStyle) {
+            var x = c * tileSize;
+            var y = r * tileSize;
+            context.fillStyle = fillStyle;
+            context.beginPath();
+            context.moveTo(x + tileSize / 2, y);
+            context.lineTo(x + tileSize, y + tileSize / 2);
+            context.lineTo(x + tileSize / 2, y + tileSize);
+            context.lineTo(x, y + tileSize / 2);
+            context.lineTo(x + tileSize / 2, y);
+            context.fill();
+        }
+    }
+}
+
+function drawFace(context, snake, headCol, headRow, orientation, adjacentTiles) {
+    drawFace2(context, snake, headCol, headRow, orientation, isNotSpace);
+    function isNotSpace(dr, dc) {
+        var tileCode = adjacentTiles[1 + dr][1 + dc];
+        var result = tileCode === WALL || tileCode === SPIKE || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER;
+        if (dr == 1 || dr == -1) return result || tileCode === OPENLIFT;
+        else return result;
+    }
+}
+
+function drawFace2(context, snake, headCol, headRow, orientation, isOccupied) {
+    var forwardLocation;
+    var forwardObject = null;
+    var straight;
+
+    var x = headCol * tileSize;
+    var y = headRow * tileSize;
+
+    var scaleFactor = 1.5;
+    var scale1;
+    var scale2;
+    var eye1 = tileSize * .8;
+    var eye2 = tileSize * .4;
+
+    var eyeSize = tileSize / 5;
+    var eyeRotation = 2;
+    var z1, z2, z3, z4, z5, z6, z7, z8;
+    var a1, a2, a3, a4, a5, a6, a7, a8;
+    var b1, b2, b3, b4, b5, b6, b7, b8, b9, b10;
+    var beakRotation = 1.5;
+    var arcDirection = false;
+
+    switch (orientation) {
+        case 0:    //red up and blue left
+            z1 = eye2;
+            z2 = tileSize - eye1;
+            z3 = eye2;
+            z4 = tileSize - eye2;
+            z5 = eye2;
+            z6 = tileSize - eye1;
+            z7 = eye2;
+            z8 = tileSize - eye2
+            eyeRotation = 1.5;
+            scale1 = scaleFactor;
+            scale2 = 1;
+
+            if (1 <= headRow && headRow < level.height - 1) {
+                forwardLocation = getLocation(level, headRow - 1, headCol);
+                forwardObject = findObjectAtLocation(forwardLocation);
+            }
+            if (isOccupied(-1, 0) || (forwardObject != null && forwardObject.type !== FRUIT)) {
+                straight = false;
+                b1 = tileSize * .6;
+                b2 = tileSize * .05;
+                b3 = tileSize * .7;
+                b4 = -tileSize * .05;
+                b5 = tileSize;
+                b6 = tileSize * .1;
+                b7 = tileSize * .2;
+                b8 = tileSize * .1;
+            }
+            else straight = true;
+
+            a1 = tileSize * .7;
+            a2 = tileSize * .3;
+            a3 = tileSize * .7;
+            a4 = -tileSize * .3;
+            a5 = tileSize * .7;
+            a6 = tileSize * .3;
+            a7 = tileSize / 6;
+            a8 = 0;
+            beakRotation = 1;
+            arcDirection = false;
+            break;
+        case 1:    //red right and blue up
+        case 10:
+            z1 = eye1;
+            z2 = eye2;
+            z3 = eye2;
+            z4 = eye2;
+            z5 = eye1;
+            z6 = eye2;
+            z7 = eye2;
+            z8 = eye2;
+            eyeRotation = 2;
+            scale1 = 1;
+            scale2 = scaleFactor;
+
+            if (1 <= headCol && headCol < level.width - 1) {
+                forwardLocation = getLocation(level, headRow, headCol + 1);
+                forwardObject = findObjectAtLocation(forwardLocation);
+            }
+            if (isOccupied(0, 1) || (forwardObject != null && forwardObject.type !== FRUIT)) {
+                straight = false;
+                b1 = tileSize * .95;
+                b2 = tileSize * .6;
+                b3 = tileSize * 1.05;
+                b4 = tileSize * .7;
+                b5 = tileSize * .9;
+                b6 = tileSize;
+                b7 = -tileSize * .1;
+                b8 = tileSize * .2;
+            }
+            else straight = true;
+
+            a1 = tileSize * .7;
+            a2 = tileSize * .7;
+            a3 = tileSize * 1.3;
+            a4 = tileSize * .7;
+            a5 = tileSize * .7;
+            a6 = tileSize * .7;
+            a7 = 0;
+            a8 = tileSize / 6;
+            beakRotation = 1.5;
+            arcDirection = false;
+            break;
+        case 2:    //red down and blue right
+            z1 = tileSize - eye2;
+            z2 = eye1;
+            z3 = tileSize - eye2;
+            z4 = eye2;
+            z5 = tileSize - eye2;
+            z6 = eye1;
+            z7 = tileSize - eye2;
+            z8 = eye2;
+            eyeRotation = 2.5;
+            scale1 = scaleFactor;
+            scale2 = 1;
+
+            if (1 <= headRow && headRow < level.height - 1) {
+                forwardLocation = getLocation(level, headRow + 1, headCol);
+                forwardObject = findObjectAtLocation(forwardLocation);
+            }
+            if (isOccupied(1, 0) || (forwardObject != null && forwardObject.type !== FRUIT)) {
+                straight = false;
+                b1 = tileSize * .4;
+                b2 = tileSize * .95;
+                b3 = tileSize * .3;
+                b4 = tileSize * 1.05;
+                b5 = 0;
+                b6 = tileSize * .9;
+                b7 = -tileSize * .2;
+                b8 = -tileSize * .1;
+            }
+            else straight = true;
+
+            a1 = tileSize * .3;
+            a2 = tileSize * .7;
+            a3 = tileSize * .3;
+            a4 = tileSize * 1.3;
+            a5 = tileSize * .3;
+            a6 = tileSize * .7;
+            a7 = tileSize / 6;
+            a8 = 0;
+            beakRotation = 2;
+            arcDirection = false;
+            break;
+        case 3:    //red left and blue down
+            z1 = tileSize - eye1;
+            z2 = tileSize - eye2;
+            z3 = tileSize - eye2;
+            z4 = tileSize - eye2;
+            z5 = tileSize - eye1;
+            z6 = tileSize - eye2;
+            z7 = tileSize - eye2;
+            z8 = tileSize - eye2;
+            eyeRotation = 3;
+            scale1 = 1;
+            scale2 = scaleFactor;
+
+            if (1 <= headCol && headCol < level.width - 1) {
+                forwardLocation = getLocation(level, headRow, headCol - 1);
+                forwardObject = findObjectAtLocation(forwardLocation);
+            }
+            if (isOccupied(0, -1) || (forwardObject != null && forwardObject.type !== FRUIT)) {
+                straight = false;
+                b1 = tileSize * .05;
+                b2 = tileSize * .4;
+                b3 = -tileSize * .05;
+                b4 = tileSize * .3;
+                b5 = tileSize * .1;
+                b6 = 0;
+                b7 = tileSize * .1;
+                b8 = -tileSize * .2;
+            }
+            else straight = true;
+
+            a1 = tileSize * .3;
+            a2 = tileSize * .3;
+            a3 = tileSize - tileSize * 1.3;
+            a4 = tileSize * .3;
+            a5 = tileSize * .3;
+            a6 = tileSize * .3;
+            a7 = 0;
+            a8 = tileSize / 6;
+            beakRotation = 2.5;
+            arcDirection = false;
+            break;
+        case 4:    //green up and yellow right
+            z1 = tileSize - eye2;
+            z2 = tileSize - eye1;
+            z3 = tileSize - eye2;
+            z4 = tileSize - eye2;
+            z5 = tileSize - eye2;
+            z6 = tileSize - eye1;
+            z7 = tileSize - eye2;
+            z8 = tileSize - eye2
+            eyeRotation = 2.5;
+            scale1 = scaleFactor;
+            scale2 = 1;
+
+            if (1 <= headRow && headRow < level.height - 1) {
+                forwardLocation = getLocation(level, headRow - 1, headCol);
+                forwardObject = findObjectAtLocation(forwardLocation);
+            }
+            if (isOccupied(-1, 0) || (forwardObject != null && forwardObject.type !== FRUIT)) {
+                straight = false;
+                b1 = tileSize * .4;
+                b2 = tileSize * .05;
+                b3 = tileSize * .3;
+                b4 = -tileSize * .05;
+                b5 = 0;
+                b6 = tileSize * .1;
+                b7 = -tileSize * .2;
+                b8 = tileSize * .1;
+            }
+            else straight = true;
+
+            a1 = tileSize * .3;
+            a2 = tileSize * .3;
+            a3 = tileSize * .3;
+            a4 = -tileSize * .3;
+            a5 = tileSize * .3;
+            a6 = tileSize * .3;
+            a7 = tileSize / 6;
+            a8 = 0;
+            beakRotation = 2;
+            arcDirection = true;
+            break;
+        case 5:    //green right and yellow down
+            z1 = eye1;
+            z2 = tileSize - eye2;
+            z3 = eye2;
+            z4 = tileSize - eye2;
+            z5 = eye1;
+            z6 = tileSize - eye2;
+            z7 = eye2;
+            z8 = tileSize - eye2;
+            eyeRotation = 3;
+            scale1 = 1;
+            scale2 = scaleFactor;
+
+            if (1 <= headCol && headCol < level.width - 1) {
+                forwardLocation = getLocation(level, headRow, headCol + 1);
+                forwardObject = findObjectAtLocation(forwardLocation);
+            }
+            if (isOccupied(0, 1) || (forwardObject != null && forwardObject.type !== FRUIT)) {
+                straight = false;
+                b1 = tileSize * .95;
+                b2 = tileSize * .4;
+                b3 = tileSize * 1.05;
+                b4 = tileSize * .3;
+                b5 = tileSize * .9;
+                b6 = 0;
+                b7 = -tileSize * .1;
+                b8 = -tileSize * .2;
+            }
+            else straight = true;
+
+            a1 = tileSize * .7;
+            a2 = tileSize * .3;
+            a3 = tileSize * 1.3;
+            a4 = tileSize * .3;
+            a5 = tileSize * .7;
+            a6 = tileSize * .3;
+            a7 = 0;
+            a8 = tileSize / 6;
+            beakRotation = .5;
+            arcDirection = true;
+            break;
+        case 6:    //green down and yellow left
+            z1 = eye2;
+            z2 = eye1;
+            z3 = eye2;
+            z4 = eye2;
+            z5 = eye2;
+            z6 = eye1;
+            z7 = eye2;
+            z8 = eye2;
+            eyeRotation = 1.5;
+            scale1 = scaleFactor;
+            scale2 = 1;
+
+            if (1 <= headRow && headRow < level.height - 1) {
+                forwardLocation = getLocation(level, headRow + 1, headCol);
+                forwardObject = findObjectAtLocation(forwardLocation);
+            }
+            if (isOccupied(1, 0) || (forwardObject != null && forwardObject.type !== FRUIT)) {
+                straight = false;
+                b1 = tileSize * .6;
+                b2 = tileSize * .95;
+                b3 = tileSize * .7;
+                b4 = tileSize * 1.05;
+                b5 = tileSize;
+                b6 = tileSize * .9;
+                b7 = tileSize * .2;
+                b8 = -tileSize * .1;
+            }
+            else straight = true;
+
+            a1 = tileSize * .7;
+            a2 = tileSize * .7;
+            a3 = tileSize * .7;
+            a4 = tileSize * 1.3;
+            a5 = tileSize * .7;
+            a6 = tileSize * .7;
+            a7 = tileSize / 6;
+            a8 = 0;
+            beakRotation = 1;
+            arcDirection = true;
+            break;
+        case 7:    //green left and yellow up
+            z1 = tileSize - eye1;
+            z2 = eye2;
+            z3 = tileSize - eye2;
+            z4 = eye2;
+            z5 = tileSize - eye1;
+            z6 = eye2;
+            z7 = tileSize - eye2;
+            z8 = eye2;
+            eyeRotation = 2;
+            scale1 = 1;
+            scale2 = scaleFactor;
+
+            if (1 <= headCol && headCol < level.width - 1) {
+                forwardLocation = getLocation(level, headRow, headCol - 1);
+                forwardObject = findObjectAtLocation(forwardLocation);
+            }
+            if (isOccupied(0, -1) || (forwardObject != null && forwardObject.type !== FRUIT)) {
+                straight = false;
+                b1 = tileSize * .05;
+                b2 = tileSize * .6;
+                b3 = -tileSize * .05;
+                b4 = tileSize * .7;
+                b5 = tileSize * .1;
+                b6 = tileSize;
+                b7 = tileSize * .1;
+                b8 = tileSize * .2;
+            }
+            else straight = true;
+
+            a1 = tileSize * .3;
+            a2 = tileSize * .7;
+            a3 = tileSize - tileSize * 1.3;
+            a4 = tileSize * .7;
+            a5 = tileSize * .3;
+            a6 = tileSize * .7;
+            a7 = 0;
+            a8 = tileSize / 6;
+            beakRotation = 1.5;
+            arcDirection = true;
+            break;
+    }
+
+    if (snake === activeSnakeId) {     //draw eyes for active snake only    
+        context.fillStyle = "white";
+        context.save();
+        context.scale(scale1, scale2);
+        context.beginPath();
+        context.arc((x + z1) / scale1, (y + z2) / scale2, eyeSize, (eyeRotation - 1) * Math.PI, eyeRotation * Math.PI, true);
+        context.closePath();
+        context.restore();
+        context.fill();
+
+        context.fillStyle = "white";
+        context.save();
+        context.scale(scale1, scale2);
+        context.beginPath();
+        context.arc((x + z3) / scale1, (y + z4) / scale2, eyeSize, (eyeRotation - 1) * Math.PI, eyeRotation * Math.PI, true);
+        context.closePath();
+        context.restore();
+        context.fill();
+
+        context.fillStyle = "black";
+        context.save();
+        context.scale(scale1, scale2);
+        context.beginPath();
+        context.arc((x + z5) / scale1, (y + z6) / scale2, eyeSize / 2, (eyeRotation - 1) * Math.PI, eyeRotation * Math.PI, true);
+        context.closePath();
+        context.restore();
+        context.fill();
+
+        context.fillStyle = "black";
+        context.save();
+        context.scale(scale1, scale2);
+        context.beginPath();
+        context.arc((x + z7) / scale1, (y + z8) / scale2, eyeSize / 2, (eyeRotation - 1) * Math.PI, eyeRotation * Math.PI, true);
+        context.closePath();
+        context.restore();
+        context.fill();
+    }
+
+    //beak
+    context.fillStyle = "#F9921C";
+    context.strokeStyle = "#f98806";
+    context.lineWidth = tileSize / 24;
+    context.beginPath();
+    context.arc(x + a1, y + a2, tileSize / 6, (beakRotation - 1) * Math.PI, beakRotation * Math.PI, arcDirection);
+    if (straight) context.lineTo(x + a3, y + a4);
+    else {
+        context.lineTo(x + b1, y + b2);
+        context.bezierCurveTo(x + b1, y + b2, x + b3, y + b4, x + b5, y + b6);
+        context.lineTo(x + b1 + b7, y + b2 + b8);
+    }
+    context.closePath();
+    context.stroke();
+    context.fill();
+}
+
+function drawConnector(context, r1, c1, r2, c2, color) {
+    // either r1 and r2 or c1 and c2 must be equal
+    if (r1 > r2 || c1 > c2) {
+        var rTmp = r1;
+        var cTmp = c1;
+        r1 = r2;
+        c1 = c2;
+        r2 = rTmp;
+        c2 = cTmp;
+    }
+    var connectorSize = .38;
+    var xLo = (c1 + connectorSize) * tileSize;
+    var yLo = (r1 + connectorSize) * tileSize;
+    var xHi = (c2 + 1 - connectorSize) * tileSize;
+    var yHi = (r2 + 1 - connectorSize) * tileSize;
+    context.fillStyle = color;
+    context.fillRect(xLo, yLo, xHi - xLo, yHi - yLo);
+}
+
+function drawBlock(context, block, minR, minC, rng) {
+    var animationDisplacementRowcol = findAnimationDisplacementRowcol(block.type, block.id);
+    var blockRowcols = block.locations.map(function (location) {
+        var rowcol = getRowcol(level, location);
+        rowcol.r -= minR;
+        rowcol.c -= minC;
+        return rowcol;
+    });
+    var splockRowcols = block.splocks.map(function (location) {
+        var rowcol = getRowcol(level, location);
+        rowcol.r -= minR;
+        rowcol.c -= minC;
+        return rowcol;
+    });
+
+    var color = blockColors[block.id % blockColors.length];
+    splockRowcols.forEach(function (rowcol) {
+        var r = rowcol.r + animationDisplacementRowcol.r;
+        var c = rowcol.c + animationDisplacementRowcol.c;
+        if (isDead() && newSpikeDeath[0] === BLOCK && newSpikeDeath[1] === block.id && newSpikeDeath[2].dead) r += .5;
+        drawSpikes(context, r, c, null, rng, blockRowcols, splockRowcols, color);
+    });
+
+    blockRowcols.forEach(function (rowcol) {
+        var r = rowcol.r + animationDisplacementRowcol.r;
+        var c = rowcol.c + animationDisplacementRowcol.c;
+        if (isDead() && newSpikeDeath[0] === BLOCK && newSpikeDeath[1] === block.id && newSpikeDeath[2].dead) r += .5;
+
+        context.fillStyle = color;
+        var outlineThickness = .4;
+        var complement = 1 - outlineThickness;
+        var outlinePixels = outlineThickness * tileSize;
+
+        var c1, c2, c3, c4;
+        c1 = c2 = c3 = c4 = blockRadius;
+        if (isAlsoThisBlock(-1, 0)) c1 = c3 = 0;
+        if (isAlsoThisBlock(1, 0)) c2 = c4 = 0;
+        if (isAlsoThisBlock(0, -1)) c1 = c2 = 0;
+        if (isAlsoThisBlock(0, 1)) c3 = c4 = 0;
+
+        // draw curves
+        var size = .9;
+        var inverse = 1 - size;
+
+        // top right
+        if (isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(1, -1)) {
+            var y = r;
+            var x = c + 1;
+            context.beginPath();
+            context.moveTo((x + inverse) * tileSize, y * tileSize);
+            context.lineTo(x * tileSize, y * tileSize);
+            context.lineTo(x * tileSize, (y - inverse) * tileSize);
+            context.arc((x + inverse) * tileSize, (y - inverse) * tileSize, inverse * tileSize, Math.PI, .5 * Math.PI, true);
+            context.closePath();
+            context.fill();
+        }
+        // top left
+        else if (isAlsoThisBlock(-1, 0) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(-1, -1)) {
+            var y = r;
+            var x = c - 1;
+            context.beginPath();
+            context.moveTo((x + size) * tileSize, y * tileSize);
+            context.lineTo((x + 1) * tileSize, y * tileSize);
+            context.lineTo((x + 1) * tileSize, (y - inverse) * tileSize);
+            context.arc((x + size) * tileSize, (y - inverse) * tileSize, inverse * tileSize, 0, .5 * Math.PI, false);
+            context.closePath();
+            context.fill();
+        }
+        // top left
+        else if (isAlsoThisBlock(-1, 1) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(-1, 0)) {
+            var y = r + 1;
+            var x = c - 1;
+            context.beginPath();
+            context.moveTo((x + size) * tileSize, y * tileSize);
+            context.lineTo((x + 1) * tileSize, y * tileSize);
+            context.lineTo((x + 1) * tileSize, (y - inverse) * tileSize);
+            context.arc((x + size) * tileSize, (y - inverse) * tileSize, inverse * tileSize, 0, .5 * Math.PI, false);
+            context.closePath();
+            context.fill();
+        }
+        // bottom right
+        else if (isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(1, 1)) {
+            var y = r + 1;
+            var x = c + 1;
+            context.beginPath();
+            context.moveTo((x + inverse) * tileSize, y * tileSize);
+            context.lineTo(x * tileSize, y * tileSize);
+            context.lineTo(x * tileSize, (y + inverse) * tileSize);
+            context.arc((x + inverse) * tileSize, (y + inverse) * tileSize, inverse * tileSize, Math.PI, 1.5 * Math.PI, false);
+            context.closePath();
+            context.fill();
+        }
+        // bottom right
+        else if (!isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, -1) && isAlsoThisBlock(1, -1)) {
+            var y = r;
+            var x = c + 1;
+            context.beginPath();
+            context.moveTo((x + inverse) * tileSize, y * tileSize);
+            context.lineTo(x * tileSize, y * tileSize);
+            context.lineTo(x * tileSize, (y + inverse) * tileSize);
+            context.arc((x + inverse) * tileSize, (y + inverse) * tileSize, inverse * tileSize, Math.PI, 1.5 * Math.PI, false);
+            context.closePath();
+            context.fill();
+        }
+        // bottom left
+        else if (isAlsoThisBlock(-1, 0) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(-1, 1)) {
+            var y = r + 1;
+            var x = c - 1;
+            context.beginPath();
+            context.moveTo((x + size) * tileSize, y * tileSize);
+            context.lineTo((x + 1) * tileSize, y * tileSize);
+            context.lineTo((x + 1) * tileSize, (y + inverse) * tileSize);
+            context.arc((x + size) * tileSize, (y + inverse) * tileSize, inverse * tileSize, 0, 1.5 * Math.PI, true);
+            context.closePath();
+            context.fill();
+        }
+        // bottom left (why needed?)
+        else if (isAlsoThisBlock(-1, -1) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(-1, 0)) {
+            var y = r;
+            var x = c - 1;
+            context.beginPath();
+            context.moveTo((x + size) * tileSize, y * tileSize);
+            context.lineTo((x + 1) * tileSize, y * tileSize);
+            context.lineTo((x + 1) * tileSize, (y + inverse) * tileSize);
+            context.arc((x + size) * tileSize, (y + inverse) * tileSize, inverse * tileSize, 0, 1.5 * Math.PI, true);
+            context.closePath();
+            context.fill();
+        }
+
+        if (!isAlsoThisBlock(-1, -1) && isAlsoThisBlock(0, -1))
+            roundRect(context, c * tileSize, r * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: 0, bl: 0, br: blockRadius }, true, false);
+        if (!isAlsoThisBlock(1, -1) && isAlsoThisBlock(0, -1))
+            roundRect(context, (c + complement) * tileSize, r * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: 0, bl: blockRadius, br: 0 }, true, false);
+        if (!isAlsoThisBlock(-1, 1) && isAlsoThisBlock(0, 1))
+            roundRect(context, c * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: blockRadius, bl: 0, br: 0 }, true, false);
+        if (!isAlsoThisBlock(1, 1) && isAlsoThisBlock(0, 1))
+            roundRect(context, (c + complement) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels, { tl: blockRadius, tr: 0, bl: 0, br: 0 }, true, false);
+
+        if (!isAlsoThisBlock(0, -1)) roundRect(context, c * tileSize, r * tileSize, tileSize, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+        if (!isAlsoThisBlock(0, 1)) roundRect(context, c * tileSize, (r + complement) * tileSize, tileSize, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+        if (!isAlsoThisBlock(-1, 0)) roundRect(context, c * tileSize, r * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+        if (!isAlsoThisBlock(1, 0)) roundRect(context, (c + complement) * tileSize, r * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+
+        function isAlsoThisBlock(dc, dr) {
+            for (var i = 0; i < blockRowcols.length; i++) {
+                var otherRowcol = blockRowcols[i];
+                if (rowcol.r + dr === otherRowcol.r && rowcol.c + dc === otherRowcol.c) return true;
+            }
+            return false;
+        }
+    });
+}
+
+function drawMike(context, mike, minR, minC, rng) {
+    var animationDisplacementRowcol = findAnimationDisplacementRowcol(mike.type, mike.id);
+    var mikeRowcols = mike.locations.map(function (location) {
+        var rowcol = getRowcol(level, location);
+        rowcol.r -= minR;
+        rowcol.c -= minC;
+        return rowcol;
+    });
+    var color = blockColors[blockColors.length - 1 - mike.id % blockColors.length]
+    mikeRowcols.forEach(function (rowcol) {
+        var r = rowcol.r + animationDisplacementRowcol.r;
+        var c = rowcol.c + animationDisplacementRowcol.c;
+        if (isDead() && newSpikeDeath[0] === MIKE && newSpikeDeath[1] === mike.id) r += .5;
+        drawStar(context, (c + .5) * tileSize, (r + .5) * tileSize, 31, tileSize * .48, tileSize * .36, color);
+
+        var side = 0;
+        var size = tileSize / 8;
+        var x = (c + .5) * tileSize;
+        var y = (r + .5) * tileSize;
+
+        var rotation = rng() * 2 * Math.PI;
+        context.save();
+        context.translate(x, y);
+        context.rotate(rotation);
+        context.translate(-x, -y);
+
+        context.beginPath();
+        context.moveTo(x + size * Math.cos(0), y + size * Math.sin(0));
+        for (side; side < 7; side++) {
+            context.lineTo((x + size * Math.cos(side * 2 * Math.PI / 6)) * 1, (y + size * Math.sin(side * 2 * Math.PI / 6)) * 1);
+        }
+        context.lineWidth = 1.5;
+        context.strokeStyle = "#999";
+        context.stroke();
+        context.fillStyle = tint(color, .5);
+        context.fillStyle = "#888";
+        context.fill();
+        context.restore();
+    });
+
+    function drawStar(context, cx, cy, spikes, outerRadius, innerRadius, color) {
+        var rot = 1.5 * Math.PI;
+        var x = cx;
+        var y = cy;
+        var step = Math.PI / spikes;
+
+        context.save();
+        context.translate(x, y);
+        context.rotate(Math.PI / 12);
+        context.translate(-x, -y);
+        context.beginPath();
+        context.moveTo(cx, cy - outerRadius)
+        for (i = 0; i < spikes; i++) {
+            x = cx + Math.cos(rot) * outerRadius;
+            y = cy + Math.sin(rot) * outerRadius;
+            context.lineTo(x, y);
+            rot += step;
+
+            x = cx + Math.cos(rot) * innerRadius;
+            y = cy + Math.sin(rot) * innerRadius;
+            context.lineTo(x, y);
+            rot += step;
+        }
+        context.lineTo(cx, cy - outerRadius);
+        context.closePath();
+        context.lineWidth = 2;
+        context.strokeStyle = tint(color, .95);
+        context.stroke();
+        context.fillStyle = color;
+        context.fill();
+        context.restore();
+    }
+}
+
+function drawFruit(context, object, isPoison, rng) {
+    var isPoison = object.type === POISONFRUIT;
+    var rowcol = getRowcol(level, object.locations[0]);
+    var c = rowcol.c;
+    var r = rowcol.r;
+    var startC = c * tileSize + tileSize / 2;
+    var startR = (r + .08) * tileSize;
+    var resize = tileSize * 1.7;
+
+    var color = fruitColors[object.id % fruitColors.length];
+    var stemColor = themes[themeCounter][7];
+    if (themeName === "Classic") {
+        var circle = true;
+        color = "#f0f";
+    }
+    context.save();
+    if (isPoison) {
+        color = "#666600";
+        stemColor = "#805500";
+    }
+
+    context.fillStyle = color;
+    if (circle) {
+        drawCircle(context, r, c, 1, color);
+    }
+    else {
+        if (wall.surface == "rainbow") {
+            if (isPoison) {
+                stemColor = "black";
+                var grd = context.createLinearGradient(c * tileSize, r * tileSize, (c + 1) * tileSize, (r + 1) * tileSize);
+                grd.addColorStop(0, "black");
+                grd.addColorStop(1 / 2, "gray");
+                grd.addColorStop(1, "black");
+                context.fillStyle = grd;
+            } else {
+                stemColor = "white";
+                var grd = context.createLinearGradient(c * tileSize, r * tileSize, (c + 1) * tileSize, (r + 1) * tileSize);
+                grd.addColorStop(0, "white");
+                grd.addColorStop(1 / 2, "#888");
+                grd.addColorStop(1, "white");
+                context.fillStyle = grd;
+            }
+
+            // context.lineWidth = tileSize / 8;
+            // context.strokeStyle = "white";
+        }
+        // context.transform(.8, 0, 0, .8, 100, 100);
+        context.beginPath();
+        context.moveTo(startC, startR);
+        context.bezierCurveTo(startC - resize * .1, startR - resize * .05, startC - resize * .25, startR - resize * .1, startC - resize * .3, startR + resize * .05);
+        context.bezierCurveTo(startC - resize * .35, startR + resize * .15, startC - resize * .3, startR + resize * .6, startC, startR + resize * .5);
+        context.bezierCurveTo(startC + resize * .3, startR + resize * .6, startC + resize * .35, startR + resize * .15, startC + resize * .3, startR + resize * .05);
+        context.bezierCurveTo(startC + resize * .25, startR - resize * .05, startC + resize * .1, startR - resize * .1, startC, startR);
+        context.closePath();
+        context.fill();
+
+        context.beginPath();
+        context.moveTo(startC, startR);
+        context.bezierCurveTo(startC - resize * .1, startR - resize * .05, startC, startR - resize * .1, startC - resize * .1, startR - resize * .15);
+        context.bezierCurveTo(startC, startR - resize * .1, startC + resize * .05, startR - resize * .1, startC, startR);
+        context.fillStyle = stemColor;
+        context.fill();
+    }
+    if (isPoison) {
+        for (var i = 0; i < 60; i++) {
+            var spotC = rng();
+            var spotR = rng();
+            var mod = i % 2;
+            switch (mod) {
+                case 0: context.fillStyle = "rgba(20,20,0,.2)"; break;
+                case 1: context.fillStyle = "rgba(100,200,255,.2)"; break;
+            }
+            context.globalCompositeOperation = "source-atop";
+            context.beginPath();
+            context.arc((c + spotC) * tileSize, (r + spotR) * tileSize, tileSize / 22, 0, 2 * Math.PI);
+            context.fill();
+        }
+        for (var i = 0; i < 10; i++) {
+            var spotC = rng();
+            var spotR = rng();
+            var mod = i % 2;
+            switch (mod) {
+                case 0: context.fillStyle = "rgba(20,20,0,.2)"; break;
+                case 1: context.fillStyle = "rgba(100,200,255,.1)"; break;
+            }
+            context.globalCompositeOperation = "source-atop";
+            context.beginPath();
+            context.arc((c + spotC) * tileSize, (r + spotR) * tileSize, tileSize / 10, 0, 2 * Math.PI);
+            context.fill();
+        }
+    }
+    context.restore();
+}
 
 function drawTile(context, tileCode, r, c, level, location, rng, isCurve, grass) {
     switch (tileCode) {
@@ -6366,6 +6477,9 @@ function identityFunction(x) {
 }
 function compareId(a, b) {
     return operatorCompare(a.id, b.id);
+}
+function compareLocations(a, b) {
+    return operatorCompare(a.locations[0], b.locations[0]);
 }
 function operatorCompare(a, b) {
     return a < b ? -1 : a > b ? 1 : 0;
