@@ -145,7 +145,7 @@ canvas {
     width: 200px;
     margin: 0 2px 0 2px;
     border-radius: 20px;
-    overflow: hidden;
+    position: relative;
 }
 
 #uneditButton {
@@ -337,7 +337,7 @@ canvas {
 
 .separator {
     background-color: black;
-    height: 170px;
+    height: 210px;
     width: 1px;
     margin: 0 5px 0 5px;
     display: inline-block;
@@ -378,6 +378,14 @@ canvas {
     left: -300px;
 }
 
+#highlighters {
+    display: inline-block;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.05);
+    vertical-align: top;
+    padding: 5px 10px 5px 10px;
+}
+
 #levelSize {
     display: inline-block;
     border-radius: 5px;
@@ -394,20 +402,95 @@ canvas {
     position: relative;
 }
 
-#levelSizeText:active {
-    transform: scale(0.97);
-}
-
 #fitButtonContainer {
     vertical-align: middle;
     padding: 0 5px 0 5px;
     border-collapse: separate;
 }
 
-input[type=radio] {
-    margin-top: 7px;
+.radioContainer {
+    position: relative;
+    cursor: pointer;
     float: right;
+    width: 15px;
+    height: 15px;
+    margin-top: 5px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
+
+/* Hide the browser's default radio button */
+
+.radioContainer input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Create a custom radio button */
+
+.radioButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 15px;
+    width: 15px;
+    background-color: white;
+    border: 2px solid #555;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+/* On mouse-over, add a grey background color */
+
+/* .radioContainer:hover input~.radioButton {
+    background-color: white;
+} */
+
+/* When the radio button is checked, add a blue background */
+
+.radioContainer input:checked~.radioButton {
+    background-color: #2196F3;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+
+.radioButton:after {
+    content: "";
+    position: absolute;
+    display: none;
+    box-sizing: border-box;
+}
+
+/* Show the indicator (dot/circle) when checked */
+
+.radioContainer input:checked~.radioButton:after {
+    display: block;
+}
+
+/* Style the indicator (dot/circle) */
+
+/* .radioContainer .radioButton:after {
+    top: 5.5px;
+    left: 5.5px;
+    width: 4px;
+    height: 4px;
+    border-radius: .5px;
+    background: white;
+} */
+
+/* .radioContainer .radioButton:after {
+    top: 2px;
+    left: 2px;
+    width: 11px;
+    height: 11px;
+    border-radius: 1.5px;
+    background: white;
+} */
 
 .fitButton {
     float: left;
@@ -419,12 +502,12 @@ input[type=radio] {
 }
 
 .plusMinus {
-    font-size: 12pt;
-    line-height: 12pt;
+    font-size: 10pt;
+    line-height: 12px;
     font-weight: 900;
     border-radius: 3px;
-    width: 15px;
-    height: 15px;
+    width: 12px;
+    height: 12px;
     background-color: #1e90ff;
     color: white;
 }
@@ -549,13 +632,13 @@ input[type=radio] {
     background-color: rgba(0, 0, 0, 0.05);
     padding: 5px 10px 5px 10px;
     display: inline-block;
-    border-radius: 5px;
+    border-radius: 4px;
     margin-bottom: 10px;
 }
 
 .sliderContainer {
     display: block;
-    border-radius: 5px;
+    border-radius: 4px;
     padding: 2px;
 }
 
@@ -591,7 +674,7 @@ input[type=radio] {
     right: 0;
     bottom: 0;
     background-color: #555;
-    border-radius: 5px;
+    border-radius: 4px;
     -webkit-transition: .2s;
     transition: .2s;
 }
@@ -604,7 +687,7 @@ input[type=radio] {
     left: 2px;
     bottom: 2px;
     background-color: white;
-    border-radius: 3px;
+    border-radius: 2px;
     -webkit-transition: .2s;
     transition: .2s;
 }
@@ -646,6 +729,55 @@ input:checked+.slider:before {
 }
 
 .stackHeader {
-    margin-bottom: 10px;
+    margin-bottom: 6px;
     font-weight: 900;
+}
+
+button #clearHighlightsButton {
+    background-image: linear-gradient(black, #e6e6e6);
+}
+
+#openEditorButton {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #66903c;
+    border: 10px solid white;
+    text-align: center;
+    color: white;
+    font-size: 100pt;
+    line-height: 65pt;
+    position: absolute;
+    top: 10;
+    right: 10;
+    z-index: 100;
+}
+
+#openEditorButton:hover {
+    cursor: pointer;
+}
+
+#openEditorButton:active {
+    transform: scale(.97);
+}
+
+#closeEditorButton {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #b44b4b;
+    border: 2px solid white;
+    text-align: center;
+    color: white;
+    font-size: 12pt;
+    line-height: 16pt;
+    position: absolute;
+    top: -6;
+    right: -6;
+    opacity: 100%;
+}
+
+#closeEditorButton:hover {
+    cursor: pointer;
 }
