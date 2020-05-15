@@ -7,12 +7,12 @@
         src="//local.adguard.org?ts=1579613273701&amp;type=content-script&amp;dmn=wolfesoftware.com&amp;css=1&amp;js=1&amp;gcss=1&amp;rel=1&amp;rji=1&amp;stealth=1&amp;uag="></script>
     <script type="text/javascript" nonce="42ae50bf4e80482d87795e8d3ee"
         src="//local.adguard.org?ts=1579613273701&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Assistant&amp;type=user-script"></script>
-    <script src="jquery.min.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript" src="jscript/Main.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
 </head>
 <body>
+    <div id="openEditorButton" title="\&#10;&#10;Open level editor">+</div>
     <table id="levelTable">
         <tr id="levelRow">
             <td style="width:0px;" id="ghostEditorPane"></td>
@@ -29,6 +29,7 @@
             </td>
             <td id="editorPane">
                 <div id="controls">
+                <div id="closeEditorButton">&#10006;</div>
                 <table style="width:200px">
                     <tr><td><button id="saveLevelButton" title="Ctrl + S - saves the current state to the URL bar of your browser; clears unmove/re-move history">Save Changes</button></td></tr>
                     <tr><td>
@@ -166,7 +167,7 @@
             <div class="bottomBlockBox">
                 <div class="optionsHeaders">Progress Tracking</div><br>
                     
-                <div class="sliderStack">
+                <div class="sliderStack" style="padding-bottom: 8px;">
                     <div class="stackHeader">Moves</div>
                     <div id="progressButtons">
                         <div id="unmoveButton" class="progressButton" title="Backspace&#10;Z&#10;Q&#10;&#10;Unmove snake" disabled>&#10148;</div>
@@ -179,7 +180,8 @@
                 </div>
 
                 <div class="sliderStack">
-                    <label class="sliderLabel">Replay Animations</label>
+                    <!-- title doesn't work -->
+                    <label class="sliderLabel" title="Toggles snake animations during replays">Replay Animations</label>
                     <label class="switch">
                         <input id="replayAnimationSlider" type="checkbox">
                         <span class="slider"></span>
@@ -196,12 +198,18 @@
                             <div id="levelSizeInsider">
                             <div id="fitButtonContainer">
                                 <div class="fitButtonWrapper">
-                                    <button id="fitCanvas" class="fitButton" title="9&#10;&#10;Fit canvas">Fit Canvas</button>
-                                    <input type="radio" id="fitCanvasDefault"></input>
+                                    <button id="fitControls" class="fitButton" title="0&#10;&#10;Fit canvas and controls">Fit Controls</button>
+                                    <label class="radioContainer">
+                                        <input type="radio" class="radioButton" id="fitControlsDefault"></input>
+                                        <span class="radioButton"></span>
+                                    </label>
                                 </div>
                                 <div class="fitButtonWrapper">
-                                    <button id="fitControls" class="fitButton" title="0&#10;&#10;Fit canvas and controls">Fit Controls</button>
-                                    <input type="radio" id="fitControlsDefault"></input>
+                                    <button id="fitCanvas" class="fitButton" title="9&#10;&#10;Fit canvas">Fit Canvas</button>
+                                    <label class="radioContainer">
+                                        <input type="radio" class="radioButton" id="fitCanvasDefault"></input>
+                                        <span class="radioButton"></span>
+                                    </label>
                                 </div>
                             </div>
                         </div>  
@@ -226,24 +234,23 @@
                     </div><br>
                 </div>
 
-                <div id="optionsStack">
-                    <div id="highlighters">
-                        <div id="levelSizeText" class="stackHeader">Highlighters</div>
-                            <div id="levelSizeInsider">
-                            <div id="fitButtonContainer">
-                                <button id="highlightSnakesButton" class="fitButton" title="8&#10;&#10;Highlight remaining snakes">Snakes</button><br>
-                                <button id="highlightFruitsButton" class="fitButton" title="7&#10;&#10;Highlight and number remaining fruits">Fruits</button><br>
-                                <button id="clearHighlightsButton" class="fitButton" title="6&#10;&#10;Clear all highlights">Clear</button>
+                <div id="highlighters" style="margin-top: -7px; margin-bottom: 1px; padding-bottom: 8px;">
+                    <div id="levelSizeText" class="stackHeader">Highlighters</div>
+                        <div id="levelSizeInsider">
+                        <div id="fitButtonContainer" style = "width: 242px;">
+                            <div style="display: inline-block;">
+                                <button id="highlightSnakesButton" class="fitButton highlightButton" title="6&#10;&#10;Highlight remaining snakes">Snakes</button>
+                                <button id="highlightFruitsButton" class="fitButton highlightButton" title="7&#10;&#10;Highlight and number remaining fruits">Fruits</button>
+                                <button disabled id="clearHighlightsButton" class="fitButton highlightButton" title="8&#10;&#10;Clear all highlights">Clear</button>
                             </div>
-                        </div>  
-                    </div>
+                        </div>
+                    </div>  
+                </div>
 
-                    <div style="display: inline-block">
-                        <button id="themeButton" class="bottomButton" title="T&#10;Shift + T when editor is open">Theme | <b>Spring</b></button>
-                        <button id="showGridButton" class="bottomButton" title="G">Show Grid</button><br>      
-                        <button id="showHideEditor" class="bottomButton" title="\">Show Editor Stuff</button>
-                        <button id="hideHotkeyButton" class="bottomButton" title="Shift + H">Hide Hotkeys</button>
-                    </div>
+                <div style="display: inline-block">
+                    <button id="themeButton" class="bottomButton" title="T&#10;Shift + T when editor is open">Theme | <b>Spring</b></button>
+                    <button id="showGridButton" class="bottomButton" title="G">Show Grid</button>      
+                    <button id="hideHotkeyButton" class="bottomButton" title="Shift + H">Hide Hotkeys</button>
                 </div>
             </div>
         </div>
