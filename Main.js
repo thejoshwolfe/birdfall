@@ -4,10 +4,15 @@ if (typeof VERSION !== "undefined") {
         '<a href="https://github.com/thejoshwolfe/snakefall/blob/' + VERSION.sha1 + '/README.md">' + VERSION.tag + '</a>';
 }
 
-// $(document).ready(function () {
-//     var fruits = getObjectsOfType(FRUIT);
-
-// });
+$(document).ready(function () {
+    $(window).on("mousemove", function (e) {
+        $("#openEditorButton").css({ opacity: 1 });
+        clearTimeout(window.myTimeout);
+        window.myTimeout = setTimeout(function () {
+            $("#openEditorButton").css({ opacity: .2 });
+        }, 5000);
+    });
+});
 
 var sv = false;
 var didResize = false;
@@ -128,7 +133,7 @@ function loadLevel(newLevel) {
 
     // alert(document.getElementById("editorPane").style.offsetHeight);
     if (!persistentState.showEditor) document.getElementById("ghostEditorPane").style.display = "none";
-    // else toggleEditorLocation(false, localStorage.getItem("editorLocation"));
+    // else openEditorButtonLocation(false, localStorage.getItem("editorLocation"));
     // document.getElementById("ghostEditorPane").style.height = document.getElementById("editorPane").style.offsetHeight;
     // document.getElementById("ghostEditorPane").style.height = tileSize * level.height;  // doesn't add up
 
@@ -717,7 +722,7 @@ document.addEventListener("keydown", function (event) {
                 return;
             case 220: // backslash
                 if (modifierMask === 0) {
-                    if (dirtyState != EDITOR_DIRTY) { toggleShowEditor(); break; }
+                    if (dirtyState != EDITOR_DIRTY) { openEditorButton(); break; }
                     else { alert("Can't hide editor with unsaved changes"); break; }
                 }
                 return;
@@ -798,17 +803,17 @@ document.addEventListener("keydown", function (event) {
                 if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode([ONEWAYWALLU, ONEWAYWALLD, ONEWAYWALLL, ONEWAYWALLR]); break; }
                 return;
             case "M".charCodeAt(0):
-                if (persistentState.showEditor && modifierMask === 0 && !blockIsInFocus) { setPaintBrushTileCode(MIKE); break; }
+                if (persistentState.showEditor && modifierMask === 0) { setPaintBrushTileCode(MIKE); break; }
                 return;
             case 190:
-                toggleEditorLocation(true);
+                openEditorButtonLocation(true);
                 return;
             case 54: // 6
-                if (modifierMask === 0) { clearHighlights(); break; }
+                if (modifierMask === 0) { highlightSnakes(); break; }
             case 55: // 7
                 if (modifierMask === 0) { highlightFruits(); break; }
             case 56: // 8
-                if (modifierMask === 0) { highlightSnakes(); break; }
+                if (modifierMask === 0) { clearHighlights(); break; }
             case 57: // 9
                 if (modifierMask === 0) { fitCanvas(0); break; }
             case 191:
@@ -950,6 +955,12 @@ document.getElementById("clearHighlightsButton").addEventListener("click", funct
 document.getElementById("showGridButton").addEventListener("click", function () {
     toggleGrid();
 });
+document.getElementById("openEditorButton").addEventListener("click", function () {
+    openEditorButton();
+});
+document.getElementById("closeEditorButton").addEventListener("click", function () {
+    openEditorButton();
+});
 document.getElementById("hideHotkeyButton").addEventListener("click", function () {
     toggleHotkeys();
 });
@@ -971,9 +982,6 @@ document.getElementById("removeButton").addEventListener("click", function () {
     redo(unmoveStuff);
     render();
 });
-document.getElementById("showHideEditor").addEventListener("click", function () {
-    toggleShowEditor();
-});
 document.getElementById("animationSlider").addEventListener("click", function () {
     animationsOn = document.getElementById("animationSlider").checked;
     localStorage.setItem("cachedAO", animationsOn);
@@ -990,7 +998,7 @@ document.getElementById("replayAnimationSlider").addEventListener("click", funct
 });
 $(document).ready(function () {
     $("body").on("click", "#ghostEditorPane", function () {
-        toggleEditorLocation(true);
+        openEditorButtonLocation(true);
     });
 });
 function resizeCanvasContainer(cc) {
@@ -1013,7 +1021,12 @@ function resetCanvases() {
 function highlightSnakes() {
     persistentState.highlightSnakes = !persistentState.highlightSnakes;
     var context = canvas7.getContext("2d");
+    var button = document.getElementById("highlightSnakesButton");
     if (persistentState.highlightSnakes) {
+        button.style.color = "white";
+        button.style.backgroundImage = "linear-gradient(#4b91ff, #055ce4)";
+        document.getElementById("clearHighlightsButton").disabled = false;
+
         if (!persistentState.highlightFruits) {
             canvas7.style.display = "block";
             context.fillStyle = "rgba(0,0,0,.8)";
@@ -1026,18 +1039,26 @@ function highlightSnakes() {
         });
     }
     else {
+        button.style.color = "";
+        button.style.backgroundImage = "";
         context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
         canvas7.style.display = "none";
         if (persistentState.highlightFruits) {
             persistentState.highlightFruits = !persistentState.highlightFruits;
             highlightFruits();
         }
+        else document.getElementById("clearHighlightsButton").disabled = true;
     }
 }
 function highlightFruits() {
     persistentState.highlightFruits = !persistentState.highlightFruits;
     var context = canvas7.getContext("2d");
+    var button = document.getElementById("highlightFruitsButton");
     if (persistentState.highlightFruits) {
+        button.style.color = "white";
+        button.style.backgroundImage = "linear-gradient(#4b91ff, #055ce4)";
+        document.getElementById("clearHighlightsButton").disabled = false;
+
         if (!persistentState.highlightSnakes) {
             canvas7.style.display = "block";
             context.fillStyle = "rgba(0,0,0,.8)";
@@ -1062,24 +1083,36 @@ function highlightFruits() {
         });
     }
     else {
+        button.style.color = "";
+        button.style.backgroundImage = "";
         context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
         canvas7.style.display = "none";
         if (persistentState.highlightSnakes) {
             persistentState.highlightSnakes = !persistentState.highlightSnakes;
             highlightSnakes();
         }
+        else document.getElementById("clearHighlightsButton").disabled = true;
     }
 }
 function clearHighlights() {
+    var button1 = document.getElementById("highlightSnakesButton");
+    var button2 = document.getElementById("highlightFruitsButton");
+    button1.style.color = "";
+    button1.style.backgroundImage = "";
+    button2.style.color = "";
+    button2.style.backgroundImage = "";
+
     var context = canvas7.getContext("2d");
     context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
     canvas7.style.display = "none";
+    persistentState.highlightSnakes = false;
+    persistentState.highlightFruits = false;
 }
 function fitCanvas(type) {
     var offset = 0;
     switch (type) {
         case 0: offset = 0; break;
-        case 1: offset = document.getElementById("bottomBlock").offsetHeight + 12; break;
+        case 1: offset = document.getElementById("bottomBlock").offsetHeight + 20; break;
         case 2: offset = document.getElementById("csText").offsetHeight + 50; break;
     }
     var maxW = window.innerWidth / level.width;
@@ -1113,14 +1146,14 @@ function recalculateBorderRadius() {
 function recalculateBlockRadius() {
     blockRadius = tileSize / blockRadiusFactor;
 }
-function toggleShowEditor() {
+function openEditorButton() {
     persistentState.showEditor = !persistentState.showEditor;
     savePersistentState();
     showEditorChanged();
     // resetCanvases();
     // resizeCanvasContainer();
 }
-function toggleEditorLocation(clicked, cached) {
+function openEditorButtonLocation(clicked, cached) {
     cached = JSON.parse(cached);
     if (clicked) {
         persistentState.editorLeft = !persistentState.editorLeft;
@@ -1544,10 +1577,8 @@ function setPaintBrushTileCode(tileCode) {
             paintBrushMikeId = null;
         }
     }
-    if (!(tileCode === MIKE && blockIsInFocus)) {
-        paintBrushTileCode = Array.isArray(tileCode) ? tileCode[OWWCounter] : tileCode;
-        paintBrushTileCodeChanged();
-    }
+    paintBrushTileCode = Array.isArray(tileCode) ? tileCode[OWWCounter] : tileCode;
+    paintBrushTileCodeChanged();
 }
 function paintBrushTileCodeChanged() {
     paintButtonIdAndTileCodes.forEach(function (pair) {
@@ -2490,6 +2521,7 @@ function loadPersistentState() {
     persistentState.editorLeft = !!persistentState.editorLeft;
     persistentState.showGrid = !!persistentState.showGrid;
     persistentState.hideHotkeys = !!persistentState.hideHotkeys;
+    persistentState.highlightSnakes = !!persistentState.highlightSnakes;
     persistentState.highlightFruits = !!persistentState.highlightFruits;
     showEditorChanged();
 }
@@ -2586,8 +2618,6 @@ function populateThemeVars() {
 }
 
 function showEditorChanged() {
-    document.getElementById("showHideEditor").textContent = (persistentState.showEditor ? "Hide" : "Show") + " Editor";
-    document.getElementById("ghostEditorPane").style.display = persistentState.showEditor ? "inline-block" : "none";
 
     ["editorDiv", "editorPane"].forEach(function (id) {
         document.getElementById(id).style.display = persistentState.showEditor ? "inline-block" : "none";
@@ -2600,16 +2630,23 @@ function showEditorChanged() {
     document.getElementById("wasdSpan").textContent = persistentState.showEditor ? "" : " or WASD";
     document.getElementById("hideHotkeyButton").disabled = persistentState.showEditor ? false : true;
 
-    if (persistentState.showEditor && defaultOn) document.getElementById("animationSlider").checked = animationsOn = false;
-    else if (persistentState.showEditor && !defaultOn) document.getElementById("animationSlider").checked = animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
-    if (!persistentState.showEditor) document.getElementById("animationSlider").checked = animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
+    if (persistentState.showEditor) {
+        document.getElementById("ghostEditorPane").style.display = "inline-block";
+        document.getElementById("openEditorButton").style.display = "none";
+        if (defaultOn) document.getElementById("animationSlider").checked = animationsOn = false;
+        else document.getElementById("animationSlider").checked = animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
+    }
+    if (!persistentState.showEditor) {
+        document.getElementById("ghostEditorPane").style.display = "none";
+        document.getElementById("openEditorButton").style.display = "block";
+        document.getElementById("animationSlider").checked = animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
+    }
 
     // loadFromLocationHash();
 }
 
 function move(dr, dc, doAnimations) {
-    if (persistentState.highlightSnakes) highlightSnakes(); // do this on every keypress but 8
-    if (persistentState.highlightFruits) highlightFruits(); // do this on every keypress but 7
+    clearHighlights();
     if (!isDead()) newSpikeDeath = [];
     lowDeath = false;
     if (!isDead()) theseDyingLocations = [];
@@ -3596,7 +3633,7 @@ function render() {
                     bufferContext.beginPath();
                     // Draw a path around the whole screen in the opposite direction as the rectangle paths below.
                     // This means that the below rectangles will be removing area from the greater rectangle.
-                    // bufferContext.rect(image.width, 0, -image.width, image.height);
+                    bufferContext.rect(image.width, 0, -image.width, image.height);
 
                     for (var i = 0; i < object.locations.length; i++) {
                         var rowcol = getRowcol(level, object.locations[i]);
@@ -3604,7 +3641,7 @@ function render() {
                         var c = rowcol.c - minC;
                         bufferContext.rect(c * tileSize, r * tileSize, tileSize, tileSize);
                     }
-                    // bufferContext.clip();
+                    bufferContext.clip();
                     for (var i = 0; i < object.locations.length - 1; i++) {
                         var rowcol1 = getRowcol(level, object.locations[i]);
                         rowcol1.r -= minR;
@@ -3654,14 +3691,14 @@ function render() {
                     bufferContext.beginPath();
                     // Draw a path around the whole screen in the opposite direction as the rectangle paths below.
                     // This means that the below rectangles will be removing area from the greater rectangle.
-                    // bufferContext.rect(image.width, 0, -image.width, image.height);
+                    bufferContext.rect(image.width, 0, -image.width, image.height);
                     for (var i = 0; i < object.locations.length; i++) {
                         var rowcol = getRowcol(level, object.locations[i]);
                         var r = rowcol.r - minR;
                         var c = rowcol.c - minC;
                         bufferContext.rect(c * tileSize, r * tileSize, tileSize, tileSize);
                     }
-                    // bufferContext.clip();
+                    bufferContext.clip();
                     for (var i = 0; i < object.locations.length - 1; i++) {
                         var rowcol1 = getRowcol(level, object.locations[i]);
                         rowcol1.r -= minR;
@@ -3686,6 +3723,7 @@ function render() {
         }
 
         var exitExists = false;
+        var tileCounter = 0;
         if (!dont) {
             if (onlyTheseObjects == null) {
                 for (var r = 0; r < level.height; r++) {    //draws wall underside curves and/or grass
@@ -3694,6 +3732,7 @@ function render() {
                         var tileCode = level.map[location];
                         if (persistentState.showEditor || (!persistentState.showEditor && tileCode !== WALL && tileCode !== SPIKE)) drawTile(context, tileCode, r, c, level, location, rng, true, true);
                         if (tileCode === EXIT) exitExists = true;
+                        if (tileCode === RAINBOW || tileCode === TRELLIS || tileCode === ONEWAYWALLU || tileCode === ONEWAYWALLD || tileCode === ONEWAYWALLL || tileCode === ONEWAYWALLR || tileCode === CLOSEDLIFT || tileCode === OPENLIFT || tileCode === CLOUD || tileCode === BUBBLE || tileCode === LAVA || tileCode === WATER) tileCounter++;
                     }
                 }
             }
@@ -3708,6 +3747,7 @@ function render() {
             for (var i = 0; i < objects.length; i++) {
                 var object = objects[i];
                 if (object.type === SNAKE) drawObject(context, object);
+                if (object.splocks.length > 0 || object.type === MIKE) tileCounter++;
             }
 
             if (persistentState.showEditor && onlyTheseObjects == null) {
@@ -3744,6 +3784,22 @@ function render() {
             for (var i = 0; i < objects.length; i++) {
                 var object = objects[i];
                 if (object.type === FRUIT || object.type === POISONFRUIT) drawObject(context, object, rng);  //draws fruit
+            }
+
+            //describe level type
+            if (enhanced) {
+                document.getElementById("additions").style.display = "none";
+                if (persistentState.showEditor && tileCounter === 0) {
+                    document.getElementById("additions").innerHTML = "all initial enhanced elements have been removed but the level is not saved";
+                    document.getElementById("additions").style.display = "block";
+                }
+            }
+            else {
+                document.getElementById("additions").style.display = "none";
+                if (persistentState.showEditor && tileCounter > 0) {
+                    document.getElementById("additions").innerHTML = "enhanced elements have been added to this level but the level is not saved";
+                    document.getElementById("additions").style.display = "block";
+                }
             }
 
             if (portalFailure && countSnakes() != 0) {
@@ -4254,7 +4310,7 @@ function drawObject(context, object, rng) {
                 rowcol.c += animation[3] * (animationProgress - 1);
             } else if (i === object.locations.length) {
                 // animated tail?
-                if ((animation = findAnimation([SLITHER], object.id)) != null) {
+                if ((animation = findAnimation([SLITHER + (i - 1)], object.id)) != null) {
                     // animate tail slithering to catch up
                     rowcol = getRowcol(level, object.locations[i - 1]);
                     rowcol.r += animation[2] * (animationProgress - 1);
