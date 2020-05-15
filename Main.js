@@ -2850,11 +2850,11 @@ function move(dr, dc, doAnimations) {
                     // }
                     // alert(JSON.stringify(slitherAnimations));
 
-                    // removeAnimatedObject(snake, changeLog);
-                    // exitAnimationQueue.push([
-                    //     200,
-                    //     [EXIT_SNAKE, snake.id, 0, 0],
-                    // ]);
+                    removeAnimatedObject(snake, changeLog);
+                    exitAnimationQueue.push([
+                        200,
+                        [EXIT_SNAKE, snake.id, 0, 0],
+                    ]);
                     didAnything = true;
                 }
             }
@@ -2915,11 +2915,11 @@ function move(dr, dc, doAnimations) {
         Array.prototype.push.apply(animationQueue, exitAnimationQueue);
         if (fallingAnimations.length > 1) animationQueue.push(fallingAnimations);
 
-        if (snakeExited) {
-            if (exitedSnake.length > 0) move(dr, dc);
-            // else removeAnimatedObject(exitedSnake, changeLog);
-            exitedSnake.locations.pop();
-        }
+        // if (snakeExited) {
+        //     if (exitedSnake.length > 0) move(dr, dc);
+        //     // else removeAnimatedObject(exitedSnake, changeLog);
+        //     exitedSnake.locations.pop();
+        // }
     }
 
     pushUndo(unmoveStuff, changeLog);
