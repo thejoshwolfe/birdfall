@@ -125,6 +125,23 @@ function loadLevel(newLevel) {
 
     // don't know why this was defaulting to true
     persistentState.highlightFruits = false;
+    var snakes = getSnakes();
+    var fruits = getObjectsOfType(FRUIT);
+    var poisonFruits = getObjectsOfType(POISONFRUIT);
+    fruits.sort(compareLocations);
+    for (var i = 0; i < fruits.length; i++) {
+        fruitLog.push([fruits[i], i + 1]);
+    }
+    poisonFruits.sort(compareLocations);
+    for (var i = 0; i < poisonFruits.length; i++) {
+        poisonFruitLog.push([poisonFruits[i], i + 1]);
+    }
+    if (snakes.length === 0) document.getElementById("highlightSnakesButton").disabled = true;
+    else document.getElementById("highlightSnakesButton").disabled = false;
+    if (fruits.length === 0) document.getElementById("highlightFruitsButton").disabled = true;
+    else document.getElementById("highlightFruitsButton").disabled = false;
+    if (poisonFruits.length === 0) document.getElementById("highlightPoisonFruitsButton").disabled = true;
+    else document.getElementById("highlightPoisonFruitsButton").disabled = false;
 
     activateAnySnakePlease();
     unmoveStuff.undoStack = [];
@@ -3542,28 +3559,12 @@ function render() {
     }
     context = canvas4.getContext("2d");
 
-    fruitLog = [];
-    poisonFruitLog = [];
-    var snakes = getSnakes();
-
-    var fruits = getObjectsOfType(FRUIT);
-    fruits.sort(compareLocations);
-    for (var i = 0; i < fruits.length; i++) {
-        fruitLog.push([fruits[i], i + 1]);
-    }
-
-    var poisonFruits = getObjectsOfType(POISONFRUIT);
-    poisonFruits.sort(compareLocations);
-    for (var i = 0; i < poisonFruits.length; i++) {
-        poisonFruitLog.push([poisonFruits[i], i + 1]);
-    }
-
-    if (snakes.length === 0) document.getElementById("highlightSnakesButton").disabled = true;
-    else document.getElementById("highlightSnakesButton").disabled = false;
-    if (fruits.length === 0) document.getElementById("highlightFruitsButton").disabled = true;
-    else document.getElementById("highlightFruitsButton").disabled = false;
-    if (poisonFruits.length === 0) document.getElementById("highlightPoisonFruitsButton").disabled = true;
-    else document.getElementById("highlightPoisonFruitsButton").disabled = false;
+    // if (snakes.length === 0) document.getElementById("highlightSnakesButton").disabled = true;
+    // else document.getElementById("highlightSnakesButton").disabled = false;
+    // if (fruits.length === 0) document.getElementById("highlightFruitsButton").disabled = true;
+    // else document.getElementById("highlightFruitsButton").disabled = false;
+    // if (poisonFruits.length === 0) document.getElementById("highlightPoisonFruitsButton").disabled = true;
+    // else document.getElementById("highlightPoisonFruitsButton").disabled = false;
 
     themeName = themes[themeCounter][0];
     background = themes[themeCounter][1];
@@ -4299,13 +4300,18 @@ function drawObject(context, object, rng, hover) {
                 if (stage === 1 && i === 0) continue;
                 var animation;
                 var rowcol = getRowcol(level, object.locations[i]);
+                var up, down;
                 if (stage === 2) {
                     if (i === 0 && (animation = findAnimation([SLITHER], object.id)) != null) {
                         rowcol.r += animation[2] * (animationProgress - 1);
                         rowcol.c += animation[3] * (animationProgress - 1);
+                        up = (1 - animationProgress);
+                        down = (animationProgress - 1);
                     } else if ((animation = findAnimation([SLITHER + i], object.id)) != null) {
                         rowcol.r += animation[2] * (animationProgress - 1);
                         rowcol.c += animation[3] * (animationProgress - 1);
+                        up = (1 - animationProgress);
+                        down = (animationProgress - 1);
                     }
                 }
 
@@ -4339,7 +4345,7 @@ function drawObject(context, object, rng, hover) {
                     //determines orientation of face
                     if (!falling) nextRowcol = getRowcol(level, object.locations[1]);
                     if (nextRowcol.r < rowcol.r) {  //last move down
-                        roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false);  //draw head
+                        roundRect(context, cx, cy, tileSize, tileSize, { tl: 0, tr: 0, bl: borderRadius, br: borderRadius }, true, false);  //draw head
                         if (colorIndex === 0) orientation = 2;
                         else if (colorIndex === 1) orientation = 6;
                         else if (colorIndex === 2) orientation = 3;
@@ -4373,27 +4379,35 @@ function drawObject(context, object, rng, hover) {
                 } else {
                     if (i % 2 == 0) context.fillStyle = color;
                     else context.fillStyle = altColor;
+                    var br = buildSegment(rowcol, lastRowcol, nextRowcol);
+                    roundRect(context, cx, cy, tileSize, tileSize, br, true, false);
 
-                    if (i === object.locations.length - 1) {
-                        if (lastRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, tr: borderRadius }, true, false); }
-                        else if (lastRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius, br: borderRadius }, true, false); }
-                        else if (lastRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius, br: borderRadius }, true, false); }
-                        else if (lastRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius, bl: borderRadius }, true, false); }
+                    function buildSegment(rowcol, lastRowcol, nextRowcol) {
+                        var br = {}; // border radius
+                        if (i === object.locations.length - 1) {
+                            // tail
+                            if (lastRowcol.r > rowcol.r) br = { tl: borderRadius, tr: borderRadius };
+                            else if (lastRowcol.r < rowcol.r) br = { bl: borderRadius, br: borderRadius };
+                            else if (lastRowcol.c < rowcol.c) br = { tr: borderRadius, br: borderRadius };
+                            else if (lastRowcol.c > rowcol.c) br = { tl: borderRadius, bl: borderRadius };
+                        }
+                        else if (i < object.locations.length - 1) {
+                            // middle
+                            if (lastRowcol.r > rowcol.r && nextRowcol.c < rowcol.c) br = { tr: borderRadius };
+                            else if (lastRowcol.r > rowcol.r && nextRowcol.c > rowcol.c) br = { tl: borderRadius };
+                            else if (lastRowcol.r < rowcol.r && nextRowcol.c < rowcol.c) br = { br: borderRadius };
+                            else if (lastRowcol.r < rowcol.r && nextRowcol.c > rowcol.c) br = { bl: borderRadius };
+
+                            else if (lastRowcol.c > rowcol.c && nextRowcol.r < rowcol.r) br = { bl: borderRadius };
+                            else if (lastRowcol.c > rowcol.c && nextRowcol.r > rowcol.r) br = { tl: borderRadius };
+                            else if (lastRowcol.c < rowcol.c && nextRowcol.r < rowcol.r) br = { br: borderRadius };
+                            else if (lastRowcol.c < rowcol.c && nextRowcol.r > rowcol.r) br = { tr: borderRadius };
+
+                            else if (lastRowcol.c < rowcol.c && nextRowcol.c > rowcol.c || lastRowcol.c > rowcol.c && nextRowcol.c < rowcol.c || lastRowcol.r < rowcol.r && nextRowcol.r > rowcol.r || lastRowcol.r > rowcol.r && nextRowcol.r < rowcol.r) br = 0;
+                        }
+                        else roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false); // don't think it ever hits this code
+                        return br;
                     }
-                    else if (i < object.locations.length - 1) {
-                        if (lastRowcol.r > rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
-                        else if (lastRowcol.r > rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
-                        else if (lastRowcol.r < rowcol.r && nextRowcol.c < rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
-                        else if (lastRowcol.r < rowcol.r && nextRowcol.c > rowcol.c) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
-
-                        else if (lastRowcol.c > rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { bl: borderRadius }, true, false); }
-                        else if (lastRowcol.c > rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tl: borderRadius }, true, false); }
-                        else if (lastRowcol.c < rowcol.c && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { br: borderRadius }, true, false); }
-                        else if (lastRowcol.c < rowcol.c && nextRowcol.r > rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, { tr: borderRadius }, true, false); }
-
-                        else if (lastRowcol.c < rowcol.c && nextRowcol.c > rowcol.c || lastRowcol.c > rowcol.c && nextRowcol.c < rowcol.c || lastRowcol.r < rowcol.r && nextRowcol.r > rowcol.r || lastRowcol.r > rowcol.r && nextRowcol.r < rowcol.r) { roundRect(context, cx, cy, tileSize, tileSize, 0, true, false); }
-                    }
-                    else roundRect(context, cx, cy, tileSize, tileSize, borderRadius, true, false);
                 }
             }
         }
