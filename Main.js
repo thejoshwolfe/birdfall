@@ -1110,9 +1110,7 @@ function highlightFruits() {
             var counter = 0;
             var eatenCounter = 0;
             fruitLog.forEach(function (fruit) {
-                if (fruits.includes(fruit[0])) {
-                    drawObject(context, fruit[0]);
-                }
+                if (fruits.includes(fruit[0])) drawObject(context, fruit[0]);
                 else {
                     eatenCounter++;
                     drawFruit(context, fruit[0], false, null, true);
@@ -1127,15 +1125,20 @@ function highlightFruits() {
                 context.fillText(fruitLog[counter][1], rowcol.c * tileSize + tileSize / 2, rowcol.r * tileSize + tileSize / 2.1);
                 counter++;
             });
-            var eatenText = "Fruit eaten: " + eatenCounter;
-            var remainingText = "Fruit remaining: " + fruits.length;
-            var fontSize = tileSize / 2;
-            context.font = fontSize + "px Trebuchet MS";
+            var eatenText = "Eaten: " + eatenCounter;
+            var remainingText = "Remaining: " + fruits.length;
             context.fillStyle = "rgba(255,255,255,.5)";
             context.textAlign = "left";
             context.textBaseline = "middle";
-            context.fillText(eatenText, tileSize / 2, tileSize / 2);
-            context.fillText(remainingText, tileSize / 2, tileSize * 1.1);
+
+            var fontSize = tileSize;
+            context.font = fontSize + "px Trebuchet MS";
+            context.fillText("FRUIT", tileSize / 2, tileSize * .8);
+
+            var fontSize = tileSize / 2;
+            context.font = fontSize + "px Trebuchet MS";
+            context.fillText(eatenText, tileSize / 2, tileSize * 1.6);
+            context.fillText(remainingText, tileSize / 2, tileSize * 2.2);
         }
         else {
             button.style.color = "";
@@ -1173,10 +1176,14 @@ function highlightPoisonFruits() {
 
             var fruits = getObjectsOfType(POISONFRUIT);
             var counter = 0;
+            var eatenCounter = 0;
             var tempRng = new Math.seedrandom("b");
             poisonFruitLog.forEach(function (fruit) {
                 if (fruits.includes(fruit[0])) drawObject(context, fruit[0], tempRng);
-                else drawFruit(context, fruit[0], true, tempRng, true);
+                else {
+                    eatenCounter++;
+                    drawFruit(context, fruit[0], true, tempRng, true);
+                }
 
                 var rowcol = getRowcol(level, fruit[0].locations[0]);
                 var fontSize = tileSize / 2;
@@ -1187,6 +1194,20 @@ function highlightPoisonFruits() {
                 context.fillText(poisonFruitLog[counter][1], rowcol.c * tileSize + tileSize / 2, rowcol.r * tileSize + tileSize / 2.1);
                 counter++;
             });
+            var eatenText = "Eaten: " + eatenCounter;
+            var remainingText = "Remaining: " + fruits.length;
+            context.fillStyle = "rgba(255,255,255,.5)";
+            context.textAlign = "right";
+            context.textBaseline = "middle";
+
+            var fontSize = tileSize;
+            context.font = fontSize + "px Trebuchet MS";
+            context.fillText("POISON FRUIT", level.width * tileSize - tileSize / 2, tileSize * .8);
+
+            var fontSize = tileSize / 2;
+            context.font = fontSize + "px Trebuchet MS";
+            context.fillText(eatenText, level.width * tileSize - tileSize / 2, tileSize * 1.6);
+            context.fillText(remainingText, level.width * tileSize - tileSize / 2, tileSize * 2.2);
         }
         else {
             button.style.color = "";
