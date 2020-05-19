@@ -337,7 +337,7 @@ canvas {
 
 .separator {
     background-color: black;
-    height: 210px;
+    height: 190px;
     width: 1px;
     margin: 0 5px 0 5px;
     display: inline-block;
@@ -474,14 +474,14 @@ canvas {
 
 /* Style the indicator (dot/circle) */
 
-/* .radioContainer .radioButton:after {
-    top: 5.5px;
-    left: 5.5px;
-    width: 4px;
-    height: 4px;
-    border-radius: .5px;
+.radioContainer .radioButton:after {
+    top: 4.5px;
+    left: 4.5px;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
     background: white;
-} */
+}
 
 /* .radioContainer .radioButton:after {
     top: 2px;
@@ -502,8 +502,9 @@ canvas {
 }
 
 .plusMinus {
-    font-size: 10pt;
-    line-height: 12px;
+    text-align: center;
+    font-size: 4pt;
+    line-height: 13px;
     font-weight: 900;
     border-radius: 3px;
     width: 12px;
@@ -516,7 +517,16 @@ canvas {
     cursor: pointer;
     border-radius: 3px;
     background-color: white;
-    color: #1e90ff;
+}
+
+.colorFix {
+    color: transparent;
+    text-shadow: 0 0 0 white;
+}
+
+.plusMinus:hover .colorFix {
+    color: transparent;
+    text-shadow: 0 0 0 #1e90ff;
 }
 
 #minus {
@@ -745,8 +755,8 @@ button #clearHighlightsButton {
     border: 10px solid white;
     text-align: center;
     color: white;
-    font-size: 100pt;
-    line-height: 65pt;
+    font-size: 60pt;
+    line-height: 78pt;
     position: absolute;
     top: 10;
     right: 10;
