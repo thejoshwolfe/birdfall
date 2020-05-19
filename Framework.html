@@ -12,7 +12,8 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
 </head>
 <body>
-    <div id="openEditorButton" title="\&#10;&#10;Open level editor">+</div>
+    <!-- below style code needed to make character white -->
+    <div id="openEditorButton" title="\&#10;&#10;Open level editor"><span class="colorFix">&#10133;</span></div>
     <table id="levelTable">
         <tr id="levelRow">
             <td style="width:0px;" id="ghostEditorPane"></td>
@@ -194,7 +195,7 @@
 
                 <div id="optionsStack">
                     <div id="levelSize">
-                        <div id="levelSizeText" class="stackHeader"><div id="minus" class="plusMinus" title="Decrease game size">-</div>Level Size<div id="plus" class="plusMinus" title="Increase game size">+</div></div>
+                        <div id="levelSizeText" class="stackHeader"><div id="minus" class="plusMinus" title="Decrease game size"><span class="colorFix colorFixHover">&#10134;</span></div>Level Size<div id="plus" class="plusMinus" title="Increase game size"><span class="colorFix colorFixHover">&#10133;</span></div></div>
                             <div id="levelSizeInsider">
                             <div id="fitButtonContainer">
                                 <div class="fitButtonWrapper">
@@ -239,8 +240,9 @@
                         <div id="levelSizeInsider">
                         <div id="fitButtonContainer" style = "width: 242px;">
                             <div style="display: inline-block;">
-                                <button id="highlightSnakesButton" class="fitButton highlightButton" title="6&#10;&#10;Highlight remaining snakes">Snakes</button>
-                                <button id="highlightFruitsButton" class="fitButton highlightButton" title="7&#10;&#10;Highlight and number remaining fruits">Fruits</button>
+                                <button id="highlightSnakesButton" class="fitButton highlightButton" title="5&#10;&#10;Highlight remaining snakes">Snakes</button>
+                                <button id="highlightFruitsButton" class="fitButton highlightButton" title="6&#10;&#10;Highlight and number remaining fruits">Fruits</button>
+                                <button id="highlightPoisonFruitsButton" class="fitButton highlightButton" title="7&#10;&#10;Highlight and number remaining poison fruits">Poison Fruits</button>
                                 <button disabled id="clearHighlightsButton" class="fitButton highlightButton" title="8&#10;&#10;Clear all highlights">Clear</button>
                             </div>
                         </div>
