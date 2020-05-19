@@ -3657,60 +3657,60 @@ function render() {
 
                 //combine locations and splocks because they're treated the same
                 var locations = object.locations.concat(object.splocks);
-                var minDistance = Infinity;
-                var connected = [];
-                var connectedPoints = [];
-                for (var i = 0; i < locations.length; i++) {
-                    var rowcol = getRowcol(level, locations[i]);
-                    for (var j = 0; j < locations.length; j++) {
-                        if (j != i) {
-                            var rowcolComparison = getRowcol(level, locations[j]);
-                            var distance = Math.abs(rowcol.r - rowcolComparison.r) + Math.abs(rowcol.c - rowcolComparison.c);
-                            if (distance < minDistance) {
-                                minDistance = distance;
-                                connected = [i, j];
-                                connectedPoints = [rowcol, rowcolComparison];
-                            }
-                        }
-                    }
-                }
-                // new array omitting blocks that are already connected
-                // somehow this ruins locations for the bottom section
-                var remainingLocations = locations;
-                remainingLocations.splice(connected[0], 1);
-                remainingLocations.splice(connected[1], 1);
+                // var minDistance = Infinity;
+                // var connected = [];
+                // var connectedPoints = [];
+                // for (var i = 0; i < locations.length; i++) {
+                //     var rowcol = getRowcol(level, locations[i]);
+                //     for (var j = 0; j < locations.length; j++) {
+                //         if (j != i) {
+                //             var rowcolComparison = getRowcol(level, locations[j]);
+                //             var distance = Math.abs(rowcol.r - rowcolComparison.r) + Math.abs(rowcol.c - rowcolComparison.c);
+                //             if (distance < minDistance) {
+                //                 minDistance = distance;
+                //                 connected = [i, j];
+                //                 connectedPoints = [rowcol, rowcolComparison];
+                //             }
+                //         }
+                //     }
+                // }
+                // // new array omitting blocks that are already connected
+                // // somehow this ruins locations for the bottom section
+                // var remainingLocations = locations;
+                // remainingLocations.splice(connected[0], 1);
+                // remainingLocations.splice(connected[1], 1);
 
-                connectedPoints.forEach(function (rowcol) {
-                    if (rowcol.r < minR) minR = rowcol.r;
-                    if (rowcol.r > maxR) maxR = rowcol.r;
-                    if (rowcol.c < minC) minC = rowcol.c;
-                    if (rowcol.c > maxC) maxC = rowcol.c;
-                });
+                // connectedPoints.forEach(function (rowcol) {
+                //     if (rowcol.r < minR) minR = rowcol.r;
+                //     if (rowcol.r > maxR) maxR = rowcol.r;
+                //     if (rowcol.c < minC) minC = rowcol.c;
+                //     if (rowcol.c > maxC) maxC = rowcol.c;
+                // });
 
-                // add the horizontal connector locations to the connected blocks array
-                for (var i = 0; i < maxC - minC; i++) {
-                    var connectorRowcol = { r: minR, c: maxC - i };
-                    addIfAbsent(connectedPoints, connectorRowcol);
-                }
+                // // add the horizontal connector locations to the connected blocks array
+                // for (var i = 0; i < maxC - minC; i++) {
+                //     var connectorRowcol = { r: minR, c: maxC - i };
+                //     addIfAbsent(connectedPoints, connectorRowcol);
+                // }
 
-                // add the vertical connector locations to the connected blocks array
-                for (var i = 1; i < maxR - minR; i++) {
-                    var connectorRowcol = { r: maxR - i, c: maxC };
-                    addIfAbsent(connectedPoints, connectorRowcol);
-                }
+                // // add the vertical connector locations to the connected blocks array
+                // for (var i = 1; i < maxR - minR; i++) {
+                //     var connectorRowcol = { r: maxR - i, c: maxC };
+                //     addIfAbsent(connectedPoints, connectorRowcol);
+                // }
 
-                // find the next closest blocks and the point to which it's closest
-                minDistance = Infinity;
-                for (var i = 0; i < remainingLocations.length; i++) {
-                    var rowcol = getRowcol(level, remainingLocations[i]);
-                    for (var j = 0; j < connectedPoints.length; j++) {
-                        var distance = Math.abs(rowcol.r - connectedPoints.r) + Math.abs(rowcol.c - connectedPoints.c);
-                        if (distance < minDistance) {
-                            minDistance = distance;
-                            connected = [i, j];
-                        }
-                    }
-                }
+                // // find the next closest blocks and the point to which it's closest
+                // minDistance = Infinity;
+                // for (var i = 0; i < remainingLocations.length; i++) {
+                //     var rowcol = getRowcol(level, remainingLocations[i]);
+                //     for (var j = 0; j < connectedPoints.length; j++) {
+                //         var distance = Math.abs(rowcol.r - connectedPoints.r) + Math.abs(rowcol.c - connectedPoints.c);
+                //         if (distance < minDistance) {
+                //             minDistance = distance;
+                //             connected = [i, j];
+                //         }
+                //     }
+                // }
 
 
 
