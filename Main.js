@@ -63,6 +63,8 @@ var cr = false;
 var cs = false;
 var cs2 = false;
 var dont = false;
+var fruitLog = [];
+var poisonFruitLog = [];
 
 var postPortalSnakeOutline = [];
 var portalConflicts = [];
@@ -120,6 +122,9 @@ function loadLevel(newLevel) {
     var string = stringifyLevel(newLevel);
     var levelString = string.substring(string.indexOf("?") + 1, string.indexOf("/")); //everything before objects
     if (levelString.match(/[a-z]/i)) enhanced = true;
+
+    // don't know why this was defaulting to true
+    persistentState.highlightFruits = false;
 
     activateAnySnakePlease();
     unmoveStuff.undoStack = [];
@@ -723,7 +728,13 @@ document.addEventListener("keydown", function (event) {
             case 220: // backslash
                 if (modifierMask === 0) {
                     if (dirtyState != EDITOR_DIRTY) { openEditorButton(); break; }
-                    else { alert("Can't hide editor with unsaved changes"); break; }
+                    else {
+                        if (confirm("Hide editor and cancel changes without saving?\n\nNote: To avoid seeing this prompt in the future, save changes before closing the editor")) {
+                            openEditorButton();
+                            location.reload();
+                        }
+                        break;
+                    }
                 }
                 return;
             case "A".charCodeAt(0):
@@ -808,10 +819,12 @@ document.addEventListener("keydown", function (event) {
             case 190:
                 openEditorButtonLocation(true);
                 return;
-            case 54: // 6
+            case 53: // 5
                 if (modifierMask === 0) { highlightSnakes(); break; }
-            case 55: // 7
+            case 54: // 6
                 if (modifierMask === 0) { highlightFruits(); break; }
+            case 55: // 7
+                if (modifierMask === 0) { highlightPoisonFruits(); break; }
             case 56: // 8
                 if (modifierMask === 0) { clearHighlights(); break; }
             case 57: // 9
@@ -949,6 +962,9 @@ document.getElementById("highlightSnakesButton").addEventListener("click", funct
 document.getElementById("highlightFruitsButton").addEventListener("click", function () {
     highlightFruits();
 });
+document.getElementById("highlightPoisonFruitsButton").addEventListener("click", function () {
+    highlightPoisonFruits();
+});
 document.getElementById("clearHighlightsButton").addEventListener("click", function () {
     clearHighlights();
 });
@@ -1019,96 +1035,164 @@ function resetCanvases() {
     return;
 }
 function highlightSnakes() {
-    persistentState.highlightSnakes = !persistentState.highlightSnakes;
-    var context = canvas7.getContext("2d");
-    var button = document.getElementById("highlightSnakesButton");
-    if (persistentState.highlightSnakes) {
-        button.style.color = "white";
-        button.style.backgroundImage = "linear-gradient(#4b91ff, #055ce4)";
-        document.getElementById("clearHighlightsButton").disabled = false;
+    if (document.getElementById("highlightSnakesButton").disabled === false) {
+        persistentState.highlightSnakes = !persistentState.highlightSnakes;
+        var context = canvas7.getContext("2d");
+        var button = document.getElementById("highlightSnakesButton");
+        if (persistentState.highlightSnakes) {
+            button.style.color = "white";
+            button.style.backgroundImage = "linear-gradient(#4b91ff, #055ce4)";
+            document.getElementById("clearHighlightsButton").disabled = false;
 
-        if (!persistentState.highlightFruits) {
-            canvas7.style.display = "block";
-            context.fillStyle = "rgba(0,0,0,.8)";
-            context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
-        }
+            if (!persistentState.highlightFruits && !persistentState.highlightPoisonFruits) {
+                canvas7.style.display = "block";
+                context.fillStyle = "rgba(0,0,0,.8)";
+                context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+            }
 
-        var snakes = getSnakes();
-        snakes.forEach(function (snake) {
-            drawObject(context, snake);
-        });
-    }
-    else {
-        button.style.color = "";
-        button.style.backgroundImage = "";
-        context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
-        canvas7.style.display = "none";
-        if (persistentState.highlightFruits) {
-            persistentState.highlightFruits = !persistentState.highlightFruits;
-            highlightFruits();
+            var snakes = getSnakes();
+            snakes.forEach(function (snake) {
+                drawObject(context, snake);
+            });
         }
-        else document.getElementById("clearHighlightsButton").disabled = true;
+        else {
+            button.style.color = "";
+            button.style.backgroundImage = "";
+            context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
+            canvas7.style.display = "none";
+            if (persistentState.highlightFruits) {
+                persistentState.highlightFruits = !persistentState.highlightFruits;
+                highlightFruits();
+            }
+            else document.getElementById("clearHighlightsButton").disabled = true;
+            if (persistentState.highlightPoisonFruits) {
+                persistentState.highlightPoisonFruits = !persistentState.highlightPoisonFruits;
+                highlightPoisonFruits();
+            }
+            else document.getElementById("clearHighlightsButton").disabled = true;
+        }
     }
 }
 function highlightFruits() {
-    persistentState.highlightFruits = !persistentState.highlightFruits;
-    var context = canvas7.getContext("2d");
-    var button = document.getElementById("highlightFruitsButton");
-    if (persistentState.highlightFruits) {
-        button.style.color = "white";
-        button.style.backgroundImage = "linear-gradient(#4b91ff, #055ce4)";
-        document.getElementById("clearHighlightsButton").disabled = false;
+    if (document.getElementById("highlightFruitsButton").disabled === false) {
+        persistentState.highlightFruits = !persistentState.highlightFruits;
+        var context = canvas7.getContext("2d");
+        var button = document.getElementById("highlightFruitsButton");
+        if (persistentState.highlightFruits) {
+            button.style.color = "white";
+            button.style.backgroundImage = "linear-gradient(#4b91ff, #055ce4)";
+            document.getElementById("clearHighlightsButton").disabled = false;
 
-        if (!persistentState.highlightSnakes) {
-            canvas7.style.display = "block";
-            context.fillStyle = "rgba(0,0,0,.8)";
-            context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+            if (!persistentState.highlightSnakes && !persistentState.highlightPoisonFruits) {
+                canvas7.style.display = "block";
+                context.fillStyle = "rgba(0,0,0,.8)";
+                context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+            }
+
+            var fruits = getObjectsOfType(FRUIT);
+            var counter = 0;
+            fruitLog.forEach(function (fruit) {
+                if (fruits.includes(fruit[0])) drawObject(context, fruit[0]);
+                else drawFruit(context, fruit[0], false, null, true);
+
+                var rowcol = getRowcol(level, fruit[0].locations[0]);
+                var fontSize = tileSize / 2;
+                context.font = fontSize + "px Trebuchet MS";
+                context.fillStyle = "black";
+                context.textAlign = "center";
+                context.textBaseline = "middle";
+                context.fillText(fruitLog[counter][1], rowcol.c * tileSize + tileSize / 2, rowcol.r * tileSize + tileSize / 2.1);
+                counter++;
+            });
         }
-
-        var fruits = getObjectsOfType(FRUIT);
-        fruits.sort(compareLocations);
-        var counter = 0;
-
-        fruits.forEach(function (fruit) {
-            drawObject(context, fruit);
-
-            counter++;
-            var rowcol = getRowcol(level, fruit.locations[0]);
-            var fontSize = tileSize / 2;
-            context.font = fontSize + "px Arial";
-            context.fillStyle = "black";
-            context.textAlign = "center";
-            context.textBaseline = "middle";
-            context.fillText(counter, rowcol.c * tileSize + tileSize / 2, rowcol.r * tileSize + tileSize / 2.1);
-        });
+        else {
+            button.style.color = "";
+            button.style.backgroundImage = "";
+            context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
+            canvas7.style.display = "none";
+            if (persistentState.highlightSnakes) {
+                persistentState.highlightSnakes = !persistentState.highlightSnakes;
+                highlightSnakes();
+            }
+            else document.getElementById("clearHighlightsButton").disabled = true;
+            if (persistentState.highlightPoisonFruits) {
+                persistentState.highlightPoisonFruits = !persistentState.highlightPoisonFruits;
+                highlightPoisonFruits();
+            }
+            else document.getElementById("clearHighlightsButton").disabled = true;
+        }
     }
-    else {
-        button.style.color = "";
-        button.style.backgroundImage = "";
-        context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
-        canvas7.style.display = "none";
-        if (persistentState.highlightSnakes) {
-            persistentState.highlightSnakes = !persistentState.highlightSnakes;
-            highlightSnakes();
+}
+function highlightPoisonFruits() {
+    if (document.getElementById("highlightPoisonFruitsButton").disabled === false) {
+        persistentState.highlightPoisonFruits = !persistentState.highlightPoisonFruits;
+        var context = canvas7.getContext("2d");
+        var button = document.getElementById("highlightPoisonFruitsButton");
+        if (persistentState.highlightPoisonFruits) {
+            button.style.color = "white";
+            button.style.backgroundImage = "linear-gradient(#4b91ff, #055ce4)";
+            document.getElementById("clearHighlightsButton").disabled = false;
+
+            if (!persistentState.highlightSnakes && !persistentState.highlightFruits) {
+                canvas7.style.display = "block";
+                context.fillStyle = "rgba(0,0,0,.8)";
+                context.fillRect(0, 0, level.width * tileSize, level.height * tileSize);
+            }
+
+            var fruits = getObjectsOfType(POISONFRUIT);
+            var counter = 0;
+            var tempRng = new Math.seedrandom("b");
+            poisonFruitLog.forEach(function (fruit) {
+                if (fruits.includes(fruit[0])) drawObject(context, fruit[0], tempRng);
+                else drawFruit(context, fruit[0], true, tempRng, true);
+
+                var rowcol = getRowcol(level, fruit[0].locations[0]);
+                var fontSize = tileSize / 2;
+                context.font = fontSize + "px Trebuchet MS";
+                context.fillStyle = "black";
+                context.textAlign = "center";
+                context.textBaseline = "middle";
+                context.fillText(poisonFruitLog[counter][1], rowcol.c * tileSize + tileSize / 2, rowcol.r * tileSize + tileSize / 2.1);
+                counter++;
+            });
         }
-        else document.getElementById("clearHighlightsButton").disabled = true;
+        else {
+            button.style.color = "";
+            button.style.backgroundImage = "";
+            context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
+            canvas7.style.display = "none";
+            if (persistentState.highlightSnakes) {
+                persistentState.highlightSnakes = !persistentState.highlightSnakes;
+                highlightSnakes();
+            }
+            else document.getElementById("clearHighlightsButton").disabled = true;
+            if (persistentState.highlightFruits) {
+                persistentState.highlightFruits = !persistentState.highlightFruits;
+                highlightFruits();
+            }
+            else document.getElementById("clearHighlightsButton").disabled = true;
+        }
     }
 }
 function clearHighlights() {
     var button1 = document.getElementById("highlightSnakesButton");
     var button2 = document.getElementById("highlightFruitsButton");
-    button1.style.color = "";
-    button1.style.backgroundImage = "";
-    button2.style.color = "";
-    button2.style.backgroundImage = "";
+    var button3 = document.getElementById("highlightPoisonFruitsButton");
+    [button1, button2, button3].forEach(function (button) {
+        button.style.color = "";
+        button.style.backgroundImage = "";
+    });
 
     var context = canvas7.getContext("2d");
     context.clearRect(0, 0, level.width * tileSize, level.height * tileSize);
     canvas7.style.display = "none";
     persistentState.highlightSnakes = false;
     persistentState.highlightFruits = false;
+    persistentState.highlightPoisonFruits = false;
+    document.getElementById("clearHighlightsButton").disabled = true;
 }
 function fitCanvas(type) {
+    clearHighlights();
     var offset = 0;
     switch (type) {
         case 0: offset = 0; break;
@@ -2507,7 +2591,8 @@ var persistentState = {
     showGrid: false,
     hideHotkeys: false,
     highlightSnakes: false,
-    highlightFruits: false
+    highlightFruits: false,
+    highlightPoisonFruits: false
 };
 function savePersistentState() {
     localStorage.snakefall = JSON.stringify(persistentState);
@@ -2523,6 +2608,7 @@ function loadPersistentState() {
     persistentState.hideHotkeys = !!persistentState.hideHotkeys;
     persistentState.highlightSnakes = !!persistentState.highlightSnakes;
     persistentState.highlightFruits = !!persistentState.highlightFruits;
+    persistentState.highlightPoisonFruits = !!persistentState.highlightPoisonFruits;
     showEditorChanged();
 }
 var isGravityEnabled = true;
@@ -2618,7 +2704,6 @@ function populateThemeVars() {
 }
 
 function showEditorChanged() {
-
     ["editorDiv", "editorPane"].forEach(function (id) {
         document.getElementById(id).style.display = persistentState.showEditor ? "inline-block" : "none";
     });
@@ -2641,8 +2726,7 @@ function showEditorChanged() {
         document.getElementById("openEditorButton").style.display = "block";
         document.getElementById("animationSlider").checked = animationsOn = JSON.parse(localStorage.getItem("cachedAO"));
     }
-
-    // loadFromLocationHash();
+    render();
 }
 
 function move(dr, dc, doAnimations) {
@@ -3458,6 +3542,29 @@ function render() {
     }
     context = canvas4.getContext("2d");
 
+    fruitLog = [];
+    poisonFruitLog = [];
+    var snakes = getSnakes();
+
+    var fruits = getObjectsOfType(FRUIT);
+    fruits.sort(compareLocations);
+    for (var i = 0; i < fruits.length; i++) {
+        fruitLog.push([fruits[i], i + 1]);
+    }
+
+    var poisonFruits = getObjectsOfType(POISONFRUIT);
+    poisonFruits.sort(compareLocations);
+    for (var i = 0; i < poisonFruits.length; i++) {
+        poisonFruitLog.push([poisonFruits[i], i + 1]);
+    }
+
+    if (snakes.length === 0) document.getElementById("highlightSnakesButton").disabled = true;
+    else document.getElementById("highlightSnakesButton").disabled = false;
+    if (fruits.length === 0) document.getElementById("highlightFruitsButton").disabled = true;
+    else document.getElementById("highlightFruitsButton").disabled = false;
+    if (poisonFruits.length === 0) document.getElementById("highlightPoisonFruitsButton").disabled = true;
+    else document.getElementById("highlightPoisonFruitsButton").disabled = false;
+
     themeName = themes[themeCounter][0];
     background = themes[themeCounter][1];
     wall = themes[themeCounter][2];
@@ -3550,60 +3657,60 @@ function render() {
 
                 //combine locations and splocks because they're treated the same
                 var locations = object.locations.concat(object.splocks);
-                // var minDistance = Infinity;
-                // var connected = [];
-                // var connectedPoints = [];
-                // for (var i = 0; i < locations.length; i++) {
-                //     var rowcol = getRowcol(level, locations[i]);
-                //     for (var j = 0; j < locations.length; j++) {
-                //         if (j != i) {
-                //             var rowcolComparison = getRowcol(level, locations[j]);
-                //             var distance = Math.abs(rowcol.r - rowcolComparison.r) + Math.abs(rowcol.c - rowcolComparison.c);
-                //             if (distance < minDistance) {
-                //                 minDistance = distance;
-                //                 connected = [i, j];
-                //                 connectedPoints = [rowcol, rowcolComparison];
-                //             }
-                //         }
-                //     }
-                // }
-                // // new array omitting blocks that are already connected
-                // // somehow this ruins locations for the bottom section
-                // var remainingLocations = locations;
-                // remainingLocations.splice(connected[0], 1);
-                // remainingLocations.splice(connected[1], 1);
+                var minDistance = Infinity;
+                var connected = [];
+                var connectedPoints = [];
+                for (var i = 0; i < locations.length; i++) {
+                    var rowcol = getRowcol(level, locations[i]);
+                    for (var j = 0; j < locations.length; j++) {
+                        if (j != i) {
+                            var rowcolComparison = getRowcol(level, locations[j]);
+                            var distance = Math.abs(rowcol.r - rowcolComparison.r) + Math.abs(rowcol.c - rowcolComparison.c);
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                connected = [i, j];
+                                connectedPoints = [rowcol, rowcolComparison];
+                            }
+                        }
+                    }
+                }
+                // new array omitting blocks that are already connected
+                // somehow this ruins locations for the bottom section
+                var remainingLocations = locations;
+                remainingLocations.splice(connected[0], 1);
+                remainingLocations.splice(connected[1], 1);
 
-                // connectedPoints.forEach(function (rowcol) {
-                //     if (rowcol.r < minR) minR = rowcol.r;
-                //     if (rowcol.r > maxR) maxR = rowcol.r;
-                //     if (rowcol.c < minC) minC = rowcol.c;
-                //     if (rowcol.c > maxC) maxC = rowcol.c;
-                // });
+                connectedPoints.forEach(function (rowcol) {
+                    if (rowcol.r < minR) minR = rowcol.r;
+                    if (rowcol.r > maxR) maxR = rowcol.r;
+                    if (rowcol.c < minC) minC = rowcol.c;
+                    if (rowcol.c > maxC) maxC = rowcol.c;
+                });
 
-                // // add the horizontal connector locations to the connected blocks array
-                // for (var i = 0; i < maxC - minC; i++) {
-                //     var connectorRowcol = { r: minR, c: maxC - i };
-                //     addIfAbsent(connectedPoints, connectorRowcol);
-                // }
+                // add the horizontal connector locations to the connected blocks array
+                for (var i = 0; i < maxC - minC; i++) {
+                    var connectorRowcol = { r: minR, c: maxC - i };
+                    addIfAbsent(connectedPoints, connectorRowcol);
+                }
 
-                // // add the vertical connector locations to the connected blocks array
-                // for (var i = 1; i < maxR - minR; i++) {
-                //     var connectorRowcol = { r: maxR - i, c: maxC };
-                //     addIfAbsent(connectedPoints, connectorRowcol);
-                // }
+                // add the vertical connector locations to the connected blocks array
+                for (var i = 1; i < maxR - minR; i++) {
+                    var connectorRowcol = { r: maxR - i, c: maxC };
+                    addIfAbsent(connectedPoints, connectorRowcol);
+                }
 
-                // // find the next closest blocks and the point to which it's closest
-                // minDistance = Infinity;
-                // for (var i = 0; i < remainingLocations.length; i++) {
-                //     var rowcol = getRowcol(level, remainingLocations[i]);
-                //     for (var j = 0; j < connectedPoints.length; j++) {
-                //         var distance = Math.abs(rowcol.r - connectedPoints.r) + Math.abs(rowcol.c - connectedPoints.c);
-                //         if (distance < minDistance) {
-                //             minDistance = distance;
-                //             connected = [i, j];
-                //         }
-                //     }
-                // }
+                // find the next closest blocks and the point to which it's closest
+                minDistance = Infinity;
+                for (var i = 0; i < remainingLocations.length; i++) {
+                    var rowcol = getRowcol(level, remainingLocations[i]);
+                    for (var j = 0; j < connectedPoints.length; j++) {
+                        var distance = Math.abs(rowcol.r - connectedPoints.r) + Math.abs(rowcol.c - connectedPoints.c);
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            connected = [i, j];
+                        }
+                    }
+                }
 
 
 
@@ -3654,7 +3761,7 @@ function render() {
                         drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                         drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                     }
-                    drawBlock(bufferContext, object, minR, minC, rng);
+                    drawBlock(bufferContext, object, minR, minC, rng, false);
                 }
                 var r = minR + animationDisplacementRowcol.r;
                 var c = minC + animationDisplacementRowcol.c;
@@ -3740,7 +3847,7 @@ function render() {
             if (onlyTheseObjects != null) {
                 for (var i = 0; i < objects.length; i++) {
                     var object = objects[i];
-                    if (object.type === BLOCK || object.type === MIKE) drawObject(context, object, rng);
+                    if (object.type === BLOCK || object.type === MIKE) drawObject(context, object, rng, false);
                 }
             }
 
@@ -3922,7 +4029,7 @@ function render() {
                 }
             } else if (paintBrushTileCode === BLOCK) {
                 if (!(objectHere != null && objectHere.type === BLOCK && objectHere.id === paintBrushBlockId) && !splockIsActive) {
-                    drawObject(context, newBlock(hoverLocation), rng);
+                    drawObject(context, newBlock(hoverLocation), rng, true);
                 }
                 else if (!(objectHere != null && objectHere.type === BLOCK && objectHere.id === paintBrushBlockId) && splockIsActive && paintBrushBlockId != null) {
                     drawTile(context, SPIKE, hoverRowcol.r, hoverRowcol.c, level, hoverLocation, rng);
@@ -4138,14 +4245,14 @@ function tint(hex, delta) {
     return 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
 }
 
-function drawObject(context, object, rng) {
+function drawObject(context, object, rng, hover) {
     var r, c;
     switch (object.type) {
         case SNAKE:
             themeName !== "Classic" ? drawNewSnake(context) : drawOriginalSnake(context);
             break;
         case BLOCK:
-            drawBlock(context, object, 0, 0, rng);
+            drawBlock(context, object, 0, 0, rng, hover);
             break;
         case MIKE:
             drawMike(context, object, 0, 0, rng);
@@ -4153,7 +4260,7 @@ function drawObject(context, object, rng) {
         case FRUIT:
         case POISONFRUIT:
             var isPoison = object.type == POISONFRUIT;
-            drawFruit(context, object, isPoison, rng);
+            drawFruit(context, object, isPoison, rng, false);
             break;
         default: throw unreachable();
     }
@@ -4832,7 +4939,7 @@ function drawConnector(context, r1, c1, r2, c2, color) {
     context.fillRect(xLo, yLo, xHi - xLo, yHi - yLo);
 }
 
-function drawBlock(context, block, minR, minC, rng) {
+function drawBlock(context, block, minR, minC, rng, hover) {
     var animationDisplacementRowcol = findAnimationDisplacementRowcol(block.type, block.id);
     var blockRowcols = block.locations.map(function (location) {
         var rowcol = getRowcol(level, location);
@@ -4847,7 +4954,8 @@ function drawBlock(context, block, minR, minC, rng) {
         return rowcol;
     });
 
-    var color = blockColors[block.id % blockColors.length];
+    var blockId = hover && block.id != 0 ? block.id - 1 : block.id;
+    var color = blockColors[blockId % blockColors.length];
     splockRowcols.forEach(function (rowcol) {
         var r = rowcol.r + animationDisplacementRowcol.r;
         var c = rowcol.c + animationDisplacementRowcol.c;
@@ -5059,7 +5167,7 @@ function drawMike(context, mike, minR, minC, rng) {
     }
 }
 
-function drawFruit(context, object, isPoison, rng) {
+function drawFruit(context, object, isPoison, rng, eaten) {
     var isPoison = object.type === POISONFRUIT;
     var rowcol = getRowcol(level, object.locations[0]);
     var c = rowcol.c;
@@ -5079,6 +5187,7 @@ function drawFruit(context, object, isPoison, rng) {
         color = "#666600";
         stemColor = "#805500";
     }
+    if (eaten) color = stemColor = "rgba(255,255,255,.3)";
 
     context.fillStyle = color;
     if (circle) {
