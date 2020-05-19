@@ -1108,9 +1108,15 @@ function highlightFruits() {
 
             var fruits = getObjectsOfType(FRUIT);
             var counter = 0;
+            var eatenCounter = 0;
             fruitLog.forEach(function (fruit) {
-                if (fruits.includes(fruit[0])) drawObject(context, fruit[0]);
-                else drawFruit(context, fruit[0], false, null, true);
+                if (fruits.includes(fruit[0])) {
+                    drawObject(context, fruit[0]);
+                }
+                else {
+                    eatenCounter++;
+                    drawFruit(context, fruit[0], false, null, true);
+                }
 
                 var rowcol = getRowcol(level, fruit[0].locations[0]);
                 var fontSize = tileSize / 2;
@@ -1121,6 +1127,15 @@ function highlightFruits() {
                 context.fillText(fruitLog[counter][1], rowcol.c * tileSize + tileSize / 2, rowcol.r * tileSize + tileSize / 2.1);
                 counter++;
             });
+            var eatenText = "Fruit eaten: " + eatenCounter;
+            var remainingText = "Fruit remaining: " + fruits.length;
+            var fontSize = tileSize / 2;
+            context.font = fontSize + "px Trebuchet MS";
+            context.fillStyle = "rgba(255,255,255,.5)";
+            context.textAlign = "left";
+            context.textBaseline = "middle";
+            context.fillText(eatenText, tileSize / 2, tileSize / 2);
+            context.fillText(remainingText, tileSize / 2, tileSize * 1.1);
         }
         else {
             button.style.color = "";
