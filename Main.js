@@ -5237,7 +5237,7 @@ function drawFruit(context, object, isPoison, rng, eaten) {
         color = "#666600";
         stemColor = "#805500";
     }
-    if (eaten) color = stemColor = "rgba(255,255,255,.3)";
+    if (eaten) color = stemColor = "rgba(255,255,255,.2)";
 
     context.fillStyle = color;
     if (circle) {
