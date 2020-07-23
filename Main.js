@@ -90,6 +90,7 @@ var oldRowcols = [];
 var animationsOn = true;    //defaults
 var defaultOn = true;
 var replayAnimationsOn = false;
+var blockFixOn = false;
 
 function updateSwitches() {
     var fitDefault = "";
@@ -1028,6 +1029,12 @@ document.getElementById("defaultSlider").addEventListener("click", function () {
 document.getElementById("replayAnimationSlider").addEventListener("click", function () {
     replayAnimationsOn = document.getElementById("replayAnimationSlider").checked;
     localStorage.setItem("cachedRAO", replayAnimationsOn);
+});
+document.getElementById("blockSlider").addEventListener("click", function () {
+    blockFixOn = document.getElementById("blockSlider").checked;
+    localStorage.setItem("cachedBFO", blockFixOn);
+    // if (blockFixOn && persistentState.showEditor) document.getElementById("animationSlider").checked = false;
+    // animationsOn = false;
 });
 $(document).ready(function () {
     $("body").on("click", "#ghostEditorPane", function () {
@@ -3694,60 +3701,61 @@ function render() {
 
                 //combine locations and splocks because they're treated the same
                 var locations = object.locations.concat(object.splocks);
-                // var minDistance = Infinity;
-                // var connected = [];
-                // var connectedPoints = [];
-                // for (var i = 0; i < locations.length; i++) {
-                //     var rowcol = getRowcol(level, locations[i]);
-                //     for (var j = 0; j < locations.length; j++) {
-                //         if (j != i) {
-                //             var rowcolComparison = getRowcol(level, locations[j]);
-                //             var distance = Math.abs(rowcol.r - rowcolComparison.r) + Math.abs(rowcol.c - rowcolComparison.c);
-                //             if (distance < minDistance) {
-                //                 minDistance = distance;
-                //                 connected = [i, j];
-                //                 connectedPoints = [rowcol, rowcolComparison];
-                //             }
-                //         }
-                //     }
-                // }
-                // // new array omitting blocks that are already connected
-                // // somehow this ruins locations for the bottom section
-                // var remainingLocations = locations;
-                // remainingLocations.splice(connected[0], 1);
-                // remainingLocations.splice(connected[1], 1);
+                var minDistance = Infinity;
+                var connected = [];
+                var connectedPoints = [];
+                for (var i = 0; i < locations.length; i++) {
+                    var rowcol = getRowcol(level, locations[i]);
+                    for (var j = 0; j < locations.length; j++) {
+                        if (j != i) {
+                            var rowcolComparison = getRowcol(level, locations[j]);
+                            var distance = Math.abs(rowcol.r - rowcolComparison.r) + Math.abs(rowcol.c - rowcolComparison.c);
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                connected = [i, j];
+                                connectedPoints = [rowcol, rowcolComparison];
+                            }
+                        }
+                    }
+                }
+                // new array omitting blocks that are already connected
+                // somehow this ruins locations for the bottom section
+                var remainingLocations = locations;
+                remainingLocations.splice(connected[0], 1);
+                remainingLocations.splice(connected[1], 1);
 
-                // connectedPoints.forEach(function (rowcol) {
-                //     if (rowcol.r < minR) minR = rowcol.r;
-                //     if (rowcol.r > maxR) maxR = rowcol.r;
-                //     if (rowcol.c < minC) minC = rowcol.c;
-                //     if (rowcol.c > maxC) maxC = rowcol.c;
-                // });
+                connectedPoints.forEach(function (rowcol) {
+                    if (rowcol.r < minR) minR = rowcol.r;
+                    if (rowcol.r > maxR) maxR = rowcol.r;
+                    if (rowcol.c < minC) minC = rowcol.c;
+                    if (rowcol.c > maxC) maxC = rowcol.c;
+                });
 
-                // // add the horizontal connector locations to the connected blocks array
-                // for (var i = 0; i < maxC - minC; i++) {
-                //     var connectorRowcol = { r: minR, c: maxC - i };
-                //     addIfAbsent(connectedPoints, connectorRowcol);
-                // }
+                // add the horizontal connector locations to the connected blocks array
+                for (var i = 0; i < maxC - minC; i++) {
+                    var connectorRowcol = { r: minR, c: maxC - i };
+                    addIfAbsent(connectedPoints, connectorRowcol);
+                }
 
-                // // add the vertical connector locations to the connected blocks array
-                // for (var i = 1; i < maxR - minR; i++) {
-                //     var connectorRowcol = { r: maxR - i, c: maxC };
-                //     addIfAbsent(connectedPoints, connectorRowcol);
-                // }
+                // add the vertical connector locations to the connected blocks array
+                for (var i = 1; i < maxR - minR; i++) {
+                    var connectorRowcol = { r: maxR - i, c: maxC };
+                    addIfAbsent(connectedPoints, connectorRowcol);
+                }
 
-                // // find the next closest blocks and the point to which it's closest
-                // minDistance = Infinity;
-                // for (var i = 0; i < remainingLocations.length; i++) {
-                //     var rowcol = getRowcol(level, remainingLocations[i]);
-                //     for (var j = 0; j < connectedPoints.length; j++) {
-                //         var distance = Math.abs(rowcol.r - connectedPoints.r) + Math.abs(rowcol.c - connectedPoints.c);
-                //         if (distance < minDistance) {
-                //             minDistance = distance;
-                //             connected = [i, j];
-                //         }
-                //     }
-                // }
+                // find the next closest blocks and the point to which it's closest
+                minDistance = Infinity;
+                for (var i = 0; i < remainingLocations.length; i++) {
+                    var rowcol = getRowcol(level, remainingLocations[i]);
+                    for (var j = 0; j < connectedPoints.length; j++) {
+                        var distance = Math.abs(rowcol.r - connectedPoints.r) + Math.abs(rowcol.c - connectedPoints.c);
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            connected = [i, j];
+                        }
+                    }
+                }
+                var locations = object.locations.concat(object.splocks);
 
 
 
@@ -3798,7 +3806,7 @@ function render() {
                         drawConnector(bufferContext, rowcol1.r, rowcol1.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                         drawConnector(bufferContext, rowcol2.r, rowcol2.c, cornerRowcol.r, cornerRowcol.c, connectorColor);
                     }
-                    drawBlock(bufferContext, object, minR, minC, rng, false);
+                    if (!blockFixOn) drawBlock(bufferContext, object, minR, minC, rng, false);
                 }
                 var r = minR + animationDisplacementRowcol.r;
                 var c = minC + animationDisplacementRowcol.c;
@@ -3881,7 +3889,7 @@ function render() {
                 }
             }
 
-            if (onlyTheseObjects != null) {
+            if (onlyTheseObjects != null || blockFixOn) {
                 for (var i = 0; i < objects.length; i++) {
                     var object = objects[i];
                     if (object.type === BLOCK || object.type === MIKE) drawObject(context, object, rng, false);
@@ -4980,13 +4988,23 @@ function drawConnector(context, r1, c1, r2, c2, color) {
         r2 = rTmp;
         c2 = cTmp;
     }
-    var connectorSize = .38;
-    var xLo = (c1 + connectorSize) * tileSize;
-    var yLo = (r1 + connectorSize) * tileSize;
-    var xHi = (c2 + 1 - connectorSize) * tileSize;
-    var yHi = (r2 + 1 - connectorSize) * tileSize;
-    context.fillStyle = color;
-    context.fillRect(xLo, yLo, xHi - xLo, yHi - yLo);
+    if (themeName === "Classic") {
+        var xLo = (c1 + 0.4) * tileSize;
+        var yLo = (r1 + 0.4) * tileSize;
+        var xHi = (c2 + 0.6) * tileSize;
+        var yHi = (r2 + 0.6) * tileSize;
+        context.fillStyle = color;
+        context.fillRect(xLo, yLo, xHi - xLo, yHi - yLo);
+    }
+    else {
+        var connectorSize = .38;
+        var xLo = (c1 + connectorSize) * tileSize;
+        var yLo = (r1 + connectorSize) * tileSize;
+        var xHi = (c2 + 1 - connectorSize) * tileSize;
+        var yHi = (r2 + 1 - connectorSize) * tileSize;
+        context.fillStyle = color;
+        context.fillRect(xLo, yLo, xHi - xLo, yHi - yLo);
+    }
 }
 
 function drawBlock(context, block, minR, minC, rng, hover) {
@@ -5019,119 +5037,123 @@ function drawBlock(context, block, minR, minC, rng, hover) {
         if (isDead() && newSpikeDeath[0] === BLOCK && newSpikeDeath[1] === block.id && newSpikeDeath[2].dead) r += .5;
 
         context.fillStyle = color;
-        var outlineThickness = .4;
+        var outlineThickness = themeName === "Classic" ? .3 : .4;
         var complement = 1 - outlineThickness;
         var outlinePixels = outlineThickness * tileSize;
-
-        var c1, c2, c3, c4;
-        c1 = c2 = c3 = c4 = blockRadius;
-        if (isAlsoThisBlock(-1, 0)) c1 = c3 = 0;
-        if (isAlsoThisBlock(1, 0)) c2 = c4 = 0;
-        if (isAlsoThisBlock(0, -1)) c1 = c2 = 0;
-        if (isAlsoThisBlock(0, 1)) c3 = c4 = 0;
 
         // draw curves
         var size = .9;
         var inverse = 1 - size;
+        var br = 0;
 
-        // top right
-        if (isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(1, -1)) {
-            var y = r;
-            var x = c + 1;
-            context.beginPath();
-            context.moveTo((x + inverse) * tileSize, y * tileSize);
-            context.lineTo(x * tileSize, y * tileSize);
-            context.lineTo(x * tileSize, (y - inverse) * tileSize);
-            context.arc((x + inverse) * tileSize, (y - inverse) * tileSize, inverse * tileSize, Math.PI, .5 * Math.PI, true);
-            context.closePath();
-            context.fill();
-        }
-        // top left
-        else if (isAlsoThisBlock(-1, 0) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(-1, -1)) {
-            var y = r;
-            var x = c - 1;
-            context.beginPath();
-            context.moveTo((x + size) * tileSize, y * tileSize);
-            context.lineTo((x + 1) * tileSize, y * tileSize);
-            context.lineTo((x + 1) * tileSize, (y - inverse) * tileSize);
-            context.arc((x + size) * tileSize, (y - inverse) * tileSize, inverse * tileSize, 0, .5 * Math.PI, false);
-            context.closePath();
-            context.fill();
-        }
-        // top left
-        else if (isAlsoThisBlock(-1, 1) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(-1, 0)) {
-            var y = r + 1;
-            var x = c - 1;
-            context.beginPath();
-            context.moveTo((x + size) * tileSize, y * tileSize);
-            context.lineTo((x + 1) * tileSize, y * tileSize);
-            context.lineTo((x + 1) * tileSize, (y - inverse) * tileSize);
-            context.arc((x + size) * tileSize, (y - inverse) * tileSize, inverse * tileSize, 0, .5 * Math.PI, false);
-            context.closePath();
-            context.fill();
-        }
-        // bottom right
-        else if (isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(1, 1)) {
-            var y = r + 1;
-            var x = c + 1;
-            context.beginPath();
-            context.moveTo((x + inverse) * tileSize, y * tileSize);
-            context.lineTo(x * tileSize, y * tileSize);
-            context.lineTo(x * tileSize, (y + inverse) * tileSize);
-            context.arc((x + inverse) * tileSize, (y + inverse) * tileSize, inverse * tileSize, Math.PI, 1.5 * Math.PI, false);
-            context.closePath();
-            context.fill();
-        }
-        // bottom right
-        else if (!isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, -1) && isAlsoThisBlock(1, -1)) {
-            var y = r;
-            var x = c + 1;
-            context.beginPath();
-            context.moveTo((x + inverse) * tileSize, y * tileSize);
-            context.lineTo(x * tileSize, y * tileSize);
-            context.lineTo(x * tileSize, (y + inverse) * tileSize);
-            context.arc((x + inverse) * tileSize, (y + inverse) * tileSize, inverse * tileSize, Math.PI, 1.5 * Math.PI, false);
-            context.closePath();
-            context.fill();
-        }
-        // bottom left
-        else if (isAlsoThisBlock(-1, 0) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(-1, 1)) {
-            var y = r + 1;
-            var x = c - 1;
-            context.beginPath();
-            context.moveTo((x + size) * tileSize, y * tileSize);
-            context.lineTo((x + 1) * tileSize, y * tileSize);
-            context.lineTo((x + 1) * tileSize, (y + inverse) * tileSize);
-            context.arc((x + size) * tileSize, (y + inverse) * tileSize, inverse * tileSize, 0, 1.5 * Math.PI, true);
-            context.closePath();
-            context.fill();
-        }
-        // bottom left (why needed?)
-        else if (isAlsoThisBlock(-1, -1) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(-1, 0)) {
-            var y = r;
-            var x = c - 1;
-            context.beginPath();
-            context.moveTo((x + size) * tileSize, y * tileSize);
-            context.lineTo((x + 1) * tileSize, y * tileSize);
-            context.lineTo((x + 1) * tileSize, (y + inverse) * tileSize);
-            context.arc((x + size) * tileSize, (y + inverse) * tileSize, inverse * tileSize, 0, 1.5 * Math.PI, true);
-            context.closePath();
-            context.fill();
+        if (themeName != "Classic") {// top right
+            br = borderRadius
+            if (isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(1, -1)) {
+                var y = r;
+                var x = c + 1;
+                context.beginPath();
+                context.moveTo((x + inverse) * tileSize, y * tileSize);
+                context.lineTo(x * tileSize, y * tileSize);
+                context.lineTo(x * tileSize, (y - inverse) * tileSize);
+                context.arc((x + inverse) * tileSize, (y - inverse) * tileSize, inverse * tileSize, Math.PI, .5 * Math.PI, true);
+                context.closePath();
+                context.fill();
+            }
+            // top left
+            else if (isAlsoThisBlock(-1, 0) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(-1, -1)) {
+                var y = r;
+                var x = c - 1;
+                context.beginPath();
+                context.moveTo((x + size) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, (y - inverse) * tileSize);
+                context.arc((x + size) * tileSize, (y - inverse) * tileSize, inverse * tileSize, 0, .5 * Math.PI, false);
+                context.closePath();
+                context.fill();
+            }
+            // top left
+            else if (isAlsoThisBlock(-1, 1) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(-1, 0)) {
+                var y = r + 1;
+                var x = c - 1;
+                context.beginPath();
+                context.moveTo((x + size) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, (y - inverse) * tileSize);
+                context.arc((x + size) * tileSize, (y - inverse) * tileSize, inverse * tileSize, 0, .5 * Math.PI, false);
+                context.closePath();
+                context.fill();
+            }
+            // bottom right
+            else if (isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(1, 1)) {
+                var y = r + 1;
+                var x = c + 1;
+                context.beginPath();
+                context.moveTo((x + inverse) * tileSize, y * tileSize);
+                context.lineTo(x * tileSize, y * tileSize);
+                context.lineTo(x * tileSize, (y + inverse) * tileSize);
+                context.arc((x + inverse) * tileSize, (y + inverse) * tileSize, inverse * tileSize, Math.PI, 1.5 * Math.PI, false);
+                context.closePath();
+                context.fill();
+            }
+            // bottom right
+            else if (!isAlsoThisBlock(1, 0) && isAlsoThisBlock(0, -1) && isAlsoThisBlock(1, -1)) {
+                var y = r;
+                var x = c + 1;
+                context.beginPath();
+                context.moveTo((x + inverse) * tileSize, y * tileSize);
+                context.lineTo(x * tileSize, y * tileSize);
+                context.lineTo(x * tileSize, (y + inverse) * tileSize);
+                context.arc((x + inverse) * tileSize, (y + inverse) * tileSize, inverse * tileSize, Math.PI, 1.5 * Math.PI, false);
+                context.closePath();
+                context.fill();
+            }
+            // bottom left
+            else if (isAlsoThisBlock(-1, 0) && isAlsoThisBlock(0, 1) && !isAlsoThisBlock(-1, 1)) {
+                var y = r + 1;
+                var x = c - 1;
+                context.beginPath();
+                context.moveTo((x + size) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, (y + inverse) * tileSize);
+                context.arc((x + size) * tileSize, (y + inverse) * tileSize, inverse * tileSize, 0, 1.5 * Math.PI, true);
+                context.closePath();
+                context.fill();
+            }
+            // bottom left (why needed?)
+            else if (isAlsoThisBlock(-1, -1) && isAlsoThisBlock(0, -1) && !isAlsoThisBlock(-1, 0)) {
+                var y = r;
+                var x = c - 1;
+                context.beginPath();
+                context.moveTo((x + size) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, y * tileSize);
+                context.lineTo((x + 1) * tileSize, (y + inverse) * tileSize);
+                context.arc((x + size) * tileSize, (y + inverse) * tileSize, inverse * tileSize, 0, 1.5 * Math.PI, true);
+                context.closePath();
+                context.fill();
+            }
+
+            var c1, c2, c3, c4;
+            c1 = c2 = c3 = c4 = blockRadius;
+            if (isAlsoThisBlock(-1, 0)) c1 = c3 = 0;
+            if (isAlsoThisBlock(1, 0)) c2 = c4 = 0;
+            if (isAlsoThisBlock(0, -1)) c1 = c2 = 0;
+            if (isAlsoThisBlock(0, 1)) c3 = c4 = 0;
         }
 
         if (!isAlsoThisBlock(-1, -1) && isAlsoThisBlock(0, -1))
-            roundRect(context, c * tileSize, r * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: 0, bl: 0, br: blockRadius }, true, false);
+            roundRect(context, c * tileSize, r * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: 0, bl: 0, br: br }, true, false);
         if (!isAlsoThisBlock(1, -1) && isAlsoThisBlock(0, -1))
-            roundRect(context, (c + complement) * tileSize, r * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: 0, bl: blockRadius, br: 0 }, true, false);
+            roundRect(context, (c + complement) * tileSize, r * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: 0, bl: br, br: 0 }, true, false);
         if (!isAlsoThisBlock(-1, 1) && isAlsoThisBlock(0, 1))
-            roundRect(context, c * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: blockRadius, bl: 0, br: 0 }, true, false);
+            roundRect(context, c * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels, { tl: 0, tr: br, bl: 0, br: 0 }, true, false);
         if (!isAlsoThisBlock(1, 1) && isAlsoThisBlock(0, 1))
-            roundRect(context, (c + complement) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels, { tl: blockRadius, tr: 0, bl: 0, br: 0 }, true, false);
+            roundRect(context, (c + complement) * tileSize, (r + complement) * tileSize, outlinePixels, outlinePixels, { tl: br, tr: 0, bl: 0, br: 0 }, true, false);
 
-        if (!isAlsoThisBlock(0, -1)) roundRect(context, c * tileSize, r * tileSize, tileSize, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
-        if (!isAlsoThisBlock(0, 1)) roundRect(context, c * tileSize, (r + complement) * tileSize, tileSize, outlinePixels, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
-        if (!isAlsoThisBlock(-1, 0)) roundRect(context, c * tileSize, r * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
-        if (!isAlsoThisBlock(1, 0)) roundRect(context, (c + complement) * tileSize, r * tileSize, outlinePixels, tileSize, { tl: c1, tr: c2, bl: c3, br: c4 }, true, false);
+        var test = { tl: c1, tr: c2, bl: c3, br: c4 };
+        if (!isAlsoThisBlock(0, -1)) roundRect(context, c * tileSize, r * tileSize, tileSize, outlinePixels, test, true, false);
+        if (!isAlsoThisBlock(0, 1)) roundRect(context, c * tileSize, (r + complement) * tileSize, tileSize, outlinePixels, test, true, false);
+        if (!isAlsoThisBlock(-1, 0)) roundRect(context, c * tileSize, r * tileSize, outlinePixels, tileSize, test, true, false);
+        if (!isAlsoThisBlock(1, 0)) roundRect(context, (c + complement) * tileSize, r * tileSize, outlinePixels, tileSize, test, true, false);
 
         function isAlsoThisBlock(dc, dr) {
             for (var i = 0; i < blockRowcols.length; i++) {
@@ -5237,7 +5259,7 @@ function drawFruit(context, object, isPoison, rng, eaten) {
         color = "#666600";
         stemColor = "#805500";
     }
-    if (eaten) color = stemColor = "rgba(255,255,255,.2)";
+    if (eaten) color = stemColor = "rgba(255,255,255,.1)";
 
     context.fillStyle = color;
     if (circle) {
