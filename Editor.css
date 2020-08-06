@@ -1,0 +1,793 @@
+@keyframes click_me {
+    0% {
+        background: linear-gradient(white, #e6e6e6);
+    }
+    50% {
+        background: yellow;
+    }
+    100% {
+        background: linear-gradient(white, #e6e6e6);
+    }
+    50% {
+        background: yellow;
+    }
+    0% {
+        background: linear-gradient(white, #e6e6e6);
+    }
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%
+    }
+    50% {
+        background-position: 100% 50%
+    }
+    100% {
+        background-position: 0% 50%
+    }
+}
+
+button.click-me {
+    animation: click_me 1s infinite;
+    font-weight: bold;
+}
+
+/* ----------------------------------------------------------------------------------------------------------------- */
+
+table {
+    border-collapse: collapse;
+}
+
+td {
+    text-align: center;
+    line-height: 16px;
+}
+
+tr {
+    text-align: center;
+}
+
+body {
+    font-family: Trebuchet MS, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    background-color: aliceblue;
+}
+
+button {
+    background-image: linear-gradient(white, #e6e6e6);
+    border: none;
+    border-radius: 3px;
+    box-shadow: 0.5px 0.5px 1px black;
+    font-family: Trebuchet MS;
+    margin: 4px 0 0 0;
+}
+
+button:hover:enabled {
+    box-shadow: 0 0 0 1px #1e90ff;
+}
+
+button:focus {
+    background-image: linear-gradient(#4b91ff, #055ce4);
+    color: white;
+}
+
+button:active:enabled {
+    transform: scale(.98);
+    color: black;
+}
+
+/* CANVAS----------------------------------------------------------------------------------------------------------------- */
+
+#levelTable {
+    margin: 0 auto;
+}
+
+#canvasContainer {
+    position: relative;
+}
+
+canvas {
+    border-radius: 20px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+#canvas1 {
+    z-index: 1;
+}
+
+#canvas2 {
+    z-index: 2;
+}
+
+#canvas3 {
+    z-index: 3;
+}
+
+#canvas4 {
+    z-index: 4;
+}
+
+#canvas5 {
+    z-index: 5;
+}
+
+#canvas6 {
+    z-index: 6;
+}
+
+#canvas7 {
+    display: none;
+    z-index: 7;
+}
+
+/* EDITOR----------------------------------------------------------------------------------------------------------------- */
+
+#ghostEditorPane {
+    height: 500px;
+    width: 100%;
+    border-radius: 20px;
+    border: 5px solid transparent;
+}
+
+#ghostEditorPane:hover {
+    border: 5px solid red;
+}
+
+#editorPane {
+    display: none;
+    padding-left: 5px;
+}
+
+#controls {
+    background-color: #deb0b0;
+    width: 200px;
+    margin: 0 2px 0 2px;
+    border-radius: 20px;
+    position: relative;
+}
+
+#uneditButton {
+    margin-right: 10px;
+}
+
+#reeditButton {
+    margin-left: 10px;
+}
+
+#editsSpan {
+    font-size: 10pt;
+}
+
+.editorButton {
+    margin: -1px;
+}
+
+.buttonHeader {
+    font-size: 10pt;
+    font-weight: 900;
+}
+
+.spacer {
+    height: 10px;
+}
+
+.standard {
+    background-color: #ded2b0;
+}
+
+.enhanced {
+    background-color: #c7deb0;
+}
+
+.hotkeySpacer {
+    height: 1px;
+}
+
+.controlsHeader {
+    line-height: 20px;
+}
+
+.header {
+    font-weight: 900;
+}
+
+#selectHolder {
+    display: inline-block;
+}
+
+#controlsRow button {
+    vertical-align: top;
+}
+
+.hotkey {
+    font-size: 8pt;
+    color: rgba(0, 0, 0, 0.5);
+    font-family: Trebuchet MS;
+}
+
+.buttonDiv {
+    display: inline-block;
+}
+
+#controlButtons {
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: table;
+}
+
+/* BOTTOM CONTROLS----------------------------------------------------------------------------------------------------------------- */
+
+#returnButton {
+    display: table;
+    text-decoration: none;
+    color: white;
+    background-color: #1e90ff;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    font-size: 8pt;
+    margin: 0 auto;
+    position: relative;
+}
+
+#returnButton:hover {
+    background-image: linear-gradient(45deg, #1e90ff, #1e90ff, #1e90ff, #1e90ff, #fdc122, #dc6a3f, #d55945, #dc6a3f, #fdc122);
+    background-size: 500% 500%;
+    animation: gradient 2s ease infinite;
+}
+
+#returnButton a {
+    display: table-cell;
+    text-decoration: none;
+    vertical-align: middle;
+    margin: auto;
+}
+
+#returnButton a:visited {
+    text-decoration: none;
+    color: white;
+}
+
+#returnArrow {
+    position: absolute;
+    top: 10%;
+    left: 40%;
+    font-size: 12pt;
+}
+
+#levelTypeContainer {
+    display: flex;
+    align-items: center;
+    width: 280px;
+    position: relative;
+}
+
+#levelType {
+    flex-grow: 1;
+    font-size: 16pt;
+    color: #1e90ff;
+    font-weight: 900;
+}
+
+#levelTypeSpan {
+    font-size: 8pt;
+    font-weight: 100;
+    margin-bottom: 5px;
+}
+
+#switchSnakesButton {
+    min-height: 30px;
+    margin-right: 20px;
+}
+
+#arrowsHolder {
+    display: flex;
+    align-items: center;
+}
+
+.arrow {
+    min-height: 30px;
+    min-width: 30px;
+    font-size: 14pt;
+}
+
+#arrowLeft {
+    float: left;
+    margin-right: 5px;
+}
+
+#verticalArrowsHolder {
+    float: left;
+}
+
+#arrowRight {
+    float: left;
+    margin-left: 5px;
+}
+
+.bigButton {
+    font-size: 20pt;
+    padding: 10px;
+}
+
+#bigButtonButton {
+    display: none;
+}
+
+#bigButtonButton:hover {
+    cursor: pointer;
+}
+
+#bigButtonButton:active {
+    transform: scale(.97);
+}
+
+#bottomBlock {
+    display: table;
+    width: 900px;
+    margin: 0 auto;
+    margin-top: 20px;
+    text-align: center;
+    position: relative;
+}
+
+.separator {
+    background-color: black;
+    height: 190px;
+    width: 1px;
+    margin: 0 5px 0 5px;
+    display: inline-block;
+}
+
+.optionsHeader {
+    margin-top: 10px;
+    font-family: Trebuchet MS;
+}
+
+#keyboardInstructions {
+    font-size: 8pt;
+    width: 220px;
+    text-align: center;
+    display: inline-block;
+}
+
+#optionsStack {
+    display: inline-block;
+}
+
+.optionsHeaders {
+    font-weight: 900;
+}
+
+.bottomBlockBox {
+    width: 33%;
+    text-align: center;
+    font-size: 10pt;
+    font-family: Trebuchet MS;
+    display: table-cell;
+    vertical-align: top;
+}
+
+#firstBottomBlock {
+    position: absolute;
+    top: -12px;
+    left: -300px;
+}
+
+#highlighters {
+    display: inline-block;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.05);
+    vertical-align: top;
+    padding: 5px 10px 5px 10px;
+}
+
+#levelSize {
+    display: inline-block;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0.05);
+    vertical-align: top;
+    padding: 5px 10px 5px 10px;
+}
+
+#levelSizeInsider {
+    display: table;
+}
+
+#levelSizeText {
+    position: relative;
+}
+
+#fitButtonContainer {
+    vertical-align: middle;
+    padding: 0 5px 0 5px;
+    border-collapse: separate;
+}
+
+.radioContainer {
+    position: relative;
+    cursor: pointer;
+    float: right;
+    width: 15px;
+    height: 15px;
+    margin-top: 5px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default radio button */
+
+.radioContainer input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* Create a custom radio button */
+
+.radioButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 15px;
+    width: 15px;
+    background-color: white;
+    border: 2px solid #555;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+/* On mouse-over, add a grey background color */
+
+/* .radioContainer:hover input~.radioButton {
+    background-color: white;
+} */
+
+/* When the radio button is checked, add a blue background */
+
+.radioContainer input:checked~.radioButton {
+    background-color: #2196F3;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+
+.radioButton:after {
+    content: "";
+    position: absolute;
+    display: none;
+    box-sizing: border-box;
+}
+
+/* Show the indicator (dot/circle) when checked */
+
+.radioContainer input:checked~.radioButton:after {
+    display: block;
+}
+
+/* Style the indicator (dot/circle) */
+
+.radioContainer .radioButton:after {
+    top: 4.5px;
+    left: 4.5px;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: white;
+}
+
+/* .radioContainer .radioButton:after {
+    top: 2px;
+    left: 2px;
+    width: 11px;
+    height: 11px;
+    border-radius: 1.5px;
+    background: white;
+} */
+
+.fitButton {
+    float: left;
+    margin-right: 5px;
+}
+
+#fitCanvas {
+    margin-bottom: 2.5px;
+}
+
+.plusMinus {
+    text-align: center;
+    font-size: 4pt;
+    line-height: 13px;
+    font-weight: 900;
+    border-radius: 3px;
+    width: 12px;
+    height: 12px;
+    background-color: #1e90ff;
+    color: white;
+}
+
+.plusMinus:hover {
+    cursor: pointer;
+    border-radius: 3px;
+    background-color: white;
+}
+
+.colorFix {
+    color: transparent;
+    text-shadow: 0 0 0 white;
+}
+
+.plusMinus:hover .colorFix {
+    color: transparent;
+    text-shadow: 0 0 0 #1e90ff;
+}
+
+#minus {
+    position: absolute;
+    top: 0;
+    left: -5px;
+}
+
+#plus {
+    position: absolute;
+    top: 0;
+    right: -5px;
+}
+
+#paradoxDiv {
+    background: #f88;
+    text-align: center;
+}
+
+#cycleDiv {
+    background: yellow;
+    text-align: center;
+}
+
+#additions {
+    display: none;
+    font-family: Trebuchet MS;
+    color: white;
+    font-size: 8pt;
+    width: 200px;
+    border-radius: 10px;
+    background-color: rgba(255, 0, 0, .3);
+    padding: 5px;
+    position: absolute;
+    top: 52px;
+    right: 0;
+}
+
+#editorDiv {
+    width: 100%;
+    text-align: center;
+}
+
+#shareLink {
+    padding-right: 5px;
+    display: table-cell;
+    font-size: 10pt;
+}
+
+#shareLinkTextbox {
+    padding: 5px;
+    display: table-cell;
+    border-radius: 2px;
+    border: 1px solid black;
+    background-color: #1e90ff;
+    color: white;
+}
+
+#link2 {
+    padding-right: 5px;
+    display: table-cell;
+    font-size: 10pt;
+}
+
+#link2Textbox {
+    padding: 5px;
+    display: table-cell;
+    border-radius: 2px;
+    border: 1px solid black;
+    background-color: #1e90ff;
+    color: white;
+}
+
+#submitSerializationButton {
+    padding: 5px;
+    border-radius: 2px;
+    border: 1px solid black;
+    background-image: none;
+    background-color: #1e90ff;
+    float: left;
+    color: white;
+}
+
+#progressButtons {
+    display: table;
+    margin: 0 auto;
+    margin-bottom: 5px;
+}
+
+#unmoveButton {
+    transform: scale(-1, 1);
+}
+
+.progressButton {
+    font-size: 10pt;
+    line-height: 10pt;
+    display: table-cell;
+    vertical-align: top;
+    padding: 1px 0 0 10px;
+}
+
+.progressButton:hover {
+    cursor: pointer;
+    color: #1e90ff;
+}
+
+#movesSpan {
+    display: table-cell;
+    vertical-align: bottom;
+}
+
+.sliderStack {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 5px 10px 5px 10px;
+    display: inline-block;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.sliderContainer {
+    display: block;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.sliderLabel {
+    font-family: Trebuchet MS;
+    font-size: 8pt;
+    line-height: 12pt;
+    margin-right: 10px;
+}
+
+.switch {
+    position: relative;
+    display: table-cell;
+    vertical-align: top;
+    width: 30px;
+    height: 17px;
+    float: right;
+}
+
+/* Hide default HTML checkbox */
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #555;
+    border-radius: 4px;
+    -webkit-transition: .2s;
+    transition: .2s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 13px;
+    width: 13px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    border-radius: 2px;
+    -webkit-transition: .2s;
+    transition: .2s;
+}
+
+input:checked+.slider {
+    background-color: #1e90ff;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #1e90ff;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(13px);
+    -ms-transform: translateX(13px);
+    transform: translateX(13px);
+}
+
+.small {
+    font-size: 6pt;
+}
+
+#csButton {
+    margin: 0 auto;
+    margin-top: 20px;
+    font-size: 30pt;
+    left: 50%;
+    display: none;
+}
+
+#csText {
+    box-sizing: border-box;
+    width: 100%;
+    font-size: 24pt;
+    font-family: Trebuchet MS;
+    text-align: center;
+    padding: 20px;
+    display: none;
+}
+
+.stackHeader {
+    margin-bottom: 6px;
+    font-weight: 900;
+}
+
+button #clearHighlightsButton {
+    background-image: linear-gradient(black, #e6e6e6);
+}
+
+#openEditorButton {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #66903c;
+    border: 10px solid white;
+    text-align: center;
+    color: white;
+    font-size: 60pt;
+    line-height: 78pt;
+    position: absolute;
+    top: 10;
+    right: 10;
+    z-index: 100;
+}
+
+#openEditorButton:hover {
+    cursor: pointer;
+}
+
+#openEditorButton:active {
+    transform: scale(.97);
+}
+
+#closeEditorButton {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #b44b4b;
+    border: 2px solid white;
+    text-align: center;
+    color: white;
+    font-size: 12pt;
+    line-height: 16pt;
+    position: absolute;
+    top: -6;
+    right: -6;
+    opacity: 100%;
+}
+
+#closeEditorButton:hover {
+    cursor: pointer;
+}
